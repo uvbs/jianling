@@ -1,4 +1,7 @@
 Release/
 Debug/
-vcxproj*
+*.sln
+*.*suo
+*.vcxproj*
+
 
