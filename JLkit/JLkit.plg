@@ -1,0 +1,86 @@
+<html>
+<body>
+<pre>
+<h1>Build Log</h1>
+<h3>
+--------------------Configuration: JLkit - Win32 Release--------------------
+</h3>
+<h3>Command Lines</h3>
+Creating temporary file "C:\Users\ADMINI~1\AppData\Local\Temp\RSP468E.tmp" with contents
+[
+/nologo /MDd /W3 /GX /Zi /Od /Gf /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_AFXDLL" /D "_MBCS" /FR"Release/" /Fp"Release/JLkit.pch" /Yu"stdafx.h" /Fo"Release/" /Fd"Release/" /FD /c 
+"D:\code\JL\common\ThreadPool.cpp"
+]
+Creating command line "cl.exe @C:\Users\ADMINI~1\AppData\Local\Temp\RSP468E.tmp" 
+Creating temporary file "C:\Users\ADMINI~1\AppData\Local\Temp\RSP468F.tmp" with contents
+[
+/nologo /subsystem:windows /profile /map:"Release/JLkit.map" /debug /machine:I386 /out:"../release/JLkit.exe" 
+.\Release\BindKeyDlg.obj
+.\Release\BugRepDlg.obj
+.\Release\CVPNFile.obj
+.\Release\InfoDld.obj
+.\Release\inject.obj
+.\Release\JLkit.obj
+.\Release\JLkitDoc.obj
+.\Release\JLkitSocket.obj
+.\Release\JLkitView.obj
+.\Release\Keyviewdlg.obj
+.\Release\LaunchGameThread.obj
+.\Release\logger.obj
+.\Release\logindlg.obj
+.\Release\MainFrm.obj
+.\Release\Modifybind.obj
+.\Release\Pcinfo.obj
+.\Release\registdlg.obj
+.\Release\settingdlg.obj
+.\Release\ShareMem.obj
+.\Release\StdAfx.obj
+.\Release\webpost.obj
+.\Release\JLkit.res
+.\Release\ThreadPool.obj
+.\Release\Work.obj
+.\Release\MyWork.obj
+]
+Creating command line "link.exe @C:\Users\ADMINI~1\AppData\Local\Temp\RSP468F.tmp"
+<h3>Output Window</h3>
+Compiling...
+ThreadPool.cpp
+Linking...
+Creating temporary file "C:\Users\ADMINI~1\AppData\Local\Temp\RSP475B.tmp" with contents
+[
+/nologo /o"Release/JLkit.bsc" 
+.\Release\StdAfx.sbr
+.\Release\BindKeyDlg.sbr
+.\Release\BugRepDlg.sbr
+.\Release\CVPNFile.sbr
+.\Release\InfoDld.sbr
+.\Release\inject.sbr
+.\Release\JLkit.sbr
+.\Release\JLkitDoc.sbr
+.\Release\JLkitSocket.sbr
+.\Release\JLkitView.sbr
+.\Release\Keyviewdlg.sbr
+.\Release\LaunchGameThread.sbr
+.\Release\logger.sbr
+.\Release\logindlg.sbr
+.\Release\MainFrm.sbr
+.\Release\Modifybind.sbr
+.\Release\Pcinfo.sbr
+.\Release\registdlg.sbr
+.\Release\settingdlg.sbr
+.\Release\ShareMem.sbr
+.\Release\webpost.sbr
+.\Release\ThreadPool.sbr
+.\Release\Work.sbr
+.\Release\MyWork.sbr]
+Creating command line "bscmake.exe @C:\Users\ADMINI~1\AppData\Local\Temp\RSP475B.tmp"
+Creating browse info file...
+<h3>Output Window</h3>
+
+
+
+<h3>Results</h3>
+JLkit.exe - 0 error(s), 0 warning(s)
+</pre>
+</body>
+</html>

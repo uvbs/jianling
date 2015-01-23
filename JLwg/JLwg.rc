@@ -1,0 +1,303 @@
+//Microsoft Developer Studio generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "afxres.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// Chinese (P.R.C.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_CHS)
+#ifdef _WIN32
+LANGUAGE LANG_CHINESE, SUBLANG_CHINESE_SIMPLIFIED
+#pragma code_page(936)
+#endif //_WIN32
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE MOVEABLE PURE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE MOVEABLE PURE 
+BEGIN
+    "#include ""afxres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE MOVEABLE PURE 
+BEGIN
+    "\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_WGDLG DIALOGEX 0, 0, 93, 133
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+EXSTYLE WS_EX_WINDOWEDGE
+FONT 9, "宋体"
+BEGIN
+    PUSHBUTTON      "游戏数据",IDC_WGDATA,7,81,81,14
+    PUSHBUTTON      "开始任务",IDC_GOTASK,7,64,81,14
+    PUSHBUTTON      "卸载外挂",IDC_UNLOADWG,7,112,81,14
+    LTEXT           "",IDC_STATIC_WGINFO,7,7,81,48
+END
+
+IDD_WGDATA DIALOGEX 0, 0, 400, 239
+STYLE DS_MODALFRAME | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+EXSTYLE WS_EX_TOPMOST
+CAPTION "游戏数据"
+FONT 9, "宋体"
+BEGIN
+    EDITTEXT        IDC_EDITMEMINPUT,185,3,56,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDITINFO,243,24,154,186,ES_MULTILINE | 
+                    ES_AUTOVSCROLL | ES_WANTRETURN | WS_VSCROLL
+    COMBOBOX        IDC_COMBO_DATATYPE,3,3,172,139,CBS_DROPDOWNLIST | 
+                    CBS_SORT | WS_VSCROLL | WS_TABSTOP
+    CONTROL         "List1",IDC_LIST,"SysListView32",LVS_REPORT | WS_BORDER | 
+                    WS_TABSTOP,3,24,238,186
+    PUSHBUTTON      "重新获取",IDC_REFRESH,245,3,37,12
+    CONTROL         "交任务",IDC_HOOK_DEQUEST,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,360,226,37,10
+    CONTROL         "走路",IDC_HOOK_SENDSTEP,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,317,214,30,10
+    CONTROL         "穿装备",IDC_HOOK_CHUANZHUANGBEI,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,360,214,37,10
+    PUSHBUTTON      "清屏",ID_CLR,327,3,29,12
+    PUSHBUTTON      "角色信息",ID_GETPALYERINFO,364,3,33,12
+    PUSHBUTTON      "加速",IDC_SPEEDX,39,222,27,14
+    CONTROL         "接任务",IDC_HOOK_ACCEPTQUEST,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,317,226,37,10
+    CONTROL         "传送",IDC_HOOK_DUNDI,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,278,226,30,10
+    CONTROL         "捡物",IDC_HOOK_YICIJIANWU,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,278,214,32,10
+    CONTROL         "测杀怪",ID_FINDTHENKILL,"Button",BS_AUTOCHECKBOX | 
+                    BS_PUSHLIKE | WS_TABSTOP,3,222,28,14
+    PUSHBUTTON      "配置文件",IDC_BTNCONFIG,287,3,37,12
+    CONTROL         "战斗",IDC_HOOK_COMBAT,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,241,226,32,10
+END
+
+IDD_SETINI_ITEMFILTER DIALOG DISCARDABLE  0, 0, 321, 157
+STYLE WS_CHILD | WS_CAPTION
+CAPTION "物品过滤"
+FONT 8, "Tahoma"
+BEGIN
+    CONTROL         "",IDC_LIST_BAGS,"SysListView32",LVS_REPORT | 
+                    LVS_ALIGNLEFT | WS_BORDER | WS_TABSTOP,7,7,148,143
+    CONTROL         "",IDC_LIST_BAGSFILTER,"SysListView32",LVS_REPORT | 
+                    LVS_ALIGNLEFT | WS_BORDER | WS_TABSTOP,161,7,153,143
+END
+
+IDD_SETINI_OBJFILTER DIALOG DISCARDABLE  0, 0, 321, 157
+STYLE WS_CHILD | WS_CAPTION
+CAPTION "对象过滤"
+FONT 8, "Tahoma"
+BEGIN
+    CONTROL         "",IDC_LIST_OBJECTS,"SysListView32",LVS_REPORT | 
+                    LVS_ALIGNLEFT | WS_BORDER | WS_TABSTOP,7,7,148,143
+    CONTROL         "",IDC_LIST_OBJECTFILTER,"SysListView32",LVS_REPORT | 
+                    LVS_ALIGNLEFT | WS_BORDER | WS_TABSTOP,161,7,153,143
+END
+
+IDD_SETINI_QIANGHUA DIALOG DISCARDABLE  0, 0, 321, 157
+STYLE DS_3DLOOK | WS_CHILD | WS_CAPTION
+CAPTION "其他"
+FONT 8, "Tahoma"
+BEGIN
+    LTEXT           "合成材料颜色",-1,7,10,49,8
+    COMBOBOX        IDC_COMBO_ITEMCOLOR,72,7,68,65,CBS_DROPDOWNLIST | 
+                    WS_TABSTOP
+    LTEXT           "喝药水百分比",-1,7,25,49,8
+    EDITTEXT        IDC_CHIYAOPERCENT,72,23,68,14,ES_AUTOHSCROLL
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO MOVEABLE PURE 
+BEGIN
+    IDD_WGDLG, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 88
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 126
+    END
+
+    IDD_WGDATA, DIALOG
+    BEGIN
+        LEFTMARGIN, 3
+        RIGHTMARGIN, 397
+        VERTGUIDE, 241
+        TOPMARGIN, 3
+        BOTTOMMARGIN, 236
+        HORZGUIDE, 24
+        HORZGUIDE, 110
+        HORZGUIDE, 210
+    END
+
+    IDD_SETINI_ITEMFILTER, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 314
+        VERTGUIDE, 155
+        VERTGUIDE, 176
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 150
+        HORZGUIDE, 24
+    END
+
+    IDD_SETINI_OBJFILTER, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 314
+        VERTGUIDE, 140
+        VERTGUIDE, 190
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 150
+    END
+
+    IDD_SETINI_QIANGHUA, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 314
+        VERTGUIDE, 72
+        VERTGUIDE, 140
+        VERTGUIDE, 190
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 150
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Menu
+//
+
+IDR_OBJECT MENU DISCARDABLE 
+BEGIN
+    POPUP "对象"
+    BEGIN
+        MENUITEM "转向这个对象",                IDC_TURNTO
+        MENUITEM "走向这个对象",                ID_STEPTOOBJET
+        MENUITEM "hook这个怪的技能",            ID_HOOKSTRIKE
+    END
+END
+
+IDR_FILTER MENU DISCARDABLE 
+BEGIN
+    POPUP "类型"
+    BEGIN
+        MENUITEM "出售",                        ID_CONFIG_SELL
+        MENUITEM "存仓",                        ID_CONFIG_CUNCANG
+        MENUITEM "分解",                        ID_CONFIG_FENJIE
+        MENUITEM "交易",                        ID_CONFIG_JIAOYI
+        MENUITEM "强化饰品",                    ID_CONFIG_QHSP
+        MENUITEM "强化武器",                    ID_CONFIG_QHWQ
+    END
+    POPUP "工具"
+    BEGIN
+        MENUITEM "优先",                        ID_CONFIG_FIRST
+        MENUITEM "不杀",                        ID_CONFIG_DONTKILL
+        MENUITEM "必杀",                        ID_CONFIG_ALWAYSKILL
+        MENUITEM SEPARATOR
+        MENUITEM "刷新",                        ID_CONFIG_REFRESH
+    END
+END
+
+
+#ifndef _MAC
+/////////////////////////////////////////////////////////////////////////////
+//
+// Version
+//
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION 1,0,0,1
+ PRODUCTVERSION 1,0,0,1
+ FILEFLAGSMASK 0x3fL
+#ifdef _DEBUG
+ FILEFLAGS 0x1L
+#else
+ FILEFLAGS 0x0L
+#endif
+ FILEOS 0x40004L
+ FILETYPE 0x2L
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "080404b0"
+        BEGIN
+            VALUE "Comments", "\0"
+            VALUE "CompanyName", "Unauthorized copy\0"
+            VALUE "FileDescription", "JLwg\0"
+            VALUE "FileVersion", "1, 0, 0, 1\0"
+            VALUE "InternalName", "JLwg\0"
+            VALUE "LegalCopyright", "Copyright ? 2014\0"
+            VALUE "LegalTrademarks", "\0"
+            VALUE "OriginalFilename", "JLwg.dll\0"
+            VALUE "PrivateBuild", "\0"
+            VALUE "ProductName", "Unauthorized copy JLwg\0"
+            VALUE "ProductVersion", "1, 0, 0, 1\0"
+            VALUE "SpecialBuild", "\0"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x804, 1200
+    END
+END
+
+#endif    // !_MAC
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// 24
+//
+
+1                       24      DISCARDABLE     "res\\default1.bin"
+#endif    // Chinese (P.R.C.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+
