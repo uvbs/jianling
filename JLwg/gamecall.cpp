@@ -166,6 +166,22 @@ DWORD Gamecall::call(DWORD id, LPVOID pParam)
 {
 	switch(id)
 	{
+	case id_msg_GetStrikeToVector:
+		{
+			GetStrikeToVector(*(std::vector<STRIKEINFO>*)pParam);
+		}
+		break;
+	case id_msg__GetUiAddrByName:
+		{
+			KONGJIAN_JIEGOU* jiegou = (KONGJIAN_JIEGOU*)pParam;
+			_GetUiAddrByName((Tree*)jiegou->adress,jiegou->name,jiegou->ID);
+		}
+		break;
+	case id_msg_NewSpend:
+		{
+			_NewSpend(*(float*)pParam);
+		}
+		break;
     case id_msg_GetAllBodyEquipToVector:
         {
             _GetAllBodyEquipToVector(*(std::vector<_BAGSTU> *)pParam);
@@ -402,7 +418,13 @@ DWORD Gamecall::call(DWORD id, LPVOID pParam)
 		}
 		break;
 		
-		
+	case id_msg_step3x:
+		{
+
+			fPosition* pStepParam = (fPosition *)pParam;
+			Step3x(pStepParam->x, pStepParam->y, pStepParam->z);
+		}
+		break;
 	case id_msg_vector_ui:
 		{
 			std::vector<Tree *>* pAllui = (std::vector<Tree *> *)pParam;
@@ -673,7 +695,6 @@ BOOL Gamecall::GetGoodsFromBagByName(const wchar_t *name, _BAGSTU *goods)
 			*goods = GoodsVec[i];
 			return TRUE;
 		}
-		Sleep(10);
 	}
 	
 	return FALSE;
@@ -815,7 +836,7 @@ BOOL Gamecall::Init()
 	{
 		
 		BOOL bGetShareMem = FALSE;
-		if(g_share.Open(SHAREOBJNAME)){
+		if(g_share.Create(0, SHAREOBJNAME)){
 			//Sleep(2000);
 			m_pShareMem = g_share.Get(GetCurrentProcessId());
 			if(m_pShareMem){
@@ -1300,7 +1321,7 @@ BOOL Gamecall::GetPlayerPos2(sPosition* PlayerPosition)
 float Gamecall::GetPlayerMaxVit()
 {
 	DWORD PlayerInfo = GetPlayerDataAddr();
-	DWORD PlayerVit = UINT_MAX;
+	float PlayerVit = UINT_MAX;
 	
 	__try
 	{
@@ -1317,14 +1338,14 @@ float Gamecall::GetPlayerMaxVit()
 	{
 		OutputDebugString(FUNCNAME);
 	}
-	return (float)PlayerVit;
+	return PlayerVit;
 }
 
 //玩家轻功
 float Gamecall::GetPlayerVit()
 {
 	DWORD PlayerInfo = GetPlayerDataAddr();
-	DWORD PlayerVit = UINT_MAX;
+	float PlayerVit = UINT_MAX;
 	
 	__try
 	{
@@ -1332,7 +1353,7 @@ float Gamecall::GetPlayerVit()
 		{
 			mov eax, PlayerInfo;
 			mov eax, [eax + player_name_qinggong_offset1];
-			mov eax, [eax + player_name_qinggong_offset2];
+			mov eax, [eax + player_name_qinggong_offset2+0x8];
 			
 			mov PlayerVit, eax;
 		}
@@ -1341,7 +1362,7 @@ float Gamecall::GetPlayerVit()
 	{
 		OutputDebugString(FUNCNAME);
 	}
-	return (float)PlayerVit;
+	return PlayerVit;
 }
 
 
@@ -1499,6 +1520,29 @@ void Gamecall::Step(float x, float y, float z)
 	
 }
 
+//走路3倍
+void Gamecall::Step3x(float x, float y, float z)
+{
+
+	__try
+	{
+		void *pCall = GetStepCallAddr();
+		__asm
+		{
+			push z;
+			push y;
+			push x;
+			call pCall;
+		}
+		Stepto3x();
+	}
+	__except(1)
+	{
+		OutputDebugString(FUNCNAME);
+	}
+
+}
+
 
 //转向
 void Gamecall::Turn(int angle)
@@ -1534,26 +1578,31 @@ void Gamecall::Turn(int angle)
 //type = 0x20 任务物品
 //type = 0x4  怪物 npc
 //type = 0xb0 尸体和掉落物品,
-UCHAR Gamecall::GetObjectType(DWORD pObjAddress)
+BYTE Gamecall::GetObjectType(DWORD pObjAddress)
 {
-	
-	UCHAR Objtype = UCHAR_MAX;
+	DWORD Objtype = 0;
 	
 	__try
 	{
-		__asm
+		//Objtype = ReadDWORD(pObjAddress+obj_type_offset);
+		if(!IsBadReadPtr((void*)pObjAddress, sizeof(DWORD)))
 		{
-			mov eax, pObjAddress;
-			mov eax, [eax + obj_type_offset];
-			mov Objtype, al;
+			__asm
+			{
+				mov eax, pObjAddress;
+				mov eax, [eax + obj_type_offset];
+				mov Objtype, eax;
+			}
 		}
 	}
 	__except(1)
 	{
+		//log.logdv(_T("GetObjectType-error:%d"),pObjAddress);
 		OutputDebugString(FUNCNAME);
+		return 0;
 	}
 	
-	return Objtype;
+	return (BYTE)Objtype;
 }
 
 
@@ -1561,7 +1610,7 @@ UCHAR Gamecall::GetObjectType(DWORD pObjAddress)
 BOOL Gamecall::GetObjectPos(ObjectNode* pNode, fPosition* fpos)
 {
 	
-	UCHAR type = GetObjectType(pNode->ObjAddress);
+	DWORD type = (DWORD)GetObjectType(pNode->ObjAddress);
 	if(type == 0x20){
 		GetObjectPos2_0x20(pNode->ObjAddress, fpos);
 	}
@@ -1835,7 +1884,7 @@ void Gamecall::TiaoYue()
 //瞬移
 void Gamecall::ZOULUSHUNYI(DWORD *adress,DWORD adrewss)
 {
-	_try
+	__try
 	{
 		_asm
 		{
@@ -1862,7 +1911,7 @@ void Gamecall::ZOULUSHUNYI(DWORD *adress,DWORD adrewss)
 			call eax;
 		}
 	}
-	_except(1)
+	__except(1)
 	{
 		TRACE(_T("瞬移出错"));
 	}
@@ -2308,8 +2357,8 @@ void Gamecall::GetStrikeName(DWORD ID, DWORD IDD, STRIKENAME *pName)
 			call edx;
 			
 			mov edi, eax;
-			mov edx, [edi + 0x18];   //TODO
-			mov ecx, [edi + 0x1C];	//TODO
+			mov edx, [edi + 0x18];   //TODO 固定
+			mov ecx, [edi + 0x1C];	//TODO 固定
 			mov eax, IDD;
 			push eax;
 			
@@ -2339,11 +2388,12 @@ DWORD Gamecall::GetStrikeCD(int index, DWORD pAddr)
 	__try
 	{
 		int temp = index * nums_strike_strcut_size;
+		int temp2 = nums_strike_cd + 0x10;
 		__asm
 		{
 			mov eax, pAddr;
 			add eax, temp;
-			add eax, nums_strike_cd + 0xc0;
+			add eax, temp2;
 			
 			mov eax, [eax];
 			mov value, eax;
@@ -2357,17 +2407,18 @@ DWORD Gamecall::GetStrikeCD(int index, DWORD pAddr)
 }
 
 //取技能是否已经解锁  这个是0说明是没有解锁的技能  1 说明是已经解锁了
-BOOL Gamecall::isStrikeLocked(int index, DWORD pAddr)
+DWORD Gamecall::isStrikeLocked(int index, DWORD pAddr)
 {
 	DWORD value = UINT_MAX;
 	__try
 	{
-		int temp = index * 0x3d8;
+		int temp = index * nums_strike_strcut_size;
+		int temp2 = nums_strike_islock + 0x10;
 		__asm
 		{
 			mov eax, pAddr;
 			add eax, temp;
-			add eax, 0x44;
+			add eax, temp2;
 			
 			mov eax, [eax];
 			mov value, eax;
@@ -2377,31 +2428,36 @@ BOOL Gamecall::isStrikeLocked(int index, DWORD pAddr)
 	{
 		OutputDebugString(FUNCNAME);
 	}
-	return (value == 1);
+	return value;
 }
 
 //取技能是否可以使用 这个是0说明这个技能是可以使用的  2 说明这个技能虽然已经解锁 但是是灰名的
-BOOL Gamecall::isStrikeCanUse(int index, DWORD pAddr)
+DWORD Gamecall::isStrikeCanUse(int index, DWORD pAddr)
 {
 	DWORD value = UINT_MAX;
 	__try
 	{
-		int temp = index * 0x3d8;
+		if ( pAddr != 0 )
+		{
+			value = ReadDWORD( pAddr + index*nums_strike_strcut_size + (nums_strike_canuse + 0x10) );
+		}
+		/*int temp = index * nums_strike_strcut_size;
+		int temp2 = (nums_strike_canuse + 0x10);
 		__asm
 		{
-			mov eax, pAddr;
-			add eax, temp;
-			add eax, 0x40;
-			
-			mov eax, [eax];
-			mov value, eax;
-		}
+		mov eax, pAddr;
+		add eax, temp;
+		add eax, temp2;
+
+		mov eax, [eax];
+		mov value, eax;
+		}*/
 	}
 	__except(1)
 	{
 		OutputDebugString(FUNCNAME);
 	}
-	return (value == 0);
+	return value;
 }
 
 //根据攻击栏的地址取得技能数据的开始地址
@@ -2419,9 +2475,9 @@ DWORD Gamecall::GetStrikeStartAddr()
 		__asm
 		{
 			mov eax, StrikeStartAddr;
-			add eax, 0x44;
-			mov eax, [eax];
-			mov eax, [eax + 0x24];
+			//add eax, 0x44;
+			//mov eax, [eax];
+			//mov eax, [eax + 0x24];
 			add eax, 0x40;
 			
 			mov StartAddr, eax;
@@ -2444,7 +2500,7 @@ DWORD Gamecall::GetStrikeStartAddr()
 DWORD Gamecall::GetStrikeId1(int index, DWORD pStrikeStartAddr)
 {
 	DWORD id = UINT_MAX;
-	int temp = index * 0x3d8;
+	int temp = index *nums_strike_strcut_size;
 	
 	__try
 	{
@@ -2473,7 +2529,7 @@ DWORD Gamecall::GetStrikeId1(int index, DWORD pStrikeStartAddr)
 DWORD Gamecall::GetStrikeId2(int index, DWORD pStrikeStartAddr)  //取技能ID2
 {
 	DWORD id = UINT_MAX;
-	int temp = index * 0x3d8;
+	int temp = index * nums_strike_strcut_size;
 	
 	__try
 	{
@@ -2481,7 +2537,7 @@ DWORD Gamecall::GetStrikeId2(int index, DWORD pStrikeStartAddr)  //取技能ID2
 		{
 			mov eax, pStrikeStartAddr;
 			add eax, temp;
-			add eax, 0x24;
+			add eax, nums_strike_id2;
 			mov eax, [eax];
 			
 			mov id, eax;
@@ -4377,9 +4433,8 @@ BOOL Gamecall::isCityConveyLoadingMap()
 		__asm
 		{
 			mov eax, addr
-				mov eax, [eax + 0x14];
+			mov eax, [eax + 0x14];
 			mov eax, [eax + 0x16C];
-			
 			mov bLoading, al;
 			
 		}
@@ -4816,7 +4871,7 @@ BYTE Gamecall::GetPlayerDeadStatus()
 			mov value, al;
 			
 		}
-		log.logdv(_T("死亡状态:%d"),value);
+		//log.logdv(_T("死亡状态:%d"),value);
 	}
 	__except(1)
 	{
@@ -5474,54 +5529,54 @@ ObjectNode* Gamecall::GetObjectByName(wchar_t szName[], DWORD range)
 
 void Gamecall::_GetUItoVector(Tree *Base, std::vector<Tree *> &Allui)
 {
-    //这里我优化一下, 我看到数据遍历出来很多地址相同但是id不同的数据
-    //因此滤掉那些地址相同的
-    __try
-    {
-        if (Base->p2 == 1){
-            return;
-        }
+	//这里我优化一下, 我看到数据遍历出来很多地址相同但是id不同的数据
+	//因此滤掉那些地址相同的
+	__try
+	{
+		if (Base->p2 == 1){
+			return;
+		}
 
-        //查找连续5个内重复的
-        static DWORD ____old = 0;
-        static DWORD ___old = 0;
-        static DWORD __old = 0;
-        static DWORD _old = 0;
-        static DWORD old = 0;
-        wchar_t* curName = GetUIName(Base->Adress);
-        if(curName != NULL){
-                //过滤掉开头不是A~Z区间的
-                if(curName[0] >= 0x41 &&
-                    curName[0] <= 0x7a){
-                    if(Base->Adress != old &&
-                        Base->Adress != _old &&
-                        Base->Adress != __old &&
-                        Base->Adress != ___old &&
-                        Base->Adress != ____old
-                        ){
-                        
-                        Allui.push_back(Base);
-                        
-                        ____old = ___old;
-                        ___old = __old;
-                        __old = _old;
-                        _old = old;
-                        old = Base->Adress;
-                        
-                    }
-                }
-        }
-            
+		//查找连续5个内重复的
+		static DWORD ____old = 0;
+		static DWORD ___old = 0;
+		static DWORD __old = 0;
+		static DWORD _old = 0;
+		static DWORD old = 0;
+		wchar_t* curName = GetUIName(Base->Adress);
 
-        
-        _GetUItoVector(Base->Right, Allui);
-        _GetUItoVector(Base->Left, Allui);
-        
-    }
-    __except(1)
-    {
-        
+		if(curName != NULL){
+			if(curName[0] == 0x20 || (curName[0] >= 0x41 && //过滤掉开头不是A~Z区间的
+				curName[0] <= 0x7a ) ){
+					if(Base->Adress != old &&
+						Base->Adress != _old &&
+						Base->Adress != __old &&
+						Base->Adress != ___old &&
+						Base->Adress != ____old
+						){
+
+							Allui.push_back(Base);
+
+							____old = ___old;
+							___old = __old;
+							__old = _old;
+							_old = old;
+							old = Base->Adress;
+					}
+			}
+		}
+
+
+
+		_GetUItoVector(Base->Right, Allui);
+		_GetUItoVector(Base->Left, Allui);
+
 	}
+	__except(1)
+	{
+
+	}
+
 }
 
 //取得所有ui对象到容器
@@ -5532,6 +5587,7 @@ void Gamecall::GetUItoVector(Tree *Base, std::vector<Tree *> &Allui)
     temp.argv2 = (DWORD)&Allui;
     sendcall(id_msg_GetUItoVector, &temp);
 }
+
 
 
 //通过名称取得这个ui的地址
@@ -5911,7 +5967,6 @@ void Gamecall::_GetAllBodyEquipToVector(std::vector<_BAGSTU> &RangeObject)
                 if(FillGoods(aGoods)){
                     RangeObject.push_back(aGoods);
                 }
-                
             }
         }
         __except(1){
@@ -5964,7 +6019,7 @@ void Gamecall::GetStrikeToVector(std::vector<STRIKEINFO> &RangeObject)
 	
 	DWORD pStrikeStart = GetStrikeStartAddr();
 	DWORD adress = GetRJianSkill(pStrikeStart);
-	
+
 	STRIKEINFO strike;
 	
 	
@@ -5973,13 +6028,18 @@ void Gamecall::GetStrikeToVector(std::vector<STRIKEINFO> &RangeObject)
 		__try
 		{
 			strike.id1 = GetStrikeId1(index, pStrikeStart);
-			strike.id2 = GetStrikeId2(index, pStrikeStart);
-			GetStrikeName(strike.id1, strike.id2, &strike.stName);
-			strike.cd = GetStrikeCD(index, pStrikeStart);
-			strike.canUse = isStrikeCanUse(index, pStrikeStart);
-			strike.isBlock = isStrikeLocked(index, pStrikeStart);
-			
-			RangeObject.push_back(strike);
+			if (strike.id1 != 0)
+			{
+				strike.id2 = GetStrikeId2(index, pStrikeStart);
+				GetStrikeName(strike.id1, strike.id2, &strike.stName);
+				strike.cd = GetStrikeCD(index, pStrikeStart);
+				strike.canUse = isStrikeCanUse(index, pStrikeStart);
+				strike.isBlock = isStrikeLocked(index, pStrikeStart);
+				RangeObject.push_back(strike);
+			}else
+			{
+				continue;
+			}
 		}
 		__except(1){
 			OutputDebugString(FUNCNAME);
@@ -5990,13 +6050,18 @@ void Gamecall::GetStrikeToVector(std::vector<STRIKEINFO> &RangeObject)
 		ZeroMemory(&strike, sizeof(STRIKEINFO));
 		__try{
 			strike.id1 = GetRJSkillIDDD(index, adress);
-			strike.id2 = GetRJSkillIDDD2(index, adress);
-			GetStrikeName(strike.id1, strike.id2, &strike.stName);
-			strike.cd = GetRJSkillCD(index, adress);
-			strike.canUse = GetRJSkillISShiYong(index, adress);
-			strike.isBlock = GetRJSkillIsJieSuo(index, adress);
-			
-			RangeObject.push_back(strike);
+			if (strike.id1 != 0)
+			{
+				strike.id2 = GetRJSkillIDDD2(index, adress);
+				GetStrikeName(strike.id1, strike.id2, &strike.stName);
+				strike.cd = GetRJSkillCD(index, adress);
+				strike.canUse = GetRJSkillISShiYong(index, adress);
+				strike.isBlock = GetRJSkillIsJieSuo(index, adress);
+				RangeObject.push_back(strike);
+			}else
+			{
+				continue;
+			}
 		}
 		__except(1){
 			OutputDebugString(FUNCNAME);
@@ -6008,7 +6073,7 @@ void Gamecall::GetStrikeToVector(std::vector<STRIKEINFO> &RangeObject)
 DWORD Gamecall::GetRJSkillCD(int i, DWORD m_adress)
 {
 	DWORD Adress = UINT_MAX;
-	int temp = i * 0xb88 + 0xb0 + m_adress;
+	int temp = i * letter_strike_id + (letter_strike_cd-0x10) + m_adress;
 	
 	__try
 	{
@@ -6032,10 +6097,10 @@ DWORD Gamecall::GetRJSkillCD(int i, DWORD m_adress)
 //取R键技能是否已经解锁  
 //0 说明是没有解锁的技能 
 //1 说明是已经解锁了
-BOOL Gamecall::GetRJSkillIsJieSuo(int i, DWORD m_adress)
+DWORD Gamecall::GetRJSkillIsJieSuo(int i, DWORD m_adress)
 {
 	DWORD Adress = UINT_MAX;
-	int temp = i * 0xb88 + 0x24 + m_adress;
+	int temp = i * letter_strike_id + (letter_strike_islock - 0x10) + m_adress;
 	
 	__try
 	{
@@ -6053,14 +6118,14 @@ BOOL Gamecall::GetRJSkillIsJieSuo(int i, DWORD m_adress)
 	{
 		OutputDebugString(FUNCNAME);
 	}
-	return (Adress == 1);
+	return Adress;
 }
 
 //取R键技能是否可以使用 这个是0说明这个技能是可以使用的  2 说明这个技能虽然已经解锁 但是是灰名的
-BOOL Gamecall::GetRJSkillISShiYong(int i, DWORD m_adress)
+DWORD Gamecall::GetRJSkillISShiYong(int i, DWORD m_adress)
 {
 	DWORD Adress = UINT_MAX;
-	int temp = i * 0xb88 + 0x20 + m_adress;
+	int temp = i * letter_strike_id + (letter_strike_canuse-0x10) + m_adress;
 	
 	__try
 	{
@@ -6078,7 +6143,7 @@ BOOL Gamecall::GetRJSkillISShiYong(int i, DWORD m_adress)
 	{
 		OutputDebugString(FUNCNAME);
 	}
-	return (Adress == 0);
+	return Adress;
 }
 
 DWORD Gamecall::GetRJSkillIDDD2(int i, DWORD m_adress)  //取R键技能数组ID2
@@ -6117,8 +6182,8 @@ DWORD Gamecall::GetRJianSkill(DWORD m_adress)
 			{
 				mov eax, m_adress;
 				mov eax, [eax + 0x4];
-				mov eax, [eax + 0x20];
-				add eax, 0x68;
+				mov eax, [eax + letter_strike_start_offset2];
+				add eax, letter_strike_start_offset3;
 				mov Adress, eax;
 			}
 		}
@@ -6587,18 +6652,30 @@ int Gamecall::KillObject(DWORD range, ObjectNode *pNode, DWORD mode, DWORD canKi
 		}
 		
 		
-		if(GetPlayerHealth() <= 5){
-			log.logdv(_T("%s: 角色死亡了"), FUNCNAME);
+		if(GetPlayerHealth() <= 0){
+			log.logdv(_T("%s: 人物死亡了"), FUNCNAME);
 			return RESULT_KILL_PLAYDEAD;
 		}
 		
 		//整个逻辑根据距离来作为输入数据来做判断
+
+		if(GetType4HP(pNode->ObjAddress) == -1 || GetType4HP(pNode->ObjAddress) == 0){
+			log.logdv(_T("%s: 血量判断怪死了"), FUNCNAME);
+			return RESULT_KILL_OK;
+		}
+
+		//if (GetObjectType(pNode->ObjAddress)==0xb0)
+		//{
+		//	log.logdv(_T("%s: 类型判断怪死了"), FUNCNAME);
+		//	return RESULT_KILL_OK;
+		//}
+
 		fPosition mypos;
 		GetPlayerPos(&mypos);
 		
 		//通过距离判断目标死亡
 		fPosition targetpos;
-		if(GetObjectPos(pNode, &targetpos) == FALSE){
+		if(_GetObjectPos(pNode->ObjAddress, &targetpos) == FALSE){
 			log.logdv(_T("%s: 坐标判断怪死了"), FUNCNAME);
 			return RESULT_KILL_OK;
 		}
@@ -6608,23 +6685,24 @@ int Gamecall::KillObject(DWORD range, ObjectNode *pNode, DWORD mode, DWORD canKi
 			return RESULT_KILL_OK;
 		}
 		
-		if(GetType4HP(pNode->ObjAddress) == -1 || GetType4HP(pNode->ObjAddress) == 0){
-			log.logdv(_T("%s: 血量判断怪死了"), FUNCNAME);
-			return RESULT_KILL_OK;
-		}
 		
-		if(GetObject_0x14(pNode->ObjAddress) == -1 || GetObject_0x14(pNode->ObjAddress) == 0){
-			log.logdv(_T("%s: 0x14判断怪死了"), FUNCNAME);
-			return RESULT_KILL_OK;
-		}
+		
+		/*
+		不可用
+		if(GetObject_0x14(pNode->ObjAddress) == 0){
+		log.logdv(_T("%s: 0x14判断怪死了"), FUNCNAME);
+		return RESULT_KILL_OK;
+		}*/
 
 		
 		//可继续走
 		if(dis > canKillRange){
+			targetpos.x = targetpos.x-10;
+			targetpos.y = targetpos.y-10;
 			Stepto(targetpos, 10, CAN_OPERATOR, range);
-		}else if(dis <= 5){
+		}else if(dis <= 2){
 			log.logdv(_T("%s: 重叠怪物"), FUNCNAME);
-			RandomStep(50);
+			RandomStep(30);
 		}else if(dis <= canKillRange){
 			//判断倒地状态
 			if(isPlayerDaodi()){
@@ -6667,9 +6745,7 @@ int Gamecall::KillObject(DWORD range, ObjectNode *pNode, DWORD mode, DWORD canKi
 					oriTime = GetTickCount();
 					tarHealth = GetType4HP(pNode->ObjAddress);
 				}
-
 			}
-			
 		}
 		Sleep(50);
 	}//for
@@ -6910,9 +6986,9 @@ void Gamecall::JiaJiNengDian(DWORD ID) //加技能点
 			push eax;
 			mov eax,obj_enum_base;
 			mov eax,[eax];
-			mov eax,[eax + add_strike_offset1];   //加技能点一级偏移
-			mov eax,[eax + add_strike_offset2];   //加技能点二级偏移
-			mov eax,[eax + add_strike_offset3];  //加技能点三级偏移
+			mov eax,[eax+add_strike_offset1];   //加技能点一级偏移
+			mov eax,[eax+add_strike_offset2];   //加技能点二级偏移
+			mov eax,[eax+add_strike_offset3];  //加技能点三级偏移
 			push eax; 
 			mov ebx,add_strike_call;
 			call ebx;
@@ -7020,13 +7096,14 @@ BOOL Gamecall::Step(ObjectNode* pNode)
 //获取地图id
 DWORD Gamecall::GetCityID()
 {
+	DWORD PlayerInfo = GetPlayerDataAddr();
 	DWORD cityid = UINT_MAX;
 	
 	__try
 	{
 		__asm
 		{
-			mov eax, obj_enum_base;
+			mov eax, PlayerInfo;
 			mov eax, [eax + player_mapid];
 			mov cityid, eax;
 		}
@@ -7076,7 +7153,7 @@ BOOL Gamecall::PickupTask(ObjectNode* pNode)
 BOOL Gamecall::isCanLook(DWORD pAddr)
 {
    //BYTE temp;
-    wchar_t* name = (wchar_t *)ReadDWORD(pAddr +0x9C);
+    wchar_t* name = (wchar_t *)ReadDWORD(ReadDWORD(pAddr + obj_type4_name_offset1)+0x10);
 
     __try{
 		//temp = ReadByte(pAddr +0x9C);
@@ -7132,6 +7209,15 @@ BOOL Gamecall::isPlayerDaodi()
 	return State;	
 }
 
+void Gamecall::_NewSpend(float x)
+{
+	//DWORD dwThreadId;
+
+	if(m_pfnInitSpeed != NULL){
+		m_pfnInitSpeed(x);
+	}
+}
+
 BOOL Gamecall::isStrikeCd(DWORD id)
 {
 	std::vector<STRIKEINFO> StrikeVec;
@@ -7139,9 +7225,92 @@ BOOL Gamecall::isStrikeCd(DWORD id)
 
 	for(int i = 0; i < StrikeVec.size(); i++){
 		if(StrikeVec[i].id1 == id){
-			return (StrikeVec[i].cd == 0);
+			if (StrikeVec[i].isBlock == 1 && StrikeVec[i].canUse == 0)
+			{
+				return (StrikeVec[i].cd == 0);
+			}else
+			{
+				break;
+			}
+			
 		}
 	}
-
 	return FALSE;
+}
+
+BOOL Gamecall::GetPlayExperienceStatus()
+{
+	//KONGJIAN_JIEGOU JIEGOU = {NULL};
+	//DWORD *pUiAddr = 0;
+	//wchar_t *str = L"";  //ItemGrowth2Panel
+	//GetUIAddrByName(L"", pUiAddr);
+	//if(*pUiAddr == 0)
+	//	return FALSE;
+	KONGJIAN_JIEGOU jiegou = {NULL};
+	jiegou.adress = (DWORD)GetUIBinTreeBaseAddr();
+	jiegou.name = L"Normal";
+	jiegou.ID = 0;
+	GetUiAddrByName(jiegou);
+	DWORD pos = -1;
+	pos = ReadDWORD(ReadDWORD(jiegou.ID+0x83F8)+0x1C);
+	TRACE("经验效果的ID %X",pos);
+	if ( pos!=0 )
+	{
+		TRACE("经验药物已经吃了,不需要再吃了");
+		return TRUE;
+	}
+	if ( pos == 0 )
+	{
+		TRACE("没有吃经验药物,请吃经验药物");
+	}
+	return FALSE;
+}
+
+void Gamecall::GetUiAddrByName(KONGJIAN_JIEGOU &jiegou)
+{
+	log.logdv(_T("add:%x,name:%s,fanhui:%x"),jiegou.adress,jiegou.name,jiegou.ID);
+	sendcall(id_msg__GetUiAddrByName,&jiegou);
+}
+
+void Gamecall::_GetUiAddrByName(Tree* Addr,wchar_t* name,DWORD &reAddr)
+{
+	if (Addr->p2 == 1)		
+	{
+		//TRACE("推出了");
+		return ;
+	}
+	if ( reAddr > 0) //
+	{
+		//TRACE("返回了");
+		return;
+	}
+	wchar_t* uiname  = {0};
+	if(!IsBadReadPtr((void*)GetUiNewName(Addr->Adress), sizeof(DWORD)))
+	{
+		uiname = GetUiNewName(Addr->Adress);//获取技能面板名字
+		if (wcsstr(uiname,name) != NULL)
+		{
+			//TRACE("找到需要的控件了");
+			//log.logdv(_T("找到UI名:%s,找到控件地址:%d"),uiname,Addr->Adress);
+			reAddr = Addr->Adress;
+			return ;
+		}
+	}
+	_GetUiAddrByName(Addr->Right,name,reAddr);
+	_GetUiAddrByName(Addr->Left,name,reAddr);
+}
+
+wchar_t* Gamecall::GetUiNewName(DWORD pBarAddr)
+{
+	wchar_t *name = {0};
+	__try
+	{
+		name = (wchar_t *)ReadDWORD(pBarAddr +0x94);
+	}
+	__except(1)
+	{
+		OutputDebugString(L"获取技能面板名字错误");
+	}
+	return name;
+
 }

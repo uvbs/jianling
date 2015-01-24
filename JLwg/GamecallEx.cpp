@@ -208,7 +208,6 @@ BOOL GamecallEx::HeChengWuQi(EQUITMENT_POS pos)
 		bFindColor = FALSE;
 	}
 
-	delete []szColor;
 	if(bFindColor == FALSE){
 		return FALSE;
 	}
@@ -267,7 +266,6 @@ BOOL GamecallEx::HeChengWuQi(EQUITMENT_POS pos)
 			token = wcstok(NULL, L";"); // C4996
 		}
 
-		delete []szFilter;
 
 	}
 
@@ -368,7 +366,7 @@ void GamecallEx::Pickup(int pos, DWORD range)
             //如果在距离内就不要走过去捡
             //距离游戏内测试165以内会出现 f 按钮
             if(CalcC(fpos, fmypos) >= CAN_OPERATOR){
-                Gamecall::Stepto(fpos, 10, 2, range * 2);
+                Gamecall::Stepto(fpos, 10, 50, range * 2);
                 Sleep(300);
             }
         }
@@ -468,6 +466,9 @@ void GamecallEx::Shunyi(TCHAR* szLujing)
 	if(file == NULL){
 		log.logdv(_T("%s: open fail"), FUNCNAME);
 		return;
+	}else
+	{
+		log.logdv(_T("读取瞬移文件,准备瞬移"));
 	}
 
 	//取文件大小
@@ -502,9 +503,9 @@ void GamecallEx::Shunyi(TCHAR* szLujing)
 		temp.argv2 = 0xee;
 		sendcall(id_msg_ZOULUSHUNYI, &temp);
 		Sleep(10);
-
 	}
 
+	log.logdv(_T("关闭瞬移文件,退出瞬移"));
 	fclose(file);
 
 }
@@ -513,10 +514,10 @@ void GamecallEx::Shunyi(TCHAR* szLujing)
 void GamecallEx::kill_PickupOnce()
 {
 	//杀完捡起掉落, 此时的范围为了更可靠写改成x2
-	if(GetRangeMonsterCount(200) == 0){
-		log.logdv(_T("范围无人, 开始捡东西"));
+	//if(GetRangeMonsterCount(200) == 0){
+		//log.logdv(_T("范围无人, 开始捡东西"));
 		Pickup(0, 170);
-	}
+	//}
 }
 
 BOOL GamecallEx::kill_PickupBody()
@@ -617,16 +618,19 @@ startKiLL:
 			bTimeOut = TRUE;
 		}
 		if(mode & modePickupBody){
+			log.logdv(_T("执行modePickupBody"));
 			if(kill_PickupBody())
 				break;
 		}
 		if(mode & modePickupOnce){
+			log.logdv(_T("执行modePickupOnce"));
 			kill_PickupOnce();
 		}
 
 
 		//判断任务步骤
 		if(mode & modeTask){
+			log.logdv(_T("执行modeTask"));
 			if(kill_Task(MyQuestID, MyQuestStep))
 				goto exitfun;
 			else{
@@ -642,6 +646,7 @@ startKiLL:
 	//没办法杀的, 就不继续找剩余怪, 避免死循环
 	if(bTimeOut == FALSE){
 		//整个杀怪逻辑执行完后再遍历一次周围怪物, 如果有杀掉再返回
+		log.logdv(_T("执行GetRangeMonsterCount"));
 		if(GetRangeMonsterCount() >= 1){
 			goto startKiLL;
 		}
@@ -651,11 +656,13 @@ startKiLL:
 exitfun:
 	if(mode & modePickup){
 		Sleep(500);
+		log.logdv(_T("执行modePickup"));
 		//杀完捡起掉落, 此时的范围为了更可靠写改成x2
 		Pickup(0, range);
 	}
 
 	if(mode & modeGoback){
+		log.logdv(_T("执行modeGoback"));
 		Gamecall::Stepto(fmypos, 10, CAN_OPERATOR, range * 2);
 	}
 
@@ -869,13 +876,14 @@ void GamecallEx::randXianlu(DWORD MaxXianlu)
 	}
 
 
-	//产生随机
-	for(DWORD i = 0; i < UINT_MAX; i++){
+
+	for(DWORD i = 0; i < 20; i++){
 		UCHAR randnum = (UCHAR)(rand() % MaxXianlu);
 
 		randnum += 1; //线路下标从1开始
 
 		if(randnum != GetPlayerXianlu()){
+
 			if(isHaveXianlu(randnum)){
 				log.logdv(_T("随机获取的线路: %d"), randnum);
 				sendcall(id_msg_HuanXian, (LPVOID)randnum);
@@ -885,6 +893,7 @@ void GamecallEx::randXianlu(DWORD MaxXianlu)
 
 		Sleep(500);
 	}
+	log.logdv(_T("换线未成功，可能很多灰色线路"));
 }
 
 
@@ -917,41 +926,47 @@ void GamecallEx::WearEquipment(wchar_t *name, int pos)
 }
 
 
-BOOL Gamecall::Stepto(fPosition &tarpos, double timeOut, DWORD okRange, DWORD tooLong)
+BOOL Gamecall::Stepto(fPosition &tarpos, double timeOut, DWORD okRange, DWORD tooLong,BOOL sp3x)
 {
 
 	//首先, 人得是活的
 	if(GetPlayerDeadStatus() == 1 ||
 		GetPlayerDeadStatus() == 2){
+			return FALSE;
+	}
+
+	GetHealth(65);
+
+	DWORD tc1 = GetTickCount();
+
+	//判断距离太远
+	fPosition fmypos;
+	if(GetPlayerPos(&fmypos) == FALSE){
+		log.logdv(_T("没能获取自身坐标"));
 		return FALSE;
 	}
-	
-	GetHealth(65);
-	
-	DWORD tc1 = GetTickCount();
-	
-			//判断距离太远
-		fPosition fmypos;
-		if(GetPlayerPos(&fmypos) == FALSE){
-			log.logdv(_T("没能获取自身坐标"));
-			return FALSE;
-		}
-		
-		
-		DWORD dis = (DWORD)CalcC(fmypos, tarpos);
-		if(dis >= tooLong)
-		{
-			log.logdv(_T("%s: 目的距离太远"), FUNCNAME);
-			return FALSE;
-		}
-	
+
+
+	DWORD dis = (DWORD)CalcC(fmypos, tarpos);
+	if(dis >= tooLong)
+	{
+		log.logdv(_T("%s: 目的距离太远"), FUNCNAME);
+		return FALSE;
+	}
+
 	//走路在外边导致走的时候碰一下就停止了
-	sendcall(id_msg_step, &tarpos);
+	if (sp3x == TRUE)
+	{
+		sendcall(id_msg_step3x, &tarpos);
+	}else
+	{
+		sendcall(id_msg_step, &tarpos);
+	}
 	for(;;){
 		//等200微妙再判断, 否则调用Step时游戏内并没有立刻走
 		//导致下面的走路状态判断失败又调用一次
 		Sleep(100);
-		
+
 
 		//判断距离太远
 		fmypos;
@@ -959,26 +974,33 @@ BOOL Gamecall::Stepto(fPosition &tarpos, double timeOut, DWORD okRange, DWORD to
 			log.logdv(_T("没能获取自身坐标"));
 			return FALSE;
 		}
-		
+
 		dis = (DWORD)CalcC(fmypos, tarpos);
 		//走到
 		if(dis <= okRange){
 			return TRUE;
 		}
-		
-		
+
+
 		if((GetTickCount() - tc1) >= (timeOut * 1000)){
 			log.logdv(_T("超时"));
 			sendcall(id_msg_attack, (LPVOID)0x5e6a);
 			return FALSE;
 		}
-		
-		
+
+
 		//走路状态判定, 避免频繁调用
 		if(isPlayerSteping() == FALSE){
-			sendcall(id_msg_step, &tarpos);
+			if (sp3x == TRUE)
+			{
+				sendcall(id_msg_step3x, &tarpos);
+			}else
+			{
+				sendcall(id_msg_step, &tarpos);
+			}
+
 		}
-		
+
 	}
 }
 
@@ -989,14 +1011,14 @@ BOOL Gamecall::Stepto(fPosition &tarpos, double timeOut, DWORD okRange, DWORD to
 //参数3: 超过这个距离就不执行函数了
 //补充:
 //参数4: 到达距离模糊参数之后的行为, TRUE停止, FALSE不停止只返回
-BOOL GamecallEx::Stepto(float y, float x, float z, double timeOut, DWORD okRange, DWORD tooLong)
+BOOL GamecallEx::Stepto(float y, float x, float z, double timeOut, DWORD okRange, DWORD tooLong,BOOL sp3x)
 {
 	fPosition tarpos;
 	tarpos.x = x;
 	tarpos.y = y;
 	tarpos.z = z;
 	
-	return Gamecall::Stepto(tarpos, timeOut, okRange, tooLong);
+	return Gamecall::Stepto(tarpos, timeOut, okRange, tooLong,sp3x);
 }
 
 
@@ -1170,16 +1192,49 @@ BOOL GamecallEx::BuqiBaGua(wchar_t* name)
 {
 	//装备上几个缺
 
+	std::vector<_BAGSTU> EquiVec;
+	GetAllBodyEquipToVector(EquiVec);
+
+	log.logdv(_T("遍历数量:%d"),EquiVec.size());
 	std::vector<int> NoEquit;
 
+
     int i;
-	for(i = 8; i < 16; i++){
-		_BAGSTU goods;
-		if(GetGoodsByEquipPos(i, &goods) == FALSE){
-			log.logdv(_T("%s: %d 处没有装备"), FUNCNAME, i);
+	int j;
+	int k;
+
+	for (i = 8;i < 16;i++)
+	{
+		k = 0;
+		for (j = 0;j < EquiVec.size();j++)
+		{
+			//log.logdv(_T("当前对比装备type=%d,info=%d,i=%d"),EquiVec[j].m_Type,EquiVec[j].m_Info,i);
+			if (EquiVec[j].m_Type == 4)
+			{
+				if(EquiVec[j].m_Info == i)
+				{
+					if (EquiVec[j].m_YanSe >= 3)
+					{
+						k = 1;
+					}
+				}
+			}
+		}
+		if (k == 0)
+		{
 			NoEquit.push_back(i);
 		}
-	
+	}
+
+	log.logdv(_T("当前未装备数量:%d"),NoEquit.size());
+	for (i = 0;i < NoEquit.size();i++)
+	{
+		log.logdv(_T("%d位置没有装备八卦"),NoEquit[i]);
+	}
+
+	if (NoEquit.size() == 0)
+	{
+		return FALSE;
 	}
 
 	//取得背包里所有八卦
@@ -1189,18 +1244,14 @@ BOOL GamecallEx::BuqiBaGua(wchar_t* name)
 
 	for(i = 0; i < BaGuaVec.size(); i++){
 		for(DWORD j = 0; j < NoEquit.size(); j++){
+			//log.logdv(_T("当前对比八卦位置:%d"),NoEquit[j]);
 			if((BaGuaVec[i].m_BaGuaGeZiShu + 1) == NoEquit[j]){
 				Sleep(1000);
 				BaGuaVec[i].m_BaGuaGeZiShu += 1;
 				sendcall(id_msg_WearEquipment, &BaGuaVec[i]);
 			}
-		
 		}
-	
 	}
-
-
-
 	return TRUE;
 }
 
@@ -1538,8 +1589,7 @@ void GamecallEx::Yaojiang(wchar_t* Zen_name, wchar_t* BaGuaname)
 	_BAGSTU ZenGoods;
 	GetGoodsFromBagByName(Zen_name, &ZenGoods);
 	log.logdv(_T("精气数量:%d"),ZenGoods.m_Num);
-    DWORD i = 0;
-	for(i=0;i < ZenGoods.m_Num;i++){
+	for(int i=0;i < ZenGoods.m_Num;i++){
 		log.logdv(_T("摇精气当前进度:%d"),i);
 		PickupTask();
 		Sleep(5000);
@@ -1550,7 +1600,7 @@ void GamecallEx::Yaojiang(wchar_t* Zen_name, wchar_t* BaGuaname)
 	std::vector<_BAGSTU> HeZiVec;
 	GetGoodsByName_Hezi(BaGuaname, HeZiVec);
 	log.logdv(_T("盒子的数量:%d"),HeZiVec.size());
-	for(i = 0; i < HeZiVec.size(); i++){
+	for(DWORD i = 0; i < HeZiVec.size(); i++){
 
 		log.logdv(_T("单个盒子的数量:%d"),HeZiVec[i].m_Num);
 		for(int j = 0; j < HeZiVec[i].m_Num; j++){
@@ -1632,7 +1682,6 @@ void GamecallEx::FenJieByConfig()
 		token = wcstok(NULL, L";");
 	}
 
-	delete []szFilter;
 }
 
 
@@ -1673,7 +1722,6 @@ void GamecallEx::SellItemByConfig(wchar_t *name)
 		token = wcstok(NULL, L";"); // C4996
 	}
 
-	delete []szFilter;
 	CloseShangDian();
 }
 
@@ -1707,17 +1755,12 @@ void GamecallEx::DeleteItemByConfig()
 		token = wcstok(NULL, L";"); // C4996
 	}
 
-	delete []szFilter;
 }
 
 
 void GamecallEx::NewSpend(float x)
 {
-	//DWORD dwThreadId;
-
-	if(m_pfnInitSpeed != NULL){
-		m_pfnInitSpeed(x);
-	}
+	sendcall(id_msg_NewSpend,(LPVOID)&x);
 }
 
 void GamecallEx::TurnTo(ObjectNode* pNode)

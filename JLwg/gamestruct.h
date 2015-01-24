@@ -134,8 +134,8 @@ typedef struct _STRIKEINFO
 	int id2;
 	STRIKENAME stName;
 	DWORD cd;
-	BOOL canUse;
-	BOOL isBlock;
+	DWORD canUse;
+	DWORD isBlock;
 }STRIKEINFO, PSTRIKEINFO;
 
 

@@ -32,7 +32,7 @@ public:
 
 
 	//控制
-	BOOL Stepto(float y, float x, float z, double timeout = 10, DWORD OkRange = CAN_OPERATOR, DWORD toolong = 1000);
+	BOOL Stepto(float y, float x, float z, double timeout = 10, DWORD OkRange = CAN_OPERATOR, DWORD toolong = 1000,BOOL sp3x = FALSE);
 	void Stepto(wchar_t *name);
 	void FollowNpc(wchar_t *name, DWORD range = 1000);
 	void FuHuo();
@@ -81,4 +81,5 @@ public:
 	void AddTalent(DWORD id);	//添加一个技能点
 	void DelAllTalent();	//删除所有技能点
 	void DelTalent( DWORD id );
+	void _NewSpend(float x);
 };

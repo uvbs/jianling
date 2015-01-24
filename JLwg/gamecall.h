@@ -70,6 +70,7 @@
 //消息
 enum {
 	id_msg_step					,
+	id_msg_step3x               ,
 		id_msg_guanshangdian		,
 		id_msg_attack				,
 		id_msg_clickui				,
@@ -113,7 +114,10 @@ enum {
         id_msg_GetUItoVector,
         id_msg_GetAcceptedQuestToVector,
         id_msg_GetAllGoodsToVector,
-        id_msg_GetAllBodyEquipToVector
+        id_msg_GetAllBodyEquipToVector,
+		id_msg_NewSpend,
+		id_msg__GetUiAddrByName,
+		id_msg_GetStrikeToVector
 };
 
 
@@ -245,7 +249,7 @@ public:
 	DWORD GetPlayerQuestUIStatus();	//判断角色任务相关ui状态是否弹出
 	BYTE GetPlayerDeadStatus();	//死亡状态
 	DWORD GetCityID();
-
+	BOOL GetPlayExperienceStatus();//获得经验药状态
 
 	//对象
   
@@ -259,7 +263,7 @@ public:
 	DWORD GetRangeMonsterCount(DWORD range = CAN_OPERATOR);	//取范围内怪物数量, 一般用来判断是否用aoe攻击
 	void GetRangeTaskItemToVectr(std::vector<ObjectNode *> &TastItemVector, DWORD range);
 	ObjectNode* GetObjectByName(wchar_t szName[], DWORD range = 500);
-	static UCHAR GetObjectType(DWORD pObjAddress);		//对象类型
+	static BYTE GetObjectType(DWORD pObjAddress);		//对象类型
 	static BOOL _GetObjectPos(DWORD pObjAddress, fPosition* pos);		//取对象坐标
 	static BOOL	GetObjectPos(ObjectNode* pNode, fPosition* fpos);
 	static BOOL GetObjectPos_0xb(DWORD pObjAddress, sPosition* spos);      //对象short类型坐标
@@ -297,8 +301,8 @@ public:
 	BOOL isCanFenjie(DWORD pAddr); //可以分解
 	BOOL isFuhuoing();
 	DWORD isYaoPingCD(_BAGSTU &goods); //药瓶cd
-	BOOL isStrikeLocked(int index, DWORD pAddr);
-	BOOL isStrikeCanUse(int index, DWORD pAddr);
+	DWORD isStrikeLocked(int index, DWORD pAddr);
+	DWORD isStrikeCanUse(int index, DWORD pAddr);
 	BOOL isBagFull();
 	BOOL isCanKill(ObjectNode* pNode);
 	BOOL isCanLook(DWORD pAddr);	//可以看到的
@@ -333,9 +337,12 @@ public:
 	BOOL		ClickUI(UIOperator uiOp);   //点击ui
 	Tree*		GetUIBinTreeBaseAddr();
 	wchar_t*	GetUIName(DWORD pBarAddr);
+	wchar_t*GetUiNewName(DWORD pBarAddr);
     void        _GetUItoVector(Tree *Base, std::vector<Tree *> &Allui);
 	void		GetUItoVector(Tree* pBaseAddr, std::vector<Tree *> &Allui);
 	void		GetUIAddrByName(wchar_t* name, DWORD *pUIAddr);
+	void    GetUiAddrByName(KONGJIAN_JIEGOU &jiegou);
+	void    _GetUiAddrByName(Tree* Addr,wchar_t* name,DWORD &reAddr);
 	void		GetStrikeToVector(std::vector<STRIKEINFO> &RangeObject);
 	void		GetStrikeBarBaseAddr(Tree *pBaseAddr, DWORD *pStrikeBarBaseAddr);
 	void		GetStrikeName(DWORD ID,DWORD IDD, STRIKENAME *pName);
@@ -349,8 +356,8 @@ public:
 	DWORD		GetRJianSkill(DWORD m_adress);  //取技能R键攻击的数组开始地址
 	DWORD		GetRJSkillIDDD(int i, DWORD m_adress);  //取R键数组技能ID
 	DWORD		GetRJSkillIDDD2(int i, DWORD m_adress);  //取R键技能数组ID2
-	BOOL		GetRJSkillIsJieSuo(int i, DWORD m_adress);  //取R键技能是否已经解锁
-	BOOL		GetRJSkillISShiYong(int i, DWORD m_adress);  //取R键技能是否可以使用
+	DWORD		GetRJSkillIsJieSuo(int i, DWORD m_adress);  //取R键技能是否已经解锁
+	DWORD		GetRJSkillISShiYong(int i, DWORD m_adress);  //取R键技能是否可以使用
 	DWORD		GetRJSkillCD(int i, DWORD m_adress);  //取R键技能是否冷却
 	void Fuhuo(DWORD uiAddr);
 	void DaKaiJiNengMianBan(DWORD adress,DWORD adress1); //打开技能面板
@@ -459,12 +466,14 @@ public:
 	int			KillObject(DWORD range, ObjectNode *pNode, DWORD mode, DWORD canKillRange = CAN_OPERATOR); //杀死这个对象
 
 	//走路
-	BOOL Stepto(fPosition &tarpos, double timeOut = 10, DWORD okRange = CAN_OPERATOR, DWORD tooLong = 1000);
+	BOOL Stepto(fPosition &tarpos, double timeOut = 10, DWORD okRange = CAN_OPERATOR, DWORD tooLong = 1000,BOOL sp3x = FALSE);
 	void Step(float x, float y, float z);
+	void Step3x(float x, float y, float z);
 	BOOL Step(ObjectNode* pNode);
 	void Stepto3x();
 	void ZOULUSHUNYI(DWORD *adress,DWORD adrewss);
 	void OverShunyi(BOOL bEnable); //过图
+	void _NewSpend(float x);
 
 	void TiaoYue();
 	//攻击
