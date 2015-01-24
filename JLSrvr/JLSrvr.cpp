@@ -7,7 +7,7 @@
 #include "MainFrm.h"
 #include "JLSrvrDoc.h"
 #include "JLSrvrView.h"
-
+ 
 #include "..\common\common.h"
 
 #ifdef _DEBUG
