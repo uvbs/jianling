@@ -141,7 +141,7 @@ void Gamecall::DaKaiJiNengMianBan(DWORD adress,DWORD adress1) //´ò¿ª¼¼ÄÜÃæ°å
 	kj.canshu11= 0x0;
 	kj.canshu12= 0x4EFE0016;
 
-	_try
+	__try
 	{
 		_asm
 		{
@@ -154,10 +154,9 @@ void Gamecall::DaKaiJiNengMianBan(DWORD adress,DWORD adress1) //´ò¿ª¼¼ÄÜÃæ°å
 			call eax  
 		}
 	}
-
-	_except(1)
+	__except(1)
 	{
-		TRACE(_T("´ò¿ª¼¼ÄÜÃæ°åCALL´íÎó"));
+		TRACE("´ò¿ª¼¼ÄÜÃæ°åCALL´íÎó");
 	}
 }
 
@@ -736,7 +735,7 @@ void Gamecall::PickdownBody()
 	}
 	__except(1)
 	{
-		TRACE(_T("·ÅÏÂÊ¬Ìå"));
+		TRACE("·ÅÏÂÊ¬Ìå");
 	}
 }
 
@@ -846,7 +845,7 @@ BOOL Gamecall::Init()
 		}
 		
 		if(bGetShareMem == FALSE){
-			TRACE(_T("Ã»ÄÜ³õÊ¼»¯Íâ¹ÒÊı¾İ"));
+			TRACE("Ã»ÄÜ³õÊ¼»¯Íâ¹ÒÊı¾İ");
 			return FALSE;
 		}
 
@@ -889,7 +888,7 @@ BOOL Gamecall::Init()
 		if(PathFileExists(m_szConfigPath) == FALSE){
 			FILE* configFile = _tfopen(_T("default.ini"), _T("w+"));
 			if(configFile == NULL){
-				TRACE(_T("´´½¨ÅäÖÃÎÄ¼şÊ§°Ü"));
+				TRACE("´´½¨ÅäÖÃÎÄ¼şÊ§°Ü");
 				return FALSE;
 			}
 			
@@ -991,7 +990,7 @@ void Gamecall::HeChengWuQi_Po10(DWORD zhu,DWORD fu,DWORD adress)
 	LeiXing.canshu3 = 0;
 	LeiXing.canshu4 = 0;
 	
-	_try
+	__try
 	{
 		_asm
 		{
@@ -1017,9 +1016,9 @@ void Gamecall::HeChengWuQi_Po10(DWORD zhu,DWORD fu,DWORD adress)
 			call eax;
 		}
 	}
-	_except(1)
+	__except(1)
 	{
-		TRACE(_T("ºÏ³ÉÎäÆ÷ÆÆ10³ö´í"));
+		TRACE("ºÏ³ÉÎäÆ÷ÆÆ10³ö´í");
 	}
 }
 
@@ -1874,9 +1873,9 @@ void Gamecall::TiaoYue()
 			
 		}
 	}
-	_except(1)
+	__except(1)
 	{
-		TRACE(_T("ÌøÔ¾³ö´í"));
+		TRACE("ÌøÔ¾³ö´í");
 	}
 }
 
@@ -1913,7 +1912,7 @@ void Gamecall::ZOULUSHUNYI(DWORD *adress,DWORD adrewss)
 	}
 	__except(1)
 	{
-		TRACE(_T("Ë²ÒÆ³ö´í"));
+		TRACE("Ë²ÒÆ³ö´í");
 	}
 }
 
@@ -2232,7 +2231,7 @@ void Gamecall::SellItem(_BAGSTU &bag, DWORD adress)
 	if(nums == 0)
 		nums += 1;
 	
-	_try{
+	__try{
 		_asm{
 			mov eax, nums;
 			push eax;
@@ -2245,8 +2244,8 @@ void Gamecall::SellItem(_BAGSTU &bag, DWORD adress)
 		}
 		
 	}
-	_except(1){
-		TRACE(_T("Âô¶«Î÷³ö´í"));
+	__except(1){
+		TRACE("Âô¶«Î÷³ö´í");
 	}
 }
 
@@ -2610,13 +2609,13 @@ DWORD Gamecall::GetBagbodyInfoBase()
 int Gamecall::GetGoodsYanSe(DWORD m_Adress)  //»ñÈ¡ÎïÆ·µÄÑÕÉ«
 {
 	DWORD Adress = 0;
-	_try
+	__try
 	{
 		Adress =(DWORD)ReadByte(ReadDWORD( m_Adress + bag_item_color_offset1 ) + bag_item_color_offset2);
 	}
-	_except(1)
+	__except(1)
 	{
-		TRACE(_T("»ñÈ¡ÎïÆ·µÄµÈ¼¶´íÎó"));
+		TRACE("»ñÈ¡ÎïÆ·µÄµÈ¼¶´íÎó");
 		return -1;
 	}
 	return Adress;
@@ -2626,13 +2625,13 @@ int Gamecall::GetGoodsYanSe(DWORD m_Adress)  //»ñÈ¡ÎïÆ·µÄÑÕÉ«
 DWORD Gamecall::GetGoodsBiDui(DWORD m_Adress)  //»ñÈ¡ÎïÆ·µÄ±È¶Ô
 {
 	DWORD Adress = 0;
-	_try
+	__try
 	{
 		Adress =(DWORD)ReadByte(ReadDWORD( m_Adress + bag_item_bidui_offset1 ) + bag_item_bidui_offset2);
 	}
-	_except(1)
+	__except(1)
 	{
-		TRACE(_T("»ñÈ¡ÎïÆ·µÄ±È¶Ô´íÎó"));
+		TRACE("»ñÈ¡ÎïÆ·µÄ±È¶Ô´íÎó");
 		return -1;
 	}
 	return Adress;
@@ -2641,13 +2640,13 @@ DWORD Gamecall::GetGoodsBiDui(DWORD m_Adress)  //»ñÈ¡ÎïÆ·µÄ±È¶Ô
 DWORD Gamecall::GetGoodsBiDui_A(DWORD m_Adress)  //»ñÈ¡ÎïÆ·µÄ±È¶ÔA
 {
 	DWORD Adress = 0;
-	_try
+	__try
 	{
 		Adress =(DWORD)ReadByte(ReadDWORD( m_Adress + bag_item_bidui1_offset1 ) + bag_item_bidui1_offset2);
 	}
-	_except(1)
+	__except(1)
 	{
-		TRACE(_T("»ñÈ¡ÎïÆ·µÄ±È¶ÔA´íÎó"));
+		TRACE("»ñÈ¡ÎïÆ·µÄ±È¶ÔA´íÎó");
 		return -1;
 	}
 	return Adress;
@@ -2657,13 +2656,13 @@ DWORD Gamecall::GetGoodsBiDui_A(DWORD m_Adress)  //»ñÈ¡ÎïÆ·µÄ±È¶ÔA
 DWORD Gamecall::GetGoodsWuQiPingJi(DWORD m_Adress)  //»ñÈ¡ÎäÆ÷µÄÆÀ¼¶
 {
 	DWORD Adress = 0;
-	_try
+	__try
 	{
 		Adress =(DWORD)ReadByte( m_Adress + wuqi_pj_offset );
 	}
-	_except(1)
+	__except(1)
 	{
-		TRACE(_T("»ñÈ¡ÎäÆ÷µÄÆÀ¼¶´íÎó"));
+		TRACE("»ñÈ¡ÎäÆ÷µÄÆÀ¼¶´íÎó");
 		return -1;
 	}
 	return Adress;
@@ -2673,13 +2672,13 @@ DWORD Gamecall::GetGoodsWuQiPingJi(DWORD m_Adress)  //»ñÈ¡ÎäÆ÷µÄÆÀ¼¶
 DWORD Gamecall::GetGoodsWuQiDangQianJingYan(DWORD m_Adress)  //»ñÈ¡ÎäÆ÷µ±Ç°µÄ¾­Ñé
 {
 	DWORD Adress = 0;
-	_try
+	__try
 	{
 		Adress =(DWORD)ReadWORD( m_Adress + wuqi_xp_cur_offset );
 	}
-	_except(1)
+	__except(1)
 	{
-		TRACE(_T("»ñÈ¡ÎäÆ÷µ±Ç°µÄ¾­Ñé´íÎó"));
+		TRACE("»ñÈ¡ÎäÆ÷µ±Ç°µÄ¾­Ñé´íÎó");
 		return -1;
 	}
 	return Adress;
@@ -2688,13 +2687,13 @@ DWORD Gamecall::GetGoodsWuQiDangQianJingYan(DWORD m_Adress)  //»ñÈ¡ÎäÆ÷µ±Ç°µÄ¾­Ñ
 DWORD Gamecall::GetGoodsIsFengYin(DWORD m_Adress)  //»ñÈ¡ÎïÆ·ÊÇ·ñ·âÓ¡
 {
 	DWORD Adress = 0;
-	_try
+	__try
 	{
 		Adress =(DWORD)ReadByte(ReadDWORD( m_Adress + 0x0C)+0x0C ); 
 	}
-	_except(1)
+	__except(1)
 	{
-		TRACE(_T("»ñÈ¡ÎïÆ·ÊÇ·ñ·âÓ¡´íÎó"));
+		TRACE("»ñÈ¡ÎïÆ·ÊÇ·ñ·âÓ¡´íÎó");
 		return -1;
 	}
 	return Adress;
@@ -2704,13 +2703,13 @@ DWORD Gamecall::GetGoodsIsFengYin(DWORD m_Adress)  //»ñÈ¡ÎïÆ·ÊÇ·ñ·âÓ¡
 DWORD Gamecall::GetBaGuaGeZiShu(DWORD m_Adress)  //»ñÈ¡°ËØÔ¸ñ×ÓÊı
 {
 	DWORD Adress = 0;
-	_try
+	__try
 	{
 		Adress =(DWORD)ReadByte(ReadDWORD( m_Adress + bag_item_bagua_pos_offset1)+ bag_item_bagua_pos_offset2 ); 
 	}
-	_except(1)
+	__except(1)
 	{
-		TRACE(_T("»ñÈ¡°ËØÔ¸ñ×ÓÊı´íÎó"));
+		TRACE("»ñÈ¡°ËØÔ¸ñ×ÓÊı´íÎó");
 		return -1;
 	}
 	return Adress;
@@ -3349,7 +3348,7 @@ DWORD Gamecall::GetTaskNameID(int i, DWORD pAddr)
 DWORD Gamecall::GetTaskPresentAddr(int i, DWORD pAddr)
 {
 	DWORD value;
-	_try
+	__try
 	{
 		int temp = i * 0x58;
 		__asm
@@ -3362,7 +3361,7 @@ DWORD Gamecall::GetTaskPresentAddr(int i, DWORD pAddr)
 			mov value, eax
 		}
 	}
-	_except(1)
+	__except(1)
 	{
 		OutputDebugString(FUNCNAME);
 		value = NULL;
@@ -3374,7 +3373,7 @@ DWORD Gamecall::GetTaskPresentAddr(int i, DWORD pAddr)
 DWORD Gamecall::GetPresentTaskIndexes(int i, DWORD pAddr)
 {
 	DWORD value;
-	_try
+	__try
 	{
 		int temp = i * 0x58;
 		__asm
@@ -3389,7 +3388,7 @@ DWORD Gamecall::GetPresentTaskIndexes(int i, DWORD pAddr)
 			mov value, eax;
 		}
 	}
-	_except(1)
+	__except(1)
 	{
 		OutputDebugString(FUNCNAME);
 		value = UINT_MAX;
@@ -3402,7 +3401,7 @@ DWORD Gamecall::GetPresentTaskIndexes(int i, DWORD pAddr)
 DWORD Gamecall::GetPresentTaskEndFlag(int i, DWORD pAddr, DWORD info)
 {
 	DWORD value;
-	_try
+	__try
 	{
 		int temp = i * 0x58 + 0x9 + (info - 1) * 1 * 2;
 		__asm
@@ -3417,7 +3416,7 @@ DWORD Gamecall::GetPresentTaskEndFlag(int i, DWORD pAddr, DWORD info)
 			mov value, eax;
 		}
 	}
-	_except(1)
+	__except(1)
 	{
 		OutputDebugString(FUNCNAME);
 		value = UINT_MAX;
@@ -3503,7 +3502,7 @@ DWORD Gamecall::GetTaskStepById(DWORD id)
 //´ò¿ªÈÎÎñÎïÆ·
 void Gamecall::OpenQuestItem(DWORD ID, DWORD ID2)
 {
-	_try
+	__try
 	{
 		_asm
 		{
@@ -3528,7 +3527,7 @@ void Gamecall::OpenQuestItem(DWORD ID, DWORD ID2)
 			call eax;
 		}
 	}
-	_except(1)
+	__except(1)
 	{
 		log.logdv(_T("%s"), FUNCNAME);
 	}
@@ -3566,9 +3565,9 @@ void Gamecall::Pickup1(ObjectNode *pObj) //Ò»´Î¼ñÎï
 			
 		}
 	}
-	_except(1)
+	__except(1)
 	{
-		TRACE(_T("Ò»´Î¼ñÎï³ö´í"));
+		TRACE("Ò»´Î¼ñÎï³ö´í");
 	}
 	
 }
@@ -3906,7 +3905,7 @@ void Gamecall::WearEquipment(_BAGSTU &bag)
 //½â·â·ûÊıÁ¿
 void Gamecall::JieFengZhuangBei(DWORD zhuangbei,DWORD jiefengfu_ID,DWORD num)
 {
-	_try
+	__try
 	{
 		_asm
 		{
@@ -3932,9 +3931,9 @@ void Gamecall::JieFengZhuangBei(DWORD zhuangbei,DWORD jiefengfu_ID,DWORD num)
 			call eax;
 		}
 	}
-	_except(1)
+	__except(1)
 	{
-		TRACE(_T("½â·â×°±¸³ö´í"));
+		TRACE("½â·â×°±¸³ö´í");
 	}
 }
 
@@ -3976,7 +3975,7 @@ void Gamecall::JieFengZhuangBei(DWORD adress1,DWORD adress2,DWORD adress3,DWORD 
 	}
 	__except(1)
 	{
-		TRACE(_T("½â·âºĞ×Ó³ö´í"));
+		TRACE("½â·âºĞ×Ó³ö´í");
 	}
 }
 
@@ -4376,7 +4375,7 @@ DWORD Gamecall::GetIndexByType(DWORD pObjAddress)
 DWORD Gamecall::m_Get2E4(DWORD m_Adress) 
 {
 	BYTE jd = 0;
-	_try
+	__try
 	{
 		_asm
 		{
@@ -4385,7 +4384,7 @@ DWORD Gamecall::m_Get2E4(DWORD m_Adress)
 			mov jd,al;
 		}
 	}
-	_except(1)
+	__except(1)
 	{
 		OutputDebugString(FUNCNAME);
 		return 0;
@@ -5061,7 +5060,7 @@ BOOL Gamecall::Kill_ApplyConfig(std::vector<ObjectNode *> &ObjectVec)
         
 	}
 	catch(...){
-		TRACE(_T("Ó¦ÓÃÅäÖÃÎÄ¼ş´íÎó"));
+		TRACE("Ó¦ÓÃÅäÖÃÎÄ¼ş´íÎó");
 	}
 	return TRUE;
 }
@@ -5444,7 +5443,7 @@ DWORD Gamecall::GetRangeLootCount(DWORD range)
 }
 
 
-void Gamecall::HookQietu( BOOL bEnable )
+void Gamecall::HookQietu(BOOL bEnable )
 {
 	if(bEnable)
 	{
@@ -5478,10 +5477,11 @@ void Gamecall::OverShunyi(BOOL bEnable) //¹ıÍ¼
 			call eax;
 		}
 	}
-	_except(1)
+	__except(1)
 	{
-		TRACE(_T("¹ıÍ¼³ö´í"));
+		TRACE("¹ıÍ¼³ö´í");
 	}
+	TRACE1("Ö´ĞĞË²ÒÆHOOKÍê±Ï,²ÎÊı:%d",bEnable);
 }
 
 
@@ -5622,13 +5622,13 @@ void Gamecall::GetUIAddrByName(wchar_t *name, DWORD *pUIAddr)
 DWORD Gamecall::GetGoodsBagInfo(DWORD m_Adress) 
 {
 	DWORD Adress = 0;
-	_try
+	__try
 	{
 		Adress = (DWORD)ReadByte( m_Adress + 0x1C );
 	}
-	_except(1)
+	__except(1)
 	{
-		TRACE(_T("»ñÈ¡ÎïÆ·µÄ±³°üÀàĞÍ´íÎó"));
+		TRACE("»ñÈ¡ÎïÆ·µÄ±³°üÀàĞÍ´íÎó");
 		return -1;
 	}
 	return Adress;
@@ -5638,7 +5638,7 @@ DWORD Gamecall::GetGoodsBagInfo(DWORD m_Adress)
 DWORD Gamecall::GetMuQianJingYanZongZhi(DWORD Adress) 
 {
 	DWORD JingYan;
-	_try
+	__try
 	{
 		_asm
 		{
@@ -5664,9 +5664,9 @@ DWORD Gamecall::GetMuQianJingYanZongZhi(DWORD Adress)
 			mov JingYan,eax;
 		}
 	}
-	_except(1)
+	__except(1)
 	{
-		TRACE(_T("»ñÈ¡µ±Ç°ÎäÆ÷¾­Ñé×ÜÖµ³ö´í"));
+		TRACE("»ñÈ¡µ±Ç°ÎäÆ÷¾­Ñé×ÜÖµ³ö´í");
 		return 0;
 	}
 	
@@ -5678,7 +5678,7 @@ DWORD Gamecall::GetMuQianJingYanZongZhi(DWORD Adress)
 DWORD Gamecall::GetMuQianJingYanZongZhi_A(DWORD Adress)
 {
 	DWORD JingYan;
-	_try
+	__try
 	{
 		_asm
 		{
@@ -5704,9 +5704,9 @@ DWORD Gamecall::GetMuQianJingYanZongZhi_A(DWORD Adress)
 			mov JingYan,eax;
 		}
 	}
-	_except(1)
+	__except(1)
 	{
-		TRACE(_T("»ñÈ¡µ±Ç°ÎäÆ÷¾­Ñé×ÜÖµA³ö´í"));
+		TRACE("»ñÈ¡µ±Ç°ÎäÆ÷¾­Ñé×ÜÖµA³ö´í");
 		return 0;
 	}
 	
@@ -5744,7 +5744,7 @@ DWORD Gamecall::GetBagYouJianCaoZuoType(DWORD Adress,DWORD argv2)
 	}
 	__except(1)
 	{
-		TRACE(_T("»ñÈ¡±³°üÎïÆ·ÓÒ¼ü²Ù×÷ÀàĞÍ"));
+		TRACE("»ñÈ¡±³°üÎïÆ·ÓÒ¼ü²Ù×÷ÀàĞÍ");
 	}
 	return BBB;
 }
@@ -5809,7 +5809,7 @@ void Gamecall::KaiHeZi(_BAGSTU &bag)
 	}
 	__except(1)
 	{
-		TRACE(_T("¿ªºĞ×Ó³ö´í"));
+		TRACE("¿ªºĞ×Ó³ö´í");
 	}
 }
 
@@ -5861,31 +5861,31 @@ BOOL Gamecall::FillGoods(_BAGSTU &BagBuff)
 	BagBuff.m_IsFengYin  =   GetGoodsIsFengYin(BagBuff.m_Base);  //»ñÈ¡ÎïÆ·ÊÇ·ñ·âÓ¡
 	if ( BagBuff.m_YanSe == 5 )
 	{
-		//TRACE(_T("´ËÎïÆ·ÊÇ×ÏÉ«   %X",BagBuff.m_CaoZuoType);
+		//TRACE("´ËÎïÆ·ÊÇ×ÏÉ«   %X",BagBuff.m_CaoZuoType);
 	}
 	if ( BagBuff.m_YanSe == 4 )
 	{
-		//TRACE(_T("´ËÎïÆ·ÊÇÀ¶É«   %X",BagBuff.m_CaoZuoType);
+		//TRACE("´ËÎïÆ·ÊÇÀ¶É«   %X",BagBuff.m_CaoZuoType);
 	}
 	if ( BagBuff.m_YanSe == 3 )
 	{
-		//TRACE(_T("´ËÎïÆ·ÊÇÂÌÉ«   %X",BagBuff.m_CaoZuoType);
+		//TRACE("´ËÎïÆ·ÊÇÂÌÉ«   %X",BagBuff.m_CaoZuoType);
 	}
 	if ( BagBuff.m_YanSe == 2 )
 	{
-		//TRACE(_T("´ËÎïÆ·ÊÇ°×É«   %X",BagBuff.m_CaoZuoType);
+		//TRACE("´ËÎïÆ·ÊÇ°×É«   %X",BagBuff.m_CaoZuoType);
 	}
 	if ( BagBuff.m_CaoZuoType == 0x0E )
 	{
-		//TRACE(_T("´ËÎïÆ·ÊÇÎ´½â·âµÄ×°±¸  ×Ü¸÷Êı %X,Ê×µØÖ· %X ÎïÆ·ÓÒ¼ü²Ù×÷ÀàĞÍ  %X",GridNum,BagBuff.m_Base,BagBuff.m_CaoZuoType);
+		//TRACE("´ËÎïÆ·ÊÇÎ´½â·âµÄ×°±¸  ×Ü¸÷Êı %X,Ê×µØÖ· %X ÎïÆ·ÓÒ¼ü²Ù×÷ÀàĞÍ  %X",GridNum,BagBuff.m_Base,BagBuff.m_CaoZuoType);
 	}
 	else if ( BagBuff.m_CaoZuoType == 0x0F )
 	{
-		//TRACE(_T("´ËÎïÆ·ÊÇÎ´½â·âµÄºĞ×Ó  ×Ü¸÷Êı %X,Ê×µØÖ· %X ÎïÆ·ÓÒ¼ü²Ù×÷ÀàĞÍ  %X",GridNum,BagBuff.m_Base,BagBuff.m_CaoZuoType);
+		//TRACE("´ËÎïÆ·ÊÇÎ´½â·âµÄºĞ×Ó  ×Ü¸÷Êı %X,Ê×µØÖ· %X ÎïÆ·ÓÒ¼ü²Ù×÷ÀàĞÍ  %X",GridNum,BagBuff.m_Base,BagBuff.m_CaoZuoType);
 	}
 	else
 	{
-		//TRACE(_T("×Ü¸÷Êı %X,Ê×µØÖ· %X ÎïÆ·ÓÒ¼ü²Ù×÷ÀàĞÍ  %X",GridNum,BagBuff.m_Base,BagBuff.m_CaoZuoType);
+		//TRACE("×Ü¸÷Êı %X,Ê×µØÖ· %X ÎïÆ·ÓÒ¼ü²Ù×÷ÀàĞÍ  %X",GridNum,BagBuff.m_Base,BagBuff.m_CaoZuoType);
 	}
 	
 	
@@ -6429,7 +6429,7 @@ DWORD Gamecall::isYaoPingCD(_BAGSTU &goods)
 	int adress = goods.m_Base;
 
 
-	_try
+	__try
 	{
 		_asm
 		{
@@ -6475,7 +6475,7 @@ DWORD Gamecall::isYaoPingCD(_BAGSTU &goods)
 			mov m_Adress,al;
 		}
 	}
-	_except(1)
+	__except(1)
 	{
 		OutputDebugString(_T("Ò©Æ·CD_CALL³ö´í"));
 		return -1;
@@ -6824,7 +6824,7 @@ void Gamecall::RandomStep(DWORD range)
 
 void Gamecall::QuChuJiNengDian(DWORD ID) //È¥³ı¼¼ÄÜµã
 {
-	_try{
+	__try{
 		_asm{
 			push 0;
 			mov eax,ID;
@@ -6839,8 +6839,8 @@ void Gamecall::QuChuJiNengDian(DWORD ID) //È¥³ı¼¼ÄÜµã
 			call ebx;
 		}
 	}
-	_except(1){
-		TRACE(_T("È¥³ı¼¼ÄÜµã"));
+	__except(1){
+		TRACE("È¥³ı¼¼ÄÜµã");
 	}
 
 }
@@ -6865,7 +6865,7 @@ void Gamecall::DaKaiQingChuQuanBuJiNengJieMian(DWORD adress,DWORD adress1) //´ò¿
 	kj.canshu11= 0x0;
 	kj.canshu12= 0x4EFE0016;
 
-	_try{
+	__try{
 		_asm{
 			mov ecx,adress; //Õâ¸öÊÇ¿Ø¼şµÄÊ×µØÖ·  "SkillTrainPanel"
 			mov edx,[ecx];
@@ -6876,9 +6876,8 @@ void Gamecall::DaKaiQingChuQuanBuJiNengJieMian(DWORD adress,DWORD adress1) //´ò¿
 			call eax  
 		}
 	}
-
-	_except(1){
-		TRACE(_T("´ò¿ªÇå³ıÈ«²¿¼¼ÄÜ½çÃæCALL´íÎó"));
+	__except(1){
+		TRACE("´ò¿ªÇå³ıÈ«²¿¼¼ÄÜ½çÃæCALL´íÎó");
 	}
 }
 
@@ -6929,10 +6928,9 @@ void Gamecall::QueRenQingChuQuanBuJiNengJieMian(DWORD adress,DWORD adress1)
 			call eax  
 		}
 	}
-
 	__except(1)
 	{
-		TRACE(_T("È·ÈÏÇå³ıÈ«²¿¼¼ÄÜ½çÃæCALL´íÎó"));
+		TRACE("È·ÈÏÇå³ıÈ«²¿¼¼ÄÜ½çÃæCALL´íÎó");
 	}
 }
 
@@ -6964,7 +6962,7 @@ BOOL Gamecall::isConfirmDeleteTalnetPanelShow()
 			return TRUE;
 		}
 		if(canshu2 == 0){
-			TRACE(_T("Çå³ı¼¼ÄÜ½çÃæÃ»ÓĞ´ò¿ª"));
+			TRACE("Çå³ı¼¼ÄÜ½çÃæÃ»ÓĞ´ò¿ª");
 		}
 	}
 
@@ -6974,7 +6972,7 @@ BOOL Gamecall::isConfirmDeleteTalnetPanelShow()
 
 void Gamecall::QueRenJiNengDian() //È·ÈÏ¼¼ÄÜµã
 {
-	_try{
+	__try{
 		_asm{
 			mov eax, obj_enum_base;
 			mov eax, [eax];
@@ -6988,15 +6986,15 @@ void Gamecall::QueRenJiNengDian() //È·ÈÏ¼¼ÄÜµã
 
 		}
 	}
-	_except(1){
-		TRACE(_T("È·ÈÏ¼¼ÄÜµã´íÎó"));
+	__except(1){
+		TRACE("È·ÈÏ¼¼ÄÜµã´íÎó");
 	}
 
 }
 
 void Gamecall::JiaJiNengDian(DWORD ID) //¼Ó¼¼ÄÜµã
 {
-	_try{
+	__try{
 		_asm{
 
 
@@ -7015,8 +7013,8 @@ void Gamecall::JiaJiNengDian(DWORD ID) //¼Ó¼¼ÄÜµã
 
 		}
 	}
-	_except(1){
-		TRACE(_T("¼Ó¼¼ÄÜµã´íÎó"));
+	__except(1){
+		TRACE("¼Ó¼¼ÄÜµã´íÎó");
 	}
 
 }
@@ -7035,7 +7033,7 @@ BOOL Gamecall::isTalentPanelShow()
 		return TRUE;
 	}
 	if ( canshu2 == 2 ){
-		TRACE(_T("¼¼ÄÜÃæ°åÃ»ÓĞ´ò¿ª"));
+		TRACE("¼¼ÄÜÃæ°åÃ»ÓĞ´ò¿ª");
 	}
 
 	return FALSE;
@@ -7205,7 +7203,7 @@ BOOL Gamecall::isPlayerDaodi()
 	DWORD m_Adress = GetPlayerDataAddr();
 	DWORD Adress = 0;
 	bool State = FALSE;
-	_try
+	__try
 	{
 		if(m_Adress)
 		{
@@ -7220,9 +7218,9 @@ BOOL Gamecall::isPlayerDaodi()
 			State = TRUE;
 		}
 	}
-	_except(1)
+	__except(1)
 	{
-		TRACE(_T("»ñÈ¡½ÇÉ«µ¹µØ×´Ì¬´íÎó"));
+		TRACE("»ñÈ¡½ÇÉ«µ¹µØ×´Ì¬´íÎó");
 	}
 
 	return State;	
@@ -7272,15 +7270,15 @@ BOOL Gamecall::GetPlayExperienceStatus()
 	GetUiAddrByName(jiegou);
 	DWORD pos = -1;
 	pos = ReadDWORD(ReadDWORD(jiegou.ID+0x83F8)+0x1C);
-	TRACE(_T("¾­ÑéĞ§¹ûµÄID %X"),pos);
+	TRACE("¾­ÑéĞ§¹ûµÄID %X",pos);
 	if ( pos!=0 )
 	{
-		TRACE(_T("¾­ÑéÒ©ÎïÒÑ¾­³ÔÁË,²»ĞèÒªÔÙ³ÔÁË"));
+		TRACE("¾­ÑéÒ©ÎïÒÑ¾­³ÔÁË,²»ĞèÒªÔÙ³ÔÁË");
 		return TRUE;
 	}
 	if ( pos == 0 )
 	{
-		TRACE(_T("Ã»ÓĞ³Ô¾­ÑéÒ©Îï,Çë³Ô¾­ÑéÒ©Îï"));
+		TRACE("Ã»ÓĞ³Ô¾­ÑéÒ©Îï,Çë³Ô¾­ÑéÒ©Îï");
 	}
 	return FALSE;
 }

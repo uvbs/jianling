@@ -58,12 +58,12 @@ void CConfigObjPage::RefreshObj()
 	
 	m_ObjList.DeleteAllItems();
 	std::vector<ObjectNode *> RangeObject;
-	TRACE(_T("GetRangeMonsterToVector"));
+	TRACE("GetRangeMonsterToVector");
 	gcall.GetRangeMonsterToVector(10000, RangeObject);
 
 	fPosition fmypos;
 	gcall.GetPlayerPos(&fmypos);
-	TRACE(_T("GetRangeMonsterToVector:%d"), RangeObject.size());
+	TRACE("GetRangeMonsterToVector:%d", RangeObject.size());
 	for(unsigned i = 0; i < RangeObject.size(); i++)
 	{
 		ObjectNode *pNode = RangeObject[i];

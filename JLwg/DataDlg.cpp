@@ -261,7 +261,7 @@ static void __stdcall mySendStep(SENDSTEP *ftarpos)
 		size_t count = fwrite(buff, 512, 1, file);
 		if(count == 0)
 		{
-			TRACE(_T("–¥»Î ß∞‹"));
+			TRACE("–¥»Î ß∞‹");
 			break;
 		}
 
