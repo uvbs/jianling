@@ -836,7 +836,7 @@ BOOL Gamecall::Init()
 	{
 		
 		BOOL bGetShareMem = FALSE;
-		if(g_share.Create(0, SHAREOBJNAME)){
+		if(g_share.Open(SHAREOBJNAME)){
 			Sleep(2000);
 			m_pShareMem = g_share.Get(GetCurrentProcessId());
 			if(m_pShareMem){
