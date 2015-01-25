@@ -6675,13 +6675,7 @@ int Gamecall::KillObject(DWORD range, ObjectNode *pNode, DWORD mode, DWORD canKi
 			return RESULT_KILL_OK;
 		}
 
-		//if (GetObjectType(pNode->ObjAddress)==0xb0)
-		//{
-		//	log.logdv(_T("%s: ¿‡–Õ≈–∂œπ÷À¿¡À"), FUNCNAME);
-		//	return RESULT_KILL_OK;
-		//}
 
-		
 		ZeroMemory(&mypos,sizeof(fPosition));
 		GetPlayerPos(&mypos);
 		
