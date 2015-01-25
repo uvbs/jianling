@@ -5,4 +5,5 @@ Debug/
 *.vcxproj*
 *.ncb
 *.opt
-
+*.sdf
+ipch/
