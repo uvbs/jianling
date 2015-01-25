@@ -165,6 +165,11 @@ DWORD Gamecall::call(DWORD id, LPVOID pParam)
 {
 	switch(id)
 	{
+	case id_msg_LinQuJiangLi:
+		{
+			_LinQuJiangLi();
+		}
+		break;
 	case id_msg_GetStrikeToVector:
 		{
 			GetStrikeToVector(*(std::vector<STRIKEINFO>*)pParam);
@@ -7324,4 +7329,32 @@ wchar_t* Gamecall::GetUiNewName(DWORD pBarAddr)
 	}
 	return name;
 
+}
+
+void Gamecall::_LinQuJiangLi()
+{
+	DWORD uiAddr = 0;
+
+	GetUIAddrByName(L"SurveyRewardPanel", &uiAddr);
+	if(uiAddr == 0)
+		return;
+
+	__try{
+		__asm{
+
+			mov eax, obj_enum_base;
+			mov eax, [eax];
+			mov eax, [eax + get_jiangli_offset1];
+			mov eax, [eax + get_jiangli_offset2];
+			mov ecx, [eax + get_jiangli_offset3];
+			mov edi, uiAddr;
+			mov edx, [edi + get_jiangli_offset4];
+			push edx;
+			mov eax, get_jiangli_call;
+			call eax;
+		}
+	}
+	__except(1){
+		OutputDebugString(FUNCNAME);
+	}
 }

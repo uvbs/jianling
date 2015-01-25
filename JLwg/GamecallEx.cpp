@@ -1338,30 +1338,7 @@ BOOL GamecallEx::TihuanBaGua(wchar_t* name)
 //¡Ï»°Ω±¿¯
 void GamecallEx::LinQuJiangLi()
 {
-	DWORD uiAddr = 0;
-
-    GetUIAddrByName(L"SurveyRewardPanel", &uiAddr);
-	if(uiAddr == 0)
-        return;
-
-	__try{
-		__asm{
-
-			mov eax, obj_enum_base;
-			mov eax, [eax];
-			mov eax, [eax + get_jiangli_offset1];
-			mov eax, [eax + get_jiangli_offset2];
-			mov ecx, [eax + get_jiangli_offset3];
-			mov edi, uiAddr;
-			mov edx, [edi + get_jiangli_offset4];
-			push edx;
-			mov eax, get_jiangli_call;
-			call eax;
-		}
-	}
-	__except(1){
-		OutputDebugString(FUNCNAME);
-	}
+	sendcall(id_msg_LinQuJiangLi,(LPVOID)0);
 }
 
 

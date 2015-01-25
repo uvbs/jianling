@@ -117,7 +117,8 @@ enum {
         id_msg_GetAllBodyEquipToVector,
 		id_msg_NewSpend,
 		id_msg__GetUiAddrByName,
-		id_msg_GetStrikeToVector
+		id_msg_GetStrikeToVector,
+		id_msg_LinQuJiangLi
 };
 
 
@@ -250,7 +251,7 @@ public:
 	BYTE GetPlayerDeadStatus();	//死亡状态
 	DWORD GetCityID();
 	BOOL GetPlayExperienceStatus();//获得经验药状态
-
+	void _LinQuJiangLi();
 	//对象
   
 	ObjectNode* GetObjectBinTreeBaseAddr();
