@@ -54,16 +54,17 @@ int CLaunchGameThread::Run()
     //当前选中的条目
     for(int i = 0; i < list.GetItemCount(); i++){
         
-		if (list.GetCheck(i))
-		{
-			CString strName = list.GetItemText(i, COLUMN_TEXT_ACCOUNT);
-			CString strPw = list.GetItemText(i, COLUMN_TEXT_PASSWORD);
-			CString strConfig = list.GetItemText(i, COLUMN_TEXT_CONFIG);
-			CString strScript = list.GetItemText(i, COLUMN_TEXT_SCRIPT);
-			list.SetItemText(i, COLUMN_TEXT_STATUS, _T("开始运行.."));
-			int nReslt = pDoc->LaunchGame(strName, strPw, strConfig, strScript);
-			m_pView->SetResult(nReslt, i);
-		}
+        if(list.GetCheck(i)){
+            CString strName = list.GetItemText(i, COLUMN_TEXT_ACCOUNT);
+            CString strPw = list.GetItemText(i, COLUMN_TEXT_PASSWORD);
+            CString strConfig = list.GetItemText(i, COLUMN_TEXT_CONFIG);
+            CString strScript = list.GetItemText(i, COLUMN_TEXT_SCRIPT);
+            
+            list.SetItemText(i, COLUMN_TEXT_STATUS, _T("开始运行.."));
+            int nReslt = pDoc->LaunchGame(strName, strPw, strConfig, strScript);
+            m_pView->SetResult(nReslt, i);	
+        }
+    
     }
     Webpost::UnInitCom();
     return 0;

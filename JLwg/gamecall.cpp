@@ -837,6 +837,7 @@ BOOL Gamecall::Init()
 		
 		BOOL bGetShareMem = FALSE;
 		if(g_share.Open(SHAREOBJNAME)){
+			Sleep(2000);
 			m_pShareMem = g_share.Get(GetCurrentProcessId());
 			if(m_pShareMem){
 				bGetShareMem = TRUE;
@@ -5009,7 +5010,6 @@ UCHAR Gamecall::GetPlayerLevel() //获得角色等级
 //中存在但是原本范围过滤中不存在的情况.
 BOOL Gamecall::Kill_ApplyConfig(std::vector<ObjectNode *> &ObjectVec)
 {
-	log.logdv(_T("执行Kill_ApplyConfig"));
     try{ 
         CCIniFile fileConfig;
         fileConfig.Open(m_szConfigPath);
@@ -5063,7 +5063,6 @@ BOOL Gamecall::Kill_ApplyConfig(std::vector<ObjectNode *> &ObjectVec)
 	catch(...){
 		TRACE(_T("应用配置文件错误"));
 	}
-	log.logdv(_T("执行Kill_ApplyConfig完"));
 	return TRUE;
 }
 
