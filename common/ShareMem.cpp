@@ -204,14 +204,14 @@ DWORD ShareMem::GetLoginedCount()
 //获取指定的共享数据
 SHAREINFO* ShareMem::Get(DWORD dwPid)
 {
-	TRACE1("dwpid:%d",dwPid);
 	if(m_lpMem == NULL ||
 		m_hFileMap == NULL){
 		return NULL;
 	}
+
+
 	SHAREINFO *pItor = m_lpMem;
 	for(DWORD i = 0; i < m_dwMaxCount; i++){
-		TRACE1("pItor->pid:%d",pItor->pid);
 		if(pItor->pid == dwPid){
 			return pItor;
 		}
