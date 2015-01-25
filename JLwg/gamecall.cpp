@@ -1321,7 +1321,7 @@ BOOL Gamecall::GetPlayerPos2(sPosition* PlayerPosition)
 float Gamecall::GetPlayerMaxVit()
 {
 	DWORD PlayerInfo = GetPlayerDataAddr();
-	float PlayerVit = UINT_MAX;
+	float PlayerVit;
 	
 	__try
 	{
@@ -1345,7 +1345,7 @@ float Gamecall::GetPlayerMaxVit()
 float Gamecall::GetPlayerVit()
 {
 	DWORD PlayerInfo = GetPlayerDataAddr();
-	float PlayerVit = UINT_MAX;
+	float PlayerVit;
 	
 	__try
 	{
@@ -7253,15 +7253,15 @@ BOOL Gamecall::GetPlayExperienceStatus()
 	GetUiAddrByName(jiegou);
 	DWORD pos = -1;
 	pos = ReadDWORD(ReadDWORD(jiegou.ID+0x83F8)+0x1C);
-	TRACE("经验效果的ID %X",pos);
+	TRACE(_T("经验效果的ID %X"),pos);
 	if ( pos!=0 )
 	{
-		TRACE("经验药物已经吃了,不需要再吃了");
+		TRACE(_T("经验药物已经吃了,不需要再吃了"));
 		return TRUE;
 	}
 	if ( pos == 0 )
 	{
-		TRACE("没有吃经验药物,请吃经验药物");
+		TRACE(_T("没有吃经验药物,请吃经验药物"));
 	}
 	return FALSE;
 }
