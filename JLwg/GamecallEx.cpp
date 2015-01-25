@@ -464,7 +464,7 @@ void GamecallEx::Shunyi(TCHAR* szLujing)
     _tcscat(szFull, _T(".bin"));
 
 
-	FILE *file = _tfopen(szFull, _T("a+b"));
+	FILE *file = _tfopen(szFull, _T("rb"));
 	if(file == NULL){
 		log.logdv(_T("%s: open fail"), FUNCNAME);
 		return;
