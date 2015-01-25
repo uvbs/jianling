@@ -1,0 +1,121 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <SccProjectName />
+    <SccLocalPath />
+    <Keyword>MFCProj</Keyword>
+    <ProjectGuid>{5C5ED285-6740-4381-8DDE-22F0F32E2556}</ProjectGuid>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <PlatformToolset>v110</PlatformToolset>
+    <UseOfMfc>Dynamic</UseOfMfc>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(VCTargetsPath)Microsoft.Cpp.UpgradeFromVC60.props" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <OutDir>.\Release\</OutDir>
+    <IntDir>.\Release\</IntDir>
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <InlineFunctionExpansion>Default</InlineFunctionExpansion>
+      <FunctionLevelLinking>false</FunctionLevelLinking>
+      <Optimization>Disabled</Optimization>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AssemblerListingLocation>.\Release\</AssemblerListingLocation>
+      <BrowseInformation>true</BrowseInformation>
+      <PrecompiledHeaderOutputFile>.\Release\JLSrvr.pch</PrecompiledHeaderOutputFile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>stdafx.h</PrecompiledHeaderFile>
+      <ObjectFileName>.\Release\</ObjectFileName>
+      <ProgramDataBaseFileName>.\Release\</ProgramDataBaseFileName>
+    </ClCompile>
+    <Midl>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <TypeLibraryName>.\Release\JLSrvr.tlb</TypeLibraryName>
+      <MkTypLibCompatible>true</MkTypLibCompatible>
+      <TargetEnvironment>Win32</TargetEnvironment>
+    </Midl>
+    <ResourceCompile>
+      <Culture>0x0804</Culture>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ResourceCompile>
+    <Bscmake>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <OutputFile>.\Release\JLSrvr.bsc</OutputFile>
+    </Bscmake>
+    <Link>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+      <OutputFile>..\Release/JLSrvr.exe</OutputFile>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="DBLoginDlg.cpp" />
+    <ClCompile Include="JLSrvr.cpp" />
+    <ClCompile Include="JLSrvrDoc.cpp" />
+    <ClCompile Include="JLSrvrView.cpp" />
+    <ClCompile Include="ListenSocket.cpp" />
+    <ClCompile Include="..\common\logger.cpp" />
+    <ClCompile Include="MainFrm.cpp" />
+    <ClCompile Include="Request.cpp" />
+    <ClCompile Include="RequestSocket.cpp" />
+    <ClCompile Include="RequestView.cpp" />
+    <ClCompile Include="StdAfx.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">stdafx.h</PrecompiledHeaderFile>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="JLSrvr.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="DBLoginDlg.h" />
+    <ClInclude Include="JLSrvr.h" />
+    <ClInclude Include="JLSrvrDoc.h" />
+    <ClInclude Include="JLSrvrView.h" />
+    <ClInclude Include="ListenSocket.h" />
+    <ClInclude Include="MainFrm.h" />
+    <ClInclude Include="Request.h" />
+    <ClInclude Include="RequestSocket.h" />
+    <ClInclude Include="RequestView.h" />
+    <ClInclude Include="Resource.h" />
+    <ClInclude Include="StdAfx.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="res\default1.bin" />
+    <CustomBuild Include="res\JLSrvr.rc2" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="res\JLSrvr.ico" />
+    <Image Include="res\JLSrvrDoc.ico" />
+    <Image Include="res\Toolbar.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="ReadMe.txt" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

@@ -1,7 +1,8 @@
 Release/
 Debug/
+Backup/
+ipch/
 *.suo
 *.ncb
 *.opt
 *.sdf
-ipch/
