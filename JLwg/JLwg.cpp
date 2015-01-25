@@ -10,7 +10,6 @@
 #include "..\common\logger.h"
 #include "..\common\inject.h"
 #include "..\common\inlinehook.h"
-#include "..\common\CallTracer.h"
 
 #pragma comment(lib, "dbghelp")
 
