@@ -45,6 +45,7 @@ END_MESSAGE_MAP()
 // CConfigSheet message handlers
 void CConfigSheet::OnApplyNow()
 {
+
 	CString szSell;
 	CString szCunCang;
 	CString szJioayi;

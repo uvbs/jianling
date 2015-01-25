@@ -837,7 +837,7 @@ BOOL Gamecall::Init()
 		
 		BOOL bGetShareMem = FALSE;
 		if(g_share.Create(0, SHAREOBJNAME)){
-			//Sleep(2000);
+			Sleep(2000);
 			m_pShareMem = g_share.Get(GetCurrentProcessId());
 			if(m_pShareMem){
 				bGetShareMem = TRUE;
@@ -4844,11 +4844,10 @@ void Gamecall::WaitPlans()
 	{
 		if(isLoadingMap() == 3)
 			break;
-		
-		
 		log.logdv(_T("等待蓝条"));
-		Sleep(2000);
+		Sleep(1000);
 	}
+	Sleep(10000);
 }
 
 
@@ -5293,19 +5292,23 @@ void Gamecall::GetRangeMonsterToVector(DWORD range, std::vector<ObjectNode *> &M
     {
 		//这个函数简写了,  直接从范围对象中遍历的过滤
 		std::vector<ObjectNode *> RangeObject;
+		log.logdv(_T("执行GetRangeObjectToVector"));
 		GetRangeObjectToVector(GetObjectBinTreeBaseAddr(), range, RangeObject);
 		
 		fPosition fmypos;
+		log.logdv(_T("执行GetPlayerPos"));
 		GetPlayerPos(&fmypos);
 		for(DWORD i = 0; i < RangeObject.size(); i++)
 		{
 			ObjectNode *pNode = RangeObject[i];
+			log.logdv(_T("执行GetObjectName"));
 			wchar_t* objName = GetObjectName(pNode->ObjAddress);
 			if(objName == NULL)
 				continue;
 
 			fPosition fpos;
 			//过滤掉距离远的和没距离的
+			log.logdv(_T("执行GetObjectPos"));
 			if(GetObjectPos(RangeObject[i], &fpos) == FALSE)
 				continue;
 			
@@ -5314,7 +5317,7 @@ void Gamecall::GetRangeMonsterToVector(DWORD range, std::vector<ObjectNode *> &M
 			
 			if(CalcC(fpos, fmypos) > range)
 				continue;
-
+			log.logdv(_T("执行isCanLook"));
 			if(isCanLook(pNode->ObjAddress) == FALSE)
 				continue;
 
@@ -5721,7 +5724,7 @@ DWORD Gamecall::GetBagYouJianCaoZuoType(DWORD Adress,DWORD argv2)
 	LeiXing.canshu3 = 0;
 	LeiXing.canshu4 = 0;
 	DWORD BBB;
-	_try
+	__try
 	{
 		_asm
 		{
@@ -5739,7 +5742,7 @@ DWORD Gamecall::GetBagYouJianCaoZuoType(DWORD Adress,DWORD argv2)
 			
 		}
 	}
-	_except(1)
+	__except(1)
 	{
 		TRACE(_T("获取背包物品右键操作类型"));
 	}
@@ -5750,17 +5753,24 @@ DWORD Gamecall::GetBagYouJianCaoZuoType(DWORD Adress,DWORD argv2)
 //获取背包物品右键操作类型
 DWORD Gamecall::GetGoodsYouJianType(DWORD m_BagLeiXing,DWORD m_Info)  
 {
-	DWORD m_Adress;
+	DWORD m_Adress = 0;
 	DWORD UIaddr = 0;
-	GetUIAddrByName(L"Inventory2Panel", &UIaddr);
-	int value = m_Info;
-	value <<= 16;
-	value += m_BagLeiXing;
-	
-	if(UIaddr){
-		m_Adress = GetBagYouJianCaoZuoType(value,UIaddr);
+
+	__try
+	{
+		GetUIAddrByName(L"Inventory2Panel", &UIaddr);
+		int value = m_Info;
+		value <<= 16;
+		value += m_BagLeiXing;
+
+		if(UIaddr){
+			m_Adress = GetBagYouJianCaoZuoType(value,UIaddr);
+		}
 	}
-	
+	__except(1)
+	{
+		OutputDebugString(FUNCNAME);
+	}
 	return m_Adress;
 }
 
@@ -5797,7 +5807,7 @@ void Gamecall::KaiHeZi(_BAGSTU &bag)
 			
 		}
 	}
-	_except(1)
+	__except(1)
 	{
 		TRACE(_T("开盒子出错"));
 	}
@@ -5905,7 +5915,6 @@ BOOL Gamecall::FillGoods(_BAGSTU &BagBuff)
 	if (  BagBuff.m_Type == 4 )
 	{
 		BagBuff.m_BaGuaGeZiShu = GetBaGuaGeZiShu(BagBuff.m_Base);  //获取八卦格子数
-		
 	}
 	
 	
@@ -6633,6 +6642,8 @@ int Gamecall::KillObject(DWORD range, ObjectNode *pNode, DWORD mode, DWORD canKi
 	DWORD tarHealth = GetType4HP(pNode->ObjAddress);;
 	int chiyaojs;
 	chiyaojs = 0;
+	fPosition mypos;
+	fPosition targetpos;
 	for(;;){
 		if (chiyaojs == 0)
 		{
@@ -6670,11 +6681,18 @@ int Gamecall::KillObject(DWORD range, ObjectNode *pNode, DWORD mode, DWORD canKi
 		//	return RESULT_KILL_OK;
 		//}
 
-		fPosition mypos;
+		
+		ZeroMemory(&mypos,sizeof(fPosition));
 		GetPlayerPos(&mypos);
 		
 		//通过距离判断目标死亡
-		fPosition targetpos;
+		
+		ZeroMemory(&targetpos,sizeof(fPosition));
+		if (GetObjectType(pNode->ObjAddress) != 0x4)
+		{
+			log.logdv(_T("%s: 类型判断怪死了"), FUNCNAME);
+			return RESULT_KILL_OK;
+		}
 		if(_GetObjectPos(pNode->ObjAddress, &targetpos) == FALSE){
 			log.logdv(_T("%s: 坐标判断怪死了"), FUNCNAME);
 			return RESULT_KILL_OK;
@@ -6701,6 +6719,7 @@ int Gamecall::KillObject(DWORD range, ObjectNode *pNode, DWORD mode, DWORD canKi
 			targetpos.y = targetpos.y-10;
 			Stepto(targetpos, 10, CAN_OPERATOR, range);
 		}else if(dis <= 2){
+			log.logdv(_T("自己的坐标X:%d,y:%d,怪物的坐标X:%d,Y:%d"),(int)mypos.x,(int)mypos.y,(int)targetpos.x,(int)targetpos.y);
 			log.logdv(_T("%s: 重叠怪物"), FUNCNAME);
 			RandomStep(30);
 		}else if(dis <= canKillRange){

@@ -876,8 +876,7 @@ void GamecallEx::randXianlu(DWORD MaxXianlu)
 	}
 
 
-
-	for(DWORD i = 0; i < 20; i++){
+	for(DWORD i = 0; i < 5; i++){
 		UCHAR randnum = (UCHAR)(rand() % MaxXianlu);
 
 		randnum += 1; //线路下标从1开始

@@ -9,7 +9,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 // CDataDlg dialog
-class CConfigSheet;
+
 class CDataDlg : public CDialog
 {
 // Construction
@@ -22,7 +22,6 @@ public:
 	CListCtrl	m_ListCtrl;
 	CEdit	m_hEdit;
 	CComboBox	m_ComBox;
-
 	UINT	m_nRange;
 	BOOL	m_bHook_step;
 	BOOL	m_bHook_Dundi;
@@ -33,7 +32,7 @@ public:
 	BOOL	m_bHook_Combat;
 	//}}AFX_DATA
 	void CheckHook();
-    CConfigSheet* m_lpConfigSheet;
+
 // Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CDataDlg)

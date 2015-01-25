@@ -55,12 +55,15 @@ END_MESSAGE_MAP()
 
 void CConfigObjPage::RefreshObj()
 {
+	
 	m_ObjList.DeleteAllItems();
 	std::vector<ObjectNode *> RangeObject;
+	TRACE("GetRangeMonsterToVector");
 	gcall.GetRangeMonsterToVector(10000, RangeObject);
 
 	fPosition fmypos;
 	gcall.GetPlayerPos(&fmypos);
+	TRACE("GetRangeMonsterToVector:%d", RangeObject.size());
 	for(unsigned i = 0; i < RangeObject.size(); i++)
 	{
 		ObjectNode *pNode = RangeObject[i];
@@ -85,12 +88,12 @@ BOOL CConfigObjPage::OnInitDialog()
 	// TODO: Add extra initialization here
 	m_ObjList.InsertColumn(0, _T("名称"));
 	m_ObjList.InsertColumn(1, _T("距离"));
-	m_ObjList.SetColumnWidth(0, LVSCW_AUTOSIZE_USEHEADER);
+	m_ObjList.SetColumnWidth(0, 120);
 	m_ObjList.SetColumnWidth(1, LVSCW_AUTOSIZE_USEHEADER);
 
 	m_FilterList.InsertColumn(0, _T("名称"));
 	m_FilterList.InsertColumn(1, _T("优先"));
-    m_FilterList.SetColumnWidth(0, LVSCW_AUTOSIZE_USEHEADER);
+	m_FilterList.SetColumnWidth(0, 120);
 	m_FilterList.SetColumnWidth(1, LVSCW_AUTOSIZE_USEHEADER);
 
 
@@ -143,13 +146,6 @@ BOOL CConfigObjPage::OnInitDialog()
 	delete []lpszMustKill;
 
 	RefreshObj();
-
-
-    m_ObjList.SetColumnWidth(0, LVSCW_AUTOSIZE_USEHEADER);
-    m_ObjList.SetColumnWidth(1, LVSCW_AUTOSIZE_USEHEADER);
-    m_FilterList.SetColumnWidth(0, LVSCW_AUTOSIZE_USEHEADER);
-        m_FilterList.SetColumnWidth(1, LVSCW_AUTOSIZE_USEHEADER);
-
 	return TRUE;  // return TRUE unless you set the focus to a control
 	              // EXCEPTION: OCX Property Pages should return FALSE
 }
@@ -192,10 +188,7 @@ void CConfigObjPage::GetSelToFilterList(TCHAR szName[])
 			m_FilterList.InsertItem(dwCount, strItem);
 			m_FilterList.SetItemText(dwCount, 1, szName);
 		}
-        
-        m_FilterList.SetColumnWidth(0, LVSCW_AUTOSIZE_USEHEADER);
-        m_FilterList.SetColumnWidth(1, LVSCW_AUTOSIZE_USEHEADER);
-    }
+	}
 }
 
 

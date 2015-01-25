@@ -620,14 +620,15 @@ void CDataDlg::OnGetpalyerinfo()
 	gcall.GetPlayerPos2(&PlayerPos2);
 	
 	log2(_T("角色名: %s"), gcall.GetPlayerName());
+	log2(_T("角色地图ID: %d"), gcall.GetCityID());
 	log2(_T("角色魔法: %d"), gcall.GetPlayerMana());
 	log2(_T("角色等级: %d"), gcall.GetPlayerLevel());
 	log2(_T("角色血量: %d"), gcall.GetPlayerHealth());
 	log2(_T("角色最大血量: %d"), gcall.GetPlayerMaxHealth());
 	log2(_T("角色内力: %d"), gcall.GetPlayerMana());
 	log2(_T("角色ID: %d"), gcall.GetPlayerID());
-	log2(_T("角色最大体力: %d"), (int)gcall.GetPlayerMaxVit());
-	log2(_T("角色体力: %d"), (int)gcall.GetPlayerVit());
+	log2(_T("角色最大体力: %d"),(int)gcall.GetPlayerMaxVit());
+	log2(_T("角色体力: %d"),(int) gcall.GetPlayerVit());
 	log2(_T("角色视角: %d"), (int)gcall.GetPlayerViewPoint());
 	log2(_T("角色坐标: x:%d y:%d z:%d"), (int)PlayerPos.x, (int)PlayerPos.y, (int)PlayerPos.z);
 	log2(_T("角色坐标2: x:%d y:%d z:%d"), (int)PlayerPos2.x, (int)PlayerPos2.y, (int)PlayerPos2.z);
@@ -808,9 +809,9 @@ void CDataDlg::PrintfAllUI()
 {
 	std::vector<Tree *> AllUI;
 	gcall.sendcall(id_msg_vector_ui, &AllUI);
-    DWORD i;
+
 	CString strTemp;
-    for(i = 0; i < AllUI.size(); i++)
+    for(DWORD i = 0; i < AllUI.size(); i++)
     {
         wchar_t* name = gcall.GetUIName(AllUI[i]->Adress);
         if(name != NULL)
@@ -827,8 +828,6 @@ void CDataDlg::PrintfAllUI()
 			}
         }
     }
-
-    log2(_T("遍历到: %d 个"), i);
 }
 
 //遍历任务
@@ -955,10 +954,28 @@ void CDataDlg::PrintfStrike()
 		strTemp.Format(_T("%d"), RangeObject[i].cd);
         m_ListCtrl.SetItemText(i, 1, strTemp);
 
-		strTemp.Format(_T("%d"), RangeObject[i].canUse);
-        m_ListCtrl.SetItemText(i, 2, strTemp);
+		
 
-		strTemp.Format(_T("%d"), RangeObject[i].isBlock);
+		if (RangeObject[i].isBlock == 0)
+		{
+			
+			strTemp.Format(_T("不可用"));
+			m_ListCtrl.SetItemText(i, 2, strTemp);
+			strTemp.Format(_T("未解锁"));
+		}else
+		{
+			if (RangeObject[i].canUse == 0)
+			{
+				strTemp.Format(_T("可使用"));
+			}else
+			{
+				strTemp.Format(_T("不可用"));
+			}
+			//strTemp.Format(_T("%d"), RangeObject[i].canUse);
+			m_ListCtrl.SetItemText(i, 2, strTemp);
+			strTemp.Format(_T("已解锁"));
+		}
+		//strTemp.Format(_T("%d"), RangeObject[i].isBlock);
         m_ListCtrl.SetItemText(i, 3, strTemp);
 
 		strTemp.Format(_T("%d"), id1);
@@ -1020,9 +1037,9 @@ void CDataDlg::PrintfRangeMonster(BOOL bApplyConfig)
 			fPosition mypos;
 			gcall.GetPlayerPos(&mypos);
 			
-			strTemp.Format(_T("x:%d y:%d z:%d"), (int)pos.x, (int)pos.y, (int)pos.z);
-			m_ListCtrl.SetItemText(index, 6, strTemp);
 			strTemp.Format(_T("%d"), (DWORD)gcall.CalcC(pos, mypos));
+			m_ListCtrl.SetItemText(index, 6, strTemp);
+			strTemp.Format(_T("x:%d y:%d z:%d"), (int)pos.x, (int)pos.y, (int)pos.z);
 			m_ListCtrl.SetItemText(index, 7, strTemp);
 		}
  
@@ -1238,8 +1255,8 @@ void CDataDlg::OnBtnConfig()
 {
 	// TODO: Add your control notification handler code here
 	ShowWindow(SW_HIDE);
-	m_lpConfigSheet = new CConfigSheet;
-	m_lpConfigSheet->DoModal();
+	CConfigSheet ConfigSheet;
+	ConfigSheet.DoModal();
 	ShowWindow(SW_SHOW);
 }
 

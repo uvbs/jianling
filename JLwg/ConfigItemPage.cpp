@@ -63,12 +63,12 @@ BOOL CConfigItemPage::OnInitDialog()
 	// TODO: Add extra initialization here
 	m_BagList.InsertColumn(0, _T("名称"));
 	m_BagList.InsertColumn(1, _T("位置"));
-	m_BagList.SetColumnWidth(0, LVSCW_AUTOSIZE_USEHEADER);
+	m_BagList.SetColumnWidth(0, 150);
 	m_BagList.SetColumnWidth(1, LVSCW_AUTOSIZE_USEHEADER);
 
 	m_FilterList.InsertColumn(0, _T("名称"));
 	m_FilterList.InsertColumn(1, _T("位置"));
-	m_FilterList.SetColumnWidth(0, LVSCW_AUTOSIZE_USEHEADER);
+	m_FilterList.SetColumnWidth(0, 150);
 	m_FilterList.SetColumnWidth(1, LVSCW_AUTOSIZE_USEHEADER);
 
 	m_BagList.SetExtendedStyle(LVS_EX_FULLROWSELECT);
@@ -199,12 +199,6 @@ BOOL CConfigItemPage::OnInitDialog()
 	delete []szSell;
 	
 
-    m_BagList.SetColumnWidth(0, LVSCW_AUTOSIZE_USEHEADER);
-    m_BagList.SetColumnWidth(1, LVSCW_AUTOSIZE_USEHEADER);
-    m_FilterList.SetColumnWidth(0, LVSCW_AUTOSIZE_USEHEADER);
-    m_FilterList.SetColumnWidth(1, LVSCW_AUTOSIZE_USEHEADER);
-
-
 	return TRUE;  // return TRUE unless you set the focus to a control
 	              // EXCEPTION: OCX Property Pages should return FALSE
 }
@@ -239,13 +233,7 @@ void CConfigItemPage::GetSelToFilterList(TCHAR szName[])
 			m_FilterList.InsertItem(dwCount, strItem);
 			m_FilterList.SetItemText(dwCount, 1, szName);
 		}
-
-        m_FilterList.SetColumnWidth(0, LVSCW_AUTOSIZE_USEHEADER);
-        m_FilterList.SetColumnWidth(1, LVSCW_AUTOSIZE_USEHEADER);
-
 	}
-
-
 }
 void CConfigItemPage::OnConfigCuncang() 
 {

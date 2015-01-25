@@ -39,6 +39,7 @@ static LRESULT CALLBACK GameMsgProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM 
 	//µ÷³öÍâ¹Ò
 	switch(uMsg)
 	{
+
 	case WM_KEYDOWN:
 		{
 			if(wParam == VK_INSERT)

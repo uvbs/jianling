@@ -3,7 +3,7 @@
 
 #include "stdafx.h"
 #include "JLDlg.h"
-//#include "TaskScript.h"
+#include "TaskScript.h"
 #include "DataDlg.h"
 
 #include "..\common\common.h"
@@ -76,8 +76,8 @@ static UINT TaskThread(LPVOID pParam)
 
 	g_pCloseThread = AfxBeginThread(AutoCloseThread, 0);
 
-//	TaskScript task;
-//	task.BeginTask();
+	TaskScript task;
+	task.BeginTask();
 
 	return 0;
 }

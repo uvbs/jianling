@@ -44,6 +44,8 @@ public:
 	void lianji10_go();//10级副本 进
 	void lianji14();//14级副本
 	void lianji14_go();//14级副本 进
+	BOOL ShunYiResult(DWORD CityId,wchar_t* FileName,BOOL Hook_flag);//瞬移等待逻辑的封装函数
+	void UseExperience();//使用经验药
 private:
 };
 
