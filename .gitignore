@@ -1,8 +1,7 @@
 Release/
 Debug/
-*.sln
 *.suo
-*.*.suo
-*.vcxproj*
-
-
+*.ncb
+*.opt
+*.sdf
+ipch/
