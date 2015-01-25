@@ -61,19 +61,39 @@ int _tmain(int argc, TCHAR* argv[], TCHAR* envp[])
 	else
 	{
 
-	    CThreadPool poolt;
-        poolt.SetMaxThreads(10);
-        poolt.Init();
+         char CpuId[200];
+	     char szCPUID[129] = {NULL}; 
+         char szTmp[33] = {NULL}; 
+         unsigned long s1 = 0, s2 = 0; 
+         _asm { 
+             mov eax,01h 
+                 xor edx,edx
+                 cpuid 
+                 mov s1,edx 
+                 mov s2,eax 
+         } 
 
-        for(int i = 0; i < 200; i++){
-            poolt.AddWork(new CMyWork(10, 10));
+  
 
-        }
+         _asm { 
+             mov eax,03h 
+                 xor ecx,ecx 
+                 xor edx,edx
+                 cpuid 
+                 mov s1,edx 
+                 mov s2,ecx
+         } 
 
 
-        WaitForMultipleObjects(poolt.GetThreadsCounts(), poolt.GetThreadHandle(), TRUE, INFINITE);
 
+             
+           PCHAR bname, bcopy, bdate, bserial; 
+           bname=(char*)(0xFE061); // Bios name 
+           bcopy=(char*)(0xFE091); // Bios copyright 
+           bdate=(char*)(0xFFFF5); // Bios date 
+           bserial=(char*)(0x000FEC71); // Bios serial number 
     }
+
 
 
 	return nRetCode;

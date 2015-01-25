@@ -462,7 +462,7 @@ void GamecallEx::Shunyi(TCHAR* szLujing)
     _tcscat(szFull, _T(".bin"));
 
 
-	FILE *file = _tfopen(szFull, _T("a+b"));
+	FILE *file = _tfopen(szFull, _T("rb"));
 	if(file == NULL){
 		log.logdv(_T("%s: open fail"), FUNCNAME);
 		return;
@@ -1585,10 +1585,11 @@ void GamecallEx::Yaojiang(wchar_t* Zen_name, wchar_t* BaGuaname)
 {
 
 	//摇奖
+    DWORD i = 0;
 	_BAGSTU ZenGoods;
 	GetGoodsFromBagByName(Zen_name, &ZenGoods);
 	log.logdv(_T("精气数量:%d"),ZenGoods.m_Num);
-	for(int i=0;i < ZenGoods.m_Num;i++){
+	for(i=0;i < ZenGoods.m_Num;i++){
 		log.logdv(_T("摇精气当前进度:%d"),i);
 		PickupTask();
 		Sleep(5000);
@@ -1599,7 +1600,7 @@ void GamecallEx::Yaojiang(wchar_t* Zen_name, wchar_t* BaGuaname)
 	std::vector<_BAGSTU> HeZiVec;
 	GetGoodsByName_Hezi(BaGuaname, HeZiVec);
 	log.logdv(_T("盒子的数量:%d"),HeZiVec.size());
-	for(DWORD i = 0; i < HeZiVec.size(); i++){
+	for(i = 0; i < HeZiVec.size(); i++){
 
 		log.logdv(_T("单个盒子的数量:%d"),HeZiVec[i].m_Num);
 		for(int j = 0; j < HeZiVec[i].m_Num; j++){
