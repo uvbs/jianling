@@ -3,5 +3,6 @@ Debug/
 *.sln
 *.*suo
 *.vcxproj*
+*.ncb
 
 
