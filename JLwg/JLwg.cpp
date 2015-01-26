@@ -209,7 +209,7 @@ DWORD CALLBACK WGThread(LPVOID pParam)
 	}
 	
 
-	TRACE("消息循环退出了");
+	TRACE(_T("消息循环退出了"));
 	g_pWgDlg = NULL;
 	if(wpOrigGameProc){
 		::SetWindowLong(gcall.GetGamehWnd(), GWL_WNDPROC, (LONG)wpOrigGameProc);

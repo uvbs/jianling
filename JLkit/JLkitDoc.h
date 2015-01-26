@@ -16,8 +16,8 @@
 // CJLkitDoc document
 
 class CWaitDlg;
-class KeyViewDlg;
-class CLoginDlg;
+class CDlgKeyView;
+class CDlgLogin;
 class CJLkitSocket;
 class CThreadPool;
 class CLock;
@@ -39,8 +39,8 @@ public:
     TCHAR m_szAccountPw[MAX_PATH];
 
     //¶Ô»°¿ò
-    KeyViewDlg* m_pKeyDlg;
-    CLoginDlg* m_pLoginDlg;
+    CDlgKeyView* m_pKeyDlg;
+    CDlgLogin* m_pLoginDlg;
     CJLkitSocket* m_pSocket;
     ShareMem m_share;
     std::vector<QUERYKEY_RET_BUF> m_KeyVec;

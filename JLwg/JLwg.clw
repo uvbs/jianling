@@ -2,13 +2,13 @@
 
 [General Info]
 Version=1
-LastClass=CJLkitDoc
+LastClass=
 LastTemplate=CDocument
 NewFileInclude1=#include "stdafx.h"
 NewFileInclude2=#include "jlwg.h"
 LastPage=0
 
-ClassCount=8
+ClassCount=7
 Class1=CConfigDlg
 Class2=CDataDlg
 Class3=CJLDlg
@@ -24,9 +24,8 @@ Class4=CConfigItemPage
 Class5=CConfigObjPage
 Class6=CConfigQhPage
 Class7=CConfigSheet
-Resource7=IDD_WGDLG
-Class8=CJLkitDoc
-Resource8=IDR_FILTER
+Resource7=IDR_FILTER
+Resource8=IDD_WGDLG
 
 [CLS:CConfigDlg]
 Type=0
@@ -173,11 +172,4 @@ Command8=ID_CONFIG_DONTKILL
 Command9=ID_CONFIG_ALWAYSKILL
 Command10=ID_CONFIG_REFRESH
 CommandCount=10
-
-[CLS:CJLkitDoc]
-Type=0
-HeaderFile=JLkitDoc.h
-ImplementationFile=JLkitDoc.cpp
-BaseClass=CDocument
-Filter=N
 

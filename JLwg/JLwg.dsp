@@ -124,7 +124,6 @@ SOURCE=.\StdAfx.cpp
 # Begin Source File
 
 SOURCE=.\TaskScript.cpp
-# PROP Exclude_From_Build 1
 # End Source File
 # End Group
 # Begin Group "Header Files"
@@ -205,7 +204,6 @@ SOURCE=.\StdAfx.h
 # Begin Source File
 
 SOURCE=.\TaskScript.h
-# PROP Exclude_From_Build 1
 # End Source File
 # End Group
 # Begin Group "Resource Files"

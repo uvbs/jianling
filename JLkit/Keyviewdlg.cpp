@@ -1,26 +1,26 @@
-// KeyViewDlg.cpp : implementation file
+// CDlgKeyView.cpp : implementation file
 //
 
 #include "stdafx.h"
 #include "JLkit.h"
 #include "JLkitDoc.h"
 #include "JLkitSocket.h"
-#include "KeyViewDlg.h"
+#include "Keyviewdlg.h"
 #include "BindkeyDlg.h"
 
 
-// KeyViewDlg dialog
+// CDlgKeyView dialog
 
-IMPLEMENT_DYNAMIC(KeyViewDlg, CDialog)
-KeyViewDlg::KeyViewDlg(CJLkitDoc* pDoc)
-	: CDialog(KeyViewDlg::IDD, NULL)
+IMPLEMENT_DYNAMIC(CDlgKeyView, CDialog)
+CDlgKeyView::CDlgKeyView(CJLkitDoc* pDoc)
+	: CDialog(CDlgKeyView::IDD, NULL)
 {
     m_pSocket = pDoc->m_pSocket;
     m_pDoc = pDoc;
 
 }
 
-KeyViewDlg::~KeyViewDlg()
+CDlgKeyView::~CDlgKeyView()
 {
 
 }
@@ -30,18 +30,18 @@ KeyViewDlg::~KeyViewDlg()
 
 
 
-void KeyViewDlg::DoDataExchange(CDataExchange* pDX)
+void CDlgKeyView::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
 
-	//{{AFX_DATA_MAP(KeyViewDlg)
+	//{{AFX_DATA_MAP(CDlgKeyView)
 	DDX_Control(pDX, IDC_LISTKEY, m_ListCtrl);
 	//}}AFX_DATA_MAP
 }
 
 
-BEGIN_MESSAGE_MAP(KeyViewDlg, CDialog)
-	//{{AFX_MSG_MAP(KeyViewDlg)
+BEGIN_MESSAGE_MAP(CDlgKeyView, CDialog)
+	//{{AFX_MSG_MAP(CDlgKeyView)
 	ON_WM_RBUTTONUP()
 	ON_NOTIFY(NM_RCLICK, IDC_LISTKEY, OnNMRClickListkey)
 	ON_COMMAND(ID_QUERY, OnQuerykey)
@@ -52,8 +52,8 @@ BEGIN_MESSAGE_MAP(KeyViewDlg, CDialog)
 END_MESSAGE_MAP()
 
 
-// KeyViewDlg message handlers
-void KeyViewDlg::OnRButtonUp(UINT nFlags, CPoint point)
+// CDlgKeyView message handlers
+void CDlgKeyView::OnRButtonUp(UINT nFlags, CPoint point)
 {
 	// TODO: Add your message handler code here and/or call default
 
@@ -61,7 +61,7 @@ void KeyViewDlg::OnRButtonUp(UINT nFlags, CPoint point)
 	CDialog::OnRButtonUp(nFlags, point);
 }
 
-BOOL KeyViewDlg::OnInitDialog()
+BOOL CDlgKeyView::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 
@@ -84,7 +84,7 @@ BOOL KeyViewDlg::OnInitDialog()
 	// EXCEPTION: OCX Property Pages should return FALSE
 }
 
-void KeyViewDlg::OnNMRClickListkey(NMHDR *pNMHDR, LRESULT *pResult)
+void CDlgKeyView::OnNMRClickListkey(NMHDR *pNMHDR, LRESULT *pResult)
 {
 
 	POINT point;
@@ -98,9 +98,9 @@ void KeyViewDlg::OnNMRClickListkey(NMHDR *pNMHDR, LRESULT *pResult)
 	*pResult = 0;
 }
 
-void KeyViewDlg::OnBinkey()
+void CDlgKeyView::OnBinkey()
 {
-	CBindKeyDlg dlg;
+	CDlgBindKey dlg;
 	if(dlg.DoModal() == IDOK)
 	{
 		m_pSocket->BindKey(dlg.m_strKey);
@@ -108,12 +108,12 @@ void KeyViewDlg::OnBinkey()
 	
 }
 
-void KeyViewDlg::OnQuerykey()
+void CDlgKeyView::OnQuerykey()
 {
 	m_pSocket->Querykey();
 }
 
-void KeyViewDlg::UnBindResult(int nResult)
+void CDlgKeyView::UnBindResult(int nResult)
 {
     if(nResult == result_ok){
         AfxMessageBox(_T("解绑完成"));
@@ -127,7 +127,7 @@ void KeyViewDlg::UnBindResult(int nResult)
             
 }
 
-void KeyViewDlg::BindResult(int nResult)
+void CDlgKeyView::BindResult(int nResult)
 {
     if(nResult == result_bind_used){
         AfxMessageBox(_T("这个卡号已经被使用"));
@@ -143,7 +143,7 @@ void KeyViewDlg::BindResult(int nResult)
     }
             
 }
-void KeyViewDlg::QueryKeyResult()
+void CDlgKeyView::QueryKeyResult()
 {
 	m_ListCtrl.DeleteAllItems();
     int i;
@@ -162,7 +162,7 @@ void KeyViewDlg::QueryKeyResult()
     }
 }
 
-void KeyViewDlg::OnUnbindkey()
+void CDlgKeyView::OnUnbindkey()
 {
 	UINT i, uSelectedCount = m_ListCtrl.GetSelectedCount();
 	int  nItem = -1;

@@ -1,4 +1,4 @@
-// CRegistDlg.cpp : implementation file
+// CDlgRegist.cpp : implementation file
 //
 
 #include "stdafx.h"
@@ -14,19 +14,19 @@
 
 
 
-CRegistDlg::CRegistDlg(CWnd* pParent /*=NULL*/)
-	: CDialog(CRegistDlg::IDD, pParent)
+CDlgRegist::CDlgRegist(CWnd* pParent /*=NULL*/)
+	: CDialog(CDlgRegist::IDD, pParent)
 {
-	//{{AFX_DATA_INIT(CRegistDlg)
+	//{{AFX_DATA_INIT(CDlgRegist)
 		// NOTE: the ClassWizard will add member initialization here
 	//}}AFX_DATA_INIT
 }
 
 
-void CRegistDlg::DoDataExchange(CDataExchange* pDX)
+void CDlgRegist::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
-	//{{AFX_DATA_MAP(CRegistDlg)
+	//{{AFX_DATA_MAP(CDlgRegist)
 	DDX_Text(pDX, IDC_EDITPASSWORD, m_strPw);
 	DDX_Text(pDX, IDC_EDITUSERNAME, m_strName);
 	DDX_Text(pDX, IDC_IPADDRESS, m_strIp);
@@ -34,17 +34,17 @@ void CRegistDlg::DoDataExchange(CDataExchange* pDX)
 }
 
 
-BEGIN_MESSAGE_MAP(CRegistDlg, CDialog)
-	//{{AFX_MSG_MAP(CRegistDlg)
+BEGIN_MESSAGE_MAP(CDlgRegist, CDialog)
+	//{{AFX_MSG_MAP(CDlgRegist)
 		// NOTE: the ClassWizard will add message map macros here
 	//}}AFX_MSG_MAP
 	ON_WM_TIMER()
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
-// CRegistDlg message handlers
+// CDlgRegist message handlers
 
-void CRegistDlg::OnOK()
+void CDlgRegist::OnOK()
 {
 	// TODO: Add your specialized code here and/or call the base class
 	UpdateData();
@@ -139,7 +139,7 @@ void CRegistDlg::OnOK()
 	
 }
 
-BOOL CRegistDlg::OnInitDialog()
+BOOL CDlgRegist::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 
@@ -150,7 +150,7 @@ BOOL CRegistDlg::OnInitDialog()
 	// EXCEPTION: OCX Property Pages should return FALSE
 }
 
-void CRegistDlg::OnTimer(UINT nIDEvent)
+void CDlgRegist::OnTimer(UINT nIDEvent)
 {
 	// TODO: Add your message handler code here and/or call default
 	OnOK();

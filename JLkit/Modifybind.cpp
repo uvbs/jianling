@@ -1,4 +1,4 @@
-// Modifybind.cpp : implementation file
+// CDlgModifyBind.cpp : implementation file
 //
 
 #include "stdafx.h"
@@ -8,19 +8,19 @@
 #include "..\common\protocol.h"
 
 
-// Modifybind dialog
+// CDlgModifyBind dialog
 
-IMPLEMENT_DYNAMIC(Modifybind, CDialog)
-Modifybind::Modifybind(CWnd* pParent /*=NULL*/)
-	: CDialog(Modifybind::IDD, pParent)
+IMPLEMENT_DYNAMIC(CDlgModifyBind, CDialog)
+CDlgModifyBind::CDlgModifyBind(CWnd* pParent /*=NULL*/)
+	: CDialog(CDlgModifyBind::IDD, pParent)
 {
 }
 
-Modifybind::~Modifybind()
+CDlgModifyBind::~CDlgModifyBind()
 {
 }
 
-void Modifybind::DoDataExchange(CDataExchange* pDX)
+void CDlgModifyBind::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
 
@@ -31,14 +31,14 @@ void Modifybind::DoDataExchange(CDataExchange* pDX)
 }
 
 
-BEGIN_MESSAGE_MAP(Modifybind, CDialog)
+BEGIN_MESSAGE_MAP(CDlgModifyBind, CDialog)
 	ON_BN_CLICKED(IDOK, OnBnClickedOk)
 END_MESSAGE_MAP()
 
 
-// Modifybind message handlers
+// CDlgModifyBind message handlers
 
-void Modifybind::OnBnClickedOk()
+void CDlgModifyBind::OnBnClickedOk()
 {
 	/*处理修改绑定的数据发送*/
 	

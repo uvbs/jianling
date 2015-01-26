@@ -6,14 +6,14 @@
 #endif // _MSC_VER > 1000
 
 
-class CRegistDlg : public CDialog
+class CDlgRegist : public CDialog
 {
 // Construction
 public:
-	CRegistDlg(CWnd* pParent = NULL);   // standard constructor
+	CDlgRegist(CWnd* pParent = NULL);   // standard constructor
 
 // Dialog Data
-	//{{AFX_DATA(CRegistDlg)
+	//{{AFX_DATA(CDlgRegist)
 	enum { IDD = IDD_REGISTER };
 	CString m_strName;
 	CString m_strPw;
@@ -23,7 +23,7 @@ public:
 
 // Overrides
 	// ClassWizard generated virtual function overrides
-	//{{AFX_VIRTUAL(CRegistDlg)
+	//{{AFX_VIRTUAL(CDlgRegist)
 	protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 	//}}AFX_VIRTUAL
@@ -32,7 +32,7 @@ public:
 protected:
 
 	// Generated message map functions
-	//{{AFX_MSG(CRegistDlg)
+	//{{AFX_MSG(CDlgRegist)
 		// NOTE: the ClassWizard will add member functions here
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()

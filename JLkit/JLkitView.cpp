@@ -340,7 +340,7 @@ void CJLkitView::OnReportbug()
 	// TODO: Add your command handler code here
     CJLkitDoc* pDoc = GetDocument();
 
-	CBugRepDlg dlg(pDoc);
+	CDlgBugRep dlg(pDoc);
     dlg.DoModal();
 
 }
