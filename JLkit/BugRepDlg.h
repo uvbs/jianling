@@ -8,17 +8,17 @@
 //
 
 /////////////////////////////////////////////////////////////////////////////
-// CDlgBugRep dialog
+// CBugRepDlg dialog
 class CJLkitSocket;
 class CJLkitDoc;
-class CDlgBugRep : public CDialog
+class CBugRepDlg : public CDialog
 {
 // Construction
 public:
-	CDlgBugRep(CJLkitDoc *pDoc);   // standard constructor
+	CBugRepDlg(CJLkitDoc *pDoc);   // standard constructor
 
 // Dialog Data
-	//{{AFX_DATA(CDlgBugRep)
+	//{{AFX_DATA(CBugRepDlg)
 	enum { IDD = IDD_REPORTBUG };
 	CString	m_strBug;
 	//}}AFX_DATA
@@ -27,7 +27,7 @@ public:
     CJLkitSocket* m_pSocket;
 // Overrides
 	// ClassWizard generated virtual function overrides
-	//{{AFX_VIRTUAL(CDlgBugRep)
+	//{{AFX_VIRTUAL(CBugRepDlg)
 	protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 	//}}AFX_VIRTUAL
@@ -36,7 +36,7 @@ public:
 protected:
 
 	// Generated message map functions
-	//{{AFX_MSG(CDlgBugRep)
+	//{{AFX_MSG(CBugRepDlg)
 	virtual void OnOK();
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()

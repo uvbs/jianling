@@ -14,13 +14,13 @@ static char THIS_FILE[] = __FILE__;
 #endif
 
 /////////////////////////////////////////////////////////////////////////////
-// CDlgBugRep dialog
+// CBugRepDlg dialog
 
 
-CDlgBugRep::CDlgBugRep(CJLkitDoc *pDoc)
-	: CDialog(CDlgBugRep::IDD, NULL)
+CBugRepDlg::CBugRepDlg(CJLkitDoc *pDoc)
+	: CDialog(CBugRepDlg::IDD, NULL)
 {
-	//{{AFX_DATA_INIT(CDlgBugRep)
+	//{{AFX_DATA_INIT(CBugRepDlg)
 	m_strBug = _T("");
 	//}}AFX_DATA_INIT
     m_pDoc = pDoc;
@@ -29,24 +29,24 @@ CDlgBugRep::CDlgBugRep(CJLkitDoc *pDoc)
 }
 
 
-void CDlgBugRep::DoDataExchange(CDataExchange* pDX)
+void CBugRepDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
-	//{{AFX_DATA_MAP(CDlgBugRep)
+	//{{AFX_DATA_MAP(CBugRepDlg)
 	DDX_Text(pDX, IDC_EDIT1, m_strBug);
 	//}}AFX_DATA_MAP
 }
 
 
-BEGIN_MESSAGE_MAP(CDlgBugRep, CDialog)
-	//{{AFX_MSG_MAP(CDlgBugRep)
+BEGIN_MESSAGE_MAP(CBugRepDlg, CDialog)
+	//{{AFX_MSG_MAP(CBugRepDlg)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
-// CDlgBugRep message handlers
+// CBugRepDlg message handlers
 
-void CDlgBugRep::OnOK() 
+void CBugRepDlg::OnOK() 
 {
 	// TODO: Add extra validation here
     UpdateData();
