@@ -1387,7 +1387,7 @@ void GamecallEx::FollowNpc(wchar_t *name, DWORD range)
 void GamecallEx::CloseXiaoDongHua()
 {
     DWORD dtzt;
-    dtzt = (DWORD)ReadByte(ReadDWORD(ReadDWORD(ReadDWORD(obj_enum_base)+0x2C)+0x1C)+0x448B0+0x21B);//是否有小动画 0是有 1是没有
+    dtzt = (DWORD)ReadByte(ReadDWORD(ReadDWORD(ReadDWORD(move_status_base)+move_status_offset1)+move_status_offset2)+move_status_offset3+move_status_offset31);//是否有小动画 0是有 1是没有
     if(dtzt == 1){
         //TRACE("动画状态中");
         //KeyPress(VK_ESCAPE);

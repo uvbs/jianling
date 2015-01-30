@@ -63,7 +63,7 @@
 #define		WM_CUSTOM_GCALL		(WM_USER + 0x300)
 
 
-#define     SHENXINGBAIBIANCHAZHI   0x1F35F18   //神行百变差值 
+#define     SHENXINGBAIBIANCHAZHI   0x1EE4F18   //神行百变差值 
 
 
 

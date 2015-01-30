@@ -1894,7 +1894,7 @@ void Gamecall::ZOULUSHUNYI(DWORD *adress,DWORD adrewss)
 		{
 			
             push shunyi_offset1;
-			push shunyi_offset1;
+			push shunyi_offset2;
 			
 			mov eax,obj_enum_base;
 			mov eax,[eax];
@@ -3817,13 +3817,13 @@ void Gamecall::DeliverQuests(DWORD id, DWORD step, DWORD questtype, DWORD ff, DW
 			mov eax, [eax +  deliver_quest_offset2];
 			mov esi, eax;
 			mov eax, [eax +  deliver_quest_offset3];
-			
-			mov edx, eax;
+			push eax;
+			mov ecx,0x0;
 			mov ecx, step;
 			mov ebx, id;
 			//mov edi, mianban;
 			
-			mov eax, deliver_quest_call ;
+			mov eax, deliver_quest_call;
 			call eax;
 		}
 	}
