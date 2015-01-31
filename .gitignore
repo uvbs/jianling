@@ -2,7 +2,7 @@ Release/
 Debug/
 Backup/
 ipch/
-JL.v11.suo
+*.*.suo
 *.ncb
 *.opt
 *.sdf
