@@ -5,16 +5,16 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
-// KeyViewDlg dialog
+// CDlgKeyView dialog
 class CJLkitSocket;
-class KeyViewDlg : public CDialog
+class CDlgKeyView : public CDialog
 {
-	DECLARE_DYNAMIC(KeyViewDlg)
+	DECLARE_DYNAMIC(CDlgKeyView)
     DECLARE_MESSAGE_MAP()
 
 public:
-	KeyViewDlg(CJLkitDoc* pDoc);   // standard constructor
-	virtual ~KeyViewDlg();
+	CDlgKeyView(CJLkitDoc* pDoc);   // standard constructor
+	virtual ~CDlgKeyView();
     void BindResult(int nResult);
     void UnBindResult(int nResult);
     void QueryKeyResult();
@@ -25,18 +25,18 @@ public:
 
 
 // Dialog Data
-	//{{AFX_DATA(KeyViewDlg)
+	//{{AFX_DATA(CDlgKeyView)
 	enum { IDD = IDD_KEY };
 	//}}AFX_DATA
 
 protected:
-	//{{AFX_VIRTUAL(KeyViewDlg)
+	//{{AFX_VIRTUAL(CDlgKeyView)
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 	virtual BOOL OnInitDialog();
 	//}}AFX_VIRTUAL
 
 public:
-    //{{AFX_MSG(KeyViewDlg)
+    //{{AFX_MSG(CDlgKeyView)
 	afx_msg void OnQuerykey();
     afx_msg void OnBinkey();
     afx_msg void OnUnbindkey();

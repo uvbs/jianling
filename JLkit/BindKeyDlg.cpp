@@ -12,32 +12,32 @@ static char THIS_FILE[] = __FILE__;
 #endif
 
 /////////////////////////////////////////////////////////////////////////////
-// CBindKeyDlg dialog
+// CDlgBindKey dialog
 
 
-CBindKeyDlg::CBindKeyDlg(CWnd* pParent /*=NULL*/)
-	: CDialog(CBindKeyDlg::IDD, pParent)
+CDlgBindKey::CDlgBindKey(CWnd* pParent /*=NULL*/)
+	: CDialog(CDlgBindKey::IDD, pParent)
 {
-	//{{AFX_DATA_INIT(CBindKeyDlg)
+	//{{AFX_DATA_INIT(CDlgBindKey)
 	m_strKey = _T("");
 	//}}AFX_DATA_INIT
 }
 
 
-void CBindKeyDlg::DoDataExchange(CDataExchange* pDX)
+void CDlgBindKey::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
-	//{{AFX_DATA_MAP(CBindKeyDlg)
+	//{{AFX_DATA_MAP(CDlgBindKey)
 	DDX_Text(pDX, IDC_BINDKEY, m_strKey);
 	//}}AFX_DATA_MAP
 }
 
 
-BEGIN_MESSAGE_MAP(CBindKeyDlg, CDialog)
-	//{{AFX_MSG_MAP(CBindKeyDlg)
+BEGIN_MESSAGE_MAP(CDlgBindKey, CDialog)
+	//{{AFX_MSG_MAP(CDlgBindKey)
 		// NOTE: the ClassWizard will add message map macros here
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
-// CBindKeyDlg message handlers
+// CDlgBindKey message handlers

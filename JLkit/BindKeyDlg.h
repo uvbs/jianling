@@ -8,16 +8,16 @@
 //
 
 /////////////////////////////////////////////////////////////////////////////
-// CBindKeyDlg dialog
+// CDlgBindKey dialog
 
-class CBindKeyDlg : public CDialog
+class CDlgBindKey : public CDialog
 {
 // Construction
 public:
-	CBindKeyDlg(CWnd* pParent = NULL);   // standard constructor
+	CDlgBindKey(CWnd* pParent = NULL);   // standard constructor
 
 // Dialog Data
-	//{{AFX_DATA(CBindKeyDlg)
+	//{{AFX_DATA(CDlgBindKey)
 	enum { IDD = IDD_BINDKEY };
 	CString	m_strKey;
 	//}}AFX_DATA
@@ -25,7 +25,7 @@ public:
 
 // Overrides
 	// ClassWizard generated virtual function overrides
-	//{{AFX_VIRTUAL(CBindKeyDlg)
+	//{{AFX_VIRTUAL(CDlgBindKey)
 	protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 	//}}AFX_VIRTUAL
@@ -34,7 +34,7 @@ public:
 protected:
 
 	// Generated message map functions
-	//{{AFX_MSG(CBindKeyDlg)
+	//{{AFX_MSG(CDlgBindKey)
 		// NOTE: the ClassWizard will add member functions here
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()

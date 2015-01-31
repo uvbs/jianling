@@ -5,14 +5,14 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
-class SettingDlg : public CDialog
+class CDlgSetting : public CDialog
 {
 // Construction
 public:
-	SettingDlg(CWnd* pParent = NULL);   // standard constructor
+	CDlgSetting(CWnd* pParent = NULL);   // standard constructor
 
 // Dialog Data
-	//{{AFX_DATA(SettingDlg)
+	//{{AFX_DATA(CDlgSetting)
 	enum { IDD = IDD_SETTING };
 	CString	m_strGamePath;
 	//}}AFX_DATA
@@ -20,7 +20,7 @@ public:
 
 // Overrides
 	// ClassWizard generated virtual function overrides
-	//{{AFX_VIRTUAL(SettingDlg)
+	//{{AFX_VIRTUAL(CDlgSetting)
 	protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 	//}}AFX_VIRTUAL
@@ -29,7 +29,7 @@ public:
 protected:
 
 	// Generated message map functions
-	//{{AFX_MSG(SettingDlg)
+	//{{AFX_MSG(CDlgSetting)
 	virtual BOOL OnInitDialog();
 	afx_msg void OnSettingBrowse();
 	//}}AFX_MSG

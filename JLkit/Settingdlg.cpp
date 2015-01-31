@@ -1,8 +1,8 @@
-// SettingDlg.cpp : implementation file
+// CDlgSetting.cpp : implementation file
 //
 
 #include "stdafx.h"
-#include "jlkit.h"
+#include "Jlkit.h"
 #include "Settingdlg.h"
 
 #ifdef _DEBUG
@@ -10,33 +10,33 @@
 #endif
 
 /////////////////////////////////////////////////////////////////////////////
-// SettingDlg dialog
+// CDlgSetting dialog
 
-SettingDlg::SettingDlg(CWnd* pParent /*=NULL*/)
-	: CDialog(SettingDlg::IDD, pParent)
+CDlgSetting::CDlgSetting(CWnd* pParent /*=NULL*/)
+	: CDialog(CDlgSetting::IDD, pParent)
 {
     m_strGamePath = _T("");
 }
 
-void SettingDlg::DoDataExchange(CDataExchange* pDX)
+void CDlgSetting::DoDataExchange(CDataExchange* pDX)
 {
     CDialog::DoDataExchange(pDX);
 
-    //{{AFX_DATA_MAP(SettingDlg)
+    //{{AFX_DATA_MAP(CDlgSetting)
     DDX_Text(pDX, IDC_GAMEPATH, m_strGamePath);
     //}}AFX_DATA_MAP
 }
 
-BEGIN_MESSAGE_MAP(SettingDlg, CDialog)
-	//{{AFX_MSG_MAP(SettingDlg)
+BEGIN_MESSAGE_MAP(CDlgSetting, CDialog)
+	//{{AFX_MSG_MAP(CDlgSetting)
 	ON_BN_CLICKED(IDC_SETTING_BROWSE, OnSettingBrowse)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
-// SettingDlg message handlers
+// CDlgSetting message handlers
 
-BOOL SettingDlg::OnInitDialog()
+BOOL CDlgSetting::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 
@@ -47,7 +47,7 @@ BOOL SettingDlg::OnInitDialog()
 }
 
 
-void SettingDlg::OnSettingBrowse() 
+void CDlgSetting::OnSettingBrowse() 
 {
 	// TODO: Add your control notification handler code here
 	CFileDialog* lpCfd = new CFileDialog(TRUE);

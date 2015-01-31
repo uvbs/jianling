@@ -160,23 +160,13 @@ void CMainFrame::OnTimer(UINT nIDEvent)
     CJLkitSocket* pSocket = pDoc->m_pSocket;
     CListCtrl &list = pView->GetListCtrl();
     
-    if(nIDEvent == IDT_TIMERPOSTKEYQUERY){
-        if(pSocket && pDoc){
-            pSocket->Querykey();
-        }
-    }
-    else if(nIDEvent == IDT_TIMERGAMEEXIT){
+    if(nIDEvent == IDT_TIMERGAMEEXIT){
         for(int i = 0; i < list.GetItemCount(); i++){
             CString strName = list.GetItemText(i, 0);
             if(pDoc->m_share.IsPidValid((LPCTSTR)strName) == FALSE){
                 pDoc->m_share.Del((LPCTSTR)strName);
                 list.SetItemText(i, COLUMN_TEXT_STATUS, _T("进程退出了"));
             }
-        }
-    }
-    else if(nIDEvent == IDT_HEART){
-        if(pSocket && pDoc){
-            pSocket->Heart();
         }
     }
 }

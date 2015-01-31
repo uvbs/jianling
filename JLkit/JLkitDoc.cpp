@@ -76,7 +76,7 @@ BOOL CJLkitDoc::OnNewDocument()
     if(!m_pSocket)
         m_pSocket = new CJLkitSocket(this);
     if(!m_pLoginDlg)
-        m_pLoginDlg = new CLoginDlg(this);
+        m_pLoginDlg = new CDlgLogin(this);
     if(!m_pJob)
         m_pJob = new CJob;
 
@@ -207,7 +207,7 @@ void CJLkitDoc::OnLookShareMem()
 
 void CJLkitDoc::OnLookkey()
 {
-    m_pKeyDlg = new KeyViewDlg(this);
+    m_pKeyDlg = new CDlgKeyView(this);
     m_pKeyDlg->DoModal();
     
     delete m_pKeyDlg;
@@ -217,7 +217,7 @@ void CJLkitDoc::OnLookkey()
 void CJLkitDoc::OnSetting() 
 {
     // TODO: Add your command handler code here
-    SettingDlg dlg;
+    CDlgSetting dlg;
     dlg.m_strGamePath = m_szGamePath;
     if(dlg.DoModal() == IDOK)
     {

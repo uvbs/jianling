@@ -204,7 +204,7 @@ BOOL GamecallEx::HeChengWuQi(EQUITMENT_POS pos)
 	}
 	else
 	{
-		TRACE("一个未知的颜色");
+		TRACE(_T("一个未知的颜色"));
 		bFindColor = FALSE;
 	}
 
@@ -448,7 +448,7 @@ void GamecallEx::XieZhuangBei(EQUITMENT_POS pos)
 		}
 	}
 	__except(1){
-		TRACE("卸装备出错");
+		TRACE(_T("卸装备出错"));
 	}
 }
 
@@ -490,7 +490,7 @@ void GamecallEx::Shunyi(TCHAR* szLujing)
 			//TODO: 钩子那里同样的问题, 但是能用
 			size_t count = fread(temp, 512, 1, file);
 			if(count == 0){
-				TRACE("读取出错");
+				TRACE(_T("读取出错"));
 			}
 
 			memcpy(buff, temp, 512);
@@ -1390,7 +1390,7 @@ void GamecallEx::CloseXiaoDongHua()
     dtzt = (DWORD)ReadByte(ReadDWORD(ReadDWORD(ReadDWORD(move_status_base)+move_status_offset1)+move_status_offset2)+move_status_offset3+move_status_offset31);//是否有小动画 0是有 1是没有
 	TRACE1("小动画状态:%d",dtzt);
     if(dtzt == 1){
-        //TRACE("动画状态中");
+        //TRACE(_T("动画状态中"));
         //KeyPress(VK_ESCAPE);
 		Sleep(100);
 		KeyPress(27);

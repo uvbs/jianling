@@ -5,15 +5,15 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
-// Modifybind dialog
+// CDlgModifyBind dialog
 
-class Modifybind : public CDialog
+class CDlgModifyBind : public CDialog
 {
-	DECLARE_DYNAMIC(Modifybind)
+	DECLARE_DYNAMIC(CDlgModifyBind)
 
 public:
-	Modifybind(CWnd* pParent = NULL);   // standard constructor
-	virtual ~Modifybind();
+	CDlgModifyBind(CWnd* pParent = NULL);   // standard constructor
+	virtual ~CDlgModifyBind();
 
 // Dialog Data
 	enum { IDD = IDD_MODIFYBIND };
