@@ -393,7 +393,8 @@ static void __stdcall myDunDi()
 
 
 //交任务钩子函数
-static void __stdcall myDeliveQuest(DWORD questID, 
+static void __stdcall myDeliveQuest(DWORD unknow,
+									DWORD questID, 
                              UCHAR questStep,
                              DWORD argv3,
                              DWORD argv4, 
@@ -419,7 +420,7 @@ static void __stdcall myDeliveQuest(DWORD questID,
     
     
     log2(_T("dump stack"));
-    for(i = 0; i < 7; i++)
+    for(i = 0; i < 8; i++)
     {
         log2(_T("esp+%d %08x"), i, *(pEsp + i));
     }
@@ -477,7 +478,7 @@ static void __stdcall myDeliveQuest(DWORD questID,
         {
             popad;
             leave;
-            retn 28;
+            retn 32;
         }
     }
 }

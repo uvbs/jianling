@@ -118,7 +118,13 @@ enum {
 		id_msg_NewSpend,
 		id_msg__GetUiAddrByName,
 		id_msg_GetStrikeToVector,
-		id_msg_LinQuJiangLi
+		id_msg_LinQuJiangLi,
+		id_msg_QueRenJiNengDian,
+		id_msg_QuChuJiNengDian,
+		id_msg_JiaJiNengDian,
+		id_msg_OpenTalentUI,
+		id_msg_ConfirmDeletePalentPanelShowOk,
+		id_msg_OpenDeleteTalentPanel
 };
 
 
@@ -366,13 +372,19 @@ public:
 
 	//加点
 	void JiaJiNengDian(DWORD ID); //加技能点
+	void _JiaJiNengDian(DWORD ID); //加技能点
 	void QuChuJiNengDian(DWORD ID); //去除技能点
+	void _QuChuJiNengDian(DWORD ID); //去除技能点
 	void QueRenJiNengDian(); //确认技能点
+	void _QueRenJiNengDian(); //确认技能点
 	void OpenDeleteTalentPanel();
+	void _OpenDeleteTalentPanel();
 	void DaKaiQingChuQuanBuJiNengJieMian(DWORD adress,DWORD adress1);
 	void ConfirmDeletePalentPanelShowOk();
+	void _ConfirmDeletePalentPanelShowOk();
 	void QueRenQingChuQuanBuJiNengJieMian(DWORD adress,DWORD adress1);
 	void OpenTalentUI();
+	void _OpenTalentUI();
 
 
 	//商品

@@ -107,8 +107,14 @@ void Gamecall::Fuhuo(DWORD uiAddr)
 		OutputDebugString(_T("¸´»îÊ§°Ü"));
 	}
 }
+
 //´ò¿ªÌì¸³ui
 void Gamecall::OpenTalentUI()
+{
+	sendcall(id_msg_OpenTalentUI,0);
+}
+//´ò¿ªÌì¸³ui
+void Gamecall::_OpenTalentUI()
 {
 	DWORD dwUIAddr = 0;
 	GetUIAddrByName(L"SystemMenuPanel", &dwUIAddr);
@@ -165,6 +171,36 @@ DWORD Gamecall::call(DWORD id, LPVOID pParam)
 {
 	switch(id)
 	{
+	case id_msg_OpenTalentUI:
+		{
+			_OpenTalentUI();
+		}
+		break;
+	case id_msg_ConfirmDeletePalentPanelShowOk:
+		{
+			_ConfirmDeletePalentPanelShowOk();
+		}
+		break;
+	case id_msg_OpenDeleteTalentPanel:
+		{
+			_OpenDeleteTalentPanel();
+		}
+		break;
+	case id_msg_QueRenJiNengDian:
+		{
+			_QueRenJiNengDian();
+		}
+		break;
+	case id_msg_QuChuJiNengDian:
+		{
+			_QuChuJiNengDian((DWORD)pParam);
+		}
+		break;
+	case id_msg_JiaJiNengDian:
+		{
+			_JiaJiNengDian((DWORD)pParam);
+		}
+		break;
 	case id_msg_LinQuJiangLi:
 		{
 			_LinQuJiangLi();
@@ -3665,13 +3701,13 @@ pickup_one:
 		
 		for(int i = 0; i < 6; i++)
 		{
+			Sleep(200);
 			if(GetPlayerQuestUIStatus() != 2)
 			{
+				Sleep(200);
 				break;
 			}
-			
-			KeyPress('Y');
-			Sleep(200);
+			KeyPress(89);
 		}
 		
 		
@@ -3818,7 +3854,7 @@ void Gamecall::DeliverQuests(DWORD id, DWORD step, DWORD questtype, DWORD ff, DW
 			mov esi, eax;
 			mov eax, [eax +  deliver_quest_offset3];
 			push eax;
-			mov ecx,0x0;
+			mov ecx, 0x0;
 			mov ecx, step;
 			mov ebx, id;
 			//mov edi, mianban;
@@ -6821,7 +6857,14 @@ void Gamecall::RandomStep(DWORD range)
 	Stepto(fmypos, 10, 10);
 }
 
+
 void Gamecall::QuChuJiNengDian(DWORD ID) //È¥³ý¼¼ÄÜµã
+{
+	sendcall(id_msg_QuChuJiNengDian,(LPVOID)ID);
+}
+
+
+void Gamecall::_QuChuJiNengDian(DWORD ID) //È¥³ý¼¼ÄÜµã
 {
 	__try{
 		_asm{
@@ -6880,9 +6923,13 @@ void Gamecall::DaKaiQingChuQuanBuJiNengJieMian(DWORD adress,DWORD adress1) //´ò¿
 	}
 }
 
-
 //´ò¿ªÇå¿Õ¼¼ÄÜµãµÄui
 void Gamecall::OpenDeleteTalentPanel()
+{
+	sendcall(id_msg_OpenDeleteTalentPanel,0);
+}
+//´ò¿ªÇå¿Õ¼¼ÄÜµãµÄui
+void Gamecall::_OpenDeleteTalentPanel()
 {
 	DWORD dwUIAddr = 0;
 	PARAM_GETUIADDRBYNAME temp;
@@ -6936,6 +6983,12 @@ void Gamecall::QueRenQingChuQuanBuJiNengJieMian(DWORD adress,DWORD adress1)
 //È·ÈÏÉ¾³ýÌì¸³µÄui
 void Gamecall::ConfirmDeletePalentPanelShowOk()
 {
+	sendcall(id_msg_ConfirmDeletePalentPanelShowOk,0);
+}
+
+//È·ÈÏÉ¾³ýÌì¸³µÄui
+void Gamecall::_ConfirmDeletePalentPanelShowOk()
+{
 	DWORD dwUIAddr = 0;
     GetUIAddrByName(L"SkillTrainInitConfirmPanel", &dwUIAddr);
 	if(dwUIAddr){
@@ -6971,6 +7024,11 @@ BOOL Gamecall::isConfirmDeleteTalnetPanelShow()
 
 void Gamecall::QueRenJiNengDian() //È·ÈÏ¼¼ÄÜµã
 {
+	sendcall(id_msg_QueRenJiNengDian,0);
+}
+
+void Gamecall::_QueRenJiNengDian() //È·ÈÏ¼¼ÄÜµã
+{
 	__try{
 		_asm{
 			mov eax, obj_enum_base;
@@ -6993,6 +7051,10 @@ void Gamecall::QueRenJiNengDian() //È·ÈÏ¼¼ÄÜµã
 
 void Gamecall::JiaJiNengDian(DWORD ID) //¼Ó¼¼ÄÜµã
 {
+	sendcall(id_msg_JiaJiNengDian,(LPVOID)ID);
+}
+void Gamecall::_JiaJiNengDian(DWORD ID) //¼Ó¼¼ÄÜµã
+{
 	__try{
 		_asm{
 
@@ -7008,8 +7070,6 @@ void Gamecall::JiaJiNengDian(DWORD ID) //¼Ó¼¼ÄÜµã
 			push eax; 
 			mov ebx,add_strike_call;
 			call ebx;
-
-
 		}
 	}
 	__except(1){

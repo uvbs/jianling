@@ -63,10 +63,8 @@ static UINT AutoCloseThread(LPVOID pParam)
 	
 	while(1)
 	{
-
 		gcall.CloseXiaoDongHua();
-
-		Sleep(3000);
+		Sleep(1000);
 	}
 
 }
