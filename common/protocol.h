@@ -56,7 +56,7 @@ struct LOGIN_BUF
 	//¹¦ÄÜºÅ
 	char fun;
 	char name[MAXLEN];
-	char password[MAXLEN];
+	char pw[MAXLEN];
 };
 
 

@@ -132,7 +132,7 @@ BOOL CJLSrvrDoc::isLogined(TCHAR *szUserName)
     while(pos != NULL)
     {
         CRequestSocket* pSocket = (CRequestSocket *)m_ClientList.GetAt(pos);
-        if(strcmp(szUserName, pSocket->szName) == 0){
+        if(strcmp(szUserName, pSocket->m_szName) == 0){
             return TRUE;
         }
         m_ClientList.GetNext(pos);

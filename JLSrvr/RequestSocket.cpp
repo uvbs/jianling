@@ -250,11 +250,11 @@ BOOL CRequestSocket::ProcessRequest(BYTE* pRequestBuf)
 	case fun_login:
 		{
 			LOGIN_BUF* pLoginBuf = (LOGIN_BUF *)pRequestBuf;
-			int nResult = GetPwRight(pLoginBuf->name, pLoginBuf->password);
+			int nResult = GetPwRight(pLoginBuf->name, pLoginBuf->pw);
 
 			m_pRequest->strUserName = pLoginBuf->name;
 			m_pRequest->strType = _T("登录");
-			m_pRequest->strOther = pLoginBuf->password;
+			m_pRequest->strOther = pLoginBuf->pw;
 
 			if(nResult == result_login_ok){
 				
@@ -265,6 +265,8 @@ BOOL CRequestSocket::ProcessRequest(BYTE* pRequestBuf)
                 }
                 else{
                     m_pRequest->strResult = _T("验证完成");
+                    memcpy(m_szName, pLoginBuf->name, MAXLEN*sizeof(TCHAR));
+                    memcpy(m_szPw, pLoginBuf->pw, MAXLEN*sizeof(TCHAR));
                 }
 			}
 			else if(nResult == result_login_pwerror){
@@ -287,11 +289,11 @@ BOOL CRequestSocket::ProcessRequest(BYTE* pRequestBuf)
 	case fun_querykey:
 		{
 
-			LOGIN_BUF* LoginBuf = (LOGIN_BUF *)pRequestBuf;
+			LOGIN_BUF* pLoginBuf = (LOGIN_BUF *)pRequestBuf;
 			std::vector<QUERYKEY_RET_BUF> querybuf;
 			m_pRequest->strType = _T("查询卡号");
             m_pRequest->strOther = _T("");
-			if(Querykey(querybuf, LoginBuf->name, LoginBuf->password)){
+			if(Querykey(querybuf, pLoginBuf->name, pLoginBuf->pw)){
 				m_pRequest->strResult = _T("完成");
 
 				m_buf.SetSize(sizeof(QUERYKEY_RET_BUF) * querybuf.size());
