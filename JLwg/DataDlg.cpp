@@ -1435,7 +1435,7 @@ void CDataDlg::OnHookAcceptquest()
 {
 	// TODO: Add your control notification handler code here
 	UpdateData(TRUE);
-	if(m_bHook_quest)
+	if(m_bHook_Accquest)
 	{
 		aeQuestHook.hook();
 	}
