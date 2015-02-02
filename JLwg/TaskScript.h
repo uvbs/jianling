@@ -38,7 +38,9 @@ public:
 	void Task_316(int zid,int taskid);//21장. 겁먹은 아이
 	void Task_493(int zid,int taskid);//22장. 첩자의 정체
 	void Task_317(int zid,int taskid);//23장. 경국지색
-	void Task_318(int zid,int taskid);//
+	void Task_318(int zid,int taskid);//24장. 거짓 서신
+	void Task_319(int zid,int taskid);//
+	void Task_320(int zid,int taskid);//
 	void Task_294(int zid,int taskid);//魔道4-19
 	void Lianji6();//6级副本
 	void Lianji6_go();//6级副本 进

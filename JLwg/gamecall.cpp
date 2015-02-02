@@ -537,7 +537,8 @@ DWORD Gamecall::call(DWORD id, LPVOID pParam)
 		
 	case id_msg_CunCangku:
 		{
-			CunCangku(*(_BAGSTU *)pParam);
+			PARAM_GUANSHANGDIAN* temp = (PARAM_GUANSHANGDIAN *)pParam;	
+			CunCangku(*(_BAGSTU *)temp->argv1);
 		}
 		break;
 	}
@@ -692,7 +693,6 @@ BOOL Gamecall::GetGoodsByName_Hezi(wchar_t *name, std::vector<_BAGSTU> &GoodsVec
 				GoodsVec.insert(GoodsVec.begin(), temp);
 			}
 		}
-		
 	}
 	
 	
@@ -997,7 +997,7 @@ BOOL Gamecall::SortBag()
 //参数1: 背包中的格子数
 void Gamecall::CunCangku(_BAGSTU &goods)
 {
-	
+	TRACE1("格子:%d",goods.m_Info);
 	int value = goods.m_Info;
 	value <<= 16;
 	value += package;
@@ -2206,7 +2206,7 @@ BOOL Gamecall::OpenShangDian(wchar_t* name, DWORD* pUiAddr)
 	//先判断打开没有
 	BOOL bOpen = FALSE;
 	
-	GetUIAddrByName(L"ItemStorePanel", pUiAddr);
+	GetUIAddrByName(L"TalkControlPanel", pUiAddr);//old-ItemStorePanel
 	if(*pUiAddr == 0)
         return FALSE;
 	
@@ -2214,7 +2214,8 @@ BOOL Gamecall::OpenShangDian(wchar_t* name, DWORD* pUiAddr)
 	//等待四秒判断商店是否已经打开
 	for(DWORD i = 0; i < 4; i++){
 		
-		if(*(DWORD *)(*pUiAddr + 0x88) == 0){
+		//TRACE1("123:%d",*(DWORD *)(*pUiAddr + 0x38));
+		if(*(DWORD *)(*pUiAddr + 0x38) == 2){
 			
 			ObjectNode *pNode = GetObjectByName(name);
 			if(pNode == NULL){
@@ -7292,5 +7293,86 @@ void Gamecall::_NPCJieRenWu(DWORD canshu1, DWORD canshu2, DWORD canshu3, DWORD c
 	}
 	__except(1){
 		OutputDebugString(FUNCNAME);
+	}
+}
+
+void Gamecall::ChangeZ_Status(BOOL flag)
+{
+	HMODULE hBsengine = ::GetModuleHandle(_T("bsengine_Shipping"));
+	unsigned addr = (unsigned)hBsengine;
+	unsigned addr1 = (unsigned)hBsengine;
+	addr = addr + 0x593AFA;
+    addr1 = addr1 + 0x0A410FC;
+
+	DWORD pi = 0;
+	DWORD pi1 = 0;
+
+	//VirtualProtect((void*)addr,4,PAGE_EXECUTE_READWRITE ,&pi);
+	//*(WORD*)(addr) = 0x0EEB;
+	//VirtualProtect((void*)addr,4,pi ,&pi);
+	if (flag)
+	{
+		if ( ReadByte(addr) == 0xF3 )
+		{
+
+			VirtualProtect((void*)addr,4,PAGE_EXECUTE_READWRITE ,&pi);
+			*(WORD*)(addr) = 0x0EEB;
+			VirtualProtect((void*)addr,4,pi ,&pi);
+		}
+		if ( ReadByte(addr1) == 0xD9 )
+		{
+
+			VirtualProtect((void*)addr1,4,PAGE_EXECUTE_READWRITE ,&pi1);
+			*(WORD*)(addr1) = 0x01EB;
+			VirtualProtect((void*)addr1,4,pi1 ,&pi1);
+		}
+	}
+	else
+	{
+		if ( ReadByte(addr) == 0xEB )
+		{
+			VirtualProtect((void*)addr,4,PAGE_EXECUTE_READWRITE ,&pi);
+			*(WORD*)(addr) = 0x0FF3;
+			VirtualProtect((void*)addr,4,pi ,&pi);
+		}
+		if ( ReadByte(addr1) == 0xEB )
+		{
+
+			VirtualProtect((void*)addr1,4,PAGE_EXECUTE_READWRITE ,&pi1);
+			*(WORD*)(addr1) = 0x5ED9;
+			VirtualProtect((void*)addr1,4,pi1 ,&pi1);
+		}
+	}
+
+}
+
+void Gamecall::ChangeHeight(float how)
+{
+	HMODULE hBsengine = ::GetModuleHandle(_T("bsengine_Shipping"));
+	unsigned addr = (unsigned)hBsengine;
+	addr = addr + SHENXINGBAIBIANCHAZHI;
+
+
+	//int gg = 43480000;
+	__try
+	{
+		__asm
+		{
+			mov eax, addr;
+			mov eax, [eax];
+			mov eax, [eax + 0x3bc];
+			mov eax, [eax];
+			mov eax, [eax + 0x40];
+			mov eax, [eax + 0x214];
+			//add eax, 0x5C;
+			mov ebx,how;
+			mov dword ptr ds:[eax+0x5C],ebx;
+
+
+		}
+	}
+	__except(1)
+	{
+		TRACE("飞起错误");
 	}
 }

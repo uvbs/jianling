@@ -40,7 +40,8 @@ public:
 	void Stepto(wchar_t *name);
 	void FollowNpc(wchar_t *name, DWORD range = 1000);
 	void FuHuo();
-	BOOL CityConvey(DWORD cityid);		//传送
+	BOOL _CityConvey(DWORD cityid);		//传送
+	void CityConvey(DWORD cityid);//传送 逻辑 判断
 	void Shunyi(TCHAR* szLujing);
 	void NewSpend(float x);
 	void TurnTo(ObjectNode* pNode);
@@ -53,7 +54,8 @@ public:
 	//商品, 背包
 	void NewBag();
 	void BuyItem(DWORD nums, DWORD index, wchar_t *npcname, BOOL bClose = TRUE);  //购买物品
-	void CunCangku(wchar_t *name);    //放仓库
+	void CunCangku(wchar_t *name,wchar_t *npcname);    //放仓库
+	void CuncangkuByConfig(wchar_t *name);//配置文件存仓库
 	void DeleteItem(wchar_t *name);   //删除一个物品
 	void DeleteItemByConfig();		//删除配置文件中所有物品
 	void SellItem(wchar_t *name, wchar_t* npcName, BOOL bClose = TRUE);     //卖掉一个物品

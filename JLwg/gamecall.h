@@ -215,7 +215,8 @@ public:
 	TCHAR* GetLujingPath(){return m_szLujingPath;}
 	TCHAR* GetConfigPath(){return m_szConfigPath;}
 	TCHAR* GetLujingTest(){return m_szLujingTest;}
-
+	void ChangeZ_Status(BOOL flag);//¸Ä×´Ì¬
+	void ChangeHeight(float how);
 
 
 	
