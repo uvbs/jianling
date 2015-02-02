@@ -25,7 +25,6 @@ BOOL GamecallEx::HeChengWuQi_Po5(EQUITMENT_POS pos, wchar_t *name)
 	_BAGSTU zhu;
 	if(GetGoodsByEquipPos(pos, &zhu) == FALSE)
 	{
-
 		log.logdv(_T("装备位置没有物品"));
 		return FALSE;
 	}
@@ -35,45 +34,48 @@ BOOL GamecallEx::HeChengWuQi_Po5(EQUITMENT_POS pos, wchar_t *name)
 	_BAGSTU fu;
 	if(GetGoodsFromBagByName(name, &fu) == FALSE)
 	{
-		log.logdv(_T("背包没有对应物品"));
+		log.logdv(_T("背包里没有对应物品"));
 		return FALSE;
 	}
-
+	
 
 	//参数有, 再判断合成目标有没有已经满5
-	BOOL isFull5 = FALSE;
-	if(fu.m_PingJi == 5 &&
-		(fu.m_DangQianJingYanZhi == fu.m_DangQianJingYanZongZhi))
+	BOOL isFull5_fu = FALSE;
+	if (_wcsicmp(fu.name,qianhun) == 0)
 	{
-		//已经满5
-		isFull5 = TRUE;
+		isFull5_fu = TRUE;
+	}else
+	{
+		if(fu.m_PingJi == 5 &&
+			(fu.m_DangQianJingYanZhi == fu.m_DangQianJingYanZongZhi))
+		{
+			//已经满5
+			isFull5_fu = TRUE;
+		}
 	}
+	
 
-	if(isFull5)
+	if(isFull5_fu)
 	{
 
 		PARAM_GUANSHANGDIAN temp;
 		temp.argv1 = (DWORD)&zhu;
 		temp.argv2 = (DWORD)&fu;
 		sendcall(id_msg_HeChengWuQi_Po5, &temp);
-		
+		Sleep(2000);
 		//破5级后继续强化
 		HeChengWuQi(pos);
 	}
 	else
 	{
-		log.logdv(_T("这个物品还未满5级"));
-		log.logdv(_T("开始合成"));
-		if(HeChengWuQi(pos))
+		log.logdv(_T("材料武器还未满5级"));
+		log.logdv(_T("开始使用武魂合成"));
+		if(HeChengWuQiByHun(pos))
 		{
-
 			return HeChengWuQi_Po5(pos, name);
-
 		}
-
 		log.logdv(_T("合成完毕, 依然不满5"));
 	}
-
 
 	return TRUE;
 }
@@ -488,9 +490,12 @@ void GamecallEx::Shunyi(TCHAR* szLujing)
 			BYTE temp[512];
 			//TODO: 这里还有问题, 得保证512全部读出来了.
 			//TODO: 钩子那里同样的问题, 但是能用
-			size_t count = fread(temp, 512, 1, file);
+			size_t count = fread(temp, 1, 512, file);
 			if(count == 0){
 				TRACE(_T("读取出错"));
+			}else
+			{
+				//TRACE1("读取:%d",count);
 			}
 
 			memcpy(buff, temp, 512);
@@ -586,16 +591,16 @@ int GamecallEx::FindThenKill(int pos, DWORD range, DWORD mode,DWORD MyQuestStep,
 	GetPlayerPos(&fmypos);
 
 startKiLL:
-	log.logdv(_T("遍历怪物"));
+	//log.logdv(_T("遍历怪物"));
 	std::vector<ObjectNode *> RangeObject;
 	GetRangeMonsterToVector(range, RangeObject);
     
 
 	//排序
-	log.logdv(_T("怪物排序"));
+	//log.logdv(_T("怪物排序"));
 	std::sort(RangeObject.begin(), RangeObject.end(), UDgreater);
 
-	log.logdv(_T("根据配置配需"));
+	//log.logdv(_T("根据配置配需"));
 	Kill_ApplyConfig(RangeObject);
 
     DWORD count = RangeObject.size();
@@ -1017,7 +1022,7 @@ BOOL GamecallEx::Stepto(float y, float x, float z, double timeOut, DWORD okRange
 	tarpos.x = x;
 	tarpos.y = y;
 	tarpos.z = z;
-	
+	TRACE3("走路:%d,%d,%d",(int)y,(int)x,(int)z);
 	return Gamecall::Stepto(tarpos, timeOut, okRange, tooLong,sp3x);
 }
 
@@ -1117,36 +1122,13 @@ BOOL GamecallEx::CityConvey(DWORD cityid)
 //NPC接任务
 void GamecallEx::NPCJieRenWu(DWORD canshu1, DWORD canshu2, DWORD canshu3, DWORD canshu4, DWORD canshu5)
 {
-	__try{
-		__asm{
-			mov ebx, canshu5;
-			push ebx;
-			mov ebx, canshu4;
-			push ebx;
-			mov ebx, canshu3;
-			push ebx;
-			mov ebx, canshu2;
-			push ebx;
-			mov ebx, canshu1;
-			push ebx;
-
-			mov eax, obj_enum_base;
-			mov eax, [eax];
-			mov eax, [eax + npc_quest_offset1];
-			mov eax, [eax + npc_quest_offset2];
-			mov ecx, [eax + npc_quest_offset3];
-			mov edx, [eax + npc_quest_offset4];
-			push edx;
-			mov eax, [eax + npc_quest_offset5];
-			push eax;
-
-			mov ebx, npc_quest_call;
-			call ebx;
-		}
-	}
-	__except(1){
-		OutputDebugString(FUNCNAME);
-	}
+	PARAM_JIEFENGZHUANGBEI temp;
+	temp.argv1 = canshu1;
+	temp.argv2 = canshu2;
+	temp.argv3 = canshu3;
+	temp.argv4 = canshu4;
+	temp.argv5 = canshu5;
+	sendcall(id_msg_NPCJieRenWu,&temp);
 }
 
 BOOL GamecallEx::BuqiBaGua()
@@ -1388,7 +1370,7 @@ void GamecallEx::CloseXiaoDongHua()
 {
     DWORD dtzt;
     dtzt = (DWORD)ReadByte(ReadDWORD(ReadDWORD(ReadDWORD(move_status_base)+move_status_offset1)+move_status_offset2)+move_status_offset3+move_status_offset31);//是否有小动画 0是有 1是没有
-	TRACE1("小动画状态:%d",dtzt);
+	//TRACE1("小动画状态:%d",dtzt);
     if(dtzt == 1){
         //TRACE(_T("动画状态中"));
         //KeyPress(VK_ESCAPE);
@@ -1751,16 +1733,23 @@ void GamecallEx::TurnTo(ObjectNode* pNode)
 	
 }
 //添加一个天赋技能
-void GamecallEx::AddTalent( DWORD id )
+void GamecallEx::AddTalent(DWORD id)
 {
-	OpenTalentUI();
-	Sleep(1000);
-
-	if(isTalentPanelShow()){
-		JiaJiNengDian(id);
-		Sleep(1000);
-		QueRenJiNengDian();
+	while (true)
+	{
+		if(isTalentPanelShow()){
+			JiaJiNengDian(id);
+			Sleep(1000);
+			QueRenJiNengDian();
+			Sleep(1000);
+			break;
+		}else
+		{
+			OpenTalentUI();
+			Sleep(1000);
+		}
 	}
+	
 }
 
 //删除一个天赋技能
@@ -1779,9 +1768,240 @@ void GamecallEx::DelTalent( DWORD id )
 
 void GamecallEx::DelAllTalent()
 {
-	OpenDeleteTalentPanel();
-	Sleep(1000);
-	if(isConfirmDeleteTalnetPanelShow()){
-		ConfirmDeletePalentPanelShowOk();
+	while (true)
+	{
+		Sleep(1000);
+		if(isTalentPanelShow()){
+			break;
+		}else
+		{
+			OpenTalentUI();
+		}
 	}
+	while (true)
+	{
+		Sleep(1000);
+		if(isConfirmDeleteTalnetPanelShow()){
+			ConfirmDeletePalentPanelShowOk();
+			Sleep(1000);
+			//QueRenJiNengDian();
+			break;
+		}else
+		{
+			OpenDeleteTalentPanel();
+		}
+	}
+	
+}
+
+void GamecallEx::TurnToNear(DWORD range)
+{
+	std::vector<ObjectNode *> RangeObject;
+	GetRangeMonsterToVector(range, RangeObject);
+	//排序
+	//log.logdv(_T("怪物排序"));
+	std::sort(RangeObject.begin(), RangeObject.end(), UDgreater);
+	//log.logdv(_T("根据配置配需"));
+	Kill_ApplyConfig(RangeObject);
+	if (RangeObject.size()>0)
+	{
+		TRACE2("找到最近怪,面向它.ID:%d,ID2:%d",RangeObject[0]->id,RangeObject[0]->id2);
+		TurnTo(RangeObject[0]);
+	}
+}
+
+void GamecallEx::Kill_Tab()
+{
+	int cs;
+	cs = 0;
+	sendcall(id_msg_attack, (LPVOID)0x5dca);
+	while (true)
+	{
+		if (cs > 20)
+		{
+			return;
+		}
+		Sleep(500);
+		if (isStrikeCd(0x5dca) == TRUE)
+		{
+			break;
+		}
+		cs++;
+	}
+}
+//普通攻击, rt 循环按, 具体逻辑看里面, 需要参数来使视角总是面向这个对象
+void GamecallEx::AttackNormal()
+{
+
+	//放技能, 加对魔法值的判断
+	if(GetPlayerMana() >= 50){
+		//T
+		sendcall(id_msg_attack, (LPVOID)0x5dde);
+	}
+	else{	
+		//Attack(ATTACK_R);
+		sendcall(id_msg_attack, (LPVOID)0x5dc1);
+	}
+
+}
+
+
+//AOE攻击
+//TODO: 可以通过判断公共cd来优化
+void GamecallEx::AttackAOE()
+{
+	
+	int mana = GetPlayerMana();
+	if(mana >= 60){
+		/*sendcall(id_msg_attack, (LPVOID)0x5dca);
+		Sleep(1000);*/
+		Kill_Tab();
+	}
+	else{
+		sendcall(id_msg_attack, (LPVOID)0x5dc1);
+	}
+	
+	
+}
+
+//杀死对象, 逻辑中带有走路
+//循环出口: 怪死, 超时, 角色死, 出范围
+//参数1: 对象地址
+//参数2: 超时
+//补充:参数2, 这个模式影响杀怪的整个过程
+//canKillRange 设定多远距离可直接攻击
+int GamecallEx::KillObject(DWORD range, ObjectNode *pNode, DWORD mode, DWORD canKillRange)
+{
+	//记录当下状态来判断目标是否死亡或者杀怪超时
+	DWORD oriTime = GetTickCount();
+	DWORD tarHealth = GetType4HP(pNode->ObjAddress);;
+	int chiyaojs;
+	chiyaojs = 0;
+	fPosition mypos;
+	fPosition targetpos;
+	for(;;){
+		if (chiyaojs == 0)
+		{
+			if (GetHealth(50) == 1)
+			{
+				chiyaojs = 100*12;//100次*12 1次=50毫秒
+			}else if (GetHealth(50) == 2 || GetHealth(50) == 3 || GetHealth(50) == 5)
+			{
+				chiyaojs = 50000;//出现2，3，4就不准备进循环
+			}else if(GetHealth(50) == 4)
+			{
+				chiyaojs = 20;//CD中，给1秒时间再进入判断。
+			}
+		}else
+		{
+			chiyaojs--;
+		}
+		
+		
+		if(GetPlayerHealth() <= 0){
+			log.logdv(_T("%s: 人物死亡了"), FUNCNAME);
+			return RESULT_KILL_PLAYDEAD;
+		}
+		
+		//整个逻辑根据距离来作为输入数据来做判断
+
+		if(GetType4HP(pNode->ObjAddress) == -1 || GetType4HP(pNode->ObjAddress) == 0){
+			log.logdv(_T("%s: 血量判断怪死了"), FUNCNAME);
+			return RESULT_KILL_OK;
+		}
+
+
+		ZeroMemory(&mypos,sizeof(fPosition));
+		GetPlayerPos(&mypos);
+		
+		//通过距离判断目标死亡
+		
+		ZeroMemory(&targetpos,sizeof(fPosition));
+		if (GetObjectType(pNode->ObjAddress) != 0x4)
+		{
+			log.logdv(_T("%s: 类型判断怪死了"), FUNCNAME);
+			return RESULT_KILL_OK;
+		}
+		if(_GetObjectPos(pNode->ObjAddress, &targetpos) == FALSE){
+			log.logdv(_T("%s: 坐标判断怪死了"), FUNCNAME);
+			return RESULT_KILL_OK;
+		}
+		DWORD dis = (DWORD)CalcC(targetpos, mypos);
+		if(CalcC(targetpos, mypos) >= range){
+			log.logdv(_T("%s: 距离判断怪死了"), FUNCNAME);
+			return RESULT_KILL_OK;
+		}
+		
+		
+		
+		/*
+		不可用
+		if(GetObject_0x14(pNode->ObjAddress) == 0){
+		log.logdv(_T("%s: 0x14判断怪死了"), FUNCNAME);
+		return RESULT_KILL_OK;
+		}*/
+
+		
+		//可继续走
+		if(dis > canKillRange){
+			targetpos.x = targetpos.x-10;
+			targetpos.y = targetpos.y-10;
+			Gamecall::Stepto(targetpos, 10, CAN_OPERATOR, range);
+		/*}else if(dis <= 2){
+			log.logdv(_T("自己的坐标X:%d,y:%d,怪物的坐标X:%d,Y:%d"),(int)mypos.x,(int)mypos.y,(int)targetpos.x,(int)targetpos.y);
+			log.logdv(_T("%s: 重叠怪物"), FUNCNAME);
+			RandomStep(30);*/
+		}else if(dis <= canKillRange){
+			//判断倒地状态
+			if(isPlayerDaodi()){
+				//5E60->5EA6->5EB0->5E9C
+				TRACE("进入倒地状态");
+				if(isStrikeCd(0x5e60) == TRUE){
+					TRACE("进入倒地状态:0x5e60");
+					sendcall(id_msg_attack, (LPVOID)0x5e60);
+					Sleep(1000);
+				}
+				else if(isStrikeCd(0x5EA6) == TRUE){
+					TRACE("进入倒地状态:0x5EA6");
+					sendcall(id_msg_attack, (LPVOID)0x5EA6);
+				}
+				else if(isStrikeCd(0x5EB0) == TRUE){
+					TRACE("进入倒地状态:0x5EB0");
+					sendcall(id_msg_attack, (LPVOID)0x5EB0);
+				}
+				else if(isStrikeCd(0x5E9C) == TRUE){
+					TRACE("进入倒地状态:0x5E9C");
+					sendcall(id_msg_attack, (LPVOID)0x5E9C);
+				}
+				
+			}
+			//杀怪时才需要转向
+			Gamecall::TurnTo(targetpos);
+			if(mode & modeAoe){
+				if(GetRangeMonsterCount() >= 2){
+					AttackAOE();
+				}else{
+					AttackNormal();
+				}
+			}
+			else{
+				AttackNormal();
+			}
+
+			//5秒没能打掉血就退
+			DWORD curTime = GetTickCount();
+			if((curTime - oriTime) >= 5000){
+				DWORD curHealth = GetType4HP(pNode->ObjAddress);
+				if(curHealth == tarHealth){
+					log.logdv(_T("%s: 超时退出"), FUNCNAME);
+					return RESULT_KILL_TIMEOUT;
+				}
+				else{
+					oriTime = GetTickCount();
+					tarHealth = GetType4HP(pNode->ObjAddress);
+				}
+			}
+		}
+		Sleep(50);
+	}//for
 }
