@@ -13,7 +13,8 @@
 #define		MAXLEN			16
 #define		KEYLEN			128
 
-enum{
+
+enum FUNCODE{
 		fun_login		,	//µÇÂ¼
 		fun_regist		,	//×¢²á
 		fun_log			,	//ÈÕÖ¾
@@ -34,7 +35,7 @@ enum{
 #define	result_login_pwerror	0
 #define	result_login_ok			1
 #define	result_login_notuser	2
-
+#define result_login_logined    3
 
 
 #define	result_bind_fail	0
