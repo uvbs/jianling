@@ -42,7 +42,7 @@ public:
     void StopListening();
     void ClientAccept();
     void ClientClose(CRequestSocket *pSock);
- 
+    BOOL isLogined(TCHAR *szUserName);
 // Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CJLSrvrDoc)
@@ -72,7 +72,7 @@ protected:
 	afx_msg void OnFileRestart();
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
-
+ 
     
 };
 

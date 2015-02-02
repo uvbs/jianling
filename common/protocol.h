@@ -13,7 +13,8 @@
 #define		MAXLEN			16
 #define		KEYLEN			128
 
-enum{
+
+enum FUNCODE{
 		fun_login		,	//登录
 		fun_regist		,	//注册
 		fun_log			,	//日志
@@ -34,7 +35,7 @@ enum{
 #define	result_login_pwerror	0
 #define	result_login_ok			1
 #define	result_login_notuser	2
-
+#define result_login_logined    3
 
 
 #define	result_bind_fail	0
@@ -55,7 +56,7 @@ struct LOGIN_BUF
 	//功能号
 	char fun;
 	char name[MAXLEN];
-	char password[MAXLEN];
+	char pw[MAXLEN];
 };
 
 

@@ -126,6 +126,21 @@ void CJLSrvrDoc::StopListening()
     }
 }
 
+BOOL CJLSrvrDoc::isLogined(TCHAR *szUserName)
+{
+    POSITION pos = m_ClientList.GetHeadPosition();
+    while(pos != NULL)
+    {
+        CRequestSocket* pSocket = (CRequestSocket *)m_ClientList.GetAt(pos);
+        if(strcmp(szUserName, pSocket->m_szName) == 0){
+            return TRUE;
+        }
+        m_ClientList.GetNext(pos);
+    }
+
+    return FALSE;
+}
+
 void CJLSrvrDoc::SetTitle(LPCTSTR lpszTitle)
 {
 	CString strTitle;

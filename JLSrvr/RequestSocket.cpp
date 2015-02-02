@@ -249,13 +249,25 @@ BOOL CRequestSocket::ProcessRequest(BYTE* pRequestBuf)
 
 	case fun_login:
 		{
-			LOGIN_BUF* LoginBuf = (LOGIN_BUF *)pRequestBuf;
-			int nResult = GetPwRight(LoginBuf->name, LoginBuf->password);
+			LOGIN_BUF* pLoginBuf = (LOGIN_BUF *)pRequestBuf;
+			int nResult = GetPwRight(pLoginBuf->name, pLoginBuf->pw);
 
+			m_pRequest->strUserName = pLoginBuf->name;
 			m_pRequest->strType = _T("登录");
-			m_pRequest->strOther = LoginBuf->password;
+			m_pRequest->strOther = pLoginBuf->pw;
+
 			if(nResult == result_login_ok){
-				m_pRequest->strResult = _T("验证完成");
+				
+                //检测是否已经登录
+                if(m_pDoc->isLogined(pLoginBuf->name)){
+                    m_pRequest->strResult = _T("已经登陆");
+                    nResult = result_login_logined;
+                }
+                else{
+                    m_pRequest->strResult = _T("验证完成");
+                    memcpy(m_szName, pLoginBuf->name, MAXLEN*sizeof(TCHAR));
+                    memcpy(m_szPw, pLoginBuf->pw, MAXLEN*sizeof(TCHAR));
+                }
 			}
 			else if(nResult == result_login_pwerror){
 				m_pRequest->strResult = _T("密码错误");
@@ -264,7 +276,6 @@ BOOL CRequestSocket::ProcessRequest(BYTE* pRequestBuf)
                 m_pRequest->strResult = _T("用户不存在");
             }
 
-			m_pRequest->strUserName = LoginBuf->name;
 
             RET_BUF retbuf;
             retbuf.fun = fun;
@@ -278,23 +289,21 @@ BOOL CRequestSocket::ProcessRequest(BYTE* pRequestBuf)
 	case fun_querykey:
 		{
 
-			LOGIN_BUF* LoginBuf = (LOGIN_BUF *)pRequestBuf;
+			LOGIN_BUF* pLoginBuf = (LOGIN_BUF *)pRequestBuf;
 			std::vector<QUERYKEY_RET_BUF> querybuf;
 			m_pRequest->strType = _T("查询卡号");
             m_pRequest->strOther = _T("");
-			if(Querykey(querybuf, LoginBuf->name, LoginBuf->password)){
+			if(Querykey(querybuf, pLoginBuf->name, pLoginBuf->pw)){
 				m_pRequest->strResult = _T("完成");
 
 				m_buf.SetSize(sizeof(QUERYKEY_RET_BUF) * querybuf.size());
-				for(int i = 0; i < querybuf.size(); i++)
-				{
+				for(int i = 0; i < querybuf.size(); i++){
 					memcpy((m_buf.GetData() + sizeof(QUERYKEY_RET_BUF) * i), &querybuf[i], sizeof(QUERYKEY_RET_BUF));
 				}
 
 				
 			}
-			else
-			{
+			else{
 				m_pRequest->strResult = _T("失败");
 
 				RET_BUF retbuf;
@@ -307,7 +316,7 @@ BOOL CRequestSocket::ProcessRequest(BYTE* pRequestBuf)
 		break;
 
 	case fun_unbindkey:
-		{
+        {
 			KEY_BUF* keybuf = (KEY_BUF *)pRequestBuf;
 
 			m_pRequest->strType = _T("解绑");

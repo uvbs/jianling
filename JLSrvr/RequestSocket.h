@@ -22,7 +22,8 @@ public:
     CRequest* m_pRequest;
 	SOCKADDR_IN m_soaddr;
     CByteArray  m_buf;
-
+    TCHAR m_szName[MAXLEN];
+    TCHAR m_szPw[MAXLEN];
 
 // Operations
 public:

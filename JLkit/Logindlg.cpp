@@ -87,6 +87,9 @@ void CDlgLogin::LoginResult(int nResult)
     else if(nResult == result_login_pwerror){
         AfxMessageBox(_T("ÃÜÂë´íÎó"));
     }
+    else if(nResult == result_login_logined){
+        AfxMessageBox(_T("ÕÊºÅÒÑ¾­µÇÂ¼"));
+    }
     
 }
 
