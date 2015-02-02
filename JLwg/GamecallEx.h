@@ -29,7 +29,11 @@ public:
 	void kill_PickupOnce();
 	BOOL kill_PickupBody();
 	BOOL kill_Task(int MyQuestID, int MyQuestStep);
-
+	void Kill_Tab();//tab释放等待
+	void AttackNormal();	//普通攻击 , rt 循环按, 需要参数来使视角总是面向这个对象
+	void AttackAOE();						//AOE攻击
+	//杀怪
+	int			KillObject(DWORD range, ObjectNode *pNode, DWORD mode, DWORD canKillRange = CAN_OPERATOR); //杀死这个对象
 
 	//控制
 	BOOL Stepto(float y, float x, float z, double timeout = 10, DWORD OkRange = CAN_OPERATOR, DWORD toolong = 1000,BOOL sp3x = FALSE);
@@ -40,7 +44,7 @@ public:
 	void Shunyi(TCHAR* szLujing);
 	void NewSpend(float x);
 	void TurnTo(ObjectNode* pNode);
-
+	void TurnToNear(DWORD range);
 
 	//线路
 	void randXianlu(DWORD MaxXianlu);

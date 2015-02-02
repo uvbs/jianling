@@ -124,7 +124,8 @@ enum {
 		id_msg_JiaJiNengDian,
 		id_msg_OpenTalentUI,
 		id_msg_ConfirmDeletePalentPanelShowOk,
-		id_msg_OpenDeleteTalentPanel
+		id_msg_OpenDeleteTalentPanel,
+		id_msg_NPCJieRenWu
 };
 
 
@@ -160,6 +161,9 @@ const wchar_t hun1[] = L"\xc218\xb828\xbb34\xd63c";
 const wchar_t hun2[] = L"\xbb34\xd63c";
 const wchar_t hun3[] = L"\xd589\xc6b4\xbb34\xd63c";
 const wchar_t hun4[] = L"\xd64d\xbb38\xbb34\xd63c";
+
+//千魂武器
+const wchar_t qianhun[] = L"\ucc9c\ub839\ub3c4\ub07c";
 
 #define JINGDIANMOSHICALL_JIEGOUTOU     0x0A7CD0A4      // 经典模式CALL的结构头  
 #define QUDINGYAOJIANG_JIEGOUTOU		0x0A7CD0A4      // 确定摇奖CALL的结构头  
@@ -317,11 +321,11 @@ public:
 
 	//任务
     void        _GetAcceptedQuestToVector(std::vector<Quest> &QuestVec);
-	void		GetAcceptedQuestToVector(std::vector<Quest> &QuestVec);
+	void			GetAcceptedQuestToVector(std::vector<Quest> &QuestVec);
 	void        DeliverQuests(DWORD id, DWORD step, DWORD questtype, DWORD ff, DWORD npcid1, DWORD npcid2, DWORD unknow, DWORD mianban);     //交任务
 	DWORD		GetTaskStartAddr();  //获取任务开始地址
 	DWORD		GetTaskID(int i, DWORD pAddr);  //获得当前任务ID
-	wchar_t*	GatTaskName(DWORD ID); //获取当前已接任务名字
+	wchar_t*		GatTaskName(DWORD ID); //获取当前已接任务名字
 	DWORD		GetTaskNameID(int i, DWORD pAddr);  //获得当前任务名字ID
 	DWORD		GetTaskPresentAddr(int i, DWORD pAddr);  //获得当前任务地址
 	DWORD		GetPresentTaskIndexes(int i, DWORD pAddr);  //获得当前做到第几个小任务
@@ -329,7 +333,7 @@ public:
 	DWORD		GetPresentTaskNum(int i, DWORD pAddr ,DWORD info );  //获得当前小任务已经打的怪数量
 	void        OpenQuestItem(DWORD ID,DWORD ID2);    //打开任务物品
 	DWORD		GetTaskStepById(DWORD id);
-
+	void			_NPCJieRenWu(DWORD canshu1, DWORD canshu2, DWORD canshu3, DWORD canshu4, DWORD canshu5);//NPC接任务
 
 
 	//ui 和技能
@@ -475,9 +479,7 @@ public:
 	void		PickdownBody(); //这个用来一个任务捡起尸体又放下来完成任务
 
 
-	//杀怪
-	int			KillObject(DWORD range, ObjectNode *pNode, DWORD mode, DWORD canKillRange = CAN_OPERATOR); //杀死这个对象
-
+	
 	//走路
 	BOOL Stepto(fPosition &tarpos, double timeOut = 10, DWORD okRange = CAN_OPERATOR, DWORD tooLong = 1000,BOOL sp3x = FALSE);
 	void Step(float x, float y, float z);
@@ -495,8 +497,7 @@ public:
 	void ChiYao(const wchar_t *name);		//吃药, 药名
 	void Attack(int id);
 	void Attack(const wchar_t *name);
-	void AttackNormal();	//普通攻击 , rt 循环按, 需要参数来使视角总是面向这个对象
-	void AttackAOE();						//AOE攻击
+
 
 
 	//转向

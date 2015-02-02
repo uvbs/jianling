@@ -171,6 +171,12 @@ DWORD Gamecall::call(DWORD id, LPVOID pParam)
 {
 	switch(id)
 	{
+	case id_msg_NPCJieRenWu:
+		{
+			PARAM_JIEFENGZHUANGBEI* temp = (PARAM_JIEFENGZHUANGBEI*)pParam;
+			_NPCJieRenWu(temp->argv1,temp->argv2,temp->argv3,temp->argv4,temp->argv5);
+		}
+		break;
 	case id_msg_OpenTalentUI:
 		{
 			_OpenTalentUI();
@@ -5332,23 +5338,23 @@ void Gamecall::GetRangeMonsterToVector(DWORD range, std::vector<ObjectNode *> &M
     {
 		//这个函数简写了,  直接从范围对象中遍历的过滤
 		std::vector<ObjectNode *> RangeObject;
-		log.logdv(_T("执行GetRangeObjectToVector"));
+		//log.logdv(_T("执行GetRangeObjectToVector"));
 		GetRangeObjectToVector(GetObjectBinTreeBaseAddr(), range, RangeObject);
 		
 		fPosition fmypos;
-		log.logdv(_T("执行GetPlayerPos"));
+		//log.logdv(_T("执行GetPlayerPos"));
 		GetPlayerPos(&fmypos);
 		for(DWORD i = 0; i < RangeObject.size(); i++)
 		{
 			ObjectNode *pNode = RangeObject[i];
-			log.logdv(_T("执行GetObjectName"));
+			//log.logdv(_T("执行GetObjectName"));
 			wchar_t* objName = GetObjectName(pNode->ObjAddress);
 			if(objName == NULL)
 				continue;
 
 			fPosition fpos;
 			//过滤掉距离远的和没距离的
-			log.logdv(_T("执行GetObjectPos"));
+			//log.logdv(_T("执行GetObjectPos"));
 			if(GetObjectPos(RangeObject[i], &fpos) == FALSE)
 				continue;
 			
@@ -5357,7 +5363,7 @@ void Gamecall::GetRangeMonsterToVector(DWORD range, std::vector<ObjectNode *> &M
 			
 			if(CalcC(fpos, fmypos) > range)
 				continue;
-			log.logdv(_T("执行isCanLook"));
+			//log.logdv(_T("执行isCanLook"));
 			if(isCanLook(pNode->ObjAddress) == FALSE)
 				continue;
 
@@ -6526,39 +6532,7 @@ DWORD Gamecall::isYaoPingCD(_BAGSTU &goods)
 }
 
 
-//普通攻击, rt 循环按, 具体逻辑看里面, 需要参数来使视角总是面向这个对象
-void Gamecall::AttackNormal()
-{
 
-	//放技能, 加对魔法值的判断
-	if(GetPlayerMana() >= 50){
-		//T
-		sendcall(id_msg_attack, (LPVOID)0x5dde);
-	}
-	else{	
-		//Attack(ATTACK_R);
-		sendcall(id_msg_attack, (LPVOID)0x5dc1);
-	}
-
-}
-
-
-//AOE攻击
-//TODO: 可以通过判断公共cd来优化
-void Gamecall::AttackAOE()
-{
-	
-	int mana = GetPlayerMana();
-	if(mana >= 60){
-		sendcall(id_msg_attack, (LPVOID)0x5dca);
-		Sleep(1000);
-	}
-	else{
-		sendcall(id_msg_attack, (LPVOID)0x5dc1);
-	}
-	
-	
-}
 
 //转向
 void Gamecall::TurnTo(fPosition &pos)
@@ -6670,140 +6644,7 @@ BOOL Gamecall::PickupDeadbody(DWORD range)
 
 
 
-//杀死对象, 逻辑中带有走路
-//循环出口: 怪死, 超时, 角色死, 出范围
-//参数1: 对象地址
-//参数2: 超时
-//补充:参数2, 这个模式影响杀怪的整个过程
-//canKillRange 设定多远距离可直接攻击
-int Gamecall::KillObject(DWORD range, ObjectNode *pNode, DWORD mode, DWORD canKillRange)
-{
-	//记录当下状态来判断目标是否死亡或者杀怪超时
-	DWORD oriTime = GetTickCount();
-	DWORD tarHealth = GetType4HP(pNode->ObjAddress);;
-	int chiyaojs;
-	chiyaojs = 0;
-	fPosition mypos;
-	fPosition targetpos;
-	for(;;){
-		if (chiyaojs == 0)
-		{
-			if (GetHealth(50) == 1)
-			{
-				chiyaojs = 100*12;//100次*12 1次=50毫秒
-			}else if (GetHealth(50) == 2 || GetHealth(50) == 3 || GetHealth(50) == 5)
-			{
-				chiyaojs = 50000;//出现2，3，4就不准备进循环
-			}else if(GetHealth(50) == 4)
-			{
-				chiyaojs = 20;//CD中，给1秒时间再进入判断。
-			}
-		}else
-		{
-			chiyaojs--;
-		}
-		
-		
-		if(GetPlayerHealth() <= 0){
-			log.logdv(_T("%s: 人物死亡了"), FUNCNAME);
-			return RESULT_KILL_PLAYDEAD;
-		}
-		
-		//整个逻辑根据距离来作为输入数据来做判断
 
-		if(GetType4HP(pNode->ObjAddress) == -1 || GetType4HP(pNode->ObjAddress) == 0){
-			log.logdv(_T("%s: 血量判断怪死了"), FUNCNAME);
-			return RESULT_KILL_OK;
-		}
-
-
-		ZeroMemory(&mypos,sizeof(fPosition));
-		GetPlayerPos(&mypos);
-		
-		//通过距离判断目标死亡
-		
-		ZeroMemory(&targetpos,sizeof(fPosition));
-		if (GetObjectType(pNode->ObjAddress) != 0x4)
-		{
-			log.logdv(_T("%s: 类型判断怪死了"), FUNCNAME);
-			return RESULT_KILL_OK;
-		}
-		if(_GetObjectPos(pNode->ObjAddress, &targetpos) == FALSE){
-			log.logdv(_T("%s: 坐标判断怪死了"), FUNCNAME);
-			return RESULT_KILL_OK;
-		}
-		DWORD dis = (DWORD)CalcC(targetpos, mypos);
-		if(CalcC(targetpos, mypos) >= range){
-			log.logdv(_T("%s: 距离判断怪死了"), FUNCNAME);
-			return RESULT_KILL_OK;
-		}
-		
-		
-		
-		/*
-		不可用
-		if(GetObject_0x14(pNode->ObjAddress) == 0){
-		log.logdv(_T("%s: 0x14判断怪死了"), FUNCNAME);
-		return RESULT_KILL_OK;
-		}*/
-
-		
-		//可继续走
-		if(dis > canKillRange){
-			targetpos.x = targetpos.x-10;
-			targetpos.y = targetpos.y-10;
-			Stepto(targetpos, 10, CAN_OPERATOR, range);
-		}else if(dis <= 2){
-			log.logdv(_T("自己的坐标X:%d,y:%d,怪物的坐标X:%d,Y:%d"),(int)mypos.x,(int)mypos.y,(int)targetpos.x,(int)targetpos.y);
-			log.logdv(_T("%s: 重叠怪物"), FUNCNAME);
-			RandomStep(30);
-		}else if(dis <= canKillRange){
-			//判断倒地状态
-			if(isPlayerDaodi()){
-				//5E60->5EA6->5EB0->5E9C
-				if(isStrikeCd(0x5e60) == FALSE){
-					sendcall(id_msg_attack, (LPVOID)0x5e60);
-				}
-				else if(isStrikeCd(0x5EA6) == FALSE){
-					sendcall(id_msg_attack, (LPVOID)0x5EA6);
-				}
-				else if(isStrikeCd(0x5EB0) == FALSE){
-					sendcall(id_msg_attack, (LPVOID)0x5EB0);
-				}
-				else if(isStrikeCd(0x5E9C) == FALSE){
-					sendcall(id_msg_attack, (LPVOID)0x5E9C);
-				}
-			}
-			//杀怪时才需要转向
-			TurnTo(targetpos);
-			if(mode & modeAoe){
-				if(GetRangeMonsterCount() >= 2){
-					AttackAOE();
-				}else{
-					AttackNormal();
-				}
-			}
-			else{
-				AttackNormal();
-			}
-
-			//5秒没能打掉血就退
-			DWORD curTime = GetTickCount();
-			if((curTime - oriTime) >= 5000){
-				DWORD curHealth = GetType4HP(pNode->ObjAddress);
-				if(curHealth == tarHealth){
-					log.logdv(_T("%s: 超时退出"), FUNCNAME);
-					return RESULT_KILL_TIMEOUT;
-				}
-				else{
-					oriTime = GetTickCount();
-					tarHealth = GetType4HP(pNode->ObjAddress);
-				}
-			}
-		}
-		Sleep(50);
-	}//for
-}
 
 
 void Gamecall::DeleteItem(_BAGSTU &bag)
@@ -6932,14 +6773,16 @@ void Gamecall::OpenDeleteTalentPanel()
 void Gamecall::_OpenDeleteTalentPanel()
 {
 	DWORD dwUIAddr = 0;
-	PARAM_GETUIADDRBYNAME temp;
-	temp.argv1 = (DWORD)GetUIBinTreeBaseAddr();
-	temp.argv2 = (DWORD)L"SkillTrainPanel";
-	temp.argv3 = (DWORD)&dwUIAddr;
+	//PARAM_GETUIADDRBYNAME temp;
+	//temp.argv1 = (DWORD)GetUIBinTreeBaseAddr();
+	//temp.argv2 = (DWORD);
+	//temp.argv3 = (DWORD);
+	GetUIAddrByName(L"SkillTrainPanel",&dwUIAddr);
 	DWORD canshu2 = 0;
-	canshu2 =  ReadDWORD(dwUIAddr+0x58);
+	canshu2 =  ReadDWORD(dwUIAddr+clearstrike_isopen);
 
 	if(canshu2 > 0){
+		TRACE("123");
 		DaKaiQingChuQuanBuJiNengJieMian(dwUIAddr,canshu2); //打开清除全部技能界面
 	}
 }
@@ -7308,7 +7151,6 @@ BOOL Gamecall::isStrikeCd(DWORD id)
 			{
 				break;
 			}
-			
 		}
 	}
 	return FALSE;
@@ -7412,6 +7254,40 @@ void Gamecall::_LinQuJiangLi()
 			push edx;
 			mov eax, get_jiangli_call;
 			call eax;
+		}
+	}
+	__except(1){
+		OutputDebugString(FUNCNAME);
+	}
+}
+
+void Gamecall::_NPCJieRenWu(DWORD canshu1, DWORD canshu2, DWORD canshu3, DWORD canshu4, DWORD canshu5)
+{
+	__try{
+		__asm{
+			mov ebx, canshu5;
+			push ebx;
+			mov ebx, canshu4;
+			push ebx;
+			mov ebx, canshu3;
+			push ebx;
+			mov ebx, canshu2;
+			push ebx;
+			mov ebx, canshu1;
+			push ebx;
+
+			mov eax, obj_enum_base;
+			mov eax, [eax];
+			mov eax, [eax + npc_quest_offset1];
+			mov eax, [eax + npc_quest_offset2];
+			mov ecx, [eax + npc_quest_offset3];
+			mov edx, [eax + npc_quest_offset4];
+			push edx;
+			mov eax, [eax + npc_quest_offset5];
+			push eax;
+
+			mov ebx, npc_quest_call;
+			call ebx;
 		}
 	}
 	__except(1){
