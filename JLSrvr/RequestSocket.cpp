@@ -414,8 +414,7 @@ BOOL CRequestSocket::ModifyBind(TCHAR szUserName[], TCHAR szPassword[], TCHAR sz
 		
 		
 		record.GetFieldValue(_T("旧绑定"), strOldbind);
-		if(strOldbind == szOldBind)
-		{
+		if(strOldbind == szOldBind){
 			//旧绑定和用户提交的一致"
 			//开始判断上次更改日期
 			

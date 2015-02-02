@@ -66,7 +66,7 @@ void CDlgModifyBind::OnBnClickedOk()
 		memcpy(modifybuf.new_bind, (LPCTSTR)m_strNewbind, MAXLEN);
 		memcpy(modifybuf.old_bind, (LPCTSTR)m_strOldbind, MAXLEN);
 		memcpy(modifybuf.name, (LPCTSTR)m_strName, MAXLEN);
-		memcpy(modifybuf.password, (LPCTSTR)m_strPw, MAXLEN);
+		memcpy(modifybuf.pw, (LPCTSTR)m_strPw, MAXLEN);
 
 
 // 		g_sock = socket(AF_INET, SOCK_STREAM, 0);

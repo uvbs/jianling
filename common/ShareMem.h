@@ -10,6 +10,8 @@
 #endif // _MSC_VER > 1000
 
 #define SHAREMAXLEN 32
+
+
 typedef struct _SHAREINFO
 {
 	char szName[SHAREMAXLEN];

@@ -6,7 +6,6 @@
 
 #include "ListenSocket.h"
 #include "JLSrvrDoc.h"
-#include "DBLoginDlg.h"
 #include "RequestSocket.h"
 #include "Request.h"
 
@@ -79,41 +78,34 @@ void CJLSrvrDoc::OnFileRestart()
 
 BOOL CJLSrvrDoc::OnNewDocument()
 {
-	if (!CDocument::OnNewDocument())
-		return FALSE;
-	
-	
-	CDBLoginDlg dlg;
-	for(;;){
-		if(dlg.DoModal() != IDOK)
-			return FALSE;
-		m_strDbName = dlg.m_strDBName;
-		m_strDbPw = dlg.m_strPassW;
-		m_strDbUser = dlg.m_strUserName;
-		m_strIp = dlg.m_strIP;
-		m_strServer = ((CJLSrvrApp *)AfxGetApp())->m_strDefSvr;
-		m_pDB = new CDatabase;
-		CString strConnect = _T("DRIVER={SQL SERVER}; SERVER=" + m_strIp + "; Database=" + 
-			m_strDbName + "; uid=" + m_strDbUser + "; pwd=" + m_strDbPw);
-		
-		TRY{
-			BOOL bOpen = m_pDB->OpenEx(strConnect,CDatabase::noOdbcDialog);
-			break;
-		}
-		CATCH(CDBException, e){
-			if(AfxMessageBox(IDS_DB_OPENERROR, MB_YESNO) == IDNO){
-				delete m_pDB;
-				return FALSE;
-			}
-			
-		}
-		END_CATCH
-	}
-	
-	
-	BOOL bListen = StartListening();
-	SetTitle(NULL);
-	return bListen;
+    if (!CDocument::OnNewDocument())
+        return FALSE;
+    
+    BOOL bRet = FALSE;
+    
+    if(!m_pDB)
+        m_pDB = new CDatabase;
+
+
+    TRY{
+        bRet = m_pDB->OpenEx(NULL, CDatabase::openReadOnly);
+        if(bRet)
+        {
+            bRet = StartListening();
+            SetTitle(NULL);
+        }
+        
+    }
+    CATCH(CDBException, e){
+        if(AfxMessageBox(IDS_DB_OPENERROR, MB_YESNO) == IDNO){
+            delete m_pDB;
+        }
+        
+    }
+    END_CATCH
+     
+    
+    return bRet;
 }
 
 

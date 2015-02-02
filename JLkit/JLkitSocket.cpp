@@ -114,7 +114,7 @@ BOOL CJLkitSocket::BindKey(CString &strKey)
     keybuf.fun = fun_bindkey;
     _tcsncpy(keybuf.key, (LPCTSTR)strKey, KEYLEN);
     _tcsncpy(keybuf.name, (LPCTSTR)m_UserInfo.name, MAXLEN);
-    _tcsncpy(keybuf.password, (LPCTSTR)m_UserInfo.password, MAXLEN);
+    _tcsncpy(keybuf.pw, (LPCTSTR)m_UserInfo.pw, MAXLEN);
     //	memcpy(&keybuf.pcdata, &pcinfo.stPcData, sizeof(PCDATA));
     
     Send(&keybuf, sizeof(KEY_BUF));
@@ -128,7 +128,7 @@ void CJLkitSocket::Unbindkey(CString &strKey)
     keybuf.fun = fun_unbindkey;
     _tcsncpy(keybuf.key, (LPCTSTR)strKey, KEYLEN);
     _tcsncpy(keybuf.name, (LPCTSTR)m_UserInfo.name, MAXLEN);
-    _tcsncpy(keybuf.password, (LPCTSTR)m_UserInfo.password, MAXLEN);
+    _tcsncpy(keybuf.pw, (LPCTSTR)m_UserInfo.pw, MAXLEN);
     Send(&keybuf, sizeof(KEY_BUF));
 }
 
@@ -138,7 +138,7 @@ BOOL CJLkitSocket::Querykey()
     LOGIN_BUF keybuf;
     keybuf.fun = fun_querykey;
     _tcsncpy(keybuf.name, (LPCTSTR)m_UserInfo.name, MAXLEN);
-    _tcsncpy(keybuf.password, (LPCTSTR)m_UserInfo.password, MAXLEN);
+    _tcsncpy(keybuf.pw, (LPCTSTR)m_UserInfo.pw, MAXLEN);
     Send(&keybuf, sizeof(LOGIN_BUF));
     return TRUE;
 }
@@ -150,7 +150,7 @@ BOOL CJLkitSocket::LoginSrv(CString &strName, CString &strPassWord)
     //将用户名和密码放到发包结构中
     m_UserInfo.fun = fun_login;
     _tcsncpy(m_UserInfo.name, (LPCTSTR)strName, MAXLEN);
-    _tcsncpy(m_UserInfo.password, (LPCTSTR)strPassWord, MAXLEN);	
+    _tcsncpy(m_UserInfo.pw, (LPCTSTR)strPassWord, MAXLEN);	
     
     int nBytes = Send(&m_UserInfo, sizeof(LOGIN_BUF));
     
@@ -163,7 +163,7 @@ void CJLkitSocket::Reportbug(CString &strBug)
     BUG_BUF loginbuf;
     loginbuf.fun = fun_bugrep;
     _tcsncpy(loginbuf.name, (LPCTSTR)m_UserInfo.name, MAXLEN);
-    _tcsncpy(loginbuf.password, (LPCTSTR)m_UserInfo.password, MAXLEN);
+    _tcsncpy(loginbuf.pw, (LPCTSTR)m_UserInfo.pw, MAXLEN);
     _tcsncpy(loginbuf.szBug, (LPCTSTR)strBug, BUFSIZ);
     
     Send(&loginbuf, sizeof(BUG_BUF));
