@@ -15,41 +15,43 @@
 class CJLkitView;
 class CLaunchThread : public CWinThread
 {
-	DECLARE_DYNCREATE(CLaunchThread)
+    DECLARE_DYNCREATE(CLaunchThread)
 protected:
-	CLaunchThread();           // protected constructor used by dynamic creation
+    CLaunchThread();           // protected constructor used by dynamic creation
 
 // Attributes
 public:
 
-
-    
-	CJLkitView* m_pView;
-	void SetOwner(CJLkitView* pOwner) { m_pView = pOwner; };
-    BOOL isWorking(){return m_bIsWorking;};
+    CJLkitView* m_pView;
+    void SetOwner(CJLkitView* pOwner) {
+        m_pView = pOwner;
+    };
+    BOOL isWorking() {
+        return m_bIsWorking;
+    };
     BOOL m_bIsWorking;
 // Operations
 public:
 
 // Overrides
-	// ClassWizard generated virtual function overrides
-	//{{AFX_VIRTUAL(CLaunchGameThread)
-	public:
-	virtual int Run();
-	virtual BOOL InitInstance();
-	//}}AFX_VIRTUAL
+    // ClassWizard generated virtual function overrides
+    //{{AFX_VIRTUAL(CLaunchThread)
+public:
+    virtual int Run();
+    virtual BOOL InitInstance();
+    //}}AFX_VIRTUAL
 
 // Implementation
 protected:
-	virtual ~CLaunchThread();
+    virtual ~CLaunchThread();
 
-	// Generated message map functions
-	//{{AFX_MSG(CLaunchGameThread)
-		// NOTE - the ClassWizard will add and remove member functions here.
-	//}}AFX_MSG
+    // Generated message map functions
+    //{{AFX_MSG(CLaunchThread)
+    // NOTE - the ClassWizard will add and remove member functions here.
+    //}}AFX_MSG
 
-	DECLARE_MESSAGE_MAP()
- 
+    DECLARE_MESSAGE_MAP()
+
 };
 
 /////////////////////////////////////////////////////////////////////////////

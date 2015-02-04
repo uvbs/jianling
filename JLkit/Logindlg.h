@@ -16,46 +16,44 @@ class CDlgLogin : public CDialog
 {
 // Construction
 public:
-	CDlgLogin(CJLkitDoc* pDoc);   // standard constructor
+    CDlgLogin(CJLkitDoc* pDoc);   // standard constructor
 
 
 // Dialog Data
 public:
-	//{{AFX_DATA(CDlgLogin)
+    //{{AFX_DATA(CDlgLogin)
     enum {IDD = IDD_LOGIN};
-	CComboBox m_ComBox;
-	CString	m_strName;
-	CString	m_strPw;
+    CComboBox m_ComBox;
+    CString	m_strName;
+    CString	m_strPw;
     BOOL m_bRemPw;
-	//}}AFX_DATA
+    //}}AFX_DATA
 
     CJLkitSocket* m_pSocket;
     CJLkitDoc* m_pDoc;
 
     void LoginResult(int nResult);
-    void ConnectResult(int nErrorCode);
- 
 
 // Overrides
-	// ClassWizard generated virtual function overrides
-	//{{AFX_VIRTUAL(CDlgLogin)
-	protected:
-	virtual BOOL OnInitDialog();
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+    // ClassWizard generated virtual function overrides
+    //{{AFX_VIRTUAL(CDlgLogin)
+protected:
+    virtual BOOL OnInitDialog();
+    virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
     virtual void OnOK();
-	//}}AFX_VIRTUAL
+    //}}AFX_VIRTUAL
 
 // Implementation
 protected:
 
-	// Generated message map functions
-	//{{AFX_MSG(CDlgLogin)
-	afx_msg void OnBtnRegister();
-	afx_msg void OnBtnModifybind();
-	//}}AFX_MSG
-	DECLARE_MESSAGE_MAP()
+    // Generated message map functions
+    //{{AFX_MSG(CDlgLogin)
+    afx_msg void OnBtnRegister();
+    afx_msg void OnBtnModifybind();
+    //}}AFX_MSG
+    DECLARE_MESSAGE_MAP()
 
-  
+
 };
 
 #endif

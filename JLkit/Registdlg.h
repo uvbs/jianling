@@ -5,12 +5,12 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
-
+class CJLkitSocket;
 class CDlgRegist : public CDialog
 {
 // Construction
 public:
-	CDlgRegist(CWnd* pParent = NULL);   // standard constructor
+	CDlgRegist(CJLkitSocket* pSock, CWnd* pParent = NULL);   // standard constructor
 
 // Dialog Data
 	//{{AFX_DATA(CDlgRegist)
@@ -21,6 +21,7 @@ public:
 	//}}AFX_DATA
 
 
+    CJLkitSocket* m_pSock;
 // Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CDlgRegist)

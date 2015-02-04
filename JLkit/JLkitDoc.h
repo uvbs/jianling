@@ -43,8 +43,8 @@ public:
     ShareMem m_share;
     std::vector<QUERYKEY_RET_BUF> m_KeyVec;
 
-    int LaunchGame(const CString& strName, const CString& strPw,
-                   const CString& strConfig, const CString& strScript, BOOL bProfile = FALSE);
+    int LaunchGame(const CString& strName, const CString& strPw, const CString& strConfig,
+                   const CString& strScript, BOOL bProfile = FALSE);
 
     CDlgKeyView* m_pKeyDlg;
     CDlgLogin* m_pLoginDlg;

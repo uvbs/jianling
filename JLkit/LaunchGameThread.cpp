@@ -34,9 +34,9 @@ CLaunchThread::~CLaunchThread()
 
 
 BEGIN_MESSAGE_MAP(CLaunchThread, CWinThread)
-	//{{AFX_MSG_MAP(CLaunchThread)
-		// NOTE - the ClassWizard will add and remove mapping macros here.
-	//}}AFX_MSG_MAP
+    //{{AFX_MSG_MAP(CLaunchThread)
+    // NOTE - the ClassWizard will add and remove mapping macros here.
+    //}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
 
@@ -45,11 +45,13 @@ END_MESSAGE_MAP()
 // CLaunchGameThread message handlers
 
 
-int CLaunchThread::Run() 
+int CLaunchThread::Run()
 {
     // TODO: Add your specialized code here and/or call the base class
     if(m_pView == NULL)
+    {
         return -1;
+    }
 
 
     while(1)
@@ -62,10 +64,10 @@ int CLaunchThread::Run()
     return 0;
 }
 
-BOOL CLaunchThread::InitInstance() 
+BOOL CLaunchThread::InitInstance()
 {
-	// TODO: Add your specialized code here and/or call the base class
-	
-	CWinThread::InitInstance();
+    // TODO: Add your specialized code here and/or call the base class
+
+    CWinThread::InitInstance();
     return TRUE;
 }

@@ -33,6 +33,7 @@ CDlgLogin::CDlgLogin(CJLkitDoc* pDoc)
     //{{AFX_DATA_INIT(LoginDlg)
     m_strName = _T("");
     m_strPw = _T("");
+    m_bRemPw = TRUE;
     //}}AFX_DATA_INIT
 
     m_pDoc = pDoc;
@@ -64,19 +65,18 @@ END_MESSAGE_MAP()
 
 void CDlgLogin::OnBtnRegister()
 {
-    CDlgRegist dlg;
+    CDlgRegist dlg(m_pSocket);
+
     if(dlg.DoModal() == IDOK)
     {
         //×¢²áµÇÂ¼ÕÊºÅ
     }
-
 }
 
 
 
 void CDlgLogin::LoginResult(int nResult)
 {
-
     if(nResult == result_ok)
     {
         m_pSocket->Querykey();
@@ -94,7 +94,6 @@ void CDlgLogin::LoginResult(int nResult)
     {
         AfxMessageBox(_T("ÕÊºÅÒÑ¾­µÇÂ¼"));
     }
-
 }
 
 
@@ -103,8 +102,6 @@ BOOL CDlgLogin::OnInitDialog()
 {
     CDialog::OnInitDialog();
     UpdateData(FALSE);
-
-
     return TRUE;  // return TRUE unless you set the focus to a control
     // EXCEPTION: OCX Property Pages should return FALSE
 }
@@ -112,13 +109,12 @@ BOOL CDlgLogin::OnInitDialog()
 void CDlgLogin::OnBtnModifybind()
 {
     // TODO: Add your control notification handler code here
-    CDlgModifyBind dlg;
+    CDlgModifyBind dlg(m_pSocket);
+
     if(dlg.DoModal() == IDOK)
     {
         //ÐÞ¸Ä°ó¶¨ÐÅÏ¢
     }
-
-
 }
 
 void CDlgLogin::OnOK()
@@ -126,5 +122,4 @@ void CDlgLogin::OnOK()
     // TODO: Add extra validation here
     UpdateData(TRUE);
     m_pSocket->LoginSrv(m_strName, m_strPw);
-
 }

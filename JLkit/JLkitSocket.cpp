@@ -31,7 +31,6 @@ void CJLkitSocket::OnConnect(int nErrorCode)
 
 void CJLkitSocket::OnReceive(int nErrorCode)
 {
-
     m_pDoc->ProcessRecevice();
 }
 
@@ -113,7 +112,7 @@ int CJLkitSocket::Receive(void* lpBuf, int nBufLen, int nFlags /* = 0 */)
 
 
 
-BOOL CJLkitSocket::BindKey(CString& strKey)
+void CJLkitSocket::BindKey(CString& strKey)
 {
 
     KEY_BUF keybuf;
@@ -124,7 +123,6 @@ BOOL CJLkitSocket::BindKey(CString& strKey)
     //	memcpy(&keybuf.pcdata, &pcinfo.stPcData, sizeof(PCDATA));
 
     Send(&keybuf, sizeof(KEY_BUF));
-    return TRUE;
 }
 
 
@@ -138,15 +136,42 @@ void CJLkitSocket::Unbindkey(CString& strKey)
     Send(&keybuf, sizeof(KEY_BUF));
 }
 
+void CJLkitSocket::Register(CString&strName, CString&strPw, CString&strIP)
+{
+    REGIST_BUF registbuf;
+    registbuf.fun = fun_regist;
+    
+    memcpy(registbuf.ip, (LPCTSTR)strIP, MAXLEN);
+    memcpy(registbuf.name, (LPCTSTR)strName, MAXLEN);
+    memcpy(registbuf.pw, (LPCTSTR)strPw, MAXLEN);
+   // memcpy(&registbuf.pcdata, &pcinfo.stPcData, sizeof(PCDATA));
+    Send(&registbuf, sizeof(REGIST_BUF));
+}
 
-BOOL CJLkitSocket::Querykey()
+void CJLkitSocket::Querykey()
 {
     LOGIN_BUF keybuf;
     keybuf.fun = fun_querykey;
     _tcsncpy(keybuf.name, (LPCTSTR)m_UserInfo.name, MAXLEN);
     _tcsncpy(keybuf.pw, (LPCTSTR)m_UserInfo.pw, MAXLEN);
     Send(&keybuf, sizeof(LOGIN_BUF));
-    return TRUE;
+
+}
+
+void CJLkitSocket::ModifyBind(CString& strName, CString& strPw, CString& strOld, CString& strNew)
+{
+    /*将注册数据打包*/
+    MODIFYBIND_BUF modifybuf;
+
+    modifybuf.fun = fun_mbind;
+
+    memcpy(modifybuf.new_bind, (LPCTSTR)strNew, MAXLEN);
+    memcpy(modifybuf.old_bind, (LPCTSTR)strOld, MAXLEN);
+    memcpy(modifybuf.name, (LPCTSTR)strName, MAXLEN);
+    memcpy(modifybuf.pw, (LPCTSTR)strPw, MAXLEN);
+
+    Send(&modifybuf, sizeof(MODIFYBIND_BUF));
+
 }
 
 

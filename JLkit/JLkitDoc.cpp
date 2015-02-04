@@ -282,7 +282,8 @@ void CJLkitDoc::GetGamePath()
     {
         //取得游戏路径
         CRegKey reg;
-        if(reg.Open(HKEY_LOCAL_MACHINE, _T("SOFTWARE\\Wow6432Node\\plaync\\BNS_KOR")) == ERROR_SUCCESS)
+        if(reg.Open(HKEY_LOCAL_MACHINE,
+                    _T("SOFTWARE\\Wow6432Node\\plaync\\BNS_KOR")) == ERROR_SUCCESS)
         {
             TCHAR szValue[MAX_PATH];
             ULONG sizeValue = MAX_PATH;
@@ -336,7 +337,10 @@ void CJLkitDoc::ProcessRecevice()
         {
             m_pLoginDlg->LoginResult(retbuf->result);
         }
+        else if(retbuf->fun == fun_regist)
+        {
 
+        }
         else if(retbuf->fun == fun_querykey)
         {
             m_KeyVec.clear();
@@ -527,7 +531,8 @@ int CJLkitDoc::LaunchGame(const CString& strName,
     {
         //执行批处理
         CString strTemp;
-        strTemp.Format(_T("cmd /k profileJL.bat JLwg %s \"%s\"\""), m_szGamePath, strCmdLine);
+        strTemp.Format(_T("cmd /k profileJL.bat JLwg %s \"%s\"\""), m_szGamePath,
+                       strCmdLine);
         WinExec((LPCTSTR)strTemp, SW_SHOW);
 
         return RESULT_SUCCESS;

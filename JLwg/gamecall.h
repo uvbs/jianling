@@ -197,8 +197,8 @@ public:
     void* GetStepCallAddr();        //取走路call的地址
     void RandomStep(DWORD range);   //向某个方向随机走
     void JingDianMoShi(DWORD adress, DWORD adress1);    //经典模式
-	void ChangeZ_Status(BOOL flag);//改状态
-	void ChangeHeight(float how);
+    void ChangeZ_Status(BOOL flag);//改状态
+    void ChangeHeight(float how);
 
     TCHAR* GetLujingPath() {
         return m_szLujingPath;
@@ -509,7 +509,5 @@ protected:
     ShareMem m_ShareMem;
 
     typedef int (*_InitializeSpeedhack)(float);
-    void ChangeZ_Status(BOOL flag);
-    void ChangeHeight(float how);
     _InitializeSpeedhack m_pfnInitSpeed;
 };

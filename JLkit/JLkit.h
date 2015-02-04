@@ -31,20 +31,20 @@ class CJLkitApp : public CWinApp
     DECLARE_MESSAGE_MAP()
 
 public:
-	CJLkitApp();
+    CJLkitApp();
     ~CJLkitApp();
 
 // Overrides
-	// ClassWizard generated virtual function overrides
-	//{{AFX_VIRTUAL(CJLkitApp)
-	public:
-	virtual BOOL InitInstance();
-	virtual BOOL OnIdle(LONG lCount);
-	//}}AFX_VIRTUAL
+    // ClassWizard generated virtual function overrides
+    //{{AFX_VIRTUAL(CJLkitApp)
+public:
+    virtual BOOL InitInstance();
+    virtual BOOL OnIdle(LONG lCount);
+    //}}AFX_VIRTUAL
 // Implementation
 
-	//{{AFX_MSG(CJLkitApp)
-	//}}AFX_MSG
+    //{{AFX_MSG(CJLkitApp)
+    //}}AFX_MSG
 };
 
 
