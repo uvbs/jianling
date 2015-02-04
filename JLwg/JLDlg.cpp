@@ -28,7 +28,6 @@ CJLDlg::CJLDlg(CWnd* pParent /*=NULL*/)
 	//{{AFX_DATA_INIT(CJLDlg)
 	m_strInfo = _T("");
 	//}}AFX_DATA_INIT
-	
 }
 
 
@@ -53,26 +52,8 @@ BEGIN_MESSAGE_MAP(CJLDlg, CDialog)
 END_MESSAGE_MAP()
 
 
-
-
-
-CWinThread* g_pTaskThread = NULL;
-CWinThread* g_pCloseThread = NULL;
-static UINT AutoCloseThread(LPVOID pParam)
-{
-	
-	while(1)
-	{
-		gcall.CloseXiaoDongHua();
-		Sleep(1000);
-	}
-
-}
-
 static UINT TaskThread(LPVOID pParam)
 {
-
-	g_pCloseThread = AfxBeginThread(AutoCloseThread, 0);
 
 	TaskScript task;
 	task.BeginTask();
@@ -85,7 +66,6 @@ static UINT TaskThread(LPVOID pParam)
 
 void CJLDlg::OnGotask() 
 {
-
 	//读取配置文件
 	//创建任务线程
 	if(g_pTaskThread == NULL)
@@ -98,20 +78,13 @@ void CJLDlg::OnGotask()
 		OnStopTask();
 		SetDlgItemText(IDC_GOTASK, _T("开始任务"));
 	}
-
 }
 
 BOOL CJLDlg::OnInitDialog() 
 {
 	CDialog::OnInitDialog();
 	
-	SHAREINFO* pShareInfo = gcall.m_pShareMem;
-	CString strConfig = pShareInfo->szConfig;
-	CString strScript = pShareInfo->szSript;
-	m_strInfo.Format(
-		_T("配置: %s\n脚本: %s\n"), strConfig, strScript);
-
-	UpdateData(FALSE);	
+	
 
 	return TRUE;
 }

@@ -539,24 +539,28 @@ BOOL CRequestSocket::NewRegist(TCHAR szUserName[], TCHAR szPassword[], TCHAR szB
 
 void CRequestSocket::OnReceive(int nErrorCode) 
 {
+    
+    m_buf.SetSize(1024);
+    int nBytes = Receive(m_buf.GetData(), m_buf.GetSize());
+    if(nBytes != SOCKET_ERROR)
+    {
+        if(nBytes == 0)
+            m_pDoc->ClientClose(this);
 
-		m_buf.SetSize(1024);
-        int nBytes = Receive(m_buf.GetData(), m_buf.GetSize());
-        if(nBytes != SOCKET_ERROR)
-        {
-            ProcessRequest(m_buf.GetData());
-			m_pDoc->DocHit(HINT_REQUEST, m_pRequest);
 
-			//AsyncSelect(FD_WRITE | FD_CLOSE);
-			if(m_buf.GetSize() != 0){
-				Send(m_buf.GetData(), m_buf.GetSize());
-			}
-		
+        ProcessRequest(m_buf.GetData());
+        m_pDoc->DocHit(HINT_REQUEST, m_pRequest);
+        
+        //AsyncSelect(FD_WRITE | FD_CLOSE);
+        if(m_buf.GetSize() != 0){
+            Send(m_buf.GetData(), m_buf.GetSize());
         }
-        else{
-            nBytes = GetLastError();
-		}
-
+        
+    }
+    else{
+        nBytes = GetLastError();
+    }
+    
 }
 
 int CRequestSocket::Send(const void* lpBuf, int nBufLen, int nFlags) 

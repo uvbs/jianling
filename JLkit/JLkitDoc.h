@@ -26,67 +26,70 @@ class CJob;
 class CJLkitDoc : public CDocument
 {
 protected:
-	CJLkitDoc();           // protected constructor used by dynamic creation
-	DECLARE_DYNCREATE(CJLkitDoc)
+    CJLkitDoc();           // protected constructor used by dynamic creation
+    DECLARE_DYNCREATE(CJLkitDoc)
 
 // Attributes
 public:
     //设置
-    BOOL m_bRememberPassWord;
+    BOOL m_KeepPw;  //保存密码
     TCHAR m_szFileName[MAX_PATH];
     TCHAR m_szGamePath[MAX_PATH];
     TCHAR m_szAccountName[MAX_PATH];
     TCHAR m_szAccountPw[MAX_PATH];
 
     //对话框
-    CDlgKeyView* m_pKeyDlg;
-    CDlgLogin* m_pLoginDlg;
-    CJLkitSocket* m_pSocket;
+    CStdioFile errfile;
     ShareMem m_share;
     std::vector<QUERYKEY_RET_BUF> m_KeyVec;
 
-    int LaunchGame(const CString &strName, const CString &strPw, 
-        const CString &strConfig, const CString &strScript, BOOL bProfile = FALSE);
+    int LaunchGame(const CString& strName, const CString& strPw,
+                   const CString& strConfig, const CString& strScript, BOOL bProfile = FALSE);
 
-    CLock *m_lpLock;
+    CDlgKeyView* m_pKeyDlg;
+    CDlgLogin* m_pLoginDlg;
+    CJLkitSocket* m_pSocket;
+    CLock* m_lpLock;
     CThreadPool* m_lpTPool;
-    CStdioFile errfile;
-    CCVPNFile *m_lpVpnFile;
-    CJob *m_pJob;
-    
+    CCVPNFile* m_lpVpnFile;
+    CJob* m_pJob;
 
-    int Active(CString &strName, CString &strPw);
-    int Get(CString &strName, CString &strPw);
-	void GetandActive();
+
+    int Active(CString& strName, CString& strPw);
+    int Get(CString& strName, CString& strPw);
+    void GetandActive();
 
 // Operations
 public:
     void GetGamePath();
-	void ProcessRecevice();
+    void ProcessRecevice();
     void ConnectResult(int nErrorCode);
     BOOL IsHaveValidKey();
+
+
 // Overrides
-	// ClassWizard generated virtual function overrides
-	//{{AFX_VIRTUAL(CJLkitDoc)
-	public:
-	virtual void Serialize(CArchive& ar);   // overridden for document i/o
-	virtual void OnCloseDocument();
-	virtual BOOL OnOpenDocument(LPCTSTR lpszPathName);
-	protected:
-	virtual BOOL OnNewDocument();
-	//}}AFX_VIRTUAL
+    // ClassWizard generated virtual function overrides
+    //{{AFX_VIRTUAL(CJLkitDoc)
+public:
+    virtual void Serialize(CArchive& ar);   // overridden for document i/o
+    virtual void OnCloseDocument();
+    virtual BOOL OnOpenDocument(LPCTSTR lpszPathName);
+    virtual void DeleteContents();
+protected:
+    virtual BOOL OnNewDocument();
+    //}}AFX_VIRTUAL
 
 // Implementation
 public:
-	virtual ~CJLkitDoc();
+    virtual ~CJLkitDoc();
 #ifdef _DEBUG
-	virtual void AssertValid() const;
-	virtual void Dump(CDumpContext& dc) const;
+    virtual void AssertValid() const;
+    virtual void Dump(CDumpContext& dc) const;
 #endif
 
-	// Generated message map functions
+    // Generated message map functions
 protected:
-	//{{AFX_MSG(CJLkitDoc)
+    //{{AFX_MSG(CJLkitDoc)
     // NOTE - the ClassWizard will add and remove member functions here.
     afx_msg void OnLookkey();
     afx_msg void OnLookShareMem();
@@ -94,9 +97,9 @@ protected:
     afx_msg void OnUpdateValidKey(CCmdUI* pCmdUI);
     afx_msg void OnUpdateLoginedNums(CCmdUI* pCmdUI);
     afx_msg void OnUpdateAllNums(CCmdUI* pCmdUI);
-	//}}AFX_MSG
-	DECLARE_MESSAGE_MAP()
- 
+    //}}AFX_MSG
+    DECLARE_MESSAGE_MAP()
+
 };
 
 //{{AFX_INSERT_LOCATION}}

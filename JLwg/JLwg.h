@@ -12,16 +12,19 @@
 
 
 #include "GamecallEx.h"
-#include "..\common\ShareMem.h"
 
-
-
+class CJLDlg;
 class CJLwgApp: public CWinApp
 {
 public:
 	CJLwgApp();
 	~CJLwgApp();
+    
+    static DWORD CALLBACK WgThread(LPVOID pParam);
+    static LRESULT CALLBACK GameMsgProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
+    static WNDPROC wpOrigGameProc;
+    static CJLDlg* m_pWgDlg;
 
 // Overrides
 	// ClassWizard generated virtual function overrides
@@ -33,6 +36,4 @@ public:
 };
 
 
-
 extern GamecallEx gcall;
-void UnLoadWg();

@@ -1,9 +1,10 @@
+//JLwg.cpp 
+
 #include "stdafx.h"
 #include "JLwg.h"
-#include "GamecallEx.h"
-//#include "TaskScript.h"
-#include "resource.h"
 #include "JLDlg.h"
+#include "TaskScript.h"
+#include "GamecallEx.h"
 
 #include "..\common\CCHook.h"
 #include "..\common\common.h"
@@ -11,27 +12,23 @@
 #include "..\common\inject.h"
 #include "..\common\inlinehook.h"
 
-#pragma comment(lib, "dbghelp")
+
 
 
 
 CJLwgApp CWinApp;
 GamecallEx gcall;            //游戏call
-CJLDlg* g_pWgDlg = NULL;
 
-
-static WNDPROC wpOrigGameProc = NULL;
+WNDPROC CJLwgApp::wpOrigGameProc = NULL;
+CJLDlg* CJLwgApp::m_pWgDlg = NULL;
 
 
 //此处钩游戏的消息窗口
 //按键  和 一个自定义的消息
-static LRESULT CALLBACK GameMsgProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+LRESULT CALLBACK CJLwgApp::GameMsgProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-
-
-	if(g_pWgDlg == NULL)
-	{
-		return CallWindowProc(wpOrigGameProc, hwnd, uMsg, wParam, lParam);
+    if(CJLwgApp::m_pWgDlg == NULL){
+		return CallWindowProc(CJLwgApp::wpOrigGameProc, hwnd, uMsg, wParam, lParam);
 	}
 
 
@@ -46,24 +43,24 @@ static LRESULT CALLBACK GameMsgProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM 
 				int result = MessageBox(hwnd, _T("你按下了 VK_INSERT 按键.\n确认执行任务?"), NULL, MB_OKCANCEL);
 				if(result == IDOK)
 				{
-					g_pWgDlg->OnGotask();
+                    CJLwgApp::m_pWgDlg->OnGotask();
 				}
 				
 			}
 			else if(wParam == VK_DELETE)
 			{
-				g_pWgDlg->OnStopTask();
+                CJLwgApp::m_pWgDlg->OnStopTask();
 				
 			}
 			else if(wParam == VK_END)
 			{
-				if(g_pWgDlg->IsWindowVisible())
+				if(CJLwgApp::m_pWgDlg->IsWindowVisible())
 				{
-					g_pWgDlg->ShowWindow(SW_HIDE);
+					CJLwgApp::m_pWgDlg->ShowWindow(SW_HIDE);
 				}
 				else
 				{
-					g_pWgDlg->ShowWindow(SW_SHOWNA);
+					CJLwgApp::m_pWgDlg->ShowWindow(SW_SHOWNA);
 				}
 		
 			}
@@ -85,18 +82,19 @@ static LRESULT CALLBACK GameMsgProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM 
 			RECT rect;
 			GetWindowRect(hwnd, &rect);
 			int width = rect.right - rect.left;
-			g_pWgDlg->SetWindowPos(NULL, xPos + width, yPos, 0, 0, SWP_NOSIZE | SWP_NOACTIVATE);
+			CJLwgApp::m_pWgDlg->SetWindowPos(NULL, xPos + width, yPos, 0, 0, SWP_NOSIZE | SWP_NOACTIVATE);
 		}
 		break;
 	}
 	
-	return CallWindowProc(wpOrigGameProc, hwnd, uMsg, wParam, lParam);
+	return CallWindowProc(CJLwgApp::wpOrigGameProc, hwnd, uMsg, wParam, lParam);
 }
 
-const int FRAME_MSG_SIZE = MAX_PATH * 2;
-const int MAX_SYM_SIZE = MAX_PATH * 4;
+
 LONG CALLBACK TopLevelExceptionHander(EXCEPTION_POINTERS *ExceptionInfo)
 {
+    const int FRAME_MSG_SIZE = MAX_PATH * 2;
+    const int MAX_SYM_SIZE = MAX_PATH * 4;
 
 	TCHAR szText[BUFSIZ] = {0};
 	FILE *file =_tfopen(_T("call stack.txt"), _T("a+"));
@@ -169,10 +167,11 @@ LONG CALLBACK TopLevelExceptionHander(EXCEPTION_POINTERS *ExceptionInfo)
 	return EXCEPTION_CONTINUE_SEARCH;
 }
 
-DWORD CALLBACK WGThread(LPVOID pParam)
+DWORD CALLBACK CJLwgApp::WgThread(LPVOID pParam)
 {
 	AFX_MANAGE_STATE(AfxGetStaticModuleState());
 	setlocale(LC_ALL, "chs");
+
 	//安装一个全局的未处理异常
 	//AddVectoredExceptionHandler(1, TopLevelExceptionHander);
 
@@ -184,15 +183,13 @@ DWORD CALLBACK WGThread(LPVOID pParam)
 	}
 
 
-	//钩游戏消息处理后前提是外挂主对话框已经出现了, 否则不能响应按键, 所以
-	//上面在gcall初始化完成后就创建主对话框, 但是隐藏的
-	wpOrigGameProc = (WNDPROC)::SetWindowLong(gcall.GetGamehWnd(), GWL_WNDPROC, (LONG)GameMsgProc);
-	CString strTitle = gcall.m_pShareMem->szName;
+	CJLwgApp::wpOrigGameProc = (WNDPROC)::SetWindowLong(gcall.GetGamehWnd(), GWL_WNDPROC, (LONG)GameMsgProc);
+	CString strTitle = gcall.GetAccountInfo()->szName;
 	::SetWindowText(gcall.GetGamehWnd(), (LPCTSTR)strTitle);
 
-	g_pWgDlg = new CJLDlg;
-	g_pWgDlg->Create(CJLDlg::IDD);
-	g_pWgDlg->ShowWindow(SW_SHOW);
+    CJLwgApp::m_pWgDlg = new CJLDlg;
+	CJLwgApp::m_pWgDlg->Create(CJLDlg::IDD);
+	CJLwgApp::m_pWgDlg->ShowWindow(SW_SHOW);
 	
 	
 	//创建消息循环
@@ -202,7 +199,7 @@ DWORD CALLBACK WGThread(LPVOID pParam)
 		if(bRet == -1){
 			// handle the error and possibly exit
 		}
-		else if(!IsWindow(g_pWgDlg->m_hWnd) || !IsDialogMessage(g_pWgDlg->m_hWnd, &msg)){ 
+		else if(!IsWindow(CJLwgApp::m_pWgDlg->m_hWnd) || !IsDialogMessage(CJLwgApp::m_pWgDlg->m_hWnd, &msg)){ 
 			TranslateMessage(&msg); 
 			DispatchMessage(&msg); 
 		}
@@ -210,9 +207,8 @@ DWORD CALLBACK WGThread(LPVOID pParam)
 	
 
 	TRACE(_T("消息循环退出了"));
-	g_pWgDlg = NULL;
-	if(wpOrigGameProc){
-		::SetWindowLong(gcall.GetGamehWnd(), GWL_WNDPROC, (LONG)wpOrigGameProc);
+	if(CJLwgApp::wpOrigGameProc){
+		::SetWindowLong(gcall.GetGamehWnd(), GWL_WNDPROC, (LONG)CJLwgApp::wpOrigGameProc);
 	}
 
 	FreeLibraryAndExitThread(AfxGetInstanceHandle(), 0);
@@ -230,7 +226,7 @@ CJLwgApp::~CJLwgApp(){
 
 BOOL CJLwgApp::InitInstance(){
 	//创建一个线程
-	HANDLE hWgThread = ::CreateThread(NULL, 0, WGThread, 0, 0, 0);
+    HANDLE hWgThread = ::CreateThread(NULL, 0, CJLwgApp::WgThread, 0, 0, 0);
 	CloseHandle(hWgThread);
 	return TRUE;
 }

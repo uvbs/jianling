@@ -3,9 +3,9 @@
 //////////////////////////////////////////////////////////////////////
 
 #include "StdAfx.h"
-#include "..\common\logger.h"
 #include "ShareMem.h"
 
+#include <assert.h>
 
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -259,8 +259,7 @@ BOOL ShareMem::Open(TCHAR szObjName[])
 DWORD ShareMem::IsPidValid( const char* name )
 {
     SHAREINFO* lpsa = IsLogined(name);
-    if(lpsa == NULL)
-        return 0;
+    assert(lpsa != NULL);
 
 
     HANDLE hProcessSnap;

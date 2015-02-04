@@ -26,7 +26,7 @@ public:
 	CComboBox m_ComBox;
 	CString	m_strName;
 	CString	m_strPw;
-    BOOL bRemPw;
+    BOOL m_bRemPw;
 	//}}AFX_DATA
 
     CJLkitSocket* m_pSocket;

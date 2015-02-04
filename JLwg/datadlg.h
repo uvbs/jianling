@@ -7,10 +7,12 @@
 // DataDlg1.h : header file
 //
 
+#include "GameHook.h"
+
 /////////////////////////////////////////////////////////////////////////////
 // CDataDlg dialog
 
-class CDataDlg : public CDialog
+class CDataDlg : public CDialog, public GameHook
 {
 // Construction
 public:
@@ -31,6 +33,7 @@ public:
 	BOOL	m_bHook_Accquest;
 	BOOL	m_bHook_Combat;
 	//}}AFX_DATA
+
 	void CheckHook();
 
 // Overrides
@@ -58,10 +61,11 @@ public:
 	void PrintfStrike();
 	void PrintfRangeMonster(BOOL bApplyConfig = FALSE);
 	void PrintfRangeObject();
-	
+    void AddInfo(TCHAR szFormat[], ...);
+
 private:
 	void InsertColumnHelper(TCHAR* column[], int count);
-	
+
 
 protected:
 
@@ -88,6 +92,7 @@ protected:
 	afx_msg void OnHookCombat();
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
+ 
 };
 
 //{{AFX_INSERT_LOCATION}}

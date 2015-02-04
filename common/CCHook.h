@@ -15,25 +15,25 @@
 class CCHook
 {
 public:
-	CCHook();
-	CCHook(void* CallAddr, void* NewCall, BOOL bAutoDel = TRUE);
-	~CCHook();
-	void Init(void* CallAddr, void* NewCall, BOOL bAutoDel = TRUE);
+    CCHook();
+    CCHook(void* CallAddr, void* NewCall, BOOL bAutoDel = TRUE);
+    ~CCHook();
+    void Init(void* CallAddr, void* NewCall, BOOL bAutoDel = TRUE);
 
 
-	void unhook();
-	void* hook();
+    void unhook();
+    DWORD* hook();
 
 
 private:
-	BOOL GetPatchSize(void *Proc, DWORD dwNeedSize, LPDWORD lpPatchSize);
+    BOOL GetPatchSize(void* Proc, DWORD dwNeedSize, LPDWORD lpPatchSize);
 
 
-	BYTE *m_CallAddr;	//call地址
-	BYTE *m_NewCall;	//新call地址
-	BYTE *m_BackupCall; //备份的入口点
-	BOOL m_bAutoDel;
-	int m_nLen;
+    BYTE* m_CallAddr;	//call地址
+    BYTE* m_NewCall;	//新call地址
+    BYTE* m_BackupCall; //备份的入口点
+    BOOL m_bAutoDel;
+    int m_nLen;
 };
 
 

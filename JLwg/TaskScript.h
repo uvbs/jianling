@@ -1,11 +1,12 @@
-﻿#pragma once
+#ifndef _TASKSCRIPT_H
+#define _TASKSCRIPT_H
 
 class TaskScript
 {
 public:
-	TaskScript(void);
-	~TaskScript(void);
-	void BeginTask();
+    TaskScript(void){};
+    ~TaskScript(void){};
+    void BeginTask(){};
 	void log(TCHAR szFormat[], ...);
 	void Task_221(int zid,int taskid);//新手任务1
 	void Task_222(int zid,int taskid);//新手任务2
@@ -54,9 +55,9 @@ public:
 	void UseExperience();//使用经验药
 	void IsGoonHecheng(DWORD pos);//逻辑循环强化物品
 private:
-};
 
-typedef void (TaskScript::*FunPointer)(int zid,int taskid);
+
+    typedef void (TaskScript::*FunPointer)(int zid,int taskid);
 
 typedef struct _FunTask
 {
@@ -64,3 +65,10 @@ typedef struct _FunTask
 	FunPointer fp;//函数指针
 
 } FunTask;
+
+
+
+};
+
+
+#endif

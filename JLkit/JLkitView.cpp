@@ -28,24 +28,24 @@ IMPLEMENT_DYNCREATE(CJLkitView, CListView)
 
 
 BEGIN_MESSAGE_MAP(CJLkitView, CListView)
-//{{AFX_MSG_MAP(CJLkitView)
+    //{{AFX_MSG_MAP(CJLkitView)
     ON_WM_CREATE()
     ON_COMMAND(ID_START, OnStart)
     ON_UPDATE_COMMAND_UI(ID_GETANDACTIVE, OnUpdateStart)
-	ON_NOTIFY_REFLECT(NM_RCLICK, OnRclick)
-	ON_COMMAND(ID_PROFILE, OnProfile)
-	ON_COMMAND(ID_GETANDACTIVE, OnGetAndActive)
-    ON_WM_TIMER()
-	ON_UPDATE_COMMAND_UI(ID_PROFILE, OnUpdateProfile)
-	ON_UPDATE_COMMAND_UI(ID_SELECTALL, OnUpdateSelectall)
-	ON_WM_RBUTTONUP()
+    ON_NOTIFY_REFLECT(NM_RCLICK, OnRclick)
+    ON_COMMAND(ID_PROFILE, OnProfile)
+    ON_COMMAND(ID_GETANDACTIVE, OnGetAndActive)
+    ON_UPDATE_COMMAND_UI(ID_PROFILE, OnUpdateProfile)
+    ON_UPDATE_COMMAND_UI(ID_SELECTALL, OnUpdateSelectall)
+    ON_COMMAND(ID_REPORTBUG, OnReportbug)
+    ON_WM_RBUTTONUP()
     ON_COMMAND(ID_GET, OnGet)
     ON_COMMAND(ID_ACTIVE, OnActive)
     ON_UPDATE_COMMAND_UI(ID_GET, OnUpdateStart)
     ON_UPDATE_COMMAND_UI(ID_ACTIVE, OnUpdateStart)
     ON_UPDATE_COMMAND_UI(ID_START, OnUpdateStart)
-	ON_COMMAND(ID_REPORTBUG, OnReportbug)
-	//}}AFX_MSG_MAP
+    ON_WM_TIMER()
+    //}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
 
@@ -170,8 +170,8 @@ void CJLkitView::OnStart()
 {
    
     if(m_lpLaunchThread == NULL){
-        m_lpLaunchThread = (CLaunchGameThread *)
-            AfxBeginThread(RUNTIME_CLASS(CLaunchGameThread), THREAD_PRIORITY_NORMAL,
+        m_lpLaunchThread = (CLaunchThread *)
+            AfxBeginThread(RUNTIME_CLASS(CLaunchThread), THREAD_PRIORITY_NORMAL,
             0, CREATE_SUSPENDED);
         
         m_lpLaunchThread->SetOwner(this);
@@ -181,10 +181,35 @@ void CJLkitView::OnStart()
 }
 
 
+void CJLkitView::LaunchGame()
+{
+    Webpost::InitCom();
+    CJLkitDoc* pDoc = GetDocument();
+    CListCtrl &list = GetListCtrl();
+    //当前选中的条目
+    for(int i = 0; i < list.GetItemCount(); i++){
+        
+        if(list.GetCheck(i)){
+            CString strName = list.GetItemText(i, COLUMN_TEXT_ACCOUNT);
+            CString strPw = list.GetItemText(i, COLUMN_TEXT_PASSWORD);
+            CString strConfig = list.GetItemText(i, COLUMN_TEXT_CONFIG);
+            CString strScript = list.GetItemText(i, COLUMN_TEXT_SCRIPT);
+            
+            list.SetItemText(i, COLUMN_TEXT_STATUS, _T("开始运行.."));
+            int nReslt = pDoc->LaunchGame(strName, strPw, strConfig, strScript);
+            SetResult(nReslt, i);	
+        }
+        
+    }
+    Webpost::UnInitCom();
+}
+
+
 void CJLkitView::OnUpdateStart(CCmdUI* pCmdUI) 
 {
     // TODO: Add your command update UI handler code here
     pCmdUI->Enable(FALSE);
+
     int count = GetListCtrl().GetItemCount();
     for(int i = 0; i < count; i++){
         if(GetListCtrl().GetCheck(i)){
@@ -195,6 +220,15 @@ void CJLkitView::OnUpdateStart(CCmdUI* pCmdUI)
    
     if(GetListCtrl().GetSelectedCount() != 0)
         pCmdUI->Enable();
+
+    if(m_lpLaunchThread)
+    {
+        DWORD dwExitCode = 0;
+        GetExitCodeThread(m_lpLaunchThread->m_hThread, &dwExitCode);
+        if(dwExitCode == STILL_ACTIVE)
+            pCmdUI->Enable(FALSE);
+    }
+    
 
 }
 
@@ -255,6 +289,12 @@ void CJLkitView::OnInitialUpdate()
 {
 	CListView::OnInitialUpdate();
 	
+
+    //创建一个定时器
+
+    SetTimer(IDT_HEART, 5000, NULL);
+    SetTimer(IDT_TIMERGAMEEXIT, 2000, NULL);
+    SetTimer(IDT_TIMERPOSTKEYQUERY, 30000, NULL);
 }
 
 
@@ -343,4 +383,28 @@ void CJLkitView::OnReportbug()
 	CDlgBugRep dlg(pDoc);
     dlg.DoModal();
 
+}
+
+void CJLkitView::OnTimer(UINT nIDEvent) 
+{
+	// TODO: Add your message handler code here and/or call default
+	
+    if(nIDEvent == IDT_TIMERGAMEEXIT)
+    {
+
+        //每次遍历所有item, 判断item的pid存不存在, 不存在就是游戏退出了
+        for(int i = 0; i < GetListCtrl().GetItemCount(); i++)
+        {
+            CString strName = GetListCtrl().GetItemText(i, COLUMN_TEXT_ACCOUNT);
+
+            if(GetDocument()->m_share.IsPidValid((LPCTSTR)strName) == FALSE)
+            {
+                GetDocument()->m_share.Del((LPCTSTR)strName);
+                GetListCtrl().SetItemText(i, COLUMN_TEXT_STATUS, _T("进程退出了"));
+            }
+        }
+    }
+
+
+	CListView::OnTimer(nIDEvent);
 }

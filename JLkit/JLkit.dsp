@@ -67,6 +67,10 @@ SOURCE=.\BugRepDlg.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=..\common\CallTracer.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\CVPNFile.cpp
 # End Source File
 # Begin Source File
@@ -161,6 +165,10 @@ SOURCE=.\BindKeyDlg.h
 # Begin Source File
 
 SOURCE=.\BugRepDlg.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\common\CallTracer.h
 # End Source File
 # Begin Source File
 

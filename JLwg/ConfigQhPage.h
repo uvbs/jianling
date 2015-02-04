@@ -14,33 +14,33 @@ class CConfigQhPage : public CPropertyPage
 {
 // Construction
 public:
-	CConfigQhPage(CWnd* pParent = NULL);   // standard constructor
+    CConfigQhPage(CWnd* pParent = NULL);   // standard constructor
 
 // Dialog Data
-	//{{AFX_DATA(CConfigQhPage)
-	enum { IDD = IDD_SETINI_QIANGHUA };
-	CComboBox	m_ComBox;
-	//}}AFX_DATA
+    //{{AFX_DATA(CConfigQhPage)
+    enum { IDD = IDD_SETINI_QIANGHUA };
+    CComboBox	m_ComBox;
+    //}}AFX_DATA
 
 
 // Overrides
-	// ClassWizard generated virtual function overrides
-	//{{AFX_VIRTUAL(CConfigQhPage)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
-	//}}AFX_VIRTUAL
+    // ClassWizard generated virtual function overrides
+    //{{AFX_VIRTUAL(CConfigQhPage)
+protected:
+    virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+    //}}AFX_VIRTUAL
 
 // Implementation
 protected:
 
-	// Generated message map functions
-	//{{AFX_MSG(CConfigQhPage)
-	virtual BOOL OnInitDialog();
-	afx_msg void OnEditchangeComboItemcolor();
-	afx_msg void OnChangeChiyaopercent();
-	afx_msg void OnSelchangeComboItemcolor();
-	//}}AFX_MSG
-	DECLARE_MESSAGE_MAP()
+    // Generated message map functions
+    //{{AFX_MSG(CConfigQhPage)
+    virtual BOOL OnInitDialog();
+    afx_msg void OnEditchangeComboItemcolor();
+    afx_msg void OnChangeChiyaopercent();
+    afx_msg void OnSelchangeComboItemcolor();
+    //}}AFX_MSG
+    DECLARE_MESSAGE_MAP()
 };
 
 //{{AFX_INSERT_LOCATION}}

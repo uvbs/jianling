@@ -2,7 +2,7 @@
 //
 
 #include "stdafx.h"
-#include "jlwg.h"
+#include "Jlwg.h"
 #include "DataDlg.h"
 
 
@@ -19,7 +19,6 @@ static char THIS_FILE[] = __FILE__;
 
 
 
-static CDataDlg* g_pDataDlg = NULL;
 /////////////////////////////////////////////////////////////////////////////
 // CDataDlg dialog
 
@@ -37,8 +36,6 @@ CDataDlg::CDataDlg(CWnd* pParent /*=NULL*/)
 	m_bHook_Accquest = FALSE;
 	m_bHook_Combat = FALSE;
 	//}}AFX_DATA_INIT
-
-	g_pDataDlg = this;
 }
 
 
@@ -46,7 +43,7 @@ void CDataDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(CDataDlg)
-	DDX_Control(pDX, IDC_LIST, m_ListCtrl);
+	//DDX_Control(pDX, IDC_LIST, m_ListCtrl);
 	DDX_Control(pDX, IDC_EDITINFO, m_hEdit);
 	DDX_Control(pDX, IDC_COMBO_DATATYPE, m_ComBox);
 	DDX_Text(pDX, IDC_EDITMEMINPUT, m_nRange);
@@ -179,346 +176,6 @@ static TCHAR* cli_Loots[] =
 
 
 
-//走路发包的结构
-typedef struct _SENDSTEP
-{
-    DWORD unknow;
-    float x;
-    float y;
-    float z;
-}SENDSTEP, PSENDSTEP;
-
-
-
-static void log2(TCHAR szFormat[], ...)
-{
-    TCHAR buffer[BUFSIZ] = {0};
-    
-    va_list argptr;
-    va_start(argptr, szFormat);
-    wvsprintf(buffer, szFormat, argptr);
-    va_end(argptr);
-    
-    _tcscat(buffer, _T("\r\n"));
-    
-	int len = g_pDataDlg->m_hEdit.GetWindowTextLength();
-	g_pDataDlg->m_hEdit.SetSel(len, -1);
-	g_pDataDlg->m_hEdit.ReplaceSel(buffer);
-}
-
-
-
-static void *backupSendStep;
-static void *backupWearEquipment;
-static void *backupYiciJianWu;
-static void *backupDunDi;
-static void *backupQuest;
-static void *backupCombat;
-static DWORD g_RecordStepRange = 200;
-static fPosition g_fmypos;
-static void __stdcall mySendStep(SENDSTEP *ftarpos)
-{
-
-	static BOOL bFirst = TRUE;
-	if(bFirst)
-	{
-		log2(_T("gcall.Stepto(%d,%d,%d);"), (int)ftarpos->y, (int)ftarpos->x, (int)ftarpos->z);
-		bFirst = !bFirst;
-	}
-
-
-    fPosition tarpos = {ftarpos->x, ftarpos->y, ftarpos->z};
-    
-	BYTE* backup = (BYTE*)ftarpos;
-
-    //多长距离输出一次
-    if(gcall.CalcC(g_fmypos, tarpos) >= g_RecordStepRange)
-    {
-        log2(_T("gcall.Stepto(%d,%d,%d);"), (int)ftarpos->y, (int)ftarpos->x, (int)ftarpos->z);
-        g_fmypos.x = ftarpos->x;
-        g_fmypos.y = ftarpos->y;
-        g_fmypos.z = ftarpos->z;
-    }
-    
-
-	//追加
-	FILE* file = _tfopen(gcall.GetLujingTest(), _T("a+b"));
-	if(file == NULL)
-	{
-		OutputDebugString(_T("打开文件失败"));
-		goto exitf;
-	}
-
-    int i;
-	for(i = 0; i < 34; i++)
-	{
-
-		BYTE buff[512];
-		//从参数中复制512字节到缓冲区
-		memcpy(buff, backup, 512);
-
-		//把这512字节写到文件中
-		size_t count = fwrite(buff, 512, 1, file);
-		if(count == 0)
-		{
-			TRACE(_T("写入失败"));
-			break;
-		}
-
-		fflush(file);
-		backup += 512;
-	}
-
-	fclose(file);
-
-
-exitf:
-   __asm
-    {
-        leave;
-        jmp backupSendStep;
-    }
-}
-
-
-//穿装备
-static void __stdcall myWearEquipment(DWORD argv1, DWORD value, DWORD argv3, DWORD itemtype)
-{
-    
-    BOOL bFind = FALSE;
-    //根据value的高16位 是背包物品的id;
-    //通过各自数获取名字
-    std::vector<_BAGSTU> GoodsVector;
-    gcall.GetAllGoodsToVector(GoodsVector);
-    
-    wchar_t *name = NULL;
-    DWORD GridPos = value >> 16;
-    
-    for(DWORD i = 0; i < GoodsVector.size(); i++)
-    {
-        if(GoodsVector[i].m_Info == GridPos)
-        {
-            bFind = TRUE;
-            name = GoodsVector[i].name;
-        }
-    }
-    
-    if(bFind)
-        log2(_T("gcall.WearEquipment(L%s, %d);"), name, itemtype);
-    else
-    {
-        log2(_T("穿装备失败"));
-    }
-    
-    __asm
-    {
-        leave;
-        jmp backupWearEquipment;
-    }
-}
-
-std::vector<DWORD> g_ObjAddrVec;
-static void __stdcall myCombatFilter()
-{
-
-	DWORD objAddr;
-	DWORD id;
-	__asm
-	{
-		mov objAddr, ebx;
-	}
-	__asm 
-	{
-		mov eax,[esi+0x10];
-		mov id,eax;
-	}
-	
-	for(int i = 0; i < g_ObjAddrVec.size(); i++){
-		if(objAddr == g_ObjAddrVec[i]){
-			log2(_T("%08x, 技能: %d"), objAddr, id);
-		}
-	}
-
-	__asm{
-		leave;
-		jmp backupCombat;
-		}
-		
-}
-
-//交任务钩子函数
-static void __stdcall myYiCiJianWu(DWORD argv1, 
-                            DWORD argv2, 
-                            DWORD argv3, 
-                            DWORD argv4, 
-                            DWORD argv5)
-{
-
-    DWORD* pEsp = & argv1;
-    log2(_T("dump stack"));
-    
-    for(int i = 0; i < 5; i++)
-    {
-        log2(_T("esp+%d %08x"), i, *(pEsp + i));
-    }
-    
-    __asm
-    {
-        leave;
-        jmp backupYiciJianWu;
-    }
-}
-
-
-
-//交任务钩子函数
-static void __stdcall myDunDi()
-{
-    DWORD eax_value;
-    __asm
-    {
-        mov eax_value, eax;
-    }
-    
-    log2(_T("eax = %08x"), eax_value);
-    
- 
-    __asm
-    {
-        leave;
-        jmp backupDunDi;
-    }
-}
-
-
-
-//交任务钩子函数
-static void __stdcall myDeliveQuest(DWORD unknow,
-									DWORD questID, 
-                             UCHAR questStep,
-                             DWORD argv3,
-                             DWORD argv4, 
-                             DWORD npcid1,
-                             DWORD npcid2)
-{
-    int edi_value;
-    int i;
-
-
-    __asm
-    {
-        __asm
-        {
-            mov edi_value, edi;
-        }
-        pushad;
-    }
-    
-    //过掉返回值
-    DWORD* pEsp = &questID;  
-    pEsp += 1;
-    
-    
-    log2(_T("dump stack"));
-    for(i = 0; i < 8; i++)
-    {
-        log2(_T("esp+%d %08x"), i, *(pEsp + i));
-    }
-    
-    log2(_T("mianban: %08x"), edi_value);
-    BOOL bFined;
-    bFined = FALSE;
-    wchar_t* name = NULL;
-    std::vector<ObjectNode *> RangeObject;
-    
-    gcall.GetAllObjectToVector(gcall.GetObjectBinTreeBaseAddr(), RangeObject);
-    for(i = 0; i < RangeObject.size(); i++)
-    {
-        ObjectNode *pNode = RangeObject[i];
-        
-        if((pNode->id == npcid1) && (pNode->id2 == npcid2))
-        {
-            //只要对比到NPCID就跳出去
-            name = gcall.GetObjectName(pNode->ObjAddress);
-            bFined = TRUE;
-            
-            //此处break逻辑无误
-            break;
-        }
-    }
-    
-    if(bFined != TRUE)
-    {
-        log2(_T("没有遍历到这个\nNPCID: %d, NPCID2: %d"), npcid1, npcid2);
-    }
-    
-    //NPC有没有名字
-    if(name == NULL)
-    {
-        name = L"NULL";
-    }
-    
-    log2(_T("gcall.DeliverQuests(%d, %x, %s);"), questID, questStep, name);
-    
-    int result = MessageBox(NULL, _T("一次交任务CALL执行\n\n确定: 交了它\n取消: 停止交"),
-        NULL, MB_OKCANCEL);
-    
-    if(result == IDOK)
-    {
-        __asm
-        {
-            popad;
-            leave;
-            jmp backupQuest;
-        }
-    }
-    else
-    {
-        __asm
-        {
-            popad;
-            leave;
-            retn 32;
-        }
-    }
-}
-
-
-//交任务钩子函数
-static void __stdcall myAcceptQuest(DWORD questID, 
-                             UCHAR questStep, 
-                             DWORD argv3, 
-                             DWORD argv4, 
-                             DWORD npcid1,
-                             DWORD npcid2, 
-                             DWORD argv7)
-{
-    DWORD* pEsp = &questID;
-   
-    log2(_T("dump stack"));
-    for(int i = 0; i < 7; i++)
-    {
-        log2(_T("esp+%d %08x"), i, *(pEsp + i));
-    }
-    
-    __asm
-    {
-        leave;
-        retn 28;
-    }
-}
-
-
-
-static CCHook stepHook((void *)shunyi_call, mySendStep);
-static CCHook deQuestHook((void *)deliver_quest_call, myDeliveQuest);
-static CCHook aeQuestHook((void *)npc_quest_call, myAcceptQuest);
-static CCHook WearHook((void *)chuanzhuangbei_call, myWearEquipment);
-static CCHook DundiHook((void *)dundi_call, myDunDi);
-static CCHook Yicjw((void *)pickup1_call, myYiCiJianWu);
-static CCHook CombatHook((void *)0x0047B948, myCombatFilter);
-
-
 /////////////////////////////////////////////////////////////////////////////
 // CDataDlg message handlers
 
@@ -526,7 +183,7 @@ void CDataDlg::CheckHook()
 {
 	if(m_bHook_Combat)
 	{
-
+        CombatHook.unhook();
 	}
 	if(m_bHook_Accquest)
 	{
@@ -557,10 +214,27 @@ void CDataDlg::CheckHook()
 	{
 		stepHook.unhook();
 	}
-
-
-		
+	
 }
+
+
+void CDataDlg::AddInfo(TCHAR szFormat[], ...)
+{
+    TCHAR buffer[BUFSIZ] = {0};
+    
+    va_list argptr;
+    va_start(argptr, szFormat);
+    wvsprintf(buffer, szFormat, argptr);
+    va_end(argptr);
+    
+    _tcscat(buffer, _T("\r\n"));
+
+    int len = m_hEdit.GetWindowTextLength();
+    m_hEdit.SetSel(len, -1);
+    m_hEdit.ReplaceSel(buffer);
+
+}
+
 
 
 BOOL CDataDlg::OnInitDialog() 
@@ -601,7 +275,7 @@ BOOL CDataDlg::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult)
 			CString strClick = m_ListCtrl.GetItemText(pItem->iItem, pItem->iSubItem);
 			if(strClick.IsEmpty() == FALSE)
 			{
-				log2(_T("%s"), (LPCTSTR)strClick);
+                m_hEdit.ReplaceSel(strClick);
 			}
 		}
 		break;
@@ -620,19 +294,19 @@ void CDataDlg::OnGetpalyerinfo()
 	sPosition PlayerPos2;
 	gcall.GetPlayerPos2(&PlayerPos2);
 	
-	log2(_T("角色名: %s"), gcall.GetPlayerName());
-	log2(_T("角色地图ID: %d"), gcall.GetCityID());
-	log2(_T("角色魔法: %d"), gcall.GetPlayerMana());
-	log2(_T("角色等级: %d"), gcall.GetPlayerLevel());
-	log2(_T("角色血量: %d"), gcall.GetPlayerHealth());
-	log2(_T("角色最大血量: %d"), gcall.GetPlayerMaxHealth());
-	log2(_T("角色内力: %d"), gcall.GetPlayerMana());
-	log2(_T("角色ID: %d"), gcall.GetPlayerID());
-	log2(_T("角色最大体力: %d"),(int)gcall.GetPlayerMaxVit());
-	log2(_T("角色体力: %d"),(int) gcall.GetPlayerVit());
-	log2(_T("角色视角: %d"), (int)gcall.GetPlayerViewPoint());
-	log2(_T("角色坐标: x:%d y:%d z:%d"), (int)PlayerPos.x, (int)PlayerPos.y, (int)PlayerPos.z);
-	log2(_T("角色坐标2: x:%d y:%d z:%d"), (int)PlayerPos2.x, (int)PlayerPos2.y, (int)PlayerPos2.z);
+	AddInfo(_T("角色名: %s"), gcall.GetPlayerName());
+	AddInfo(_T("角色地图ID: %d"), gcall.GetCityID());
+	AddInfo(_T("角色魔法: %d"), gcall.GetPlayerMana());
+	AddInfo(_T("角色等级: %d"), gcall.GetPlayerLevel());
+	AddInfo(_T("角色血量: %d"), gcall.GetPlayerHealth());
+	AddInfo(_T("角色最大血量: %d"), gcall.GetPlayerMaxHealth());
+	AddInfo(_T("角色内力: %d"), gcall.GetPlayerMana());
+	AddInfo(_T("角色ID: %d"), gcall.GetPlayerID());
+	AddInfo(_T("角色最大体力: %d"),(int)gcall.GetPlayerMaxVit());
+	AddInfo(_T("角色体力: %d"),(int) gcall.GetPlayerVit());
+	AddInfo(_T("角色视角: %d"), (int)gcall.GetPlayerViewPoint());
+	AddInfo(_T("角色坐标: x:%d y:%d z:%d"), (int)PlayerPos.x, (int)PlayerPos.y, (int)PlayerPos.z);
+	AddInfo(_T("角色坐标2: x:%d y:%d z:%d"), (int)PlayerPos2.x, (int)PlayerPos2.y, (int)PlayerPos2.z);
 	
 }
 
@@ -1455,7 +1129,7 @@ void CDataDlg::OnHookstrike()
 		int nItem = m_ListCtrl.GetNextSelectedItem(pos);
 		ObjectNode* pNode = (ObjectNode *)m_ListCtrl.GetItemData(nItem);
 
-		g_ObjAddrVec.push_back(pNode->ObjAddress);
+		m_ObjAddrVec.push_back(pNode->ObjAddress);
 	}
 }
 
@@ -1465,7 +1139,7 @@ void CDataDlg::OnHookCombat()
 	UpdateData(TRUE);
 	if(m_bHook_Combat)
 	{
-		g_ObjAddrVec.clear();
+		m_ObjAddrVec.clear();
 		backupCombat = CombatHook.hook();
 	}
 	else{

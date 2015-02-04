@@ -13,17 +13,21 @@
 // CLaunchGameThread thread
 
 class CJLkitView;
-class CLaunchGameThread : public CWinThread
+class CLaunchThread : public CWinThread
 {
-	DECLARE_DYNCREATE(CLaunchGameThread)
+	DECLARE_DYNCREATE(CLaunchThread)
 protected:
-	CLaunchGameThread();           // protected constructor used by dynamic creation
+	CLaunchThread();           // protected constructor used by dynamic creation
 
 // Attributes
 public:
 
+
+    
 	CJLkitView* m_pView;
 	void SetOwner(CJLkitView* pOwner) { m_pView = pOwner; };
+    BOOL isWorking(){return m_bIsWorking;};
+    BOOL m_bIsWorking;
 // Operations
 public:
 
@@ -37,7 +41,7 @@ public:
 
 // Implementation
 protected:
-	virtual ~CLaunchGameThread();
+	virtual ~CLaunchThread();
 
 	// Generated message map functions
 	//{{AFX_MSG(CLaunchGameThread)
@@ -45,6 +49,7 @@ protected:
 	//}}AFX_MSG
 
 	DECLARE_MESSAGE_MAP()
+ 
 };
 
 /////////////////////////////////////////////////////////////////////////////
