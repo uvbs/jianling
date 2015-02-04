@@ -1140,14 +1140,13 @@ void GamecallEx::Stepto(wchar_t *name)
 
 
 
-BOOL GamecallEx::CityConvey(DWORD cityid)
+BOOL GamecallEx::_CityConvey(DWORD cityid)
 {
 
-    if(GetCityID() == cityid)
-    {
-        log.logdv(_T("相同的城市ID取消传送"));
-        return FALSE;
-    }
+	//if(GetCityID() == cityid){
+	//	log.logdv(_T("相同的城市ID取消传送"));
+	//	return FALSE;
+	//}
 
 
     __try
@@ -1159,7 +1158,7 @@ BOOL GamecallEx::CityConvey(DWORD cityid)
         if(isCityConveying() == FALSE)
         {
             log.logdv(_T("城市传送读条失败"));
-            return false;
+			return FALSE;
         }
         else
         {
@@ -1550,10 +1549,18 @@ void GamecallEx::NewBag()
 
 
 //存到仓库
-void GamecallEx::CunCangku(wchar_t *name)
+void GamecallEx::CunCangku(wchar_t *name,wchar_t * npcname)
 {
-    if(name == NULL)
+
+    if(name == NULL || npcname == NULL)
         return;
+    
+	DWORD dwUiAddr = 0;
+	if(OpenShangDian(npcname, &dwUiAddr) == FALSE){
+		log.logdv(_T("%s: 没能打开对话框"), FUNCNAME);
+		return;
+	}
+
 
     std::vector<_BAGSTU> GoodsVec;
     GetGoodsFromBagByName(name, GoodsVec);
@@ -1565,6 +1572,8 @@ void GamecallEx::CunCangku(wchar_t *name)
             break;
         }
     }
+
+	CloseShangDian();
 }
 
 
@@ -2170,4 +2179,66 @@ int GamecallEx::KillObject(DWORD range, ObjectNode *pNode, DWORD mode, DWORD can
         }
         Sleep(50);
     }//for
+}
+
+void GamecallEx::CityConvey(DWORD cityid)
+{
+	while (true)
+	{
+		if (_CityConvey(cityid))
+		{
+			ChangeZ_Status(FALSE);
+			Sleep(5000);
+			break;
+		}else
+		{
+			if(GetRangeMonsterCount() >= 1){
+				/*log.logdv(_T("传送期间有怪，执行杀怪。"));
+				FindThenKill(0,300,modeAoe | modeNormal | modePickup | modeGoback);
+				Sleep(1000);*/
+				fPosition mypos;
+				GetPlayerPos(&mypos);
+				ChangeZ_Status(TRUE);
+				ChangeHeight(mypos.z+600);
+			}
+		}
+	}
+}
+
+void GamecallEx::CuncangkuByConfig(wchar_t *name)
+{
+	CCIniFile configFile;
+	configFile.Open(m_szConfigPath);
+	TCHAR* szFilter = configFile.GetProfileString(strCunCang, strItemName);
+
+
+	//遍历一次当前所有物品
+	std::vector<_BAGSTU> AllBag;
+	GetAllGoodsToVector(AllBag);
+
+
+	DWORD dwUiAddr = 0;
+	if(OpenShangDian(name, &dwUiAddr) == FALSE)
+		return;
+
+
+	wchar_t *token = wcstok(szFilter, L";"); // C4996
+	while(token != NULL){
+		//每次从vector中判断出名字
+		for(int i = 0; i < AllBag.size(); i++){
+			if(wcscmp(token, AllBag[i].name) == 0){
+				PARAM_GUANSHANGDIAN temp;
+				temp.argv1 = (DWORD)&AllBag[i];
+				temp.argv2 = dwUiAddr;
+				sendcall(id_msg_CunCangku, &temp);
+
+				Sleep(1000);
+			}
+		}
+
+		//Get next token: 
+		token = wcstok(NULL, L";"); // C4996
+	}
+
+	CloseShangDian();
 }
