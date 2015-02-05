@@ -13,20 +13,20 @@
 class CRequest: public CObject
 {
 public:
-	CRequest();
-	virtual ~CRequest();
+    CRequest();
+    virtual ~CRequest();
 
     CString strType;
     CString strTime;
     CString strUserName;
     CString strOther;
-	CString strIp;
+    CString strIp;
     CString strResult;
     DWORD m_reqNums;	//ÇëÇó´ÎÊý
     CTime m_time;
 
-	int AddRef();
-	int Release();
+    int AddRef();
+    int Release();
 };
 
 #endif // !defined(AFX_REQUEST_H__8DB4623A_D730_4D3D_9647_34D893564383__INCLUDED_)

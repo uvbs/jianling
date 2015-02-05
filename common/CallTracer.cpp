@@ -25,7 +25,7 @@ CCallTracer::CCallTracer()
     if(m_dwSymClients <= 1)
         InitSymbols();
 
-    m_dwOptions = CALLTRACE_OPT_INFO_ALL;
+    m_dwOptions = CALLTRACE_OPT_INFO_MODULE_FUNC | CALLTRACE_OPT_INFO_MODULE_SYMBOL;
 }
 
 CCallTracer::~CCallTracer()

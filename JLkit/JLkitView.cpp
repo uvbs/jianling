@@ -70,7 +70,9 @@ BOOL CJLkitView::PreCreateWindow(CREATESTRUCT& cs)
 int CJLkitView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
     if(CListView::OnCreate(lpCreateStruct) == -1)
+    {
         return -1;
+    }
 
     CString strHeading;
 
@@ -128,27 +130,49 @@ void CJLkitView::SetResult(int nReslt, int i)
         GetListCtrl().SetCheck(i);
     }
     else if(nReslt == RESULT_FAIL_CAPTCHA)
+    {
         GetListCtrl().SetItemText(i, COLUMN_TEXT_STATUS, _T("需要验证码"));
+    }
     else if(nReslt == RESULT_FAIL_IPBLOCK)
+    {
         GetListCtrl().SetItemText(i, COLUMN_TEXT_STATUS, _T("IP BLOCK"));
+    }
     else if(nReslt == RESULT_FAIL_GETUKEY)
+    {
         GetListCtrl().SetItemText(i, COLUMN_TEXT_STATUS, _T("无法获取UKEY"));
+    }
     else if(nReslt == RESULT_NOKEY)
+    {
         GetListCtrl().SetItemText(i, COLUMN_TEXT_STATUS, _T("没有有效KEY"));
+    }
     else if(nReslt == RESULT_ALREADY_RUNNING)
+    {
         GetListCtrl().SetItemText(i, COLUMN_TEXT_STATUS, _T("已经在运行.."));
+    }
     else if(nReslt == RESULT_GET_ALEADY)
+    {
         GetListCtrl().SetItemText(i, COLUMN_TEXT_STATUS, _T("已经领取过"));
+    }
     else if(nReslt == RESULT_GET_ERROR)
+    {
         GetListCtrl().SetItemText(i, COLUMN_TEXT_STATUS, _T("领取失败"));
+    }
     else if(nReslt == RESULT_FAIL_TIMEOUT)
+    {
         GetListCtrl().SetItemText(i, COLUMN_TEXT_STATUS, _T("超时"));
+    }
     else if(nReslt == RESULT_FAIL_NOACTIVEITEMS)
+    {
         GetListCtrl().SetItemText(i, COLUMN_TEXT_STATUS, _T("无需激活"));
+    }
     else if(nReslt == RESULT_FAIL_PWERROR)
+    {
         GetListCtrl().SetItemText(i, COLUMN_TEXT_STATUS, _T("密码错误"));
+    }
     else if(nReslt == RESULT_FAIL_CREATEGAMEPROCESS)
+    {
         GetListCtrl().SetItemText(i, COLUMN_TEXT_STATUS, _T("创建进程错误"));
+    }
 }
 
 
@@ -206,7 +230,9 @@ void CJLkitView::OnUpdateStart(CCmdUI* pCmdUI)
     }
 
     if(GetListCtrl().GetSelectedCount() != 0)
+    {
         pCmdUI->Enable();
+    }
 
     if(m_lpLaunchThread)
     {
@@ -214,7 +240,9 @@ void CJLkitView::OnUpdateStart(CCmdUI* pCmdUI)
         GetExitCodeThread(m_lpLaunchThread->m_hThread, &dwExitCode);
 
         if(dwExitCode == STILL_ACTIVE)
+        {
             pCmdUI->Enable(FALSE);
+        }
     }
 }
 
@@ -291,7 +319,9 @@ void CJLkitView::OnGetAndActive()
     for(int i = 0; i < count; i++)
     {
         if(GetListCtrl().GetCheck(i))
+        {
             lpTpool->AddWork(new MyCWork(i, this));
+        }
     }
 }
 
@@ -328,7 +358,9 @@ void CJLkitView::SerializeText(CArchive& ar)
         }
 
         for(int i = 0; i < COLUMN_TEXT_NUMS; i++)
+        {
             GetListCtrl().SetColumnWidth(i, LVSCW_AUTOSIZE_USEHEADER);
+        }
 
         pDoc->m_share.Close();
         pDoc->m_share.Create(count, SHAREOBJNAME);
@@ -351,7 +383,9 @@ void CJLkitView::OnUpdateProfile(CCmdUI* pCmdUI)
     }
 
     if(GetListCtrl().GetSelectedCount() != 0)
+    {
         pCmdUI->Enable();
+    }
 }
 
 void CJLkitView::OnUpdateSelectall(CCmdUI* pCmdUI)

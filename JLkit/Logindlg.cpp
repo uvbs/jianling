@@ -27,7 +27,7 @@ static char THIS_FILE[] = __FILE__;
 // LoginDlg dialog
 
 
-CDlgLogin::CDlgLogin(CJLkitDoc* pDoc)
+CDlgLogin::CDlgLogin()
     : CDialog(CDlgLogin::IDD, NULL)
 {
     //{{AFX_DATA_INIT(LoginDlg)
@@ -35,9 +35,6 @@ CDlgLogin::CDlgLogin(CJLkitDoc* pDoc)
     m_strPw = _T("");
     m_bRemPw = TRUE;
     //}}AFX_DATA_INIT
-
-    m_pDoc = pDoc;
-    m_pSocket = pDoc->m_pSocket;
 }
 
 
@@ -65,7 +62,7 @@ END_MESSAGE_MAP()
 
 void CDlgLogin::OnBtnRegister()
 {
-    CDlgRegist dlg(m_pSocket);
+    CDlgRegist dlg;
 
     if(dlg.DoModal() == IDOK)
     {
@@ -79,7 +76,7 @@ void CDlgLogin::LoginResult(int nResult)
 {
     if(nResult == result_ok)
     {
-        m_pSocket->Querykey();
+        CJLkitSocket::GetInstance()->Querykey();
         CDialog::OnOK();
     }
     else if(nResult == result_login_notuser)
@@ -109,7 +106,7 @@ BOOL CDlgLogin::OnInitDialog()
 void CDlgLogin::OnBtnModifybind()
 {
     // TODO: Add your control notification handler code here
-    CDlgModifyBind dlg(m_pSocket);
+    CDlgModifyBind dlg;
 
     if(dlg.DoModal() == IDOK)
     {
@@ -121,5 +118,5 @@ void CDlgLogin::OnOK()
 {
     // TODO: Add extra validation here
     UpdateData(TRUE);
-    m_pSocket->LoginSrv(m_strName, m_strPw);
+    CJLkitSocket::GetInstance()->LoginSrv(m_strName, m_strPw);
 }

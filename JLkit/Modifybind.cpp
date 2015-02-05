@@ -11,7 +11,7 @@
 
 // CDlgModifyBind dialog
 
-CDlgModifyBind::CDlgModifyBind(CJLkitSocket* pSock, CWnd* pParent /*=NULL*/)
+CDlgModifyBind::CDlgModifyBind(CWnd* pParent /*=NULL*/)
     : CDialog(CDlgModifyBind::IDD, pParent)
 {
     //{{AFX_DATA_INIT(CDlgModifyBind)
@@ -21,7 +21,6 @@ CDlgModifyBind::CDlgModifyBind(CJLkitSocket* pSock, CWnd* pParent /*=NULL*/)
     m_strNewbind = _T("");
     //}}AFX_DATA_INIT
 
-    m_pSock = pSock;
 }
 
 CDlgModifyBind::~CDlgModifyBind()
@@ -69,7 +68,7 @@ void CDlgModifyBind::OnOK()
     }
     else
     {
-        m_pSock->ModifyBind(m_strName, m_strPw, m_strOldbind, m_strNewbind);
+        CJLkitSocket::GetInstance()->ModifyBind(m_strName, m_strPw, m_strOldbind, m_strNewbind);
     }
 
     CDialog::OnOK();

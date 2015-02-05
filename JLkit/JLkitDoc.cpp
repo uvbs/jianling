@@ -97,12 +97,12 @@ BOOL CJLkitDoc::OnNewDocument()
     }
     if(!m_pSocket)
     {
-        m_pSocket = new CJLkitSocket(this);
+        m_pSocket = CJLkitSocket::GetInstance(this);
         m_pSocket->Create();
     }
     if(!m_pLoginDlg)
     {
-        m_pLoginDlg = new CDlgLogin(this);
+        m_pLoginDlg = new CDlgLogin;
     }
     if(!m_pJob)
     {
@@ -370,6 +370,17 @@ void CJLkitDoc::ProcessRecevice()
             if(m_pKeyDlg)
             {
                 m_pKeyDlg->BindResult(retbuf->result);
+            }
+        }
+        else if(retbuf->fun == fun_regist)
+        {
+            if(retbuf->result = TRUE)
+            {
+                AfxMessageBox(_T("×¢²áÍê³É"));
+            }
+            else
+            {
+                AfxMessageBox(_T("×¢²áÊ§°Ü"));
             }
         }
     }

@@ -10,11 +10,14 @@
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-IMPLEMENT_DYNAMIC(CJLkitSocket, CSocket)
+
+
+CJLkitSocket* CJLkitSocket::_Instance = NULL;
 
 CJLkitSocket::CJLkitSocket(CJLkitDoc* pDoc)
 {
     m_pDoc = pDoc;
+    AfxGetApp();
 }
 
 CJLkitSocket::~CJLkitSocket()
@@ -136,15 +139,15 @@ void CJLkitSocket::Unbindkey(CString& strKey)
     Send(&keybuf, sizeof(KEY_BUF));
 }
 
-void CJLkitSocket::Register(CString&strName, CString&strPw, CString&strIP)
+void CJLkitSocket::Register(CString& strName, CString& strPw, CString& strIP)
 {
     REGIST_BUF registbuf;
     registbuf.fun = fun_regist;
-    
+
     memcpy(registbuf.ip, (LPCTSTR)strIP, MAXLEN);
     memcpy(registbuf.name, (LPCTSTR)strName, MAXLEN);
     memcpy(registbuf.pw, (LPCTSTR)strPw, MAXLEN);
-   // memcpy(&registbuf.pcdata, &pcinfo.stPcData, sizeof(PCDATA));
+    // memcpy(&registbuf.pcdata, &pcinfo.stPcData, sizeof(PCDATA));
     Send(&registbuf, sizeof(REGIST_BUF));
 }
 

@@ -7,7 +7,9 @@
 BYTE Gamecall::ReadByte(DWORD addr)
 {
     if(!IsBadReadPtr((void*)addr, sizeof(BYTE)))
+    {
         return *(BYTE*)addr;
+    }
 
     return 0;
 }
@@ -15,7 +17,9 @@ BYTE Gamecall::ReadByte(DWORD addr)
 WORD Gamecall::ReadWORD(DWORD addr)
 {
     if(!IsBadReadPtr((void*)addr, sizeof(WORD)))
+    {
         return *(WORD*)addr;
+    }
 
     return 0;
 }
@@ -23,7 +27,9 @@ WORD Gamecall::ReadWORD(DWORD addr)
 DWORD Gamecall::ReadDWORD(DWORD addr)
 {
     if(!IsBadReadPtr((void*)addr, sizeof(DWORD)))
+    {
         return *(DWORD*)addr;
+    }
 
     return 0;
 }
@@ -31,7 +37,9 @@ DWORD Gamecall::ReadDWORD(DWORD addr)
 int Gamecall::ReadInt(DWORD addr)
 {
     if(!IsBadReadPtr((void*)addr, sizeof(int)))
+    {
         return *(int*)addr;
+    }
 
     return 0;
 }
@@ -39,7 +47,9 @@ int Gamecall::ReadInt(DWORD addr)
 float Gamecall::ReadFloat(DWORD addr)
 {
     if(!IsBadReadPtr((void*)addr, sizeof(float)))
+    {
         return *(float*)addr;
+    }
 
     return 0;
 }
@@ -47,7 +57,9 @@ float Gamecall::ReadFloat(DWORD addr)
 char* Gamecall::ReadStr(DWORD addr)
 {
     if(!IsBadReadPtr((void*)addr, sizeof(char)))
+    {
         return (char*)addr;
+    }
 
     return 0;
 }
@@ -876,14 +888,18 @@ BOOL Gamecall::Init()
         PathAppend(m_szConfigPath, _T("配置"));
 
         if(PathFileExists(m_szConfigPath) == FALSE)
+        {
             _wmkdir(m_szConfigPath);
+        }
 
         //顺义的路径
         _tcscpy(m_szLujingPath, szExePath);
         PathAppend(m_szLujingPath, _T("路径"));
 
         if(PathFileExists(m_szLujingPath) == FALSE)
+        {
             _wmkdir(m_szLujingPath);
+        }
 
         //录制瞬移的默认路径
         _tcscpy(m_szLujingTest, m_szLujingPath);
@@ -909,7 +925,9 @@ BOOL Gamecall::Init()
             WORD hdr = 0xfeff;
 
             if(fwrite(&hdr, 1, sizeof(WORD), configFile) != sizeof(WORD))
+            {
                 return FALSE;
+            }
 
             fclose(configFile);
         }
@@ -1091,7 +1109,9 @@ HWND Gamecall::isGameWndCreated(DWORD dwPid)
         hGameWnd = FindWindowEx(NULL, hGameWnd, _T("LaunchUnrealUWindowsClient"), NULL);
 
         if(hGameWnd == NULL)
+        {
             return NULL;
+        }
     }
 }
 
@@ -1113,7 +1133,9 @@ void Gamecall::_GetAcceptedQuestToVector(std::vector<Quest>& QuestVec)
         qst.name = GatTaskName(qst.name_id);//获取当前已接任务名字
 
         if(qst.name)
+        {
             QuestVec.push_back(qst);
+        }
         else
         {
             //遍历完成
@@ -1593,7 +1615,9 @@ BOOL Gamecall::GetObjectPos(ObjectNode* pNode, fPosition* fpos)
     DWORD type = (DWORD)GetObjectType(pNode->ObjAddress);
 
     if(type == 0x20)
+    {
         GetObjectPos2_0x20(pNode->ObjAddress, fpos);
+    }
     else if(type == 0xb0)
     {
         sPosition spos;
@@ -1601,9 +1625,13 @@ BOOL Gamecall::GetObjectPos(ObjectNode* pNode, fPosition* fpos)
         *fpos = ShortPosToFloatPos(spos);
     }
     else if(type == 0x4)
+    {
         _GetObjectPos(pNode->ObjAddress, fpos);
+    }
     else
+    {
         return FALSE;
+    }
 
     return TRUE;
 }
@@ -1735,7 +1763,9 @@ BOOL Gamecall::GetObjectPos_0xb(DWORD pObjAddress, sPosition* spos)
 wchar_t* Gamecall::GetObjectNameByIndex(DWORD index)
 {
     if(index == UINT_MAX)
+    {
         return NULL;
+    }
 
     wchar_t* name;
 
@@ -2029,9 +2059,13 @@ DWORD Gamecall::GetXianluNums()
     for(int i = 0; i < 30; i++)
     {
         if(isHaveXianlu(i))
+        {
             count++;
+        }
         else
+        {
             break;
+        }
     }
 
     return count;
@@ -2129,7 +2163,9 @@ BOOL Gamecall::OpenShangDian(wchar_t* name, DWORD* pUiAddr)
     GetUIAddrByName(L"TalkControlPanel", pUiAddr);//old-ItemStorePanel
 
     if(*pUiAddr == 0)
+    {
         return FALSE;
+    }
 
     //等待四秒判断商店是否已经打开
     for(DWORD i = 0; i < 4; i++)
@@ -2180,7 +2216,9 @@ void Gamecall::CloseShangDian()
         Sleep(2000);
     }
     else
+    {
         log.logdv(_T("%s: 获取商店UI地址失败"), FUNCNAME);
+    }
 
     return;
 }
@@ -2195,7 +2233,9 @@ void Gamecall::SellItem(_BAGSTU& bag, DWORD adress)
     int nums = bag.m_Num;
 
     if(nums == 0)
+    {
         nums += 1;
+    }
 
     __try
     {
@@ -2271,7 +2311,9 @@ BOOL Gamecall::ClickUI(UIOperator uiOp)
 void Gamecall::GetStrikeBarBaseAddr(Tree* pBaseAddr, DWORD* pStrikeBarBaseAddr)
 {
     if(pBaseAddr->p2 == 1)
+    {
         return;
+    }
 
     __try
     {
@@ -2403,7 +2445,9 @@ DWORD Gamecall::isStrikeCanUse(int index, DWORD pAddr)
     __try
     {
         if(pAddr != 0)
+        {
             value = ReadDWORD(pAddr + index * nums_strike_strcut_size + (nums_strike_canuse + 0x10));
+        }
 
         /*int temp = index * nums_strike_strcut_size;
         int temp2 = (nums_strike_canuse + 0x10);
@@ -2756,7 +2800,9 @@ BOOL Gamecall::GetAllBaGuaToVector(std::vector<_BAGSTU>& BaGuaVec)
     {
         if(AllGoods[i].m_Info >= 8 &&
                 AllGoods[i].m_Info <= 16)
+        {
             BaGuaVec.push_back(AllGoods[i]);
+        }
     }
 
     return TRUE;
@@ -2772,7 +2818,9 @@ BOOL Gamecall::GetSpecBaGuaToVector(wchar_t* name, std::vector<_BAGSTU>& BaGuaVe
     for(DWORD i = 0; i < AllGoods.size(); i++)
     {
         if(wcscmp(name, AllGoods[i].name) == 0)
+        {
             BaGuaVec.push_back(AllGoods[i]);
+        }
     }
 
     return TRUE;
@@ -3476,7 +3524,9 @@ DWORD Gamecall::GetTaskStepById(DWORD id)
     for(DWORD i = 0; i < QuestVec.size(); i++)
     {
         if(QuestVec[i].id == id)
+        {
             return QuestVec[i].step;
+        }
     }
 
     return UINT_MAX;
@@ -3600,7 +3650,9 @@ BOOL Gamecall::isBagFull()
     GetAllGoodsToVector(GoodsVec);
 
     if(GoodsVec.size() == GetBagGridNumber())
+    {
         return TRUE;
+    }
 
     return FALSE;
 }
@@ -3619,13 +3671,17 @@ pickup_one:
         sendcall(id_msg_Pickup1, pObj);
 
         if(isPlayerHasPickupQuestItemUI())
+        {
             sendcall(id_msg_Pickup2, pObj);
+        }
         else
         {
             times++;
 
             if(times >= 3)
+            {
                 return FALSE;
+            }
 
             goto pickup_one;
         }
@@ -3688,9 +3744,13 @@ BOOL Gamecall::isLoots(DWORD pAddr)  //TODO
     if(bRet1 == -1 &&
             bRet2 == -1 &&
             bRet3 == -1)
+    {
         return false;
+    }
     else
+    {
         return TRUE;
+    }
 
     return TRUE;
 }
@@ -3718,7 +3778,9 @@ BOOL Gamecall::isCanFenjie(DWORD pAddr)
     if(type == 1 ||
             type == 4 ||
             type == 5)
+    {
         return TRUE;
+    }
 
     return false;
 }
@@ -3794,9 +3856,13 @@ void Gamecall::DeliverQuests(DWORD id, DWORD step, DWORD questtype, DWORD ff, DW
 void Gamecall::KeyPress(WPARAM vk)
 {
     if(m_hGameWnd != NULL)
+    {
         PostMessage(m_hGameWnd, WM_KEYDOWN, vk, 0);
+    }
     else
+    {
         log.logdv(_T("外挂没有获取游戏窗口句柄"));
+    }
 }
 
 
@@ -3814,9 +3880,13 @@ void Gamecall::WearEquipment(_BAGSTU& bag)
 
     if(8 <= bag.m_BaGuaGeZiShu &&
             bag.m_BaGuaGeZiShu <= 15)
+    {
         pos = bag.m_BaGuaGeZiShu;
+    }
     else
+    {
         pos = bag.m_ID;
+    }
 
     __try
     {
@@ -3937,7 +4007,9 @@ BOOL Gamecall::isDeadBody(DWORD pAddr)
     DWORD type = GetObjectType(pAddr);
 
     if(type == 0xb0)
+    {
         return TRUE;
+    }
 
     return FALSE;
 }
@@ -4194,7 +4266,9 @@ void Gamecall::LoginGame(int index)
     for(;;)
     {
         if(isLoadingMap() == 2)
+        {
             break;
+        }
 
         Sleep(1000);
     }
@@ -4238,7 +4312,9 @@ BOOL Gamecall::isQuestItem(DWORD pAddr)
 
         //==2就是可用, 可用可以断定为是任务物品
         if(value == 2)
+        {
             return TRUE;
+        }
     }
     __except(1)
     {
@@ -4283,9 +4359,13 @@ DWORD Gamecall::GetIndexByType(DWORD pObjAddress)
     __try
     {
         if(type == 0x4)
+        {
             index = GetObjectSY(pObjAddress);
+        }
         else if(type == 0x20)
+        {
             index = GetObjectSY12(pObjAddress);
+        }
     }
     __except(1)
     {
@@ -4492,9 +4572,13 @@ void Gamecall::ChiYao(const wchar_t* name)
     _BAGSTU goods;
 
     if(GetGoodsFromBagByName(name, &goods))
+    {
         sendcall(id_msg_ChiYao, &goods);
+    }
     else
+    {
         log.logdv(_T("%s: 没有在背包中找到这个物品: %s"), FUNCNAME, name);
+    }
 
     return;
 }
@@ -4755,7 +4839,9 @@ void Gamecall::WaitPlans()
     for(;;)
     {
         if(isLoadingMap() == 3)
+        {
             break;
+        }
 
         log.logdv(_T("等待蓝条"));
         Sleep(1000);
@@ -4835,17 +4921,29 @@ MoreTimes:
             }
 
             if(leave >= 50)
+            {
                 itemName = nBig50;
+            }
             else if(leave >= 45)
+            {
                 itemName = nBig45;
+            }
             else if(leave >= 36)
+            {
                 itemName = nBig36;
+            }
             else if(leave >= 29)
+            {
                 itemName = nBig29;
+            }
             else if(leave >= 10)
+            {
                 itemName = nBig10;
+            }
             else if(leave < 10 && leave >= 0)
+            {
                 itemName = nLess10;
+            }
             else
             {
                 log.logdv(_T("没有找到所有能喝的药"));
@@ -4864,7 +4962,9 @@ letsDrike:
                     return 1;
                 }
                 else
+                {
                     return 4;
+                }
             }
             else
             {
@@ -4940,9 +5040,13 @@ BOOL Gamecall::Kill_ApplyConfig(std::vector<ObjectNode*>& ObjectVec)
             //要是即不可杀配置文件又没有指定要杀就删掉这个元素
             if(isCanKill(pNode) == FALSE &&
                     fileConfig.isHave(strCombat, strAlwaysKill, objName) == FALSE)
+            {
                 it = ObjectVec.erase(it);
+            }
             else
+            {
                 it++;
+            }
         }
 
         for(it = ObjectVec.begin(); it != ObjectVec.end();)
@@ -4957,7 +5061,9 @@ BOOL Gamecall::Kill_ApplyConfig(std::vector<ObjectNode*>& ObjectVec)
                 ObjectVec.insert(ObjectVec.begin(), pBack);
             }
             else
+            {
                 it++;
+            }
         }
 
         for(it = ObjectVec.begin(); it != ObjectVec.end();)
@@ -4971,7 +5077,9 @@ BOOL Gamecall::Kill_ApplyConfig(std::vector<ObjectNode*>& ObjectVec)
                 it = ObjectVec.erase(it);
             }
             else
+            {
                 it++;
+            }
         }
     }
     catch(...)
@@ -5085,7 +5193,9 @@ BOOL Gamecall::isPlayerHasPickupQuestItemUI()
         status = GetPlayerQuestUIStatus();
 
         if(status == 2)
+        {
             return TRUE;
+        }
     }
 
     return FALSE;
@@ -5102,7 +5212,9 @@ BOOL Gamecall::isPlayerChanneling()
         status = GetPlayerQuestUIStatus();
 
         if(status == 5)
+        {
             return TRUE;
+        }
     }
 
     return FALSE;
@@ -5137,7 +5249,9 @@ void Gamecall::GetAllObjectToVector(ObjectNode* pNote, std::vector<ObjectNode*>&
     __try
     {
         if(pNote->end == 1)
+        {
             return;
+        }
 
         //加到vector中
         RangeObject.push_back(pNote);
@@ -5165,10 +5279,14 @@ void Gamecall::GetRangeTaskItemToVectr(std::vector<ObjectNode*>& TastItemVector,
 
         //过滤掉距离远的和没距离的
         if(GetObjectPos(RangeObject[i], &fpos) == FALSE)
+        {
             continue;
+        }
 
         if(fpos.x == 0 || fpos.y == 0 || fpos.z == 0)
+        {
             continue;
+        }
 
         DWORD dis = (DWORD)CalcC(fpos, fmypos);
 
@@ -5176,7 +5294,9 @@ void Gamecall::GetRangeTaskItemToVectr(std::vector<ObjectNode*>& TastItemVector,
         {
             //判断是否为任务物品
             if(isQuestItem(pNode->ObjAddress))
+            {
                 TastItemVector.push_back(pNode);
+            }
         }
     }
 }
@@ -5186,19 +5306,25 @@ BOOL Gamecall::isCanKill(ObjectNode* pNode)
 {
     //再加一个类型是4的过滤
     if(GetObjectType(pNode->ObjAddress) != 0x4)
+    {
         return FALSE;
+    }
 
     //过滤
     BOOL bCanKill = FALSE;
 
     if(m_Get11C(pNode->ObjAddress) == 1)
+    {
         bCanKill = TRUE;
+    }
     else
     {
         if(m_Get110(pNode->ObjAddress) == 1)
         {
             if(m_Get2E4(pNode->ObjAddress) != 0)
+            {
                 bCanKill = TRUE;
+            }
         }
     }
 
@@ -5226,24 +5352,34 @@ void Gamecall::GetRangeMonsterToVector(DWORD range, std::vector<ObjectNode*>& Mo
             wchar_t* objName = GetObjectName(pNode->ObjAddress);
 
             if(objName == NULL)
+            {
                 continue;
+            }
 
             fPosition fpos;
 
             //过滤掉距离远的和没距离的
             //log.logdv(_T("执行GetObjectPos"));
             if(GetObjectPos(RangeObject[i], &fpos) == FALSE)
+            {
                 continue;
+            }
 
             if(fpos.x == 0 || fpos.y == 0 || fpos.z == 0)
+            {
                 continue;
+            }
 
             if(CalcC(fpos, fmypos) > range)
+            {
                 continue;
+            }
 
             //log.logdv(_T("执行isCanLook"));
             if(isCanLook(pNode->ObjAddress) == FALSE)
+            {
                 continue;
+            }
 
             //上面几个过滤是强制的, 不管配置文件有没有
             //比如: 如果配置文件强制杀一个怪物, 但是这个怪物
@@ -5261,7 +5397,9 @@ void Gamecall::GetRangeMonsterToVector(DWORD range, std::vector<ObjectNode*>& Mo
 void Gamecall::_GetRangeObjectToVector(ObjectNode* pNote, DWORD range, std::vector<ObjectNode*>& RangeObject)
 {
     if(pNote->end == 1)
+    {
         return;
+    }
 
     try
     {
@@ -5274,12 +5412,18 @@ void Gamecall::_GetRangeObjectToVector(ObjectNode* pNote, DWORD range, std::vect
             GetPlayerPos(&fmypos);
 
             if(fpos.x == 0 || fpos.y == 0 || fpos.z	 == 0)
+            {
                 RangeObject.push_back(pNote);
+            }
             else if((DWORD)CalcC(fmypos, fpos) <= range)
+            {
                 RangeObject.push_back(pNote);
+            }
         }
         else
+        {
             RangeObject.push_back(pNote);
+        }
 
         GetRangeObjectToVector(pNote->left, range, RangeObject);
         GetRangeObjectToVector(pNote->right, range, RangeObject);
@@ -5322,10 +5466,14 @@ void Gamecall::GetRangeLootObjectToVector(DWORD range, std::vector<ObjectNode*>&
 
             //过滤掉距离远的和没距离的
             if(GetObjectPos(RangeObject[i], &fpos) == FALSE)
+            {
                 continue;
+            }
 
             if(fpos.x == 0 || fpos.y == 0 || fpos.z == 0)
+            {
                 continue;
+            }
 
             if(GetObjectType(pNode->ObjAddress) == 0xb0)
             {
@@ -5334,7 +5482,9 @@ void Gamecall::GetRangeLootObjectToVector(DWORD range, std::vector<ObjectNode*>&
                     DWORD dis = (DWORD)CalcC(fpos, fmypos);
 
                     if(dis <= range)
+                    {
                         LootVec.push_back(pNode);
+                    }
                 }
             }
         }
@@ -5367,9 +5517,13 @@ DWORD Gamecall::GetRangeLootCount(DWORD range)
 void Gamecall::HookQietu(BOOL bEnable)
 {
     if(bEnable)
+    {
         hookQietu.hook();
+    }
     else
+    {
         hookQietu.unhook();
+    }
 }
 
 void Gamecall::OverShunyi(BOOL bEnable) //过图
@@ -5410,9 +5564,13 @@ ObjectNode* Gamecall::GetObjectByName(wchar_t szName[], DWORD range)
         std::vector<ObjectNode*> RangeObject;
 
         if(range == 0)
+        {
             GetAllObjectToVector(GetObjectBinTreeBaseAddr(), RangeObject);
+        }
         else
+        {
             GetRangeObjectToVector(GetObjectBinTreeBaseAddr(), range, RangeObject);
+        }
 
         fPosition tarpos;
 
@@ -5420,20 +5578,28 @@ ObjectNode* Gamecall::GetObjectByName(wchar_t szName[], DWORD range)
         {
             //过滤掉没坐标的
             if(GetObjectPos(RangeObject[i], &tarpos) == FALSE)
+            {
                 continue;
+            }
 
             //过滤掉坐标是0的
             if(tarpos.x == 0 || tarpos.y == 0 || tarpos.z == 0)
+            {
                 continue;
+            }
 
             //过滤掉没名字的
             wchar_t* name = GetObjectName(RangeObject[i]->ObjAddress);
 
             if(name == NULL)
+            {
                 continue;
+            }
 
             if(wcscmp(name, szName) == 0)
+            {
                 return RangeObject[i];
+            }
         }
     }
     catch(...)
@@ -5451,7 +5617,9 @@ void Gamecall::_GetUItoVector(Tree* Base, std::vector<Tree*>& Allui)
     __try
     {
         if(Base->p2 == 1)
+        {
             return;
+        }
 
         //查找连续5个内重复的
         static DWORD ____old = 0;
@@ -5680,7 +5848,9 @@ DWORD Gamecall::GetGoodsYouJianType(DWORD m_BagLeiXing, DWORD m_Info)
         value += m_BagLeiXing;
 
         if(UIaddr)
+        {
             m_Adress = GetBagYouJianCaoZuoType(value, UIaddr);
+        }
     }
     __except(1)
     {
@@ -5734,14 +5904,18 @@ BOOL Gamecall::FillGoods(_BAGSTU& BagBuff)
     BagBuff.m_ID      =   GetGoodsID(BagBuff.m_Base);                //获取物品的ID
 
     if(BagBuff.m_ID == UINT_MAX)
+    {
         return FALSE;
+    }
 
     BagBuff.m_NameID  =   GetGoodsNameID(BagBuff.m_Base);            //获取物品的名字ID
     //BagBuff.name   =	  (wchar_t *)sendcall(id_msg_GatBagGoodrName, (LPVOID)BagBuff.m_NameID);
     BagBuff.name   =	  GatBagGoodrName(BagBuff.m_NameID);
 
     if(BagBuff.name == NULL)
+    {
         return FALSE;
+    }
 
     BagBuff.m_Type    =   GetGoodsType(BagBuff.m_Base);              //获取物品的类型
     BagBuff.m_Info    =   GetGoodsInfo(BagBuff.m_Base);              //获取物品的所在格子数
@@ -5843,7 +6017,9 @@ void Gamecall::_GetAllGoodsToVector(std::vector<_BAGSTU>& RangeObject)
             if(aGoods.m_Base != 0)
             {
                 if(FillGoods(aGoods))
+                {
                     RangeObject.push_back(aGoods);
+                }
             }
 
             //Sleep(10);
@@ -5881,7 +6057,9 @@ void Gamecall::_GetAllBodyEquipToVector(std::vector<_BAGSTU>& RangeObject)
             if(aGoods.m_Base != 0)
             {
                 if(FillGoods(aGoods))
+                {
                     RangeObject.push_back(aGoods);
+                }
             }
         }
         __except(1)
@@ -5951,7 +6129,9 @@ void Gamecall::GetStrikeToVector(std::vector<STRIKEINFO>& RangeObject)
                 RangeObject.push_back(strike);
             }
             else
+            {
                 continue;
+            }
         }
         __except(1)
         {
@@ -5977,7 +6157,9 @@ void Gamecall::GetStrikeToVector(std::vector<STRIKEINFO>& RangeObject)
                 RangeObject.push_back(strike);
             }
             else
+            {
                 continue;
+            }
         }
         __except(1)
         {
@@ -6475,7 +6657,9 @@ BOOL Gamecall::PickupDeadbody(DWORD range)
                 pMaxNode = pNode;
 
                 if(pNode->id > pMaxNode->id)
+                {
                     pMaxNode = pNode;
+                }
             }
         }
 
@@ -6717,10 +6901,14 @@ BOOL Gamecall::isConfirmDeleteTalnetPanelShow()
         canshu2 =  ReadDWORD(dwUIAddr + clearstrike_isopen);
 
         if(canshu2)
+        {
             return TRUE;
+        }
 
         if(canshu2 == 0)
+        {
             TRACE(_T("清除技能界面没有打开"));
+        }
     }
 
     return FALSE;
@@ -6795,10 +6983,14 @@ BOOL Gamecall::isTalentPanelShow()
     canshu2 =  ReadDWORD(dwUIAddr + skillpanel_isshow);
 
     if(canshu2 == 1)
+    {
         return TRUE;
+    }
 
     if(canshu2 == 2)
+    {
         TRACE(_T("技能面板没有打开"));
+    }
 
     return FALSE;
 }
@@ -6853,7 +7045,9 @@ void Gamecall::Attack(const wchar_t* name)
     STRIKEINFO sinfo;
 
     if(GetStrikeByName(name, &sinfo))
+    {
         sendcall(id_msg_attack, (LPVOID)sinfo.id1);
+    }
 }
 
 
@@ -6903,12 +7097,16 @@ BOOL Gamecall::PickupTask(ObjectNode* pNode)
     //判断读条
     //两个出口, 一个超时, 一个读条完成
     if(isPlayerChanneling() == FALSE)
+    {
         return FALSE;
+    }
 
     for(;;)
     {
         if(isPlayerChanneling() == FALSE)
+        {
             break;
+        }
 
         Sleep(10);
     }
@@ -6942,7 +7140,9 @@ BOOL Gamecall::isCanLook(DWORD pAddr)
         if(IsBadStringPtr(name, MAX_PATH) == FALSE)
         {
             if(wcsstr(name, L"Dummy") != NULL)
+            {
                 return FALSE;
+            }
         }
 
         /*if (temp == 9)
@@ -6968,12 +7168,18 @@ BOOL Gamecall::isPlayerDaodi()
     __try
     {
         if(m_Adress)
+        {
             Adress = ReadWORD(m_Adress + player_status_down);
+        }
 
         if(Adress == 0)
+        {
             State = FALSE;
+        }
         else
+        {
             State = TRUE;
+        }
     }
     __except(1)
     {
@@ -6987,7 +7193,9 @@ void Gamecall::_NewSpend(float x)
 {
     //DWORD dwThreadId;
     if(m_pfnInitSpeed != NULL)
+    {
         m_pfnInitSpeed(x);
+    }
 }
 
 BOOL Gamecall::isStrikeCd(DWORD id)
@@ -7000,9 +7208,13 @@ BOOL Gamecall::isStrikeCd(DWORD id)
         if(StrikeVec[i].id1 == id)
         {
             if(StrikeVec[i].isBlock == 1 && StrikeVec[i].canUse == 0)
+            {
                 return (StrikeVec[i].cd == 0);
+            }
             else
+            {
                 break;
+            }
         }
     }
 
@@ -7033,7 +7245,9 @@ BOOL Gamecall::GetPlayExperienceStatus()
     }
 
     if(pos == 0)
+    {
         TRACE(_T("没有吃经验药物,请吃经验药物"));
+    }
 
     return FALSE;
 }
@@ -7099,7 +7313,9 @@ void Gamecall::_LinQuJiangLi()
     GetUIAddrByName(L"SurveyRewardPanel", &uiAddr);
 
     if(uiAddr == 0)
+    {
         return;
+    }
 
     __try
     {

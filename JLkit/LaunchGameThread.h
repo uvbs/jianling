@@ -23,10 +23,12 @@ protected:
 public:
 
     CJLkitView* m_pView;
-    void SetOwner(CJLkitView* pOwner) {
+    void SetOwner(CJLkitView* pOwner)
+    {
         m_pView = pOwner;
     };
-    BOOL isWorking() {
+    BOOL isWorking()
+    {
         return m_bIsWorking;
     };
     BOOL m_bIsWorking;

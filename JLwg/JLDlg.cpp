@@ -23,118 +23,118 @@ static char THIS_FILE[] = __FILE__;
 
 
 CJLDlg::CJLDlg(CWnd* pParent /*=NULL*/)
-: CDialog(CJLDlg::IDD, pParent)
+    : CDialog(CJLDlg::IDD, pParent)
 {
-	//{{AFX_DATA_INIT(CJLDlg)
-	m_strInfo = _T("");
-	//}}AFX_DATA_INIT
+    //{{AFX_DATA_INIT(CJLDlg)
+    m_strInfo = _T("");
+    //}}AFX_DATA_INIT
 }
 
 
 void CJLDlg::DoDataExchange(CDataExchange* pDX)
 {
-	CDialog::DoDataExchange(pDX);
-	//{{AFX_DATA_MAP(CJLDlg)
-	DDX_Text(pDX, IDC_STATIC_WGINFO, m_strInfo);
-	//}}AFX_DATA_MAP
+    CDialog::DoDataExchange(pDX);
+    //{{AFX_DATA_MAP(CJLDlg)
+    DDX_Text(pDX, IDC_STATIC_WGINFO, m_strInfo);
+    //}}AFX_DATA_MAP
 }
 
 
 BEGIN_MESSAGE_MAP(CJLDlg, CDialog)
-	//{{AFX_MSG_MAP(CJLDlg)
-	ON_BN_CLICKED(IDC_GOTASK, OnGotask)
-	ON_BN_CLICKED(IDC_WGDATA, OnWgdata)
-	ON_BN_CLICKED(IDC_STOPTASk, OnStopTask)
-	ON_WM_CLOSE()
-	ON_WM_SHOWWINDOW()
-	ON_BN_CLICKED(IDC_UNLOADWG, OnUnloadwg)
-	//}}AFX_MSG_MAP
+    //{{AFX_MSG_MAP(CJLDlg)
+    ON_BN_CLICKED(IDC_GOTASK, OnGotask)
+    ON_BN_CLICKED(IDC_WGDATA, OnWgdata)
+    ON_BN_CLICKED(IDC_STOPTASk, OnStopTask)
+    ON_WM_CLOSE()
+    ON_WM_SHOWWINDOW()
+    ON_BN_CLICKED(IDC_UNLOADWG, OnUnloadwg)
+    //}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
 
 static UINT TaskThread(LPVOID pParam)
 {
 
-	TaskScript task;
-	task.BeginTask();
+    TaskScript task;
+    task.BeginTask();
 
-	return 0;
+    return 0;
 }
 
 /////////////////////////////////////////////////////////////////////////////
 // CJLDlg message handlers
 
-void CJLDlg::OnGotask() 
+void CJLDlg::OnGotask()
 {
-	//读取配置文件
-	//创建任务线程
-	if(g_pTaskThread == NULL)
-	{
-		g_pTaskThread = AfxBeginThread(TaskThread, 0);
-		SetDlgItemText(IDC_GOTASK, _T("终止任务"));
-	}
-	else
-	{
-		OnStopTask();
-		SetDlgItemText(IDC_GOTASK, _T("开始任务"));
-	}
+    //读取配置文件
+    //创建任务线程
+    if(g_pTaskThread == NULL)
+    {
+        g_pTaskThread = AfxBeginThread(TaskThread, 0);
+        SetDlgItemText(IDC_GOTASK, _T("终止任务"));
+    }
+    else
+    {
+        OnStopTask();
+        SetDlgItemText(IDC_GOTASK, _T("开始任务"));
+    }
 }
 
-BOOL CJLDlg::OnInitDialog() 
+BOOL CJLDlg::OnInitDialog()
 {
-	CDialog::OnInitDialog();
-	
-	
+    CDialog::OnInitDialog();
 
-	return TRUE;
+
+
+    return TRUE;
 }
 
-void CJLDlg::OnWgdata() 
+void CJLDlg::OnWgdata()
 {
-	ShowWindow(SW_HIDE);
-	CDataDlg dlg;
-	dlg.DoModal();
-	ShowWindow(SW_SHOW);
+    ShowWindow(SW_HIDE);
+    CDataDlg dlg;
+    dlg.DoModal();
+    ShowWindow(SW_SHOW);
 }
 
-void CJLDlg::OnStopTask() 
+void CJLDlg::OnStopTask()
 {
-	if(g_pTaskThread != NULL)
-	{
-		::TerminateThread(g_pTaskThread->m_hThread, 0);
-		g_pTaskThread->Delete();
-		g_pTaskThread = NULL;
-	}
+    if(g_pTaskThread != NULL)
+    {
+        ::TerminateThread(g_pTaskThread->m_hThread, 0);
+        g_pTaskThread->Delete();
+        g_pTaskThread = NULL;
+    }
 
-	if(g_pCloseThread != NULL)
-	{
-		::TerminateThread(g_pCloseThread->m_hThread, 0);
-		g_pCloseThread->Delete();
-		g_pCloseThread = NULL;
-	}
-}
-
-
-void CJLDlg::OnClose() 
-{
-	ShowWindow(SW_HIDE);
-}
-
-void CJLDlg::OnShowWindow(BOOL bShow, UINT nStatus) 
-{
-	CDialog::OnShowWindow(bShow, nStatus);
-
-}
-
-void CJLDlg::OnUnloadwg() 
-{
-	OnStopTask();
-	DestroyWindow();
+    if(g_pCloseThread != NULL)
+    {
+        ::TerminateThread(g_pCloseThread->m_hThread, 0);
+        g_pCloseThread->Delete();
+        g_pCloseThread = NULL;
+    }
 }
 
 
-void CJLDlg::PostNcDestroy() 
+void CJLDlg::OnClose()
 {
-	PostQuitMessage(0);
-	delete this;
+    ShowWindow(SW_HIDE);
+}
+
+void CJLDlg::OnShowWindow(BOOL bShow, UINT nStatus)
+{
+    CDialog::OnShowWindow(bShow, nStatus);
+
+}
+
+void CJLDlg::OnUnloadwg()
+{
+    OnStopTask();
+    DestroyWindow();
+}
+
+
+void CJLDlg::PostNcDestroy()
+{
+    PostQuitMessage(0);
+    delete this;
 }

@@ -180,7 +180,8 @@ public:
     DWORD m_Get2E4(DWORD m_Adress);   //==0 npc, else 黄名
 
     //游戏窗口
-    HWND GetGamehWnd() {
+    HWND GetGamehWnd()
+    {
         return m_hGameWnd;
     }
 
@@ -200,13 +201,16 @@ public:
     void ChangeZ_Status(BOOL flag);//改状态
     void ChangeHeight(float how);
 
-    TCHAR* GetLujingPath() {
+    TCHAR* GetLujingPath()
+    {
         return m_szLujingPath;
     }
-    TCHAR* GetConfigPath() {
+    TCHAR* GetConfigPath()
+    {
         return m_szConfigPath;
     }
-    TCHAR* GetLujingTest() {
+    TCHAR* GetLujingTest()
+    {
         return m_szLujingTest;
     }
 
@@ -483,7 +487,8 @@ public:
     static unsigned CALLBACK KeepAliveThread(PVOID pParam);
     static unsigned CALLBACK AttackThread(PVOID pParam);
 
-    SHAREINFO* GetAccountInfo() {
+    SHAREINFO* GetAccountInfo()
+    {
         return m_ShareMem.GetMemAddr();
     };
 

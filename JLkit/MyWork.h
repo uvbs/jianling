@@ -17,14 +17,14 @@ class CJLkitView;
 class MyCWork: public CWork
 {
 public:
- 	MyCWork(int item, CJLkitView *pParam);
-	~MyCWork();
-	void DoWork();
-    
+    MyCWork(int item, CJLkitView* pParam);
+    ~MyCWork();
+    void DoWork();
+
 private:
     CJLkitView* m_pFrame;
     int nItem;				//当前处理的下标
-    CLock *m_lpLock;
+    CLock* m_lpLock;
 };
 
 

@@ -23,7 +23,8 @@ protected:
     virtual ~CJLkitView();
     DECLARE_DYNCREATE(CJLkitView)
 
-    CJLkitDoc*	GetDocument()	{
+    CJLkitDoc*	GetDocument()
+    {
         return (CJLkitDoc*)m_pDocument;
     }
 

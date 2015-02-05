@@ -13,7 +13,7 @@
 // CDlgSetting dialog
 
 CDlgSetting::CDlgSetting(CWnd* pParent /*=NULL*/)
-	: CDialog(CDlgSetting::IDD, pParent)
+    : CDialog(CDlgSetting::IDD, pParent)
 {
     m_strGamePath = _T("");
 }
@@ -28,9 +28,9 @@ void CDlgSetting::DoDataExchange(CDataExchange* pDX)
 }
 
 BEGIN_MESSAGE_MAP(CDlgSetting, CDialog)
-	//{{AFX_MSG_MAP(CDlgSetting)
-	ON_BN_CLICKED(IDC_SETTING_BROWSE, OnSettingBrowse)
-	//}}AFX_MSG_MAP
+    //{{AFX_MSG_MAP(CDlgSetting)
+    ON_BN_CLICKED(IDC_SETTING_BROWSE, OnSettingBrowse)
+    //}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -38,19 +38,19 @@ END_MESSAGE_MAP()
 
 BOOL CDlgSetting::OnInitDialog()
 {
-	CDialog::OnInitDialog();
+    CDialog::OnInitDialog();
 
-	// TODO: Add extra initialization here
+    // TODO: Add extra initialization here
 
-	return TRUE;  // return TRUE unless you set the focus to a control
-	// EXCEPTION: OCX Property Pages should return FALSE
+    return TRUE;  // return TRUE unless you set the focus to a control
+    // EXCEPTION: OCX Property Pages should return FALSE
 }
 
 
-void CDlgSetting::OnSettingBrowse() 
+void CDlgSetting::OnSettingBrowse()
 {
-	// TODO: Add your control notification handler code here
-	CFileDialog* lpCfd = new CFileDialog(TRUE);
+    // TODO: Add your control notification handler code here
+    CFileDialog* lpCfd = new CFileDialog(TRUE);
     if(lpCfd->DoModal() == IDOK)
     {
         m_strGamePath = lpCfd->GetPathName();

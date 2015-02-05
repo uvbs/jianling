@@ -15,14 +15,13 @@
 
 
 
-CDlgRegist::CDlgRegist(CJLkitSocket* pSock, CWnd* pParent /*=NULL*/)
+CDlgRegist::CDlgRegist(CWnd* pParent /*=NULL*/)
     : CDialog(CDlgRegist::IDD, pParent)
 {
     //{{AFX_DATA_INIT(CDlgRegist)
     // NOTE: the ClassWizard will add member initialization here
     //}}AFX_DATA_INIT
 
-    m_pSock = pSock;
 }
 
 
@@ -59,13 +58,13 @@ void CDlgRegist::OnOK()
         return;
     }
 
-	if(m_strIp == _T("0.0.0.0") || m_strName.IsEmpty() || m_strPw.IsEmpty())
-	{
-		AfxMessageBox(_T("不能为空"));
-	}
-	else
-	{
-        m_pSock->Register(m_strName, m_strPw, m_strIp);
+    if(m_strIp == _T("0.0.0.0") || m_strName.IsEmpty() || m_strPw.IsEmpty())
+    {
+        AfxMessageBox(_T("不能为空"));
+    }
+    else
+    {
+        CJLkitSocket::GetInstance()->Register(m_strName, m_strPw, m_strIp);
     }
 
 }
@@ -79,12 +78,4 @@ BOOL CDlgRegist::OnInitDialog()
 
     return TRUE;  // return TRUE unless you set the focus to a control
     // EXCEPTION: OCX Property Pages should return FALSE
-}
-
-void CDlgRegist::OnTimer(UINT nIDEvent)
-{
-    // TODO: Add your message handler code here and/or call default
-    OnOK();
-
-    CDialog::OnTimer(nIDEvent);
 }

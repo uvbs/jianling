@@ -16,7 +16,7 @@ class CDlgLogin : public CDialog
 {
 // Construction
 public:
-    CDlgLogin(CJLkitDoc* pDoc);   // standard constructor
+    CDlgLogin();   // standard constructor
 
 
 // Dialog Data
@@ -28,9 +28,6 @@ public:
     CString	m_strPw;
     BOOL m_bRemPw;
     //}}AFX_DATA
-
-    CJLkitSocket* m_pSocket;
-    CJLkitDoc* m_pDoc;
 
     void LoginResult(int nResult);
 

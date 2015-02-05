@@ -26,24 +26,36 @@
 #define CALLTRACE_OPT_INFO_ALL                0xFFFFFFFF
 
 typedef void (* PFN_SHOWFRAME)(LPCTSTR szText, PVOID pParam);
+
 class CCallTracer //: public CD4dObject
 {
 public:
+    CCallTracer();
+    virtual ~CCallTracer();
+
+
     LPCTSTR GetSymType(DWORD dwSymType);
     HRESULT ShowFrame(STACKFRAME64* pFrame,
                       PFN_SHOWFRAME pfnShowFrame, PVOID pParam);
     HRESULT WalkStack(PFN_SHOWFRAME pfnShowFrame,
                       PVOID pParam, int nMaxFrames, PCONTEXT pContext = NULL);
     HRESULT FreeSymbols();
-    DWORD GetOptions() {
+
+
+    DWORD GetOptions()
+    {
         return m_dwOptions;
     }
-    void SetOptions(DWORD dwOptions) {
+
+
+    void SetOptions(DWORD dwOptions)
+    {
         m_dwOptions = dwOptions;
     }
+
+
     HRESULT InitSymbols();
-    CCallTracer();
-    virtual ~CCallTracer();
+
     static DWORD m_dwSymClients; // counter of symbol clients
 protected:
     CONTEXT m_Context;

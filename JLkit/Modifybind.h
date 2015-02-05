@@ -10,7 +10,7 @@ class CJLkitSocket;
 class CDlgModifyBind : public CDialog
 {
 public:
-    CDlgModifyBind(CJLkitSocket* pSock, CWnd* pParent = NULL);   // standard constructor
+    CDlgModifyBind(CWnd* pParent = NULL);   // standard constructor
     virtual ~CDlgModifyBind();
 
 // Dialog Data
@@ -21,8 +21,6 @@ public:
     CString m_strOldbind;
     CString m_strNewbind;
     //}}AFX_DATA
-
-    CJLkitSocket* m_pSock;
 
     // ClassWizard generated virtual function overrides
     //{{AFX_VIRTUAL(CDlgModifyBind)

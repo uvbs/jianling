@@ -8,7 +8,7 @@
 
 #ifdef _DEBUG
 #undef THIS_FILE
-static char THIS_FILE[]=__FILE__;
+static char THIS_FILE[] = __FILE__;
 #define new DEBUG_NEW
 #endif
 
@@ -18,24 +18,25 @@ static char THIS_FILE[]=__FILE__;
 
 CRequest::CRequest()
 {
-	
-	m_reqNums = 0;
+
+    m_reqNums = 0;
 }
 
 CRequest::~CRequest()
 {
-	TRACE(_T("del CRequest"));
 }
 
 int CRequest::AddRef()
 {
-	return ++m_reqNums;
+    return ++m_reqNums;
 }
 
 int CRequest::Release()
 {
-	int nRefs = --m_reqNums;
-	if ( nRefs == 0 )
-		delete this;
-	return nRefs;
+    int nRefs = --m_reqNums;
+    if(nRefs == 0)
+    {
+        delete this;
+    }
+    return nRefs;
 }

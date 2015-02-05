@@ -44,18 +44,26 @@ BOOL CCHook::GetPatchSize(void* Proc, DWORD dwNeedSize, LPDWORD lpPatchSize)
     DWORD PatchSize = 0;
     //前置的参数检查
     if(!Proc || !lpPatchSize)
+    {
         return FALSE;
+    }
     do
     {
         Length = SizeOfCode(Proc, &pOpcode);
         if((Length == 1) && (*pOpcode == 0xC3))
+        {
             break;
+        }
         if((Length == 3) && (*pOpcode == 0xC2))
+        {
             break;
+        }
         Proc = (PVOID)((DWORD)Proc + Length);
         PatchSize += Length;
         if(PatchSize >= dwNeedSize)
+        {
             break;
+        }
     }
     while(Length);
     *lpPatchSize = PatchSize;
@@ -69,7 +77,9 @@ BOOL CCHook::GetPatchSize(void* Proc, DWORD dwNeedSize, LPDWORD lpPatchSize)
 DWORD* CCHook::hook()
 {
     if(m_BackupCall != NULL)
+    {
         return (DWORD*)m_BackupCall;
+    }
     __try
     {
         BYTE sub[10];
@@ -84,9 +94,13 @@ DWORD* CCHook::hook()
         //改内存属性
         DWORD dwOldProtect;
         if(!VirtualProtect(m_CallAddr, 4, PAGE_EXECUTE_READWRITE, &dwOldProtect))
+        {
             return 0;
+        }
         if(!VirtualProtect((void*)pfunStart, 4, PAGE_EXECUTE_READWRITE, &dwOldProtect))
+        {
             return 0;
+        }
         //判断已经hook的情况
         if(*(BYTE*)m_CallAddr == 0xe9)
         {
@@ -96,7 +110,9 @@ DWORD* CCHook::hook()
         //取得合适的大小
         DWORD dwPathSize;
         if(!GetPatchSize(m_CallAddr, 5, &dwPathSize))
+        {
             return 0;
+        }
         //申请一块内存
         //布局
         // 4  sub大小
@@ -141,7 +157,9 @@ DWORD* CCHook::hook()
 void CCHook::unhook()
 {
     if(m_BackupCall == NULL)
+    {
         return;
+    }
     __try
     {
         DWORD dwOldProtect;

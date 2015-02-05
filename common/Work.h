@@ -11,13 +11,13 @@
 
 
 
-class CWork  
+class CWork
 {
 public:
-	virtual void DoWork() = 0;
-	CWork(){};
-	virtual ~CWork(){};
- 
+    virtual void DoWork() = 0;
+    CWork() {};
+    virtual ~CWork() {};
+
 };
 
 
