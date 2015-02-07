@@ -125,7 +125,9 @@ enum {
 		id_msg_OpenTalentUI,
 		id_msg_ConfirmDeletePalentPanelShowOk,
 		id_msg_OpenDeleteTalentPanel,
-		id_msg_NPCJieRenWu
+		id_msg_NPCJieRenWu,
+		id_msg_GetObjectNameByIndex,
+		id_msg_Pickup2ts
 };
 
 
@@ -259,6 +261,7 @@ public:
 	BOOL GetPlayerPos2(sPosition* spos);			//short型坐标
 	float GetPlayerViewPoint();		//角色面向
 	DWORD GetPlayerQuestUIStatus();	//判断角色任务相关ui状态是否弹出
+	DWORD GetPlayerQuestUIStatusts();	//判断角色任务相关ui状态是否弹出
 	BYTE GetPlayerDeadStatus();	//死亡状态
 	DWORD GetCityID();
 	BOOL GetPlayExperienceStatus();//获得经验药状态
@@ -280,13 +283,16 @@ public:
 	static BOOL	GetObjectPos(ObjectNode* pNode, fPosition* fpos);
 	static BOOL GetObjectPos_0xb(DWORD pObjAddress, sPosition* spos);      //对象short类型坐标
 	static BOOL GetObjectPos2_0x20(DWORD pObjAddress, fPosition* fpos);//0x20对象使用这个取坐标
+	static BOOL GetObjectPos2_0x90(DWORD pObjAddress, sPosition* spos);//0x90对象使用这个取坐标
 	wchar_t* GetObjectNameByIndex(DWORD index);                   //对象名
+	wchar_t* _GetObjectNameByIndex(DWORD index);
 	wchar_t* GetObjectName(DWORD pObjAddress);
 	DWORD GetType4HP(DWORD pObjAddress);  		//获取类型为4的对象血量
 	DWORD GetObject_0x14(DWORD pObjAddress);
 	DWORD GetObjectLevel(DWORD pObjAddress);		//取对象等级
 	DWORD GetObjectSY12(DWORD pObjAddress);
 	DWORD GetObjectSY(DWORD pObjAddress);
+	DWORD GetObjectSy_90(DWORD pObjAddress);//取90的索引
 	DWORD GetIndexByType(DWORD pObjAddress); //通过类型取得索引
 
 
@@ -301,6 +307,7 @@ public:
 	BOOL isSelectedSlotHavePlayer(DWORD index);	//角色选择界面当前的选择有一个角色存在
 	BOOL isQuestItem(DWORD pAddr); //判断是否是任务物品
 	BOOL isPlayerHasPickupQuestItemUI(); //有个拾取Ui弹出来
+	BOOL isPlayPickupUiStatus();//特殊的2次捡物判断
 	BOOL isPlayerChanneling();	//正在读条
 	BOOL isPlayerSteping();		//玩家正在走路
 	BOOL isLoginInSelectPlayer();	//判断是否进入了角色选择画面
@@ -454,8 +461,8 @@ public:
 
 	//武器强化
 	void		HeChengWuQi(_BAGSTU &zhu, _BAGSTU &fu);
-	void        HeChengWuQi_Po5(_BAGSTU &zhu, _BAGSTU &fu); //合成武器破5
-	void		HeChengWuQi_Po10(DWORD zhu,DWORD fu,DWORD adress);
+	void    HeChengWuQi_Po5(_BAGSTU &zhu, _BAGSTU &fu); //合成武器破5
+	void		HeChengWuQi_Po10(_BAGSTU &zhu, _BAGSTU &fu); //合成武器破10
 	void		JieFengZhuangBei(DWORD zhuangbei,DWORD jiefengfu_ID,DWORD num);
 	void		JieFengZhuangBei(DWORD adress1,DWORD adress2,DWORD adress3,DWORD adress4,DWORD adress5,DWORD adress6,DWORD adress7); //解封盒子
 	void		FenJie(_BAGSTU &bag);
@@ -472,9 +479,11 @@ public:
 	//捡东西
 	void        Pickup1(ObjectNode *pObj);    //第一次捡
 	void        Pickup2(ObjectNode *pObj);   //第二次捡起来
+	void        Pickup2ts();   //特殊的2次捡物
 	BOOL		Pickup(ObjectNode *pObj);     //捡东西
 	void        _PickupTask(ObjectNode* pObj);  //
 	BOOL		PickupTask(ObjectNode* pNode);
+	BOOL		PickupTaskts(ObjectNode* pNode);
 	void		PickupDeadbody(DWORD id1, DWORD id2);
 	BOOL		PickupDeadbody(DWORD range = 500);  //捡起尸体, 有逻辑的, 自动遍历范围内
 	void		PickdownBody(); //这个用来一个任务捡起尸体又放下来完成任务

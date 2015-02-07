@@ -39,8 +39,25 @@ public:
 	void Task_493(int zid,int taskid);//22장. 첩자의 정체
 	void Task_317(int zid,int taskid);//23장. 경국지색
 	void Task_318(int zid,int taskid);//24장. 거짓 서신
-	void Task_319(int zid,int taskid);//
-	void Task_320(int zid,int taskid);//
+	void Task_495(int zid,int taskid);//25장. 결전을 위한 준비
+	void Task_319(int zid,int taskid);//26장. 남소유 구출작전
+	void Task_320(int zid,int taskid);//27장. 불타는 대나무 마을
+	void Task_501(int zid,int taskid);//1장. 수상한 마을
+	void Task_540(int zid,int taskid);//2장. 원군 요청
+	void Task_502(int zid,int taskid);//3장. 거만한 수비대장
+	void Task_503(int zid,int taskid);//4장. 의문의 마교집단
+	void Task_504(int zid,int taskid);//5장. 원수의 흔적
+	void Task_505(int zid,int taskid);//6장. 위기의 무녀들
+	void Task_506(int zid,int taskid);//7장. 어둠의 구멍
+	void Task_507(int zid,int taskid);//8장. 운국의 감찰관
+	void Task_508(int zid,int taskid);//9장. 낭인무사의 정체
+	void Task_509(int zid,int taskid);//10장. 불타는 환영초 밭
+	void Task_510(int zid,int taskid);//11장. 절사명의
+	void Task_511(int zid,int taskid);//12장. 배신자의 집
+	void Task_512(int zid,int taskid);//13장. 끌려간 미령
+	void Task_513(int zid,int taskid);//14장. 심마
+	void Task_514(int zid,int taskid);//
+	void Task_515(int zid,int taskid);//
 	void Task_294(int zid,int taskid);//魔道4-19
 	void Lianji6();//6级副本
 	void Lianji6_go();//6级副本 进
@@ -52,6 +69,10 @@ public:
 	void lianji14_go();//14级副本 进
 	void lianji18();//18级副本
 	void lianji18_go();//18级副本 进
+	void lianji22();//22级副本
+	void lianji22_go();//22级副本 进
+	void lianji28();//28级副本
+	void lianji28_go();//28级副本 进
 	BOOL ShunYiResult(DWORD CityId,wchar_t* FileName,BOOL Hook_flag);//瞬移等待逻辑的封装函数
 	void UseExperience();//使用经验药
 	void IsGoonHecheng(DWORD pos);//逻辑循环强化物品
