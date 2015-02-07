@@ -12,7 +12,9 @@ public:
     //拾取, UI
     void Pickup(int pos, DWORD range);        //捡起范围内掉落
     BOOL PickupTask(DWORD range = CAN_OPERATOR);	//打开任务物品, 这个范围取值是游戏内能看到f键亮的距离
+	BOOL PickupTaskts(DWORD range = CAN_OPERATOR);	//打开任务物品, 这个范围取值是游戏内能看到f键亮的距离
     BOOL PickupSpecTypeTask(DWORD range, DWORD type, wchar_t* name = NULL);
+	BOOL PickupSpecTypeTaskts(DWORD range, DWORD type, wchar_t* name = NULL);
     void PickupTask(DWORD range, DWORD taskid, DWORD taskstep);
     void Pickdown();    //这个当前用来一个任务中放尸体到火堆中, 暂时不知能不能通用
     void CloseXiaoDongHua();
@@ -21,6 +23,7 @@ public:
 
     //任务
     void DeliverQuests(DWORD id, DWORD step, wchar_t* name, DWORD questtype = 0, DWORD ff = 0xff, DWORD unknow = 0);
+	void GoodsQuests(DWORD id, DWORD step, wchar_t *name, DWORD questtype = 0, DWORD ff = 0xff, DWORD unknow = 0);
     void NPCJieRenWu(DWORD canshu1, DWORD canshu2, DWORD canshu3, DWORD canshu4, DWORD canshu5);
     void Yaojiang(wchar_t* Zen_name, wchar_t* BaGuaname);
 
@@ -83,6 +86,7 @@ public:
     //合成武器
     BOOL HeChengWuQi(EQUITMENT_POS type);
     BOOL HeChengWuQi_Po5(EQUITMENT_POS pos, wchar_t* name);
+	BOOL HeChengWuQi_Po10(EQUITMENT_POS pos, wchar_t *name);
     BOOL HeChengWuQiByHun(EQUITMENT_POS pos);
     BOOL HeChengWuQi(EQUITMENT_POS pos, wchar_t* name);
     void XieBaoShi(DWORD pos);

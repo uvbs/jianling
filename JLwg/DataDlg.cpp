@@ -305,9 +305,11 @@ void CDataDlg::OnGetpalyerinfo()
     AddInfo(_T("角色最大体力: %d"), (int)gcall.GetPlayerMaxVit());
     AddInfo(_T("角色体力: %d"), (int) gcall.GetPlayerVit());
     AddInfo(_T("角色视角: %d"), (int)gcall.GetPlayerViewPoint());
-    AddInfo(_T("角色坐标: x:%d y:%d z:%d"), (int)PlayerPos.x, (int)PlayerPos.y, (int)PlayerPos.z);
-    AddInfo(_T("角色坐标2: x:%d y:%d z:%d"), (int)PlayerPos2.x, (int)PlayerPos2.y, (int)PlayerPos2.z);
-
+	AddInfo(_T("人物UI状态: %d"), gcall.GetPlayerQuestUIStatus());
+	AddInfo(_T("人物UI状态2: %d"), gcall.GetPlayerQuestUIStatusts());
+	AddInfo(_T("角色坐标: x:%d y:%d z:%d"), (int)PlayerPos.x, (int)PlayerPos.y, (int)PlayerPos.z);
+	AddInfo(_T("角色坐标2: x:%d y:%d z:%d"), (int)PlayerPos2.x, (int)PlayerPos2.y, (int)PlayerPos2.z);
+	
 }
 
 
@@ -316,8 +318,8 @@ void CDataDlg::PrintfAllObject()
 {
     std::vector<ObjectNode*> RangeObject;
     gcall.GetAllObjectToVector(gcall.GetObjectBinTreeBaseAddr(), RangeObject);
-
-
+ 
+	m_ListCtrl.SetRedraw(FALSE); 
     for(DWORD i = 0; i < RangeObject.size(); i++)
     {
 
@@ -376,7 +378,7 @@ void CDataDlg::PrintfAllObject()
 
         m_ListCtrl.SetItemData(i, (DWORD)pNode);
     }
-
+	m_ListCtrl.SetRedraw(TRUE); 
 }
 
 void CDataDlg::InertBagItem(DWORD i, _BAGSTU& BagBuff)

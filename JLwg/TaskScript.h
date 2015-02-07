@@ -1,76 +1,89 @@
-#ifndef _TASKSCRIPT_H
-#define _TASKSCRIPT_H
+#pragma once
 
 class TaskScript
 {
 public:
-    TaskScript(void) {};
-    ~TaskScript(void) {};
-    void BeginTask() {};
-    void log(TCHAR szFormat[], ...);
-    void Task_221(int zid, int taskid); //æ–°æ‰‹ä»»åŠ¡1
-    void Task_222(int zid, int taskid); //æ–°æ‰‹ä»»åŠ¡2
-    void Task_223(int zid, int taskid); //æ–°æ‰‹ä»»åŠ¡3
-    void Task_224(int zid, int taskid); //æ–°æ‰‹ä»»åŠ¡4
-    void Task_231(int zid, int taskid); //æ–°æ‰‹ä»»åŠ¡5
-    void Task_232(int zid, int taskid); //æ–°æ‰‹ä»»åŠ¡6
-    void Task_227(int zid, int taskid); //æ–°æ‰‹ä»»åŠ¡7
-    void Task_243(int zid, int taskid); //æ–°æ‰‹ä»»åŠ¡8
-    void Task_301(int zid, int taskid); //1ì¥. êµ¬ì‚¬ì¼ìƒ 1-1
-    void Task_302(int zid, int taskid); //1ì¥. ëŒ€ì‚¬í˜• ë„ì²œí’  1-2
-    void Task_303(int zid, int taskid); //1ì¥. ìê²½ë‹¨ì¥ì˜ ì•„ë“¤  1-3
-    void Task_497(int zid, int taskid); //4ì¥. ë‚¨ì†Œìœ ë¼ëŠ” ì´ë¦„ì˜ ì—¬ì¸ 1-4
-    void Task_304(int zid, int taskid); //5ì¥. ìƒëª…ì˜ ì€ì¸  1-5
-    void Task_305(int zid, int taskid); //6ì¥. ìˆ˜ìƒí•œ ì´Œì¥.  1-6
-    void Task_306(int zid, int taskid); //7ì¥. ë„ì ë“¤ì˜ ì •ì²´.  1-7
-    void Task_307(int zid, int taskid); //8ì¥. í•´ì ê³¼ ì†ì¡ì€ ì‚°ì .  1-8
-    void Task_308(int zid, int taskid); //9ì¥. ì–´ë‘ìš´ ë“±ì” ë°‘ 1-9
-    void Task_309(int zid, int taskid); //10ì¥. í•´ì ì˜ ì†Œêµ´
-    void Task_310(int zid, int taskid); //11ì¥. ê²€ì€ ê¸°ìš´
-    void Task_311(int zid, int taskid); //12ì¥. íƒê¸°ì˜ ì‹œì²´
-    void Task_312(int zid, int taskid); //13ì¥. ê´´íŒí•œ ë…ì´ˆê±°ì‚¬
-    void Task_491(int zid, int taskid); //14ì¥. ì–´ë‘  ì† ì¶œìˆ˜
-    void Task_492(int zid, int taskid); //15ì¥. ê³° ì‚¬ëƒ¥
-    void Task_313(int zid, int taskid); //16ì¥. ì˜ˆì •ëœ ê¸°ì—°
-    void Task_494(int zid, int taskid); //17ì¥. íŒ”ë¶€ê¸°ì¬ì˜ ì‹œí—˜
-    void Task_314(int zid, int taskid); //18ì¥. ì´ë…ì¹˜ë…
-    void Task_496(int zid, int taskid); //19ì¥. ë§ìì˜ ì—­ìŠµ
-    void Task_315(int zid, int taskid); //20ì¥. ìƒì–´ë²„ë¦° ë´‡ì§
-    void Task_316(int zid, int taskid); //21ì¥. ê²ë¨¹ì€ ì•„ì´
-    void Task_493(int zid, int taskid); //22ì¥. ì²©ìì˜ ì •ì²´
-    void Task_317(int zid, int taskid); //23ì¥. ê²½êµ­ì§€ìƒ‰
-    void Task_318(int zid, int taskid); //24ì¥. ê±°ì§“ ì„œì‹ 
-    void Task_319(int zid, int taskid); //
-    void Task_320(int zid, int taskid); //
-    void Task_294(int zid, int taskid); //é­”é“4-19
-    void Lianji6();//6çº§å‰¯æœ¬
-    void Lianji6_go();//6çº§å‰¯æœ¬ è¿›
-    void lianji8();//8çº§å‰¯æœ¬
-    void lianji8_go();//8çº§å‰¯æœ¬ è¿›
-    void lianji10();//10çº§å‰¯æœ¬
-    void lianji10_go();//10çº§å‰¯æœ¬ è¿›
-    void lianji14();//14çº§å‰¯æœ¬
-    void lianji14_go();//14çº§å‰¯æœ¬ è¿›
-    void lianji18();//18çº§å‰¯æœ¬
-    void lianji18_go();//18çº§å‰¯æœ¬ è¿›
-    BOOL ShunYiResult(DWORD CityId, wchar_t* FileName, BOOL Hook_flag); //ç¬ç§»ç­‰å¾…é€»è¾‘çš„å°è£…å‡½æ•°
-    void UseExperience();//ä½¿ç”¨ç»éªŒè¯
-    void IsGoonHecheng(DWORD pos);//é€»è¾‘å¾ªç¯å¼ºåŒ–ç‰©å“
+	TaskScript(void);
+	~TaskScript(void);
+	void BeginTask();
+	void log(TCHAR szFormat[], ...);
+	void Task_221(int zid,int taskid);//ĞÂÊÖÈÎÎñ1
+	void Task_222(int zid,int taskid);//ĞÂÊÖÈÎÎñ2
+	void Task_223(int zid,int taskid);//ĞÂÊÖÈÎÎñ3
+	void Task_224(int zid,int taskid);//ĞÂÊÖÈÎÎñ4
+	void Task_231(int zid,int taskid);//ĞÂÊÖÈÎÎñ5
+	void Task_232(int zid,int taskid);//ĞÂÊÖÈÎÎñ6
+	void Task_227(int zid,int taskid);//ĞÂÊÖÈÎÎñ7
+	void Task_243(int zid,int taskid);//ĞÂÊÖÈÎÎñ8
+	void Task_301(int zid,int taskid);//1?. ???? 1-1
+	void Task_302(int zid,int taskid);//1?. ??? ???  1-2
+	void Task_303(int zid,int taskid);//1?. ????? ??  1-3
+	void Task_497(int zid,int taskid);//4?. ????? ??? ?? 1-4
+	void Task_304(int zid,int taskid);//5?. ??? ??  1-5
+	void Task_305(int zid,int taskid);//6?. ??? ??.  1-6
+	void Task_306(int zid,int taskid);//7?. ???? ??.  1-7
+	void Task_307(int zid,int taskid);//8?. ??? ??? ??.  1-8
+	void Task_308(int zid,int taskid);//9?. ??? ?? ? 1-9
+	void Task_309(int zid,int taskid);//10?. ??? ??
+	void Task_310(int zid,int taskid);//11?. ?? ??
+	void Task_311(int zid,int taskid);//12?. ??? ??
+	void Task_312(int zid,int taskid);//13?. ??? ????
+	void Task_491(int zid,int taskid);//14?. ?? ? ??
+	void Task_492(int zid,int taskid);//15?. ? ?? 
+	void Task_313(int zid,int taskid);//16?. ??? ??
+	void Task_494(int zid,int taskid);//17?. ????? ??
+	void Task_314(int zid,int taskid);//18?. ????
+	void Task_496(int zid,int taskid);//19?. ??? ??
+	void Task_315(int zid,int taskid);//20?. ???? ??
+	void Task_316(int zid,int taskid);//21?. ??? ??
+	void Task_493(int zid,int taskid);//22?. ??? ??
+	void Task_317(int zid,int taskid);//23?. ????
+	void Task_318(int zid,int taskid);//24?. ?? ??
+	void Task_495(int zid,int taskid);//25?. ??? ?? ??
+	void Task_319(int zid,int taskid);//26?. ??? ????
+	void Task_320(int zid,int taskid);//27?. ??? ??? ??
+	void Task_501(int zid,int taskid);//1?. ??? ??
+	void Task_540(int zid,int taskid);//2?. ?? ??
+	void Task_502(int zid,int taskid);//3?. ??? ????
+	void Task_503(int zid,int taskid);//4?. ??? ????
+	void Task_504(int zid,int taskid);//5?. ??? ??
+	void Task_505(int zid,int taskid);//6?. ??? ???
+	void Task_506(int zid,int taskid);//7?. ??? ??
+	void Task_507(int zid,int taskid);//8?. ??? ???
+	void Task_508(int zid,int taskid);//9?. ????? ??
+	void Task_509(int zid,int taskid);//10?. ??? ??? ?
+	void Task_510(int zid,int taskid);//11?. ????
+	void Task_511(int zid,int taskid);//12?. ???? ?
+	void Task_512(int zid,int taskid);//13?. ??? ??
+	void Task_513(int zid,int taskid);//14?. ??
+	void Task_514(int zid,int taskid);//
+	void Task_515(int zid,int taskid);//
+	void Task_294(int zid,int taskid);//Ä§µÀ4-19
+	void Lianji6();//6¼¶¸±±¾
+	void Lianji6_go();//6¼¶¸±±¾ ½ø
+	void lianji8();//8¼¶¸±±¾
+	void lianji8_go();//8¼¶¸±±¾ ½ø
+	void lianji10();//10¼¶¸±±¾
+	void lianji10_go();//10¼¶¸±±¾ ½ø
+	void lianji14();//14¼¶¸±±¾
+	void lianji14_go();//14¼¶¸±±¾ ½ø
+	void lianji18();//18¼¶¸±±¾
+	void lianji18_go();//18¼¶¸±±¾ ½ø
+	void lianji22();//22¼¶¸±±¾
+	void lianji22_go();//22¼¶¸±±¾ ½ø
+	void lianji28();//28¼¶¸±±¾
+	void lianji28_go();//28¼¶¸±±¾ ½ø
+	BOOL ShunYiResult(DWORD CityId,wchar_t* FileName,BOOL Hook_flag);//Ë²ÒÆµÈ´ıÂß¼­µÄ·â×°º¯Êı
+	void UseExperience();//Ê¹ÓÃ¾­ÑéÒ©
+	void IsGoonHecheng(DWORD pos);//Âß¼­Ñ­»·Ç¿»¯ÎïÆ·
 private:
-
-
-    typedef void (TaskScript::*FunPointer)(int zid, int taskid);
-
-    typedef struct _FunTask
-    {
-        TCHAR* taskname;//å¤§ä»»åŠ¡ID+å°ä»»åŠ¡ID
-        FunPointer fp;//å‡½æ•°æŒ‡é’ˆ
-
-    } FunTask;
-
-
-
 };
 
+typedef void (TaskScript::*FunPointer)(int zid,int taskid);
 
-#endif
+typedef struct _FunTask
+{
+	TCHAR *taskname;//´óÈÎÎñID+Ğ¡ÈÎÎñID
+	FunPointer fp;//º¯ÊıÖ¸Õë
+
+} FunTask;
