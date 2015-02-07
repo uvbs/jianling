@@ -17,7 +17,7 @@ public:
     void logva(const TCHAR* pattern, va_list vp);
     void info(const TCHAR* szText, ...);
 
-    /*写日志*/
+    //写日志
     void logdv(const TCHAR szFormat[], ...);
     void logdvHex(BYTE szFormat[]);
 

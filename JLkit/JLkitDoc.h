@@ -43,8 +43,8 @@ public:
     ShareMem m_share;
     std::vector<QUERYKEY_RET_BUF> m_KeyVec;
 
-    int LaunchGame(const CString& strName, const CString& strPw, const CString& strConfig,
-                   const CString& strScript, BOOL bProfile = FALSE);
+    int LaunchGame(CString& strName, CString& strPw, CString& strConfig,
+                   CString& strScript, BOOL bProfile = FALSE);
 
     CDlgKeyView* m_pKeyDlg;
     CDlgLogin* m_pLoginDlg;
@@ -65,6 +65,7 @@ public:
     void ProcessRecevice();
     void ConnectResult(int nErrorCode);
     BOOL IsHaveValidKey();
+        int CreateGameProcess(CString &strName, CString &strPw, BOOL bProfile, PROCESS_INFORMATION* lppi);
 
 
 // Overrides

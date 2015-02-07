@@ -21,20 +21,34 @@ protected:
 
 // Attributes
 public:
-
     CJLkitView* m_pView;
+
+    enum FUNCID
+    {
+        GET,
+        ACTIVE,
+        GETANDACTIVE,
+        LAUNCHGAME
+    };
+
+private:
+
+
+    int m_nFuncid;
+    BOOL m_bStop;
+    BOOL m_bIsWorking;
+    HANDLE hEventObj;
+
+
+// Operations
+public:
     void SetOwner(CJLkitView* pOwner)
     {
         m_pView = pOwner;
     };
-    BOOL isWorking()
-    {
-        return m_bIsWorking;
-    };
-    BOOL m_bIsWorking;
-// Operations
-public:
 
+    BOOL isWorking();
+    BOOL AddWork(FUNCID id);
 // Overrides
     // ClassWizard generated virtual function overrides
     //{{AFX_VIRTUAL(CLaunchThread)

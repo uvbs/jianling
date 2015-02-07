@@ -13,6 +13,9 @@
 
 #include "GamecallEx.h"
 
+
+
+
 class CJLDlg;
 class CJLwgApp: public CWinApp
 {

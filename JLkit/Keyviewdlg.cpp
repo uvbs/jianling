@@ -42,13 +42,12 @@ void CDlgKeyView::DoDataExchange(CDataExchange* pDX)
 
 BEGIN_MESSAGE_MAP(CDlgKeyView, CDialog)
     //{{AFX_MSG_MAP(CDlgKeyView)
-    ON_WM_RBUTTONUP()
-    ON_NOTIFY(NM_RCLICK, IDC_LISTKEY, OnNMRClickListkey)
     ON_COMMAND(ID_QUERY, OnQuerykey)
     ON_COMMAND(ID_BINDKEY, OnBinkey)
     ON_COMMAND(ID_UNBIND, OnUnbindkey)
-    ON_WM_SIZE()
-    //}}AFX_MSG_MAP
+    ON_WM_RBUTTONUP()
+    ON_NOTIFY(NM_RCLICK, IDC_LISTKEY, OnNMRClickListkey)
+	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
 
@@ -78,6 +77,12 @@ BOOL CDlgKeyView::OnInitDialog()
     }
 
     m_ListCtrl.SetExtendedStyle(LVS_EX_FULLROWSELECT);
+
+
+    CRect rect;
+    GetClientRect(&rect);
+
+    m_ListCtrl.MoveWindow(&rect, FALSE);
 
     OnQuerykey();
 

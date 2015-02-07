@@ -90,10 +90,6 @@ SOURCE=.\DataDlg.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\GameBag.cpp
-# End Source File
-# Begin Source File
-
 SOURCE=.\gamecall.cpp
 # End Source File
 # Begin Source File
@@ -102,11 +98,11 @@ SOURCE=.\GamecallEx.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\GameHook.cpp
+SOURCE=.\gamedef.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\GameUI.cpp
+SOURCE=.\GameHook.cpp
 # End Source File
 # Begin Source File
 
@@ -171,10 +167,6 @@ SOURCE=.\DataDlg.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\GameBag.h
-# End Source File
-# Begin Source File
-
 SOURCE=.\gamecall.h
 # End Source File
 # Begin Source File
@@ -183,15 +175,15 @@ SOURCE=.\GamecallEx.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\gamedef.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\GameHook.h
 # End Source File
 # Begin Source File
 
 SOURCE=.\gamestruct.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\GameUI.h
 # End Source File
 # Begin Source File
 

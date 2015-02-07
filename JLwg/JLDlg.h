@@ -25,10 +25,11 @@ public:
     // Dialog Data
     //{{AFX_DATA(CJLDlg)
     enum { IDD = IDD_WGDLG };
-    CString m_strInfo;
     //}}AFX_DATA
+
+
     CWinThread* g_pTaskThread;
-    CWinThread* g_pCloseThread;
+
 
     // Overrides
     // ClassWizard generated virtual function overrides
@@ -38,6 +39,8 @@ protected:
     virtual BOOL	OnInitDialog();
     virtual void	PostNcDestroy();
     //}}AFX_VIRTUAL
+
+
 // Implementation
 public:
     // Generated message map functions
@@ -48,7 +51,6 @@ public:
     afx_msg void	OnClose();
     afx_msg void	OnShowWindow(BOOL bShow, UINT nStatus);
     afx_msg void	OnUnloadwg();
-    afx_msg void	OnBtbLogingame();
     //}}AFX_MSG
     DECLARE_MESSAGE_MAP()
 };

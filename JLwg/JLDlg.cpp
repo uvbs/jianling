@@ -26,7 +26,6 @@ CJLDlg::CJLDlg(CWnd* pParent /*=NULL*/)
     : CDialog(CJLDlg::IDD, pParent)
 {
     //{{AFX_DATA_INIT(CJLDlg)
-    m_strInfo = _T("");
     //}}AFX_DATA_INIT
 }
 
@@ -35,7 +34,6 @@ void CJLDlg::DoDataExchange(CDataExchange* pDX)
 {
     CDialog::DoDataExchange(pDX);
     //{{AFX_DATA_MAP(CJLDlg)
-    DDX_Text(pDX, IDC_STATIC_WGINFO, m_strInfo);
     //}}AFX_DATA_MAP
 }
 
@@ -104,13 +102,6 @@ void CJLDlg::OnStopTask()
         ::TerminateThread(g_pTaskThread->m_hThread, 0);
         g_pTaskThread->Delete();
         g_pTaskThread = NULL;
-    }
-
-    if(g_pCloseThread != NULL)
-    {
-        ::TerminateThread(g_pCloseThread->m_hThread, 0);
-        g_pCloseThread->Delete();
-        g_pCloseThread = NULL;
     }
 }
 

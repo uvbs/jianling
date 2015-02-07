@@ -24,12 +24,15 @@ IMPLEMENT_DYNCREATE(CLaunchThread, CWinThread)
 
 CLaunchThread::CLaunchThread()
 {
-    m_bAutoDelete = FALSE;
     m_bIsWorking = FALSE;
+    m_bStop = FALSE;
 }
 
 CLaunchThread::~CLaunchThread()
 {
+    m_bStop = TRUE;
+    
+    CloseHandle(hEventObj);
 }
 
 
@@ -44,6 +47,27 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // CLaunchGameThread message handlers
 
+BOOL CLaunchThread::AddWork(FUNCID id)
+{
+
+    //先判断当前是否工作
+    if(isWorking())
+    {
+        return FALSE;
+    }
+
+    //激活等待的事件
+    m_nFuncid = id;
+    SetEvent(hEventObj);
+    TRACE(_T("AddWork Done."));
+    return TRUE;
+}
+
+BOOL CLaunchThread::isWorking()
+{
+    return m_bIsWorking;
+};
+
 
 int CLaunchThread::Run()
 {
@@ -54,11 +78,33 @@ int CLaunchThread::Run()
     }
 
 
-    while(1)
+    while(m_bStop == FALSE)
     {
-        m_bIsWorking = TRUE;
-        m_pView->LaunchGame();
+        TRACE(_T("waiting..."));
+        if(WaitForSingleObject(hEventObj, INFINITE) == WAIT_OBJECT_0)
+        {
+            m_bIsWorking = TRUE;
 
+            if(m_nFuncid == LAUNCHGAME)
+            {
+                m_pView->LaunchGame();
+            }
+            else if(m_nFuncid == GET)
+            {
+                m_pView->OnGet();
+            }
+            else if(m_nFuncid == ACTIVE)
+            {
+                m_pView->OnActive();
+            }
+            else if(m_nFuncid == GETANDACTIVE)
+            {
+                m_pView->OnGetAndActive();
+            }
+
+
+            m_bIsWorking = FALSE;
+        }
     }
 
     return 0;
@@ -67,6 +113,10 @@ int CLaunchThread::Run()
 BOOL CLaunchThread::InitInstance()
 {
     // TODO: Add your specialized code here and/or call the base class
+
+    //初始化事件对象
+    hEventObj = CreateEvent(NULL, FALSE, FALSE, NULL);
+
 
     CWinThread::InitInstance();
     return TRUE;

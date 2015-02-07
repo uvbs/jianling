@@ -858,6 +858,8 @@ void CDataDlg::InsertColumnHelper(TCHAR* column[], int count)
         m_ListCtrl.InsertColumn(i, column[i]);
     }
 }
+
+
 void CDataDlg::OnSelchangeComboDatatype()
 {
     // TODO: Add your control notification handler code here

@@ -605,6 +605,7 @@ unsigned long __fastcall SizeOfCode(void *Code, unsigned char **pOpcode)
 	return (ULONG)cPtr - (ULONG)Code;
 }
 
+
 unsigned long __fastcall SizeOfProc(void *Proc)
 {
 	ULONG  Length;
@@ -621,6 +622,7 @@ unsigned long __fastcall SizeOfProc(void *Proc)
 	} while (Length);
 	return Result;
 }
+
 
 static char __fastcall IsRelativeCmd(unsigned char *pOpcode)
 {

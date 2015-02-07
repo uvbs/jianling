@@ -42,7 +42,7 @@ public:
     afx_msg void OnUnbindkey();
     afx_msg void OnRButtonUp(UINT nFlags, CPoint point);
     afx_msg void OnNMRClickListkey(NMHDR* pNMHDR, LRESULT* pResult);
-    //}}AFX_MSG
+	//}}AFX_MSG
 
 private:
     CListCtrl m_ListCtrl;

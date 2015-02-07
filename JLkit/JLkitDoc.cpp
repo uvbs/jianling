@@ -147,7 +147,7 @@ BOOL CJLkitDoc::OnNewDocument()
         return TRUE;
     }
 
-    return FALSE;
+    return TRUE;
 }
 
 CJLkitDoc::~CJLkitDoc()
@@ -484,27 +484,12 @@ void CJLkitDoc::GetandActive()
 
 }
 
-
-//加载游戏, 返回值为进程pid
-int CJLkitDoc::LaunchGame(const CString& strName,
-                          const CString& strPw,
-                          const CString& strConfig,
-                          const CString& strScript,
-                          BOOL bProfile)
+//创建游戏进程
+int CJLkitDoc::CreateGameProcess(CString& strName, CString& strPw, BOOL bProfile, PROCESS_INFORMATION* lppi)
 {
 
-    if(m_share.IsLogined((LPCTSTR)strName))
-    {
-        return RESULT_ALREADY_RUNNING;
-    }
-
-    PROCESS_INFORMATION pi;
     STARTUPINFO si;
-
-    ZeroMemory(&pi, sizeof(pi));
-    ZeroMemory(&si, sizeof(si));
     si.cb = sizeof(si);
-
 
     Webpost poster(strName, strPw);
     int LoginRet = poster.Login();
@@ -535,9 +520,6 @@ int CJLkitDoc::LaunchGame(const CString& strName,
     TCHAR szGameCmdLine[BUFSIZ] = {0};
     _tcsncpy(szGameCmdLine, (LPCTSTR)strGameStart, strGameStart.GetLength());
 
-
-    CCInject dllwg("JLwg.dll");
-    CCInject dllspeed("speedhack-i386.dll");
     if(bProfile)
     {
         //执行批处理
@@ -546,16 +528,40 @@ int CJLkitDoc::LaunchGame(const CString& strName,
                        strCmdLine);
         WinExec((LPCTSTR)strTemp, SW_SHOW);
 
-        return RESULT_SUCCESS;
     }
     else
     {
-        if(CreateProcess(NULL, szGameCmdLine, NULL,  NULL, FALSE,
-                         CREATE_SUSPENDED, NULL, NULL, &si, &pi) == FALSE)
+        if(CreateProcess(NULL, szGameCmdLine, NULL,  NULL, FALSE, CREATE_SUSPENDED, NULL, NULL, &si, lppi) == FALSE)
         {
             return RESULT_FAIL_CREATEGAMEPROCESS;
         }
+    }
 
+    return RESULT_SUCCESS;
+}
+
+//加载游戏
+int CJLkitDoc::LaunchGame(CString& strName, CString& strPw, CString& strConfig, CString& strScript, BOOL bProfile)
+{
+
+    //是否已经登录
+    if(m_share.IsLogined((LPCTSTR)strName))
+    {
+        return RESULT_ALREADY_RUNNING;
+    }
+
+    //是否有有效卡号
+    if(IsHaveValidKey() == FALSE)
+    {
+        return RESULT_NOKEY;
+    }
+
+    PROCESS_INFORMATION pi;
+    ZeroMemory(&pi, sizeof(PROCESS_INFORMATION));
+
+    int nResult = CreateGameProcess(strName, strPw, bProfile, &pi);
+    if(nResult == RESULT_SUCCESS)
+    {
         SHAREINFO sai;
         sai.pid = pi.dwProcessId;
         strcpy(sai.szConfig, (LPCTSTR)strConfig);
@@ -563,16 +569,24 @@ int CJLkitDoc::LaunchGame(const CString& strName,
         strcpy(sai.szName, (LPCTSTR)strName);
         m_share.Add(&sai);
 
+        CCInject dllwg("JLwg.dll");
+        CCInject dllspeed("speedhack-i386.dll");
+
+        //重新唤起进程
         ResumeThread(pi.hThread);
         if(dllwg.InjectTo(pi.dwProcessId) &&
                 dllspeed.InjectTo(pi.dwProcessId))
         {
             return RESULT_SUCCESS;
         }
+        else
+        {
+            return RESULT_FAIL_INJECT;
+        }
     }
 
 
-    return RESULT_FAIL_INJECT;
+    return nResult;;
 }
 
 int CJLkitDoc::Get(CString& strName, CString& strPw)

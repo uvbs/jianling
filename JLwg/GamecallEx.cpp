@@ -9,7 +9,7 @@
 
 GamecallEx::GamecallEx()
 {
-    m_hack = NULL;
+
 }
 
 GamecallEx::~GamecallEx()

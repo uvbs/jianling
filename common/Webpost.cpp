@@ -184,8 +184,7 @@ int Webpost::Login()
     }
     catch(CInternetException* pEx)
     {
-        TRACE(_T("%d"), pEx->m_dwError);
-        bRet = pEx->m_dwError;
+        bRet = RESULT_FAIL_EXCEPTION;
         if(pEx->m_dwError == ERROR_INTERNET_TIMEOUT)
         {
             bRet = RESULT_FAIL_TIMEOUT;
@@ -432,7 +431,7 @@ BOOL Webpost::Auth(const CString& gpvlu)
     }
     catch(CInternetException* pEx)
     {
-        TRACE(_T("%d"), pEx->m_dwError);
+       
         pEx->Delete();
     }
 

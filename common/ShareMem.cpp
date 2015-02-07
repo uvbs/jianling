@@ -28,7 +28,6 @@ ShareMem::ShareMem(HANDLE hFileMap)
 SHAREINFO* ShareMem::IsLogined(DWORD pid)
 {
     SHAREINFO* share = GetMemAddr();
-
     for(unsigned i = 0; i < m_dwMaxCount; i++)
     {
         if(share->pid == pid)
@@ -38,7 +37,6 @@ SHAREINFO* ShareMem::IsLogined(DWORD pid)
     }
 
     return NULL;
-
 }
 
 
@@ -48,7 +46,6 @@ SHAREINFO* ShareMem::IsLogined(const char* name)
 {
 
     SHAREINFO* share = GetMemAddr();
-
     for(unsigned i = 0; i < m_dwMaxCount; i++)
     {
         if(strcmp(share->szName, name) == 0)
@@ -246,6 +243,7 @@ SHAREINFO* ShareMem::Get(DWORD dwPid)
         pItor++;
     }
 
+    TRACE(_T("没能初始化外挂数据"));
     return NULL;
 }
 
@@ -290,6 +288,11 @@ BOOL ShareMem::Open(TCHAR szObjName[])
 
     }
 
+    if(bRet == FALSE)
+    {
+        TRACE(_T("没能打开共享内存"));
+    }
+
     return bRet;
 }
 
@@ -297,8 +300,10 @@ BOOL ShareMem::Open(TCHAR szObjName[])
 DWORD ShareMem::IsPidValid(const char* name)
 {
     SHAREINFO* lpsa = IsLogined(name);
-    assert(lpsa != NULL);
-
+    if(lpsa == NULL)
+    {
+        return FALSE;
+    }
 
     HANDLE hProcessSnap;
     PROCESSENTRY32 pe32;
@@ -331,8 +336,7 @@ DWORD ShareMem::IsPidValid(const char* name)
 
     }
     while(Process32Next(hProcessSnap, &pe32));
+
     CloseHandle(hProcessSnap);
     return FALSE;
-
-
 }

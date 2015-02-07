@@ -10,12 +10,27 @@
 #include "../common/ShareMem.h"
 #include "../common/protocol.h"
 
-enum { COLUMN_TEXT_CHECKBOX = 0, COLUMN_TEXT_ACCOUNT, COLUMN_TEXT_PASSWORD, COLUMN_TEXT_CONFIG, COLUMN_TEXT_SCRIPT, COLUMN_TEXT_STATUS, COLUMN_TEXT_NUMS };
+enum
+{
+    COLUMN_TEXT_CHECKBOX = 0,
+    COLUMN_TEXT_ACCOUNT,
+    COLUMN_TEXT_PASSWORD,
+    COLUMN_TEXT_CONFIG,
+    COLUMN_TEXT_SCRIPT,
+    COLUMN_TEXT_STATUS,
+    COLUMN_TEXT_NUMS
+};
 
-enum { RESULT_FAIL_INJECT = 100, RESULT_NOKEY, RESULT_ALREADY_RUNNING, RESULT_FAIL_CREATEGAMEPROCESS };
+enum
+{
+    RESULT_FAIL_INJECT = 100,
+    RESULT_NOKEY,
+    RESULT_ALREADY_RUNNING,
+    RESULT_FAIL_CREATEGAMEPROCESS
+};
 
 class CLaunchThread;;
-class	CJLkitDoc;
+class CJLkitDoc;
 class CJLkitView : public CListView
 {
 protected:
@@ -23,10 +38,7 @@ protected:
     virtual ~CJLkitView();
     DECLARE_DYNCREATE(CJLkitView)
 
-    CJLkitDoc*	GetDocument()
-    {
-        return (CJLkitDoc*)m_pDocument;
-    }
+    CJLkitDoc*	GetDocument();
 
 public:
     void			OnGet();
@@ -42,6 +54,7 @@ public:
 public:
     virtual void	OnInitialUpdate();
     virtual BOOL	PreCreateWindow(CREATESTRUCT& cs);
+    virtual BOOL DestroyWindow();
 protected:
     virtual void	OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint);
     //}}AFX_VIRTUAL
@@ -50,7 +63,6 @@ public:
     //{{AFX_MSG(CJLkitView)
     afx_msg int		OnCreate(LPCREATESTRUCT lpCreateStruct);
     afx_msg void	OnStart();
-    afx_msg void	OnUpdateStart(CCmdUI* pCmdUI);
     afx_msg void	OnRclick(NMHDR* pNMHDR, LRESULT* pResult);
     afx_msg void	OnProfile();
     afx_msg void	OnGetAndActive();
@@ -58,6 +70,8 @@ public:
     afx_msg void	OnUpdateSelectall(CCmdUI* pCmdUI);
     afx_msg void	OnReportbug();
     afx_msg void	OnTimer(UINT nIDEvent);
+    afx_msg void OnUpdateStart(CCmdUI* pCmdUI);
+    afx_msg void OnUpdateGetandactive(CCmdUI* pCmdUI);
     //}}AFX_MSG
     DECLARE_MESSAGE_MAP()
 

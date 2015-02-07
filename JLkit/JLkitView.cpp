@@ -31,20 +31,20 @@ BEGIN_MESSAGE_MAP(CJLkitView, CListView)
     //{{AFX_MSG_MAP(CJLkitView)
     ON_WM_CREATE()
     ON_COMMAND(ID_START, OnStart)
-    ON_UPDATE_COMMAND_UI(ID_GETANDACTIVE, OnUpdateStart)
     ON_NOTIFY_REFLECT(NM_RCLICK, OnRclick)
     ON_COMMAND(ID_PROFILE, OnProfile)
     ON_COMMAND(ID_GETANDACTIVE, OnGetAndActive)
-    ON_UPDATE_COMMAND_UI(ID_PROFILE, OnUpdateProfile)
-    ON_UPDATE_COMMAND_UI(ID_SELECTALL, OnUpdateSelectall)
     ON_COMMAND(ID_REPORTBUG, OnReportbug)
+    ON_WM_TIMER()
     ON_WM_RBUTTONUP()
     ON_COMMAND(ID_GET, OnGet)
     ON_COMMAND(ID_ACTIVE, OnActive)
+    ON_UPDATE_COMMAND_UI(ID_PROFILE, OnUpdateProfile)
+    ON_UPDATE_COMMAND_UI(ID_SELECTALL, OnUpdateSelectall)
     ON_UPDATE_COMMAND_UI(ID_GET, OnUpdateStart)
     ON_UPDATE_COMMAND_UI(ID_ACTIVE, OnUpdateStart)
     ON_UPDATE_COMMAND_UI(ID_START, OnUpdateStart)
-    ON_WM_TIMER()
+    ON_UPDATE_COMMAND_UI(ID_GETANDACTIVE, OnUpdateStart)
     //}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
@@ -57,6 +57,11 @@ CJLkitView::CJLkitView()
 
 CJLkitView::~CJLkitView()
 {
+}
+
+CJLkitDoc*	CJLkitView::GetDocument()
+{
+    return (CJLkitDoc*)m_pDocument;
 }
 
 
@@ -84,8 +89,8 @@ int CJLkitView::OnCreate(LPCREATESTRUCT lpCreateStruct)
     }
 
     GetListCtrl().SetExtendedStyle(LVS_EX_FULLROWSELECT | LVS_EX_CHECKBOXES);
-//    CHeaderCtrl* pHeadctrl = GetListCtrl().GetHeaderCtrl();
-    //   pHeadctrl->ModifyStyle(0, HDS_CHECKBOXES);
+    //CHeaderCtrl* pHeadctrl = GetListCtrl().GetHeaderCtrl();
+    //pHeadctrl->ModifyStyle(0, HDS_CHECKBOXES);
     return 0;
 }
 
@@ -137,6 +142,10 @@ void CJLkitView::SetResult(int nReslt, int i)
     {
         GetListCtrl().SetItemText(i, COLUMN_TEXT_STATUS, _T("IP BLOCK"));
     }
+    else if(nReslt == RESULT_FAIL_EXCEPTION)
+    {
+        GetListCtrl().SetItemText(i, COLUMN_TEXT_STATUS, _T("异常, 请重试一次"));
+    }
     else if(nReslt == RESULT_FAIL_GETUKEY)
     {
         GetListCtrl().SetItemText(i, COLUMN_TEXT_STATUS, _T("无法获取UKEY"));
@@ -178,14 +187,7 @@ void CJLkitView::SetResult(int nReslt, int i)
 
 void CJLkitView::OnStart()
 {
-    if(m_lpLaunchThread == NULL)
-    {
-        m_lpLaunchThread = (CLaunchThread*)
-                           AfxBeginThread(RUNTIME_CLASS(CLaunchThread), THREAD_PRIORITY_NORMAL,
-                                          0, CREATE_SUSPENDED);
-        m_lpLaunchThread->SetOwner(this);
-        m_lpLaunchThread->ResumeThread();
-    }
+    m_lpLaunchThread->AddWork(CLaunchThread::LAUNCHGAME);
 }
 
 
@@ -229,17 +231,10 @@ void CJLkitView::OnUpdateStart(CCmdUI* pCmdUI)
         }
     }
 
-    if(GetListCtrl().GetSelectedCount() != 0)
-    {
-        pCmdUI->Enable();
-    }
 
     if(m_lpLaunchThread)
     {
-        DWORD dwExitCode = 0;
-        GetExitCodeThread(m_lpLaunchThread->m_hThread, &dwExitCode);
-
-        if(dwExitCode == STILL_ACTIVE)
+        if(m_lpLaunchThread->isWorking())
         {
             pCmdUI->Enable(FALSE);
         }
@@ -302,6 +297,16 @@ void CJLkitView::OnRclick(NMHDR* pNMHDR, LRESULT* pResult)
 void CJLkitView::OnInitialUpdate()
 {
     CListView::OnInitialUpdate();
+
+
+
+    m_lpLaunchThread = (CLaunchThread*)AfxBeginThread(RUNTIME_CLASS(CLaunchThread), THREAD_PRIORITY_NORMAL,
+                       0, CREATE_SUSPENDED);
+
+    m_lpLaunchThread->SetOwner(this);
+    m_lpLaunchThread->ResumeThread();
+
+
     //创建一个定时器
     SetTimer(IDT_HEART, 5000, NULL);
     SetTimer(IDT_TIMERGAMEEXIT, 2000, NULL);
@@ -410,13 +415,37 @@ void CJLkitView::OnTimer(UINT nIDEvent)
         {
             CString strName = GetListCtrl().GetItemText(i, COLUMN_TEXT_ACCOUNT);
 
-            if(GetDocument()->m_share.IsPidValid((LPCTSTR)strName) == FALSE)
+            if(GetDocument()->m_share.IsLogined((LPCTSTR)strName))
             {
-                GetDocument()->m_share.Del((LPCTSTR)strName);
-                GetListCtrl().SetItemText(i, COLUMN_TEXT_STATUS, _T("进程退出了"));
+                if(GetDocument()->m_share.IsPidValid((LPCTSTR)strName) == FALSE)
+                {
+                    GetDocument()->m_share.Del((LPCTSTR)strName);
+                    GetListCtrl().SetItemText(i, COLUMN_TEXT_STATUS, _T("进程退出了"));
+                }
             }
+
         }
     }
 
-    CListView::OnTimer(nIDEvent);
+    //CListView::OnTimer(nIDEvent);
+}
+
+void CJLkitView::OnUpdateGetandactive(CCmdUI* pCmdUI)
+{
+    // TODO: Add your command update UI handler code here
+    if(m_lpLaunchThread)
+    {
+        if(m_lpLaunchThread->isWorking())
+        {
+            pCmdUI->Enable(FALSE);
+        }
+    }
+}
+
+BOOL CJLkitView::DestroyWindow()
+{
+    // TODO: Add your specialized code here and/or call the base class
+
+
+    return CListView::DestroyWindow();
 }
