@@ -1,0 +1,6 @@
+// gamedef.cpp: implementation of the gamedef class.
+//
+//////////////////////////////////////////////////////////////////////
+
+#include "stdafx.h"
+#include "gamedef.h"
