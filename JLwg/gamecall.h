@@ -347,11 +347,13 @@ public:
 
     static UINT CALLBACK KeepAliveThread(LPVOID pParam);
     static UINT CALLBACK AttackThread(LPVOID pParam);
-
-
+    BOOL isCustomKill_DontKill(wchar_t *name);
+    BOOL isCustomKill_AlwaysKill(wchar_t *name);
+    BOOL isCustomKill_HaveName(wchar_t *name);
 protected:
     Logger log;
     HANDLE m_hModuleBsEngine;
+    std::vector<CUSTOMKILL> CustomName;
 };
 
 

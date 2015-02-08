@@ -134,6 +134,19 @@ enum CUSTOMMSGID
     id_msg_Pickup2ts
 };
 
+enum CUSTOMTYPE
+{
+    DONTKILL,   //不杀
+    ALWAYSKILL, //总是
+    KILLFIRST   //优先
+};
+
+
+typedef struct _CUSTOMTYPE
+{
+    wchar_t* name;
+    int type;
+} CUSTOMKILL, *PCUSTOMKILL;
 
 const wchar_t nBig50[] = L"\xd070\x0020\xbc31\xb144\xc0bc\x0020\xd68c\xbcf5\xc57d";
 const wchar_t nBig45[] = L"\xbc31\xb144\xc0bc\x0020\xd68c\xbcf5\xc57d";
@@ -175,8 +188,8 @@ const wchar_t qianhun[] = L"\xcc9c\xb839\xb3c4\xb07c";
 
 
 #define JINGDIANMOSHICALL_JIEGOUTOU     0x0A7CD0A4      // 经典模式CALL的结构头  
-#define QUDINGYAOJIANG_JIEGOUTOU		0x0A7CD0A4      // 确定摇奖CALL的结构头  
-#define ShuaXinBeiBao_JIEGOUTOU			0x0A7BD0A4      // 刷新背包CALL的结构头  
+#define QUDINGYAOJIANG_JIEGOUTOU        0x0A7CD0A4      // 确定摇奖CALL的结构头  
+#define ShuaXinBeiBao_JIEGOUTOU         0x0A7BD0A4      // 刷新背包CALL的结构头  
 #define GUANBICHUANGKOUCALL_JIEGOUTOU   0x0AD2D0A4      // 关闭窗口CALL的结构头  
 
 

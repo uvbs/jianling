@@ -100,10 +100,9 @@ public:
     void DelAllTalent();	//删除所有技能点
     void DelTalent(DWORD id);
     void _NewSpend(float x);
-
+    int ClearCustom();
 
 private:
     //自定义的要杀的怪物名称
-    std::vector<TCHAR*> CustomName;
     Logger log;
 };

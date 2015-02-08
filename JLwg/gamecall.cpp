@@ -756,13 +756,13 @@ BOOL Gamecall::LoginInGame(DWORD index)
     if(isLoadingMap() != 3)
     {
 
-        ConfirmAgreement();	//确认游戏使用协议
-        LoginGame(index);		//进入游戏
-        WaitPlans();		//等待读条
-        //CloseAttendance();	//关掉老虎机
+        ConfirmAgreement(); //确认游戏使用协议
+        LoginGame(index);       //进入游戏
+        WaitPlans();        //等待读条
+        //CloseAttendance();    //关掉老虎机
     }
 
-    //SetMouseMode();			//TODO: 暂时不能用
+    //SetMouseMode();           //TODO: 暂时不能用
 
 
     return TRUE;
@@ -803,7 +803,7 @@ BOOL Gamecall::Init()
 
 
         GameInit::Init();
-        GameSpend::Init();		//初始化加速
+        GameSpend::Init();      //初始化加速
 
 
         _beginthreadex(0, 0, KeepAliveThread, this, 0, 0);
@@ -2200,7 +2200,7 @@ void Gamecall::SellItem(_BAGSTU& bag, DWORD adress)
 
     int nums = bag.m_Num;
     //if(nums == 0)
-    //	nums += 1;
+    //  nums += 1;
 
     __try
     {
@@ -2334,7 +2334,7 @@ void Gamecall::GetStrikeName(DWORD ID, DWORD IDD, STRIKENAME* pName)
 
             mov edi, eax;
             mov edx, [edi + 0x18];   //TODO 固定
-            mov ecx, [edi + 0x1C];	//TODO 固定
+            mov ecx, [edi + 0x1C];  //TODO 固定
             mov eax, IDD;
             push eax;
 
@@ -4146,7 +4146,7 @@ BOOL Gamecall::isLoading()
 
 //
 //wchar_t *NAME = L"AreaInfoPanel";
-//	canshu2 = ReadDWORD(JIEGOU.adress+0x58);
+//  canshu2 = ReadDWORD(JIEGOU.adress+0x58);
 void Gamecall::OpenXianluUI()
 {
     DWORD uiAddr = 0;
@@ -4319,8 +4319,8 @@ BOOL Gamecall::isQuestItem(DWORD pAddr)
 }
 
 //[[[player_base]+0x34]+0x78]+0x110] == （取一个字节）
-//5		说明在开启任务物品状态
-//2		表示那个拾取的ui弹出来了, 可以二次捡物品
+//5     说明在开启任务物品状态
+//2     表示那个拾取的ui弹出来了, 可以二次捡物品
 DWORD Gamecall::GetPlayerQuestUIStatus()
 {
     DWORD pAddr = GetPlayerDataAddr();
@@ -4820,10 +4820,10 @@ BOOL Gamecall::CloseAttendance()
 void Gamecall::SetMouseMode()
 {
     //"OptionPanel" 这个名字的控件
-    //	1:进入游戏后判断是经典模式还是键盘模式[["OptionPanel" 首地址 + 0x36D1C] + 0x1C]  等于 1  是经典模式  等于0是键盘模式
-    //	2 : [0xFE3280] 等于 1  是经典模式  等于0是键盘模式
-    //	二种方法判断经典模式的状态都可以
-    //	参数5是 控件的首地址 + 0x36F28
+    //  1:进入游戏后判断是经典模式还是键盘模式[["OptionPanel" 首地址 + 0x36D1C] + 0x1C]  等于 1  是经典模式  等于0是键盘模式
+    //  2 : [0xFE3280] 等于 1  是经典模式  等于0是键盘模式
+    //  二种方法判断经典模式的状态都可以
+    //  参数5是 控件的首地址 + 0x36F28
 
     //判断当前模式
     //UCHAR isClass = *(UCHAR *)0xfe3280;
@@ -5031,6 +5031,73 @@ UCHAR Gamecall::GetPlayerLevel() //获得角色等级
     return LV;
 }
 
+
+//判断一个名字在自定义列表中是否存在
+BOOL Gamecall::isCustomKill_DontKill(wchar_t *name)
+{
+
+    //从自定义的列表中匹配
+    for(int i = 0; i < CustomName.size(); i++)
+    {
+        
+        //根据名字来匹配, 匹配到一个
+        if(wcscmp(CustomName[i].name, name) == 0)
+        {
+            //开始根据设置的类型分别处理
+            if(CustomName[i].type == DONTKILL)
+            {
+                return TRUE;
+            }
+        }
+    }
+
+    return FALSE;
+}
+
+
+//判断一个名字在自定义列表中是否存在
+BOOL Gamecall::isCustomKill_AlwaysKill(wchar_t *name)
+{
+
+    //从自定义的列表中匹配
+    for(int i = 0; i < CustomName.size(); i++)
+    {
+        
+        //根据名字来匹配, 匹配到一个
+        if(wcscmp(CustomName[i].name, name) == 0)
+        {
+            //开始根据设置的类型分别处理
+            if(CustomName[i].type == ALWAYSKILL)
+            {
+                return TRUE;
+            }
+        }
+    }
+
+    return FALSE;
+}
+
+//判断一个名字在自定义列表中是否存在
+BOOL Gamecall::isCustomKill_HaveName(wchar_t *name)
+{
+
+    //从自定义的列表中匹配
+    for(int i = 0; i < CustomName.size(); i++)
+    {
+        
+        //根据名字来匹配, 匹配到一个
+        if(wcscmp(CustomName[i].name, name) == 0)
+        {
+            return TRUE;
+        }
+    }
+
+    return FALSE;
+}
+
+
+
+
 //应用配置文件的杀怪设置
 //一些是否怪物的判断放到这里是要让遍历范围怪物尽可能多的遍历出来, 然后
 //让配置文件去过滤, 不然就需要多写一个范围所有目标过滤. 因为有配置文件
@@ -5065,10 +5132,8 @@ BOOL Gamecall::Kill_ApplyConfig(std::vector<ObjectNode*>& ObjectVec)
             {
                 it++;
             }
-
-
-
         }
+
 
         //TRACE("_T(config循环2)");
         for(it = ObjectVec.begin(); it != ObjectVec.end();)
@@ -5117,16 +5182,64 @@ BOOL Gamecall::Kill_ApplyConfig(std::vector<ObjectNode*>& ObjectVec)
             }
             else
             {
-                if(fileConfig.isHave(strCombat, strDontKill, objName))
+
+                //应用全局之前先判断自定义
+                if(isCustomKill_HaveName(objName))
                 {
-                    //删掉这个元素
-                    //TRACE1("%d",__LINE__);
-                    it = ObjectVec.erase(it);
-                    continue;
+                    if(fileConfig.isHave(strCombat, strDontKill, objName))
+                    {
+                        //删掉这个元素
+                        //TRACE1("%d",__LINE__);
+                        it = ObjectVec.erase(it);
+                        continue;
+                    }
+                    
                 }
+
             }
+
+
             it++;
         }
+
+
+        //TRACE("_T(config循环3)");
+        for(it = ObjectVec.begin(); it != ObjectVec.end();)
+        {
+            ObjectNode* pNode = *it;
+            //TRACE1("%d",__LINE__);
+            wchar_t* objName = GetObjectName(pNode->ObjAddress);
+            //assert(objName!=NULL);
+            //TRACE1("%d",__LINE__);
+
+            //从自定义的列表中匹配
+            for(int i = 0; i < CustomName.size(); i++)
+            {
+
+                //根据名字来匹配, 匹配到一个
+                if(wcscmp(CustomName[i].name, objName) == 0)
+                {
+                    //开始根据设置的类型分别处理
+                    if(CustomName[i].type == DONTKILL)
+                    {
+                        it = ObjectVec.erase(it);
+                        continue;
+                    }
+                    else if(CustomName[i].type == ALWAYSKILL)
+                    {
+                        
+                    }
+                    else if(CustomName[i].type == KILLFIRST)
+                    {
+                        
+                    }
+                }
+            }
+
+            it++;
+        }
+
+
 
     }
     catch(...)
@@ -5227,8 +5340,8 @@ void Gamecall::PickupDeadbody(DWORD id1, DWORD id2)
 }
 
 //[[[player_base]+0x34]+0x78]+0x110] == （取一个字节）
-//5		说明在开启任务物品状态
-//2		表示那个拾取的ui弹出来了, 可以二次捡物品
+//5     说明在开启任务物品状态
+//2     表示那个拾取的ui弹出来了, 可以二次捡物品
 BOOL Gamecall::isPlayerHasPickupQuestItemUI()
 {
     DWORD status = 0;
@@ -5458,7 +5571,7 @@ void Gamecall::_GetRangeObjectToVector(ObjectNode* pNote, DWORD range, std::vect
         {
             fPosition fmypos;
             GetPlayerPos(&fmypos);
-            if(fpos.x == 0 || fpos.y == 0 || fpos.z	 == 0)
+            if(fpos.x == 0 || fpos.y == 0 || fpos.z  == 0)
             {
                 RangeObject.push_back(pNote);
             }
@@ -5953,8 +6066,8 @@ BOOL Gamecall::FillGoods(_BAGSTU& BagBuff)
     BagBuff.m_NameID  =   GetGoodsNameID(BagBuff.m_Base);            //获取物品的名字ID
 
 
-    //BagBuff.name   =	  (wchar_t *)sendcall(id_msg_GatBagGoodrName, (LPVOID)BagBuff.m_NameID);
-    BagBuff.name   =	  GatBagGoodrName(BagBuff.m_NameID);
+    //BagBuff.name   =    (wchar_t *)sendcall(id_msg_GatBagGoodrName, (LPVOID)BagBuff.m_NameID);
+    BagBuff.name   =      GatBagGoodrName(BagBuff.m_NameID);
     if(BagBuff.name == NULL)
     {
         return FALSE;
@@ -5962,10 +6075,10 @@ BOOL Gamecall::FillGoods(_BAGSTU& BagBuff)
 
     BagBuff.m_Type    =   GetGoodsType(BagBuff.m_Base);              //获取物品的类型
     BagBuff.m_Info    =   GetGoodsInfo(BagBuff.m_Base);              //获取物品的所在格子数
-    BagBuff.m_Num	  =   GetGoodsNum(BagBuff.m_Base);               //获取物品的数量
-    BagBuff.m_Lasting =	  GetGoodsLasting(BagBuff.m_Base);           //获取物品的持久
+    BagBuff.m_Num     =   GetGoodsNum(BagBuff.m_Base);               //获取物品的数量
+    BagBuff.m_Lasting =   GetGoodsLasting(BagBuff.m_Base);           //获取物品的持久
     BagBuff.m_LV      =   GetGoodsLLV(BagBuff.m_Base);               //获取物品的等级
-    //BagBuff.m_Site	  =   GetCanshu_a(BagBuff.m_Base);               //吃药和穿装备需要的一个参数
+    //BagBuff.m_Site      =   GetCanshu_a(BagBuff.m_Base);               //吃药和穿装备需要的一个参数
 
 
 
@@ -7230,7 +7343,7 @@ BOOL Gamecall::isCanLook(DWORD pAddr)
         }
         /*if (temp == 9)
         {
-        	return TRUE;
+            return TRUE;
         }*/
     }
     __except(1)
@@ -7309,7 +7422,7 @@ BOOL Gamecall::GetPlayExperienceStatus()
     //wchar_t *str = L"";  //ItemGrowth2Panel
     //GetUIAddrByName(L"", pUiAddr);
     //if(*pUiAddr == 0)
-    //	return FALSE;
+    //  return FALSE;
     KONGJIAN_JIEGOU jiegou = {NULL};
     jiegou.adress = (DWORD)GetUIBinTreeBaseAddr();
     jiegou.name = L"Normal";

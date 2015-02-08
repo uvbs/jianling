@@ -619,12 +619,23 @@ BOOL GamecallEx::kill_Task(int MyQuestID, int MyQuestStep)
 
 void GamecallEx::AddCustomKill(WCHAR* name, DWORD type)
 {
+    
+    CUSTOMKILL cust;
 
     int len = wcslen(name);
     WCHAR* lpName = new WCHAR[len];
     wcscpy(lpName, name);
-    CustomName.push_back(lpName);
 
+    cust.name = lpName;
+    cust.type = type;
+
+    CustomName.push_back(cust);
+}
+
+int GamecallEx::ClearCustom()
+{
+    CustomName.clear();
+    return 0;
 }
 
 
@@ -634,7 +645,7 @@ void GamecallEx::AddCustomKill(WCHAR* name, DWORD type)
 //参数3: 模式
 int GamecallEx::FindThenKill(int pos, DWORD range, DWORD mode, DWORD MyQuestStep, DWORD MyQuestID, DWORD canKillRange)
 {
-    CustomName.clear();
+    
 
 
     fPosition fmypos;
