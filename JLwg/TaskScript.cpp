@@ -5977,7 +5977,7 @@ void TaskScript::Task_312(int zid,int taskid)
 					Sleep(2000);
 					ShunYiResult(2203,L"Lianji14-mai-men",FALSE);
 					Sleep(2000);
-					gcall.hookQietu.unhook();
+					//gcall.hookQietu.unhook();
 					gcall.WaitPlans();
 					gcall.HeChengWuQi(EQUITMENT_POS::WUQI);
 					Sleep(1000);
