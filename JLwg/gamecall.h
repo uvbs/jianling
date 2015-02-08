@@ -34,12 +34,13 @@
 //杀怪模式, 默认只Normal
 //可以应用多个杀怪模式, 比如 modeNormal | modeSpend | modeTask | modeAoe
 #define			modeNormal						1	//用普通技能, 不会用范围攻击
-#define			modeAoe							4	//AOE
+#define			modeAoe							4	//根据判断执行AOE技能
 #define			modeTask						8	//任务, 影响退出逻辑的判断
 #define			modeGoback						16	//杀完回原点
 #define			modePickup						32	//杀完自己捡
 #define			modePickupBody					64	//杀完举起尸体	
 #define			modePickupOnce					128 //干掉一个捡一次掉落
+#define			modeOnlyAoe						256 //只用AOE技能
 
 
 /*状态常量*/

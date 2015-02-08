@@ -40,19 +40,21 @@ BOOL GamecallEx::HeChengWuQi_Po5(EQUITMENT_POS pos, wchar_t *name)
 	
 
 	//参数有, 再判断合成目标有没有已经满5
-	BOOL isFull5_fu = FALSE;
-	if (_wcsicmp(fu.name,qianhun) == 0)
-	{
-		isFull5_fu = TRUE;
-	}else
-	{
-		if(fu.m_PingJi == 5 &&
-			(fu.m_DangQianJingYanZhi == fu.m_DangQianJingYanZongZhi))
-		{
-			//已经满5
-			isFull5_fu = TRUE;
-		}
-	}
+	BOOL isFull5_fu = TRUE;
+
+	//破5的武器貌似都改成蓝颜色了，并且无需强化
+	//if (_wcsicmp(fu.name,qianhun) == 0)
+	//{
+	//	isFull5_fu = TRUE;
+	//}else
+	//{
+	//	if(fu.m_PingJi == 5 &&
+	//		(fu.m_DangQianJingYanZhi == fu.m_DangQianJingYanZongZhi))
+	//	{
+	//		//已经满5
+	//		isFull5_fu = TRUE;
+	//	}
+	//}
 	
 
 	if(isFull5_fu)
@@ -2043,22 +2045,26 @@ int GamecallEx::KillObject(DWORD range, ObjectNode *pNode, DWORD mode, DWORD can
 			}
 			//杀怪时才需要转向
 			Gamecall::TurnTo(targetpos);
-			if(mode & modeAoe){
-				TRACE("判断AEO");
-
-				if(GetRangeMonsterCount() >= 2){
-					//TRACE("执行AEO");
-					AttackAOE();
-				}else{
-					//TRACE("执行RT");
+			if (mode & modeOnlyAoe)
+			{
+				AttackAOE();
+			}else
+			{
+				if(mode & modeAoe){
+					if(GetRangeMonsterCount() >= 2){
+						//TRACE("执行AEO");
+						AttackAOE();
+					}else{
+						//TRACE("执行RT");
+						AttackNormal();
+					}
+				}
+				else{
+					//TRACE("执行AOE外的RT");
 					AttackNormal();
 				}
 			}
-			else{
-				//TRACE("执行AOE外的RT");
-				AttackNormal();
-			}
-			TRACE("判断AEO退");
+			
 			//5秒没能打掉血就退
 			DWORD curTime = GetTickCount();
 			if((curTime - oriTime) >= 5000){
@@ -2190,7 +2196,7 @@ BOOL GamecallEx::HeChengWuQi_Po10(EQUITMENT_POS pos, wchar_t *name)
 		sendcall(id_msg_HeChengWuQi_Po10, &temp);
 		Sleep(2000);
 		//破5级后继续强化
-		HeChengWuQi(pos);
+		//HeChengWuQi(pos);
 	}
 	else
 	{

@@ -56,8 +56,19 @@ public:
 	void Task_511(int zid,int taskid);//12장. 배신자의 집
 	void Task_512(int zid,int taskid);//13장. 끌려간 미령
 	void Task_513(int zid,int taskid);//14장. 심마
-	void Task_514(int zid,int taskid);//
-	void Task_515(int zid,int taskid);//
+	void Task_514(int zid,int taskid);//15장. 무신의 비보를 노리는 장군
+	void Task_515(int zid,int taskid);//16장. 보물사냥꾼
+	void Task_516(int zid,int taskid);//17장. 연꽃의 도적
+	void Task_517(int zid,int taskid);//18장. 도적의 행방
+	void Task_518(int zid,int taskid);//19장. 동업
+	void Task_519(int zid,int taskid);//20장. 무신삼원로
+	void Task_520(int zid,int taskid);//21장. 고대의 살수
+	void Task_521(int zid,int taskid);//22장. 무신릉의 단서
+	void Task_522(int zid,int taskid);//23장. 번갯불을 찾는 도공
+	void Task_523(int zid,int taskid);//24장. 가마의 제
+	void Task_524(int zid,int taskid);//25장. 주정뱅이 기인
+	void Task_525(int zid,int taskid);//
+	void Task_526(int zid,int taskid);//
 	void Task_294(int zid,int taskid);//魔道4-19
 	void Lianji6();//6级副本
 	void Lianji6_go();//6级副本 进
@@ -73,6 +84,8 @@ public:
 	void lianji22_go();//22级副本 进
 	void lianji28();//28级副本
 	void lianji28_go();//28级副本 进
+	void lianji30();//30级副本
+	void lianji30_go();//30级副本 进
 	BOOL ShunYiResult(DWORD CityId,wchar_t* FileName,BOOL Hook_flag);//瞬移等待逻辑的封装函数
 	void UseExperience();//使用经验药
 	void IsGoonHecheng(DWORD pos);//逻辑循环强化物品
