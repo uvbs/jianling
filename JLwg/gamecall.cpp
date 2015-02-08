@@ -4,29 +4,12 @@
 
 #include "..\common\CIniFile.h"
 
-    {
-    }
 
-    {
-    }
-
-    {
-    }
-    {
-    }
-
-    {
-    }
 
 Gamecall::Gamecall():
     log(_T("gcall"))
 {
-    {
-    }
-
     m_pShareMem = NULL;
-
-
 }
 
 Gamecall::~Gamecall()
@@ -813,21 +796,12 @@ BOOL Gamecall::Init()
     try
     {
 
-        {
-            {
-        {
-        {
-        {
-        {
-            {
-            {
-
         GameInit::Init();
         GameSpend::Init();      //初始化加速
 
 
-        _beginthreadex(0, 0, KeepAliveThread, this, 0, 0);
-        _beginthreadex(0, 0, AttackThread, this, 0, 0);
+        //_beginthreadex(0, 0, KeepAliveThread, this, 0, 0);
+        //_beginthreadex(0, 0, AttackThread, this, 0, 0);
 
 
         //获取加载的游戏dll的地址
@@ -842,7 +816,6 @@ BOOL Gamecall::Init()
 
     return FALSE;
 }
-
 
 //整理背包ui
 BOOL Gamecall::SortBag()
@@ -5125,154 +5098,153 @@ BOOL Gamecall::isCustomKill_HaveName(wchar_t *name)
 //中存在但是原本范围过滤中不存在的情况.
 BOOL Gamecall::Kill_ApplyConfig(std::vector<ObjectNode*>& ObjectVec)
 {
-    try
-    {
-        CCIniFile fileConfig;
-        fileConfig.Open(m_szConfigPath);
-        std::vector<ObjectNode*>::iterator it;
+	try
+	{
+		CCIniFile fileConfig;
+		fileConfig.Open(m_szConfigPath);
+		std::vector<ObjectNode*>::iterator it;
 
 
-        //TRACE("config循环1");
-        for(it = ObjectVec.begin(); it != ObjectVec.end();)
-        {
-            //如果名字相同, 放到容器起始
-            ObjectNode* pNode = *it;
-            //TRACE1("%d",__LINE__);
-            wchar_t* objName = GetObjectName(pNode->ObjAddress);
-            // TRACE1("%d",__LINE__);
+		//TRACE("config循环1");
+		for(it = ObjectVec.begin(); it != ObjectVec.end();)
+		{
+			//如果名字相同, 放到容器起始
+			ObjectNode* pNode = *it;
+			//TRACE1("%d",__LINE__);
+			wchar_t* objName = GetObjectName(pNode->ObjAddress);
+			// TRACE1("%d",__LINE__);
 
-            if(objName == NULL)
-            {
-                it = ObjectVec.erase(it);
-                continue;
-            }
-            else
-            {
-                //要是即不可杀配置文件又没有指定要杀就删掉这个元素
-                if(isCanKill(pNode) == FALSE &&
-                        fileConfig.isHave(strCombat, strAlwaysKill, objName) == FALSE)
-                {
-                    //TRACE1("%d",__LINE__);
-                    it = ObjectVec.erase(it);
-                    continue;
-                }
-            {
-            }
-            it++;
-        }
+			if(objName == NULL)
+			{
+				it = ObjectVec.erase(it);
+				continue;
+			}
+			else
+			{
+				//要是即不可杀配置文件又没有指定要杀就删掉这个元素
+				if(isCanKill(pNode) == FALSE &&
+					fileConfig.isHave(strCombat, strAlwaysKill, objName) == FALSE)
+				{
+					//TRACE1("%d",__LINE__);
+					it = ObjectVec.erase(it);
+					continue;
+				}
+			}
+			it++;
+		}
 
-        //TRACE("config循环2");
-        for(it = ObjectVec.begin(); it != ObjectVec.end();)
-        {
+		//TRACE("config循环2");
+		for(it = ObjectVec.begin(); it != ObjectVec.end();)
+		{
 
-            ObjectNode* pNode = *it;
-            //TRACE1("%d",__LINE__);
-            wchar_t* objName = GetObjectName(pNode->ObjAddress);
-            //assert(objName!=NULL);
-            //TRACE1("%d",__LINE__);
+			ObjectNode* pNode = *it;
+			//TRACE1("%d",__LINE__);
+			wchar_t* objName = GetObjectName(pNode->ObjAddress);
+			//assert(objName!=NULL);
+			//TRACE1("%d",__LINE__);
 
-            if(objName == NULL)
-            {
-                it = ObjectVec.erase(it);
-                continue;
-            }
-            else
-            {
-                if(fileConfig.isHave(strCombat, strFirst, objName))
-                {
-                    ObjectNode* pBack = pNode;
-                    //TRACE1("%d",__LINE__);
-                    it = ObjectVec.erase(it);
-                    //TRACE1("%d",__LINE__);
-                    ObjectVec.insert(ObjectVec.begin(), pBack);
-                    continue;
-                }
+			if(objName == NULL)
+			{
+				it = ObjectVec.erase(it);
+				continue;
+			}
+			else
+			{
+				if(fileConfig.isHave(strCombat, strFirst, objName))
+				{
+					ObjectNode* pBack = pNode;
+					//TRACE1("%d",__LINE__);
+					it = ObjectVec.erase(it);
+					//TRACE1("%d",__LINE__);
+					ObjectVec.insert(ObjectVec.begin(), pBack);
+					continue;
+				}
 
-            }
+			}
 
-            it++;
-        }
+			it++;
+		}
 
-        //TRACE("_T(config循环3)");
-        for(it = ObjectVec.begin(); it != ObjectVec.end();)
-        {
-            ObjectNode* pNode = *it;
-            //TRACE1("%d",__LINE__);
-            wchar_t* objName = GetObjectName(pNode->ObjAddress);
-            //assert(objName!=NULL);
-            //TRACE1("%d",__LINE__);
-            if(objName == NULL)
-            {
-                it = ObjectVec.erase(it);
-                continue;
-            }
-            else
-            {
+		//TRACE("_T(config循环3)");
+		for(it = ObjectVec.begin(); it != ObjectVec.end();)
+		{
+			ObjectNode* pNode = *it;
+			//TRACE1("%d",__LINE__);
+			wchar_t* objName = GetObjectName(pNode->ObjAddress);
+			//assert(objName!=NULL);
+			//TRACE1("%d",__LINE__);
+			if(objName == NULL)
+			{
+				it = ObjectVec.erase(it);
+				continue;
+			}
+			else
+			{
 
-                //应用全局之前先判断自定义                
-                if(isCustomKill_HaveName(objName) == FALSE)
-                {
-                    if(fileConfig.isHave(strCombat, strDontKill, objName))
-                    {
-                        //删掉这个元素
-                        //TRACE1("%d",__LINE__);
-                        it = ObjectVec.erase(it);
-                        continue;
-                    }
-                    
-                }
+				//应用全局之前先判断自定义                
+				if(isCustomKill_HaveName(objName) == FALSE)
+				{
+					if(fileConfig.isHave(strCombat, strDontKill, objName))
+					{
+						//删掉这个元素
+						//TRACE1("%d",__LINE__);
+						it = ObjectVec.erase(it);
+						continue;
+					}
 
-            }
+				}
 
-
-            it++;
-        }
+			}
 
 
-        //TRACE("_T(config循环3)");
-        for(it = ObjectVec.begin(); it != ObjectVec.end();)
-        {
-            ObjectNode* pNode = *it;
-            //TRACE1("%d",__LINE__);
-            wchar_t* objName = GetObjectName(pNode->ObjAddress);
-            //assert(objName!=NULL);
-            //TRACE1("%d",__LINE__);
-
-            //从自定义的列表中匹配
-            for(int i = 0; i < CustomName.size(); i++)
-            {
-
-                //根据名字来匹配, 匹配到一个
-                if(wcscmp(CustomName[i].name, objName) == 0)
-                {
-                    //开始根据设置的类型分别处理
-                    if(CustomName[i].type == DONTKILL)
-                    {
-                        it = ObjectVec.erase(it);
-                        continue;
-                    }
-                    else if(CustomName[i].type == ALWAYSKILL)
-                    {
-                        
-                    }
-                    else if(CustomName[i].type == KILLFIRST)
-                    {
-                        
-                    }
-                }
-            }
-
-            it++;
-        }
+			it++;
+		}
 
 
+		//TRACE("_T(config循环3)");
+		for(it = ObjectVec.begin(); it != ObjectVec.end();)
+		{
+			ObjectNode* pNode = *it;
+			//TRACE1("%d",__LINE__);
+			wchar_t* objName = GetObjectName(pNode->ObjAddress);
+			//assert(objName!=NULL);
+			//TRACE1("%d",__LINE__);
 
-    }
-    catch(...)
-    {
-        TRACE(_T("应用配置文件错误"));
-    }
-    return TRUE;
+			//从自定义的列表中匹配
+			for(int i = 0; i < CustomName.size(); i++)
+			{
+
+				//根据名字来匹配, 匹配到一个
+				if(wcscmp(CustomName[i].name, objName) == 0)
+				{
+					//开始根据设置的类型分别处理
+					if(CustomName[i].type == DONTKILL)
+					{
+						it = ObjectVec.erase(it);
+						continue;
+					}
+					else if(CustomName[i].type == ALWAYSKILL)
+					{
+
+					}
+					else if(CustomName[i].type == KILLFIRST)
+					{
+
+					}
+				}
+			}
+
+			it++;
+		}
+
+
+
+	}
+	catch(...)
+	{
+		TRACE(_T("应用配置文件错误"));
+	}
+	return TRUE;
 }
 
 

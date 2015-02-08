@@ -2,15 +2,15 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="Source Files">
-      <UniqueIdentifier>{c1ff9641-d22e-4f93-8853-57d87fd00d34}</UniqueIdentifier>
+      <UniqueIdentifier>{a397e580-6238-4bf4-aca2-1cd7eaa21da3}</UniqueIdentifier>
       <Extensions>cpp;c;cxx;rc;def;r;odl;idl;hpj;bat</Extensions>
     </Filter>
     <Filter Include="Header Files">
-      <UniqueIdentifier>{30cd4c11-bdbb-4fad-b5d5-672efa6f6dee}</UniqueIdentifier>
+      <UniqueIdentifier>{4685081c-0c23-4946-8151-4f09c4db706f}</UniqueIdentifier>
       <Extensions>h;hpp;hxx;hm;inl</Extensions>
     </Filter>
     <Filter Include="Resource Files">
-      <UniqueIdentifier>{ad31ae8a-2bc5-4f37-9521-d1733ca4c28c}</UniqueIdentifier>
+      <UniqueIdentifier>{dec59c9d-e59e-411d-82ef-686b80d86fdd}</UniqueIdentifier>
       <Extensions>ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe</Extensions>
     </Filter>
   </ItemGroup>
@@ -40,6 +40,21 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="GamecallEx.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="gamedef.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GameHepler.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GameHook.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GameInit.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GameSpend.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="JLDlg.cpp">
@@ -93,6 +108,21 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="GamecallEx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="gamedef.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GameHepler.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GameHook.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GameInit.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GameSpend.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="gamestruct.h">

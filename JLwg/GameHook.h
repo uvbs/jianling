@@ -50,7 +50,6 @@ protected:
     static std::vector<DWORD> m_ObjAddrVec;
 
 
-    CCHook stepHook;
     CCHook deQuestHook;
     CCHook aeQuestHook;
     CCHook WearHook;
@@ -58,6 +57,7 @@ protected:
     CCHook Yicjw;
     CCHook CombatHook;
 
+	CCHook stepHook;
 
     static DWORD* backupSendStep;
     static DWORD* backupWearEquipment;

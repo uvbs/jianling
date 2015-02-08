@@ -10,7 +10,7 @@
     <SccProjectName />
     <SccLocalPath />
     <Keyword>MFCProj</Keyword>
-    <ProjectGuid>{5C5ED285-6740-4381-8DDE-22F0F32E2556}</ProjectGuid>
+    <ProjectGuid>{9152BBF2-44A2-4D70-B477-66D203BDF41D}</ProjectGuid>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
@@ -72,7 +72,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="DBLoginDlg.cpp" />
+    <ClCompile Include="..\common\CallTracer.cpp" />
     <ClCompile Include="JLSrvr.cpp" />
     <ClCompile Include="JLSrvrDoc.cpp" />
     <ClCompile Include="JLSrvrView.cpp" />
@@ -91,7 +91,7 @@
     <ResourceCompile Include="JLSrvr.rc" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="DBLoginDlg.h" />
+    <ClInclude Include="..\common\CallTracer.h" />
     <ClInclude Include="JLSrvr.h" />
     <ClInclude Include="JLSrvrDoc.h" />
     <ClInclude Include="JLSrvrView.h" />

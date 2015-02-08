@@ -37,7 +37,7 @@
 #define modePickup      32                  //杀完自己捡
 #define modePickupBody  64                  //杀完举起尸体  
 #define modePickupOnce  128                 //干掉一个捡一次掉落
-
+#define modeOnlyAoe     256                 //只用Aoe
 /*状态常量*/
 #define NORTH               0               //正北
 #define SOUTH               32778           //南

@@ -2,19 +2,22 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="Source Files">
-      <UniqueIdentifier>{0ecdcd8e-c21b-4a47-a320-5732ee987b59}</UniqueIdentifier>
+      <UniqueIdentifier>{4f72f496-3d3d-4c06-a0d2-8e169f01f99d}</UniqueIdentifier>
       <Extensions>cpp;c;cxx;rc;def;r;odl;idl;hpj;bat</Extensions>
     </Filter>
     <Filter Include="Header Files">
-      <UniqueIdentifier>{fefea80f-4951-4a76-87f0-bfa766024f04}</UniqueIdentifier>
+      <UniqueIdentifier>{56ddb5d9-d8c6-452d-a4cd-d8f2de44a64c}</UniqueIdentifier>
       <Extensions>h;hpp;hxx;hm;inl</Extensions>
     </Filter>
     <Filter Include="Resource Files">
-      <UniqueIdentifier>{6da34019-21f7-4683-b3a0-4bf6dfcd1737}</UniqueIdentifier>
+      <UniqueIdentifier>{3215c599-e7e4-47a4-afb6-c430853a1ed4}</UniqueIdentifier>
       <Extensions>ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe</Extensions>
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\common\HookSystemcallx86tox64.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="..\common\inlinehook.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -30,18 +33,12 @@
     <ClCompile Include="StdAfx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\common\HookSystemcallx86tox64.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="StdAfx.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="common.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\common\HookSystemcallx86tox64.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="StdAfx.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

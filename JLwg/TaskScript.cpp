@@ -1,4 +1,4 @@
-#include "stdafx.h"
+ï»¿#include "stdafx.h"
 #include "TaskScript.h"
 #include "JLwg.h"
 #include <string>
@@ -8,14 +8,14 @@
 
 FunTask ft[0x400] =
 {
-	{ TEXT("221"), &TaskScript::Task_221 },//ĞÂÊÖÈÎÎñ1
-	{ TEXT("222"), &TaskScript::Task_222 },//ĞÂÊÖÈÎÎñ2
-	{ TEXT("223"), &TaskScript::Task_223 },//ĞÂÊÖÈÎÎñ3
-	{ TEXT("224"), &TaskScript::Task_224 },//ĞÂÊÖÈÎÎñ4
-	{ TEXT("231"), &TaskScript::Task_231 },//ĞÂÊÖÈÎÎñ5
-	{ TEXT("232"), &TaskScript::Task_232 },//ĞÂÊÖÈÎÎñ6
-	{ TEXT("227"), &TaskScript::Task_227 },//ĞÂÊÖÈÎÎñ7
-	{ TEXT("243"), &TaskScript::Task_243 },//ĞÂÊÖÈÎÎñ8
+	{ TEXT("221"), &TaskScript::Task_221 },//æ–°æ‰‹ä»»åŠ¡1
+	{ TEXT("222"), &TaskScript::Task_222 },//æ–°æ‰‹ä»»åŠ¡2
+	{ TEXT("223"), &TaskScript::Task_223 },//æ–°æ‰‹ä»»åŠ¡3
+	{ TEXT("224"), &TaskScript::Task_224 },//æ–°æ‰‹ä»»åŠ¡4
+	{ TEXT("231"), &TaskScript::Task_231 },//æ–°æ‰‹ä»»åŠ¡5
+	{ TEXT("232"), &TaskScript::Task_232 },//æ–°æ‰‹ä»»åŠ¡6
+	{ TEXT("227"), &TaskScript::Task_227 },//æ–°æ‰‹ä»»åŠ¡7
+	{ TEXT("243"), &TaskScript::Task_243 },//æ–°æ‰‹ä»»åŠ¡8
 	{ TEXT("301"), &TaskScript::Task_301 },//1-1
 	{ TEXT("302"), &TaskScript::Task_302 },//1-2
 	{ TEXT("303"), &TaskScript::Task_303 },//1-3
@@ -27,8 +27,7 @@ FunTask ft[0x400] =
 	{ TEXT("308"), &TaskScript::Task_308 },//1-9
 	{ TEXT("309"), &TaskScript::Task_309 },//1-10
 	{ TEXT("310"), &TaskScript::Task_310 },//1-11
-	{ TEXT("311"), &TaskScript::Task_311 },//1-12  µ½ÁËÕâ¸öÈÎÎñÒªÈ¥´òµ½12¼¶²ÅĞĞ£¬ÉÏÈ»ºóÃæÓĞµÄ×°±¸´©ÉÏÉÏ¡£
-
+	{ TEXT("311"), &TaskScript::Task_311 },//1-12  åˆ°äº†è¿™ä¸ªä»»åŠ¡è¦å»æ‰“åˆ°12çº§æ‰è¡Œï¼Œä¸Šç„¶åé¢æœ‰çš„è£…å¤‡ç©¿ä¸Šä¸Šã€‚
 	{ TEXT("312"), &TaskScript::Task_312 },//1-13
 	{ TEXT("491"), &TaskScript::Task_491 },//1-14
 	{ TEXT("492"), &TaskScript::Task_492 },//1-15
@@ -87,8 +86,7 @@ TaskScript::~TaskScript(void)
 }
 
 
-//¹¦ÄÜº¯ÊıÇø
-
+//åŠŸèƒ½å‡½æ•°åŒº
 
 /*
 70=f
@@ -100,9 +98,9 @@ TaskScript::~TaskScript(void)
 
 
 /************************************************************************/
-/*ĞÂÊÖ´åÈÎÎñ¿ªÊ¼ */
+/*æ–°æ‰‹æ‘ä»»åŠ¡å¼€å§‹ */
 /************************************************************************/
-/*Ğ´ÈÕÖ¾*/
+/*å†™æ—¥å¿—*/
 void TaskScript::log(TCHAR szFormat[], ...)
 {
 	TCHAR buffer[BUFSIZ] = { 0 };
@@ -121,17 +119,14 @@ void TaskScript::BeginTask()
 	{
 		while (1)
 		{
-			DWORD pStartAddr = gcall.GetTaskStartAddr();//»ñÈ¡ÈÎÎñ¿ªÊ¼µØÖ·
-
+			DWORD pStartAddr = gcall.GetTaskStartAddr();//è·å–ä»»åŠ¡å¼€å§‹åœ°å€
 
 			//log(TEXT("%08x"),pStartAddr);
-			DWORD ID = gcall.GetTaskID(0, pStartAddr);//»ñµÃµ±Ç°ÈÎÎñID
-			DWORD info = gcall.GetPresentTaskIndexes(0, pStartAddr);//»ñµÃµ±Ç°×öµ½µÚ¼¸¸öĞ¡ÈÎÎñ
+			DWORD ID = gcall.GetTaskID(0, pStartAddr);//è·å¾—å½“å‰ä»»åŠ¡ID
+			DWORD info = gcall.GetPresentTaskIndexes(0, pStartAddr);//è·å¾—å½“å‰åšåˆ°ç¬¬å‡ ä¸ªå°ä»»åŠ¡
 
-
-			DWORD nameid = gcall.GetTaskNameID(0, pStartAddr);//»ñÈ¡µ±Ç°ÈÎÎñµõid
-			//wchar_t* taskname = gcall.GatTaskName(nameid);//»ñµÃµ±Ç°ÈÎÎñµõ
-
+			DWORD nameid = gcall.GetTaskNameID(0, pStartAddr);//è·å–å½“å‰ä»»åŠ¡åŠid
+			//wchar_t* taskname = gcall.GatTaskName(nameid);//è·å¾—å½“å‰ä»»åŠ¡åŠ
 
 			//if (ID == 227)
 			//{
@@ -139,12 +134,12 @@ void TaskScript::BeginTask()
 			//}
 			if (ID == -1 || info == -1)
 			{
-				log(TEXT("»ñÈ¡ÈÎÎñÊ§°Ü..address:%x,id:%d,info:%d"), pStartAddr, ID, info);
+				log(TEXT("è·å–ä»»åŠ¡å¤±è´¥..address:%x,id:%d,info:%d"), pStartAddr, ID, info);
 				Sleep(2000);
 			}
 			//else
 			//{
-			//	log(TEXT("address:%x,id:%d,info:%d,ÈÎÎñµõ:%s"), pStartAddr, ID, info, taskname);
+			//	log(TEXT("address:%x,id:%d,info:%d,ä»»åŠ¡åŠ:%s"), pStartAddr, ID, info, taskname);
 			//}
 			//TCHAR szbuffer[20];
 			//wsprintf(szbuffer,TEXT("%d%d"),ID,info);
@@ -156,15 +151,15 @@ void TaskScript::BeginTask()
 			{
 				if (lstrcmp(ft[i].taskname, szBu_id) == 0)
 				{
-					wsprintf(szbu, TEXT("ÈÎÎñº¯Êı¿ªÊ¼Ö´ĞĞ.id:%s,task_id:%d,Êı×éÏÂ±ê:%d"), ft[i].taskname, info, i);
+					wsprintf(szbu, TEXT("ä»»åŠ¡å‡½æ•°å¼€å§‹æ‰§è¡Œ.id:%s,task_id:%d,æ•°ç»„ä¸‹æ ‡:%d"), ft[i].taskname, info, i);
 					log(szbu);
 					(ts.*(ft[i].fp))(ID,info);
-					log(TEXT("ÈÎÎñº¯ÊıÖ´ĞĞÍê³É"));
+					log(TEXT("ä»»åŠ¡å‡½æ•°æ‰§è¡Œå®Œæˆ"));
 					break;
 				}
 				else
 				{
-					log(_T("µ±Ç°ÈÎÎñ:%d,º¯ÊıID:%s,Êı×éid:%s"),ID,szBu_id,ft[i].taskname);
+					log(_T("å½“å‰ä»»åŠ¡:%d,å‡½æ•°ID:%s,æ•°ç»„id:%s"),ID,szBu_id,ft[i].taskname);
 				}
 			}
 		}
@@ -174,7 +169,7 @@ void TaskScript::BeginTask()
 	}
 	catch (...)
 	{
-		log(TEXT("»ñÈ¡ÈÎÎñÒì³£"));
+		log(TEXT("è·å–ä»»åŠ¡å¼‚å¸¸"));
 	}
 }
 
@@ -198,28 +193,27 @@ void TaskScript::Task_221(int zid,int taskid)
 		Sleep(500);
 		gcall.KeyPress(27);
 		Sleep(500);
-		gcall.DeliverQuests(zid, taskid, L"??");
+		gcall.DeliverQuests(zid, taskid, L"ì§„ì˜");
 		Sleep(500);
 		break;
 	case 2:
-		log(TEXT("¿ªÊ¼×ßÂ·"));
+		log(TEXT("å¼€å§‹èµ°è·¯"));
 		gcall.Stepto(36942, -12657, 2336);
 		Sleep(500);
-		log(TEXT("¼ñÎï"));
+		log(TEXT("æ¡ç‰©"));
 		gcall.PickupTask();
 		/*Sleep(3000);
-		log(TEXT("°´F"));
+		log(TEXT("æŒ‰F"));
 		gcall.KeyPress(70);*/
 		Sleep(1000);
 		break;
 	case 3:
-		gcall.WearEquipment(L"??? ??", 2);//´©×°±¸
-
+		gcall.WearEquipment(L"í™ë¬¸íŒŒ ë„ë³µ", 2);//ç©¿è£…å¤‡
 
 		Sleep(1000);
 		break;
 	case 4:
-		gcall.DeliverQuests(zid, taskid, L"??");
+		gcall.DeliverQuests(zid, taskid, L"ì§„ì˜");
 		Sleep(5000);
 		break;
 	case 5:
@@ -238,7 +232,7 @@ void TaskScript::Task_221(int zid,int taskid)
 		Sleep(1000);
 		break;
 	case 7:
-		gcall.DeliverQuests(zid, taskid, L"??");
+		gcall.DeliverQuests(zid, taskid, L"ê¸¸í™");
 		Sleep(1000);
 		break;
 	}
@@ -260,7 +254,7 @@ void TaskScript::Task_222(int zid,int taskid)
 	case 3:
 		break;
 	case 4:
-		gcall.DeliverQuests(zid, taskid, L"??");
+		gcall.DeliverQuests(zid, taskid, L"ì§„ì˜");
 		Sleep(1000);
 		break;
 	}
@@ -273,7 +267,7 @@ void TaskScript::Task_223(int zid,int taskid)
 	switch (taskid)
 	{
 	case 1:
-		//log(_T("Ö´ĞĞ2231"));
+		//log(_T("æ‰§è¡Œ2231"));
 		gcall.Stepto(36981, -12151, 2334);
 		gcall.Stepto(37066, -12060, 2333);
 		gcall.Stepto(37158, -11956, 2333);
@@ -294,7 +288,7 @@ void TaskScript::Task_223(int zid,int taskid)
 	case 2:
 		gcall.Stepto(39475, -10586, 2156);
 		Sleep(500);
-		gcall.DeliverQuests(zid, taskid, L"??");
+		gcall.DeliverQuests(zid, taskid, L"ì˜ë¬µ");
 		Sleep(1000);
 		break;
 	case 3:
@@ -328,7 +322,7 @@ void TaskScript::Task_223(int zid,int taskid)
 	case 4:
 		gcall.Stepto(33823, -8043, 2636);
 		Sleep(1000);
-		gcall.DeliverQuests(zid, taskid, L"??");
+		gcall.DeliverQuests(zid, taskid, L"ë¬´ì„±");
 		break;
 
 	}
@@ -378,7 +372,7 @@ void TaskScript::Task_224(int zid,int taskid)
 		Sleep(1000);
 		break;
 	case 2:
-		gcall.DeliverQuests(zid, taskid, L"???", 0);
+		gcall.DeliverQuests(zid, taskid, L"í™ì„ê·¼", 0);
 		Sleep(1000);
 		break;
 	case 3:
@@ -407,7 +401,7 @@ void TaskScript::Task_224(int zid,int taskid)
 	case 6:
 		gcall.Stepto(37685, -7270, 2743);
 		Sleep(500);
-		gcall.DeliverQuests(zid, taskid, L"???");
+		gcall.DeliverQuests(zid, taskid, L"í™ì„ê·¼");
 		Sleep(1000);
 		break;
 	}
@@ -453,11 +447,11 @@ void TaskScript::Task_231(int zid,int taskid)
 		gcall.Stepto(42523, -9026, 2232);
 		gcall.NewSpend(1);
 		Sleep(1000);
-		gcall.DeliverQuests(zid, taskid, L"??");
+		gcall.DeliverQuests(zid, taskid, L"ì˜ë¬µ");
 		Sleep(1000);
 		break;
 	case 2:
-		gcall.WearEquipment(L"??? ??", 1);
+		gcall.WearEquipment(L"ìˆ˜ë ¨ìš© ë„ë¼", 1);
 		Sleep(1000);
 		break;
 	case 3:
@@ -477,7 +471,7 @@ void TaskScript::Task_232(int zid,int taskid)
 	switch (taskid)
 	{
 	case 1:
-		gcall.DeliverQuests(zid, taskid, L"??");
+		gcall.DeliverQuests(zid, taskid, L"ì˜ë¬µ");
 		Sleep(1000);
 		break;
 	case 2:
@@ -504,14 +498,14 @@ void TaskScript::Task_227(int zid,int taskid)
 	switch (taskid)
 	{
 	case 1:
-		gcall.DeliverQuests(zid, 1, L"??");
+		gcall.DeliverQuests(zid, 1, L"ì˜ë¬µ");
 		Sleep(1000);
 		gcall.DeliverQuests(zid, 1, NULL);
 		Sleep(1000);
 		break;
 	case 2:
 		//log(_T("227-2"));
-		gcall.DeliverQuests(zid, 2, L"??", 1,0,0);
+		gcall.DeliverQuests(zid, 2, L"ì˜ë¬µ", 1,0,0);
 		Sleep(1000);
 		break;
 	case 3:
@@ -604,15 +598,15 @@ void TaskScript::Task_227(int zid,int taskid)
 		Sleep(25000);
 		break;
 	case 7:
-		//gcall.UseItem(L"?? ?? ??");
-		gcall.ChiYao(L"?? ???");
+		//gcall.UseItem(L"ì‘ì€ ì•¼ì±„ ë§Œë‘");
+		gcall.ChiYao(L"ì•½ìˆ˜ íšŒë³µì•½");
 		Sleep(2000);
 		break;
 	case 8:
 		gcall.Stepto(44193, -21271, 1018);
 		gcall.Stepto(44143, -21255, 1018);
 		Sleep(1000);
-		gcall.DeliverQuests(227, taskid, L"??");
+		gcall.DeliverQuests(227, taskid, L"ë¬´ì„±");
 		Sleep(2000);
 		break;
 	case 9:
@@ -625,7 +619,7 @@ void TaskScript::Task_227(int zid,int taskid)
 		Sleep(1000);
 		gcall.Stepto(44133, -21241, 1018);
 		Sleep(1000);
-		gcall.DeliverQuests(227, 0xa, L"??",1);
+		gcall.DeliverQuests(227, 0xa, L"ë¬´ì„±",1);
 		Sleep(2000);
 		break;
 	}
@@ -677,9 +671,9 @@ void TaskScript::Task_243(int zid,int taskid)
 		gcall.Stepto(42636, -13557, 1343);
 
 		gcall.NewSpend(1);
-		//¶Ô×¼½Ç¶È(42848, -13754, 1246);
+		//å¯¹å‡†è§’åº¦(42848, -13754, 1246);
 		Sleep(3000);
-		//ÅÜ();
+		//è·‘();
 		//Sleep(2000);
 		//gcall.KeyPress(27);
 		//Sleep(1000);
@@ -742,7 +736,7 @@ void TaskScript::Task_301(int zid,int taskid)
 		Sleep(500);
 		gcall.KeyPress(27);
 		Sleep(1000);
-		gcall.DeliverQuests(301, taskid, L"???");
+		gcall.DeliverQuests(301, taskid, L"ë‚¨ì†Œìœ ");
 		Sleep(1000);
 		break;
 	case 2:
@@ -755,7 +749,7 @@ void TaskScript::Task_301(int zid,int taskid)
 		gcall.Stepto(-51195, -54484, -3035);
 		gcall.Stepto(-51497, -54694, -3056);
 		Sleep(1000);
-		gcall.DeliverQuests(301, taskid, L"???");
+		gcall.DeliverQuests(301, taskid, L"ê³ ì„¤ì¤€");
 		Sleep(3000);
 		break;
 	case 3:
@@ -771,7 +765,7 @@ void TaskScript::Task_301(int zid,int taskid)
 	case 4:
 		gcall.Stepto(-52355, -56369, -3136);
 		Sleep(1000);
-		gcall.DeliverQuests(301, taskid, L"???");
+		gcall.DeliverQuests(301, taskid, L"ì˜¥ê²½ì›");
 		Sleep(2000);
 		break;
 	}
@@ -818,8 +812,8 @@ void TaskScript::Task_302(int zid,int taskid)
 		gcall.Stepto(-50826, -56371, -3114);
 		gcall.NewSpend(1);
 		Sleep(1000);
-		//gcall.DeliverQuests(302, 3, L"??", 11,255,0);
-		gcall.DeliverQuests(302, 3, L"??", 0x0000000b);
+		//gcall.DeliverQuests(302, 3, L"ê³½ì¤€", 11,255,0);
+		gcall.DeliverQuests(302, 3, L"ê³½ì¤€", 0x0000000b);
 		Sleep(1000);
 		gcall.NewSpend(2.5);
 		gcall.Stepto(-50863, -56554, -3116);
@@ -945,7 +939,7 @@ void TaskScript::Task_302(int zid,int taskid)
 		gcall.Stepto(-50759, -54231, -3012);
 		gcall.NewSpend(1);
 		Sleep(15000);
-		gcall.DeliverQuests(302,taskid,L"???");
+		gcall.DeliverQuests(302,taskid,L"ë„ì²œí’");
 		Sleep(2000);
 		break;
 	}
@@ -963,7 +957,7 @@ void TaskScript::Task_303(int zid,int taskid)
 		gcall.Stepto(-51340, -54544, -3042);
 		gcall.Stepto(-51552, -54663, -3056);
 		Sleep(1000);
-		gcall.DeliverQuests(303,taskid, L"???");
+		gcall.DeliverQuests(303,taskid, L"ê³ ì„¤ì¤€");
 		Sleep(2000);
 		break;
 	case 2:
@@ -1066,7 +1060,7 @@ void TaskScript::Task_303(int zid,int taskid)
 		gcall.Stepto(-65469, -50906, -3256);
 		gcall.NewSpend(1);
 		Sleep(1000);
-		gcall.DeliverQuests(303,taskid, L"??");
+		gcall.DeliverQuests(303,taskid, L"ê³ ë´‰");
 		Sleep(2000);
 		break;
 	case 4:
@@ -1083,8 +1077,7 @@ void TaskScript::Task_303(int zid,int taskid)
 		gcall.Stepto(-64994, -50736, -3210, 10, 10, 200);
 		gcall.Stepto(-65159, -50792, -3229, 10, 10, 200);
 		gcall.Stepto(-65340, -50833, -3251, 10, 10, 200);
-		//´ÓNPC×ßµ½´ò¹Öµã
-
+		//ä»NPCèµ°åˆ°æ‰“æ€ªç‚¹
 
 		gcall.Stepto(-65188, -50866, -3239);
 		gcall.Stepto(-65035, -50944, -3236);
@@ -1110,8 +1103,7 @@ void TaskScript::Task_303(int zid,int taskid)
 		gcall.Stepto(-64826, -51045, -3226, 10, 10, 200);
 
 
-		//´Ó´ò¹Öµã×ßµ½ÃÅÇ°
-
+		//ä»æ‰“æ€ªç‚¹èµ°åˆ°é—¨å‰
 
 		gcall.Stepto(-64550, -51188, -3246);
 		gcall.Stepto(-64656, -51336, -3248);
@@ -1140,8 +1132,7 @@ void TaskScript::Task_303(int zid,int taskid)
 		gcall.Stepto(-65071, -51540, -3253, 10, 10, 200);
 
 		
-		//´ÓÃÅÇ°´ò¹Öµã×ßµ½ÃÅÇ°¿ªÃÅ
-
+		//ä»é—¨å‰æ‰“æ€ªç‚¹èµ°åˆ°é—¨å‰å¼€é—¨
 
 		gcall.Stepto(-65055, -51726, -3253);
 		Sleep(1000);
@@ -1166,16 +1157,15 @@ void TaskScript::Task_303(int zid,int taskid)
 		gcall.Stepto(-65010, -51262, -3257, 10, 10, 200);
 		gcall.Stepto(-64978, -51445, -3252, 10, 10, 100);
 		gcall.Stepto(-64949, -51629, -3254, 10, 10, 50);
-		//¿ªÃÅ¿Ú×ßµ½NPC
+		//å¼€é—¨å£èµ°åˆ°NPC
 		Sleep(1000);
 		gcall.Stepto(-64858, -51740, -3253);
 		Sleep(1000);
-		gcall.DeliverQuests(303,taskid,L"???");
+		gcall.DeliverQuests(303,taskid,L"ë„ë‹¨í•˜");
 		Sleep(1000);
 		break;
 	case 8:
-		//NPC×ß³öÀ´
-
+		//NPCèµ°å‡ºæ¥
 
 		gcall.Stepto(-63344, -50355, -3055);
 		gcall.Stepto(-63548, -50365, -3050, 10, 10, 200);
@@ -1202,8 +1192,7 @@ void TaskScript::Task_303(int zid,int taskid)
 		Sleep(15000);
 		break;
 	case 9:
-		//NPC×ß³öÀ´
-
+		//NPCèµ°å‡ºæ¥
 
 		gcall.Stepto(-63344, -50355, -3055);
 		gcall.Stepto(-63263, -50339, -3053, 10, 10, 200);
@@ -1232,9 +1221,9 @@ void TaskScript::Task_303(int zid,int taskid)
 		Sleep(1000);
 		gcall.Stepto(-65437, -52250, -3262);
 		Sleep(1000);
-		gcall.Stepto(L"???");
+		gcall.Stepto(L"ë„ë‹¨í•˜");
 		Sleep(500);
-		gcall.DeliverQuests(303,taskid,L"???");
+		gcall.DeliverQuests(303,taskid,L"ë„ë‹¨í•˜");
 		
 		break;
 	case 10:
@@ -1249,7 +1238,7 @@ void TaskScript::Task_303(int zid,int taskid)
 		gcall.Stepto(-48903, -49643, -2378);
 		gcall.Stepto(-48890, -49928, -2378);
 		Sleep(1000);
-		gcall.DeliverQuests(303, 0xb, L"??");
+		gcall.DeliverQuests(303, 0xb, L"ê³ ë´‰");
 		Sleep(1000);
 		break;
 	case 12:
@@ -1275,7 +1264,7 @@ void TaskScript::Task_303(int zid,int taskid)
 		gcall.Stepto(-56089, -49929, -2539);
 		gcall.NewSpend(1);
 		Sleep(500);
-		gcall.DeliverQuests(303, 0xc, L"???");
+		gcall.DeliverQuests(303, 0xc, L"ë„ì²œí’");
 		Sleep(10000);
 		break;
 	}
@@ -1286,7 +1275,7 @@ void TaskScript::Task_497(int zid,int taskid)
 	switch (taskid)
 	{
 	case 1:
-		gcall.DeliverQuests(497, taskid, L"???");
+		gcall.DeliverQuests(497, taskid, L"ë‚¨ì†Œìœ ");
 		Sleep(1000);
 		break;
 	case 2:
@@ -1296,7 +1285,7 @@ void TaskScript::Task_497(int zid,int taskid)
 		Sleep(6000);
 		break;
 	case 3:
-		gcall.DeliverQuests(497, taskid, L"???");
+		gcall.DeliverQuests(497, taskid, L"ë‚¨ì†Œìœ ");
 		Sleep(1000);
 		break;
 	}
@@ -1318,7 +1307,7 @@ void TaskScript::Task_304(int zid,int taskid)
 		gcall.Stepto(-53781, -50473, -2525);
 		gcall.NewSpend(1);
 		Sleep(1000);
-		gcall.DeliverQuests(304,taskid, L"???");
+		gcall.DeliverQuests(304,taskid, L"ê³½ëŒ€ê·œ");
 		Sleep(1000);
 		
 		break;
@@ -1333,7 +1322,7 @@ void TaskScript::Task_304(int zid,int taskid)
 		gcall.Stepto(-55498, -51218, -2668);
 		gcall.NewSpend(1);
 		Sleep(1000);
-		/*Ö§ÏßÈÎÎñ*/
+		/*æ”¯çº¿ä»»åŠ¡*/
 		gcall.NPCJieRenWu(6, 0x40070, 0x551, 0, 0);
 		Sleep(1000);
 		gcall.NPCJieRenWu(6, 0x40070, 0x141, 0, 0);
@@ -1350,7 +1339,7 @@ void TaskScript::Task_304(int zid,int taskid)
 		Sleep(1000);
 		gcall.DeliverQuests(0x551, 2, 0, 1);
 		Sleep(1000);
-		/*Ö§ÏßÈÎÎñ½áÊø*/
+		/*æ”¯çº¿ä»»åŠ¡ç»“æŸ*/
 
 		gcall.Stepto(-55027, -51563, -2696);
 		gcall.Stepto(-54728, -51878, -2663);
@@ -1360,8 +1349,7 @@ void TaskScript::Task_304(int zid,int taskid)
 		gcall.Stepto(-54493, -51651, -2699,10,20,2000);
 		gcall.Stepto(-54314, -51487, -2691,10,20,2000);
 		//Sleep(500);
-		//gcall.NPCJieRenWu(4, 0x40070, 0x145, 0, 0);//Õâ¸öÈÎÎñÃ»ÁË¡£
-
+		//gcall.NPCJieRenWu(4, 0x40070, 0x145, 0, 0);//è¿™ä¸ªä»»åŠ¡æ²¡äº†ã€‚
 
 		//Sleep(1000);
 		gcall.NewSpend(2.5);
@@ -1377,7 +1365,7 @@ void TaskScript::Task_304(int zid,int taskid)
 		gcall.NewSpend(1);
 		gcall.Stepto(-50451, -54997, -3022,10,20,2000);
 		Sleep(2000);
-		gcall.DeliverQuests(0x141, 5, L"???");
+		gcall.DeliverQuests(0x141, 5, L"ì¥í˜¸ì—„");
 		Sleep(1000);
 		gcall.NewSpend(2.5);
 		gcall.Stepto(-50801, -54914, -3041,10,20,2000);
@@ -1388,7 +1376,7 @@ void TaskScript::Task_304(int zid,int taskid)
 		gcall.Stepto(-50534, -54127, -2988,10,20,2000);
 		gcall.NewSpend(1);
 		Sleep(1000);
-		gcall.DeliverQuests(304,taskid, L"??");
+		gcall.DeliverQuests(304,taskid, L"ê³½ì¤€");
 		Sleep(1000);
 		
 		break;
@@ -1397,19 +1385,18 @@ void TaskScript::Task_304(int zid,int taskid)
 		gcall.Stepto(-50720, -54076, -3012);
 		gcall.Stepto(-50788, -53991, -2980);
 		Sleep(1000);
-		gcall.DeliverQuests(304,taskid, L"??");
+		gcall.DeliverQuests(304,taskid, L"ê³½ì¹ ");
 		Sleep(1000);
 		break;
 	case 4:
 		gcall.Stepto(-50643, -54114, -3012);
 		gcall.Stepto(-50509, -54148, -2988);
 		Sleep(1000);
-		gcall.DeliverQuests(304,taskid, L"??");
+		gcall.DeliverQuests(304,taskid, L"ê³½ì¤€");
 		Sleep(1000);
 		
 
-		//¿ÉÄÜ»á¿¨¶Ù£¬´©×°±¸Ê±ĞèÒªÅĞ¶ÏÏÂÊÇ·ñ×°±¸ÉÏ¡£×î¶àÖ´ĞĞ3´Î
-
+		//å¯èƒ½ä¼šå¡é¡¿ï¼Œç©¿è£…å¤‡æ—¶éœ€è¦åˆ¤æ–­ä¸‹æ˜¯å¦è£…å¤‡ä¸Šã€‚æœ€å¤šæ‰§è¡Œ3æ¬¡
 
 		while(true)
 		{
@@ -1422,7 +1409,7 @@ void TaskScript::Task_304(int zid,int taskid)
 			{
 				if (EquiVec[i].m_Type == 1)
 				{
-					if (wcscmp(EquiVec[i].name, L"???? 1??") == 0)
+					if (wcscmp(EquiVec[i].name, L"í™ë¬¸ë„ë¼ 1ë‹¨ê³„") == 0)
 					{
 						flag = 1;
 					}
@@ -1435,7 +1422,7 @@ void TaskScript::Task_304(int zid,int taskid)
 				break;
 			}else
 			{
-				gcall.WearEquipment(L"???? 1??", 1);
+				gcall.WearEquipment(L"í™ë¬¸ë„ë¼ 1ë‹¨ê³„", 1);
 				Sleep(1000);
 			}
 			Sleep(100);
@@ -1633,7 +1620,7 @@ void TaskScript::Task_304(int zid,int taskid)
 		gcall.NewSpend(1);
 		gcall.Stepto(-50567, -54150, -3012);
 		Sleep(1000);
-		gcall.DeliverQuests(304,taskid, L"??");
+		gcall.DeliverQuests(304,taskid, L"ê³½ì¤€");
 		Sleep(1000);
 		break;
 	case 7:
@@ -1652,11 +1639,11 @@ void TaskScript::Task_304(int zid,int taskid)
 		gcall.Stepto(-54747, -51886, -2661,10,20,2000);
 		gcall.NewSpend(1);
 		Sleep(1000);
-		gcall.DeliverQuests(0x142,2, L"???");
+		gcall.DeliverQuests(0x142,2, L"í•œë¯¸ë°±");
 		Sleep(1000);
 		gcall.DeliverQuests(322,3,NULL,0,0,1);
 		Sleep(1000);
-		gcall.DeliverQuests(322,4,L"???");
+		gcall.DeliverQuests(322,4,L"í•œë¯¸ë°±");
 		Sleep(1000);
 		gcall.NewSpend(2.5);
 		Sleep(1000);
@@ -1682,7 +1669,7 @@ void TaskScript::Task_304(int zid,int taskid)
 		gcall.Stepto(-56130, -50006, -2539);
 		gcall.Stepto(-56104, -49893, -2539);
 		gcall.NewSpend(1);
-		gcall.DeliverQuests(304, taskid, L"???");
+		gcall.DeliverQuests(304, taskid, L"ë„ì²œí’");
 		Sleep(1000);
 		break;
 	case 8:
@@ -1690,7 +1677,7 @@ void TaskScript::Task_304(int zid,int taskid)
 		Sleep(1000);
 		break;
 	case 9:
-		gcall.DeliverQuests(304, taskid, L"???");
+		gcall.DeliverQuests(304, taskid, L"ë„ì²œí’");
 		gcall.NewBag();
 		Sleep(5000);
 		break;
@@ -1799,7 +1786,7 @@ void TaskScript::Task_304(int zid,int taskid)
 		gcall.Stepto(-50319, -31450, -1963);
 		gcall.NewSpend(1);
 		Sleep(1000);
-		gcall.DeliverQuests(304,0xA,L"???");
+		gcall.DeliverQuests(304,0xA,L"ê³µì‚¼ì‹");
 		Sleep(1000);
 		break;
 	}
@@ -1879,7 +1866,7 @@ void TaskScript::Task_305(int zid,int taskid)
 		gcall.Stepto(-53479, -33135, -3871);
 		gcall.NewSpend(1);
 		Sleep(1000);
-		gcall.DeliverQuests(305,taskid, L"???");
+		gcall.DeliverQuests(305,taskid, L"ê³½ëŒ€ê·œ");
 		Sleep(1000);
 		break;
 	case 2:
@@ -1973,13 +1960,12 @@ void TaskScript::Task_305(int zid,int taskid)
 		//gcall.Stepto(-50445, -31446, -1954);
 		//gcall.Stepto(-50349, -31507, -1961);
 		//gcall.NewSpend(1);
-		gcall.CityConvey(0x45);//´«ËÍ¹ıÀ´
-
+		gcall.CityConvey(0x45);//ä¼ é€è¿‡æ¥
 
 		Sleep(1000);
 		gcall.WaitPlans();
 		Sleep(2000);
-		gcall.DeliverQuests(305,taskid, L"???");
+		gcall.DeliverQuests(305,taskid, L"ê³µì‚¼ì‹");
 		Sleep(1000);
 		break;
 	case 3:
@@ -1996,11 +1982,11 @@ void TaskScript::Task_305(int zid,int taskid)
 		gcall.Stepto(-51328, -30430, -1905);
 		gcall.NewSpend(1);
 		Sleep(1000);
-		gcall.DeliverQuests(305,taskid, L"???");
+		gcall.DeliverQuests(305,taskid, L"ë„ë‹¨í•˜");
 		Sleep(1000);
 		break;
 	case 4:
-		gcall.DeliverQuests(305,taskid, L"???");
+		gcall.DeliverQuests(305,taskid, L"ë‚¨ì†Œìœ ");
 		Sleep(1000);
 		break;
 	}
@@ -2030,7 +2016,7 @@ void TaskScript::Task_306(int zid,int taskid)
 		gcall.Stepto(-50717, -30935, -1950);
 		gcall.Stepto(-50688, -30814, -1945);
 		Sleep(1000);
-		gcall.BuyItem(8, 0, L"???");
+		gcall.BuyItem(8, 0, L"ëª¨íŒ”ëª¨");
 		gcall.KeyPress(27);
 		Sleep(300);
 		gcall.KeyPress(27);
@@ -2116,12 +2102,12 @@ void TaskScript::Task_306(int zid,int taskid)
 		gcall.Stepto(-36868, -38077, -378);
 		gcall.NewSpend(1);
 		Sleep(1000);
-		gcall.DeliverQuests(306,taskid, L"???");
+		gcall.DeliverQuests(306,taskid, L"ì—­ê¸°ì‚°");
 		Sleep(1000);
 		gcall.Stepto(-36802, -38187, -379);
 		gcall.Stepto(-36544, -38475, -379);
 		gcall.Stepto(-36561, -38668, -378);
-		gcall.DeliverQuests(0x150, 1, L"??");
+		gcall.DeliverQuests(0x150, 1, L"ì†Œë¶•");
 		Sleep(1000);
 		break;
 	case 2:
@@ -2136,7 +2122,7 @@ void TaskScript::Task_306(int zid,int taskid)
 		gcall.Stepto(-35303, -38500, -374);
 		gcall.NewSpend(1);
 		Sleep(1000);
-		gcall.DeliverQuests(306,taskid,L"???");
+		gcall.DeliverQuests(306,taskid,L"ìŒì†Œì§€");
 		Sleep(1000);
 		break;
 	case 3:
@@ -2216,8 +2202,7 @@ void TaskScript::Task_306(int zid,int taskid)
 		gcall.Stepto(-36580, -32323, -1280);
 
 		Sleep(1000);
-		//¶ª»ğÂ¯
-
+		//ä¸¢ç«ç‚‰
 
 		//MessageBox(0, 0, 0, MB_OK);
 		gcall.Pickdown();
@@ -2277,7 +2262,7 @@ void TaskScript::Task_306(int zid,int taskid)
 		gcall.Stepto(-35279, -38471, -374);
 		gcall.NewSpend(1);
 		Sleep(1000);
-		gcall.DeliverQuests(306,taskid, L"???");
+		gcall.DeliverQuests(306,taskid, L"ìŒì†Œì§€");
 		Sleep(1000);
 		break;
 	case 5:
@@ -2292,7 +2277,7 @@ void TaskScript::Task_306(int zid,int taskid)
 		gcall.Stepto(-36853, -38116, -379);
 		gcall.NewSpend(1);
 		Sleep(1000);
-		gcall.DeliverQuests(306,taskid, L"???");
+		gcall.DeliverQuests(306,taskid, L"ì—­ê¸°ì‚°");
 		Sleep(1500);
 		
 		break;
@@ -2316,7 +2301,7 @@ void TaskScript::Task_307(int zid,int taskid)
 		gcall.Stepto(-35561, -38264, -374);
 		gcall.Stepto(-35308, -38470, -374);
 		Sleep(1000);
-		gcall.DeliverQuests(346, 1, L"???");
+		gcall.DeliverQuests(346, 1, L"ìŒì†Œì§€");
 		Sleep(1000);
 		gcall.NewSpend(2.5);
 		gcall.Stepto(-3460, -6188, 627);
@@ -2784,13 +2769,13 @@ void TaskScript::Task_307(int zid,int taskid)
 		gcall.Stepto(-30538, -25625, -991);
 		gcall.NewSpend(1);
 		Sleep(1000);
-		gcall.DeliverQuests(346, 2, L"???");
+		gcall.DeliverQuests(346, 2, L"ìœ¡ì§€í‰");
 		Sleep(1000);
-		gcall.DeliverQuests(307,taskid, L"???");
+		gcall.DeliverQuests(307,taskid, L"ê¸°ë´‰ì‚¬");
 		Sleep(1000);
 		gcall.HeChengWuQi(EQUITMENT_POS::WUQI);
 		Sleep(1000);
-		gcall.SellItemByConfig(L"???");
+		gcall.SellItemByConfig(L"ì´í™”ìƒ");
 		Sleep(1000);
 		gcall.SortBag();
 		Sleep(1000);
@@ -3178,15 +3163,15 @@ void TaskScript::Task_307(int zid,int taskid)
 		gcall.Stepto(-30678, -25728, -991);
 		gcall.NewSpend(1);
 		Sleep(1000);
-		gcall.DeliverQuests(346, 5,L"???");
+		gcall.DeliverQuests(346, 5,L"ìœ¡ì§€í‰");
 		Sleep(1000);
-		gcall.DeliverQuests(307,taskid,L"???");
+		gcall.DeliverQuests(307,taskid,L"ê¸°ë´‰ì‚¬");
 		Sleep(2000);
 		break;
 	case 4:
 		gcall.LinQuJiangLi();
 		Sleep(1000);
-		gcall.JiaBaoShi(0, L"??? ?? ???");
+		gcall.JiaBaoShi(0, L"ê±°ì™€ì˜ ì‚¼ê° ììˆ˜ì •");
 		Sleep(1000);
 		//Lianji6_go();
 		//while (true)
@@ -3194,36 +3179,34 @@ void TaskScript::Task_307(int zid,int taskid)
 			//_BAGSTU goods;
 			//gcall.GetGoodsByEquipPos(EQUITMENT_POS::WUQI, &goods);
 
-			////Èç¹ûµÈ¼¶5, ¶øÇÒ¾­ÑéÂú
-
+			////å¦‚æœç­‰çº§5, è€Œä¸”ç»éªŒæ»¡
 
 			//if (goods.m_DangQianJingYanZhi == goods.m_DangQianJingYanZongZhi)
 			//{
 			//	if (goods.m_PingJi == 5 ||
 			//		goods.m_PingJi == 10)
 			//	{
-			//		log(_T("ºéÃÅÒÑ¾­Âú¼¶,×¼±¸Í»ÆÆ5"));//ºéÃÅÎäÆ÷ÒÑÂú
+			//		log(_T("æ´ªé—¨å·²ç»æ»¡çº§,å‡†å¤‡çªç ´5"));//æ´ªé—¨æ­¦å™¨å·²æ»¡
 
-
-			//		//gcall.WearEquipment(L"???? 1??", EQUITMENT_POS::WUQI);
+			//		//gcall.WearEquipment(L"ì²œë ¹ë„ë¼ 1ë‹¨ê³„", EQUITMENT_POS::WUQI);
 			//		//Sleep(500);
-			//		//gcall.WearEquipment(L"???? 2??", EQUITMENT_POS::WUQI);
+			//		//gcall.WearEquipment(L"ì²œë ¹ë„ë¼ 2ë‹¨ê³„", EQUITMENT_POS::WUQI);
 			//		//Sleep(500);
-			//		//gcall.WearEquipment(L"???? 3??", EQUITMENT_POS::WUQI);
+			//		//gcall.WearEquipment(L"ì²œë ¹ë„ë¼ 3ë‹¨ê³„", EQUITMENT_POS::WUQI);
 			//		//Sleep(500);
-			//		//gcall.WearEquipment(L"???? 4??", EQUITMENT_POS::WUQI);
+			//		//gcall.WearEquipment(L"ì²œë ¹ë„ë¼ 4ë‹¨ê³„", EQUITMENT_POS::WUQI);
 			//		//Sleep(500);
-			//		//gcall.WearEquipment(L"???? 5??", EQUITMENT_POS::WUQI);
+			//		//gcall.WearEquipment(L"ì²œë ¹ë„ë¼ 5ë‹¨ê³„", EQUITMENT_POS::WUQI);
 			//		//Sleep(500);
 			//		//gcall.HeChengWuQi(EQUITMENT_POS::WUQI);
 			//		//Sleep(2000);
 			//		//gcall.HeChengWuQiByHun(EQUITMENT_POS::WUQI);
 			//		//Sleep(2000);
-			//		gcall.HeChengWuQi_Po5(EQUITMENT_POS::WUQI, L"????");
+			//		gcall.HeChengWuQi_Po5(EQUITMENT_POS::WUQI, L"ì²œë ¹ë„ë¼");
 			//		Sleep(2000);
 			//		/*				gcall.LinQuJiangLi();
 			//						Sleep(2000);
-			//						gcall.JiaBaoShi(0, L"?? ???");
+			//						gcall.JiaBaoShi(0, L"ì‚¼ê° ììˆ˜ì •");
 			//						Sleep(2000);*/
 			//		//break;
 			//		Lianji6();
@@ -3246,14 +3229,12 @@ void TaskScript::Task_307(int zid,int taskid)
 			//}
 			//Sleep(100);
 		//}
-		//MessageBox(0, L"6¼¶Íê", 0, MB_OK);
+		//MessageBox(0, L"6çº§å®Œ", 0, MB_OK);
 		//while (true)
 		//{
-			//DWORD pStartAddr = gcall.GetTaskStartAddr();//»ñÈ¡ÈÎÎñ¿ªÊ¼µØÖ·
+			//DWORD pStartAddr = gcall.GetTaskStartAddr();//è·å–ä»»åŠ¡å¼€å§‹åœ°å€
 
-
-			//DWORD info = gcall.GetPresentTaskIndexes(0, pStartAddr);//»ñµÃµ±Ç°×öµ½µÚ¼¸¸öĞ¡ÈÎÎñ
-
+			//DWORD info = gcall.GetPresentTaskIndexes(0, pStartAddr);//è·å¾—å½“å‰åšåˆ°ç¬¬å‡ ä¸ªå°ä»»åŠ¡
 
 			//if (info > 4)
 			//{
@@ -3315,7 +3296,7 @@ void TaskScript::Task_307(int zid,int taskid)
 			gcall.Stepto(-30514, -25604, -991);
 			gcall.NewSpend(1);
 			Sleep(1000);
-			gcall.SellItemByConfig(L"???");
+			gcall.SellItemByConfig(L"ì´í™”ìƒ");
 			Sleep(1000);
 			gcall.NewSpend(2.5);
 			gcall.Stepto(-30461,-25703,-991);
@@ -3341,9 +3322,8 @@ void TaskScript::Task_307(int zid,int taskid)
 			gcall.Stepto(-29271,-21141,-901);
 			gcall.Stepto(-29068,-20994,-883);
 			//gcall.NewSpend(1);
-			/*¹ıÂË¹ÖÎï(???, 1);
-			¹ıÂË¹ÖÎï(??? ???, 2);*/ //ÏÖÔÚÃ»ÓĞ¹ıÂË¹ÖÎïÏÈÉÏÓÃ
-
+			/*è¿‡æ»¤æ€ªç‰©(ì•¼ìƒê³°, 1);
+			è¿‡æ»¤æ€ªç‰©(í‘ë£¡ì±„ ë³´ì´ˆë³‘, 2);*/ //ç°åœ¨æ²¡æœ‰è¿‡æ»¤æ€ªç‰©å…ˆä¸Šç”¨
 
 			gcall.FindThenKill(0, 1000, modeNormal | modeAoe | modePickup);
 			//gcall.NewSpend(2.5);
@@ -3433,8 +3413,7 @@ void TaskScript::Task_307(int zid,int taskid)
 			gcall.NewSpend(1);
 			gcall.randXianlu(0);
 			Sleep(1000);
-			//ÈÎÎñĞè¸Ä£¬ÔİÊ±Ã»ÏëºÃÂß¼­ÔõÃ´Ğ´¡£
-
+			//ä»»åŠ¡éœ€æ”¹ï¼Œæš‚æ—¶æ²¡æƒ³å¥½é€»è¾‘æ€ä¹ˆå†™ã€‚
 
 		//}
 		break;
@@ -3488,7 +3467,7 @@ void TaskScript::Task_307(int zid,int taskid)
 		gcall.Stepto(-29952, -13103, -1709);
 		gcall.NewSpend(1);
 		Sleep(1000);
-		gcall.DeliverQuests(307, taskid, L"???");
+		gcall.DeliverQuests(307, taskid, L"ê¸°ë´‰ì‚¬");
 		Sleep(1000);
 		break;
 	}
@@ -3500,13 +3479,12 @@ void TaskScript::Task_308(int zid,int taskid)
 	switch (taskid)
 	{
 	case 1:
-		/*gcall.JieFengHezi(L"?? ????",0,L"??? ??",1);
-		MessageBox(0, L"Ò¡½±Íê", L"×°°ËØÔ", MB_OK);*/
-		//ÕâÀïÓ¦¸ÃÒ¡½±£¬µ«ÊÇÖ»Ö´ĞĞÒ»´Î£¬ÏÈÅĞ¶Ï±³°üÀïÊÇ·ñ»¹ÓĞ L"????? ??" Èç¹ûÒÑ¾­Ã»ÓĞÁË£¬¾ÍÉÏÖ´ĞĞÕâÀïÁË¡£
-
+		/*gcall.JieFengHezi(L"ì ê¸´ ì²œë ¹ë¬´ê¸°",0,L"ì œë£¡ë¦¼ ì—´ì‡ ",1);
+		MessageBox(0, L"æ‘‡å¥–å®Œ", L"è£…å…«å¦", MB_OK);*/
+		//è¿™é‡Œåº”è¯¥æ‘‡å¥–ï¼Œä½†æ˜¯åªæ‰§è¡Œä¸€æ¬¡ï¼Œå…ˆåˆ¤æ–­èƒŒåŒ…é‡Œæ˜¯å¦è¿˜æœ‰ L"ì²œë ¹ê°•ì‹œì˜ ì •ìˆ˜" å¦‚æœå·²ç»æ²¡æœ‰äº†ï¼Œå°±ä¸Šæ‰§è¡Œè¿™é‡Œäº†ã€‚
 
 		_BAGSTU jingqi;
-		while (gcall.GetGoodsFromBagByName(L"????? ??", &jingqi))
+		while (gcall.GetGoodsFromBagByName(L"ì²œë ¹ê°•ì‹œì˜ ì •ìˆ˜", &jingqi))
 		{
 			gcall.CityConvey(2);
 			Sleep(2000);
@@ -3517,20 +3495,20 @@ void TaskScript::Task_308(int zid,int taskid)
 			Sleep(1000);
 			gcall.HeChengWuQi(EQUITMENT_POS::WUQI);
 			Sleep(1000);
-			gcall.SellItemByConfig(L"???");
+			gcall.SellItemByConfig(L"ë¬´ë£Œí•œ");
 			Sleep(1000);
 			gcall.Stepto(-35021, -38264, -374);
 			gcall.Stepto(-34927, -38496, -374);
 			gcall.Stepto(-34788, -38701, -374);
 			Sleep(1000);
-			gcall.Yaojiang(L"????? ??", L"????");
+			gcall.Yaojiang(L"ì²œë ¹ê°•ì‹œì˜ ì •ìˆ˜", L"ì²œë ¹ë³´íŒ¨");
 			Sleep(1000);
 			gcall.Stepto(-34787, -38701, -374);
 			gcall.Stepto(-34903, -38493, -374);
 			gcall.Stepto(-35032, -38280, -374);
 			gcall.Stepto(-35120, -38097, -374);
 			Sleep(1000);
-			gcall.SellItemByConfig(L"???");
+			gcall.SellItemByConfig(L"ë¬´ë£Œí•œ");
 			Sleep(1000);
 		}
 		gcall.NewSpend(2.5);
@@ -3721,7 +3699,7 @@ void TaskScript::Task_308(int zid,int taskid)
 	case 2:
 		gcall.Stepto(-38947, -12418, -1409);
 		Sleep(1000);
-		gcall.PickupSpecTypeTask(200,0x4,L"?? ???");
+		gcall.PickupSpecTypeTask(200,0x4,L"ì•½íƒˆ ì˜ë¢°ì„œ");
 		Sleep(1000);
 		gcall.Stepto(-39052, -12237, -1409);
 		gcall.Stepto(-39249, -12029, -1409);
@@ -3814,8 +3792,7 @@ void TaskScript::Task_308(int zid,int taskid)
 		*/
 		lianji8_go();
 
-		//´òµ½9¼¶£¬Ö®ºóÔÙ¼ÌĞøÈÎÎñ¡£
-
+		//æ‰“åˆ°9çº§ï¼Œä¹‹åå†ç»§ç»­ä»»åŠ¡ã€‚
 
 		while (true)
 		{
@@ -3825,8 +3802,7 @@ void TaskScript::Task_308(int zid,int taskid)
 				lianji8();
 			}else
 			{
-				//³ö¸±±¾
-
+				//å‡ºå‰¯æœ¬
 
 				BOOL steprs;
 				steprs = FALSE;
@@ -3845,12 +3821,11 @@ void TaskScript::Task_308(int zid,int taskid)
 					gcall.WaitPlans();
 					gcall.HeChengWuQi(EQUITMENT_POS::WUQI);
 					Sleep(1000);
-					gcall.BuqiBaGua(L"?? ????");
+					gcall.BuqiBaGua(L"ì¶©ê° ì¹˜ëª…ë³´íŒ¨");
 					Sleep(1000);
 					gcall.FenJieByConfig();
 				}
-				//×ßÏòÄÜË²ÒÆµÄ×ø±ê²Å²Ù×÷Ë²ÒÆ£¬Èç¹ûµôÏß£¬¿Ï¶¨¾ÍÔÚÃÅ¿ÚÁË¡£
-
+				//èµ°å‘èƒ½ç¬ç§»çš„åæ ‡æ‰æ“ä½œç¬ç§»ï¼Œå¦‚æœæ‰çº¿ï¼Œè‚¯å®šå°±åœ¨é—¨å£äº†ã€‚
 
 				break;
 			}
@@ -3860,20 +3835,19 @@ void TaskScript::Task_308(int zid,int taskid)
 			//	i++;
 			//	if (i > 3)
 			//	{
-			//		//Ã²ËÆº«ëÃ¸ÄÁË£¬Ã»ÕâĞ©ÁË¡£
+			//		//è²Œä¼¼éŸ©æœŠæ”¹äº†ï¼Œæ²¡è¿™äº›äº†ã€‚
 
-
-			//		gcall.JieFengZhuangBei(L"??? ?????", L"?? ???? ??", 1);
+			//		gcall.JieFengZhuangBei(L"ë´‰ì¸ëœ ì œë£¡ëª©ê±¸ì´", L"ì œë£¡ ë´‰ì¸í•´ì œ ë¶€ì ", 1);
 			//		Sleep(1000);
-			//		gcall.WearEquipment(L"????? 1??", 7);
+			//		gcall.WearEquipment(L"ì œë£¡ëª©ê±¸ì´ 1ë‹¨ê³„", 7);
 			//		Sleep(1000);
-			//		gcall.JieFengZhuangBei(L"??? ????", L"?? ???? ??", 1);
+			//		gcall.JieFengZhuangBei(L"ë´‰ì¸ëœ ì œë£¡ë°˜ì§€", L"ì œë£¡ ë´‰ì¸í•´ì œ ë¶€ì ", 1);
 			//		Sleep(1000);
-			//		gcall.WearEquipment(L"???? 1??", 6);
+			//		gcall.WearEquipment(L"ì œë£¡ë°˜ì§€ 1ë‹¨ê³„", 6);
 			//		Sleep(1000);
-			//		gcall.JieFengZhuangBei(L"??? ?????", L"?? ???? ??", 1);
+			//		gcall.JieFengZhuangBei(L"ë´‰ì¸ëœ ì œë£¡ê·€ê±¸ì´", L"ì œë£¡ ë´‰ì¸í•´ì œ ë¶€ì ", 1);
 			//		Sleep(1000);
-			//		gcall.WearEquipment(L"????? 1??", 3);
+			//		gcall.WearEquipment(L"ì œë£¡ê·€ê±¸ì´ 1ë‹¨ê³„", 3);
 			//		Sleep(1000);
 			//		break;
 			//	}
@@ -3936,9 +3910,9 @@ void TaskScript::Task_308(int zid,int taskid)
 		gcall.Stepto(-30522, -25796, -990);
 		gcall.NewSpend(1);
 		Sleep(1000);
-		gcall.DeliverQuests(308,taskid,L"???");
+		gcall.DeliverQuests(308,taskid,L"ê¸°ë´‰ì‚¬");
 		Sleep(1000);
-		gcall.SellItemByConfig(L"???");
+		gcall.SellItemByConfig(L"ì´í™”ìƒ");
 		Sleep(1000);
 		gcall.SortBag();
 		Sleep(1000);
@@ -4062,7 +4036,7 @@ void TaskScript::Task_308(int zid,int taskid)
 		gcall.Stepto(-36859, -38095, -378);
 		gcall.NewSpend(1);
 		Sleep(1000);
-		gcall.DeliverQuests(308,taskid,L"???");
+		gcall.DeliverQuests(308,taskid,L"ì—­ê¸°ì‚°");
 		Sleep(2000);
 		break;
 	case 5:
@@ -4190,7 +4164,7 @@ void TaskScript::Task_309(int zid,int taskid)
 		break;
 	case 3:
 		gcall.Stepto(-18748,-44417,-2816);
-		gcall.DeliverQuests(309,taskid,L"??");
+		gcall.DeliverQuests(309,taskid,L"ê³ ë´‰");
 		Sleep(1000);
 		break;
 	case 4:
@@ -4245,7 +4219,7 @@ void TaskScript::Task_309(int zid,int taskid)
 	case 6:
 		gcall.Stepto(-24681,-46255,-2889);
 		Sleep(1000);
-		gcall.DeliverQuests(309,taskid,L"??",1);
+		gcall.DeliverQuests(309,taskid,L"ë²”ë°•",1);
 		break;
 	case 7:
 		gcall.Stepto(-24708,-46264,-2889);
@@ -4255,12 +4229,11 @@ void TaskScript::Task_309(int zid,int taskid)
 		gcall.Stepto(-24200,-46923,-2897);
 		gcall.Stepto(-24180,-46931,-2899);
 		Sleep(1000);
-		gcall.PickupSpecTypeTask(200,0x4,L"???? ???");
+		gcall.PickupSpecTypeTask(200,0x4,L"ë¶€ì§€ë¶€ì¥ ì€ê´‘ì‚¼");
 		Sleep(2000);
 		break;
 	case 8:
-		//¿ÉÄÜµô³ö¸±±¾
-
+		//å¯èƒ½æ‰å‡ºå‰¯æœ¬
 
 		gcall.Stepto(-25694,-41184,-1806);
 		gcall.NewSpend(2.5);
@@ -4317,8 +4290,7 @@ void TaskScript::Task_309(int zid,int taskid)
 		gcall.Stepto(-24382,-46929,-2892);
 		gcall.Stepto(-24579,-47081,-2895);
 		gcall.NewSpend(1);
-		//¿ÉÄÜµô³ö¸±±¾
-
+		//å¯èƒ½æ‰å‡ºå‰¯æœ¬
 
 		gcall.Stepto(-24200,-46923,-2897);
 		gcall.Stepto(-24142,-46854,-2897);
@@ -4337,18 +4309,18 @@ void TaskScript::Task_309(int zid,int taskid)
 		gcall.Stepto(-22191,-44948,-2823);
 		gcall.Stepto(-22241,-44924,-2821);
 		Sleep(1000);
-		log(_T("×¼±¸¿ªµÚÒ»¸öÃÅ"));
+		log(_T("å‡†å¤‡å¼€ç¬¬ä¸€ä¸ªé—¨"));
 		gcall.PickupTask();
 		Sleep(1000);
 		gcall.FindThenKill(0,450,modeNormal | modeAoe | modePickup);
 		gcall.Stepto(-22191,-44948,-2823);
 		gcall.Stepto(-22241,-44924,-2821);
 		Sleep(1000);
-		log(_T("×¼±¸¿ªµÚÒ»¸öÃÅ"));
+		log(_T("å‡†å¤‡å¼€ç¬¬ä¸€ä¸ªé—¨"));
 		gcall.PickupTask();
 		Sleep(1000);
 		//gcall.Stepto(-22375,-44806,-2789);
-		gcall.DeliverQuests(309,taskid,L"???");
+		gcall.DeliverQuests(309,taskid,L"í•˜ì¤€ê´‘");
 		Sleep(6000);
 		//gcall.Stepto(-22230 ,-44953 ,-2822); 
 		break;
@@ -4388,39 +4360,39 @@ void TaskScript::Task_309(int zid,int taskid)
 			//gcall.GetPlayerPos(&mypos);
 			ObjectNode *pNode = NULL;
 
-			pNode = gcall.GetObjectByName(L"???", 0);
+			pNode = gcall.GetObjectByName(L"í•˜ì¤€ê´‘", 0);
 			gcall.GetObjectPos(pNode, &mypos);
 			if (gcall.CalcC(mypos,movepos1)<200)
 			{
-				gcall.Stepto(L"???");
+				gcall.Stepto(L"í•˜ì¤€ê´‘");
 				gcall.FindThenKill(0,400,modeNormal | modeAoe | modePickup );
 				gcall.Stepto(-18960,-47184,-2846);
 				gcall.Stepto(-18978,-47374,-2852);
 				Sleep(1000);
-				gcall.PickupSpecTypeTask(200,0x20,L"?? ????");
+				gcall.PickupSpecTypeTask(200,0x20,L"í­íƒ„ ë¶€í’ˆìƒì");
 				Sleep(2000);
 				gcall.Stepto(-18978,-47374,-2852);
 				gcall.Stepto(-18960,-47184,-2846);
 			}else if (gcall.CalcC(mypos,movepos2)<150)
 			{
-				gcall.Stepto(L"???");
+				gcall.Stepto(L"í•˜ì¤€ê´‘");
 				gcall.FindThenKill(0,400,modeNormal | modeAoe | modePickup );
 				gcall.Stepto(-17701,-46701,-2845);
 				gcall.Stepto(-17737,-46541,-2846);
 				Sleep(1000);
-				gcall.PickupSpecTypeTask(200,0x20,L"?? ????");
+				gcall.PickupSpecTypeTask(200,0x20,L"í­íƒ„ ë¶€í’ˆìƒì");
 				Sleep(2000);
 			}else if (gcall.CalcC(mypos,movepos3)<150)
 			{
-				gcall.Stepto(L"???");
+				gcall.Stepto(L"í•˜ì¤€ê´‘");
 				gcall.FindThenKill(0,400,modeNormal | modeAoe | modePickup );
 				gcall.Stepto(-16227,-47513,-2863);
 				Sleep(1000);
-				gcall.PickupSpecTypeTask(200,0x20,L"?? ????");
+				gcall.PickupSpecTypeTask(200,0x20,L"í­íƒ„ ë¶€í’ˆìƒì");
 				Sleep(2000);
 			}/*else if (gcall.CalcC(mypos,movepos4)<200)
 			 {
-			 gcall.Stepto(L"???");
+			 gcall.Stepto(L"í•˜ì¤€ê´‘");
 			 gcall.FindThenKill(0,200,modeNormal | modeAoe | modePickup );
 			 gcall.Stepto(-15437,-46112,-2877);
 			 gcall.Stepto(-15591,-45918,-2877);
@@ -4428,11 +4400,11 @@ void TaskScript::Task_309(int zid,int taskid)
 			 gcall.Stepto(-16189,-45987,-2857);
 			 gcall.Stepto(-15652,-45785,-2877);
 			 Sleep(1000);
-			 gcall.PickupSpecTypeTask(200,0x20,L"???");
+			 gcall.PickupSpecTypeTask(200,0x20,L"í­ì•½í†µ");
 			 Sleep(2000);
 			 }*/else if (gcall.CalcC(mypos,movepos4_1)<150)
 			{
-				//gcall.Stepto(L"???");
+				//gcall.Stepto(L"í•˜ì¤€ê´‘");
 				gcall.Stepto(-15293,-45806,-2877,10,20,5000);
 				gcall.Stepto(-15807,-45823,-2871);
 				gcall.Stepto(-16052,-45906,-2857);
@@ -4440,7 +4412,7 @@ void TaskScript::Task_309(int zid,int taskid)
 				gcall.FindThenKill(0,200,modeNormal | modeAoe | modePickup );
 				gcall.Stepto(-16393,-46016,-2857);
 				Sleep(1000);
-				gcall.PickupSpecTypeTask(200,0x20,L"???");
+				gcall.PickupSpecTypeTask(200,0x20,L"í­ì•½í†µ");
 				Sleep(2000);
 				gcall.Stepto(-16066,-45902,-2857);
 				gcall.Stepto(-15741,-45861,-2875);
@@ -4450,30 +4422,28 @@ void TaskScript::Task_309(int zid,int taskid)
 			}
 			else if (gcall.CalcC(mypos,movepos5)<150)
 			{
-				gcall.Stepto(L"???");
+				gcall.Stepto(L"í•˜ì¤€ê´‘");
 				gcall.FindThenKill(0,50,modeNormal | modeAoe | modePickup );
 				gcall.Stepto(-14097,-46238 ,-2865);
 				gcall.Stepto(-13800,-46253,-2877);
 				Sleep(1000);
-				gcall.PickupSpecTypeTask(200,0x20,L"???");
+				gcall.PickupSpecTypeTask(200,0x20,L"í­ì•½í†µ");
 				Sleep(1000);
 				gcall.Stepto(-14097,-46238 ,-2865);
 				gcall.Stepto(-14234,-46139 ,-2862);
 				
 			}else if(gcall.CalcC(mypos,movepos6)<200)
 			{
-				DWORD pStartAddr = gcall.GetTaskStartAddr();//»ñÈ¡ÈÎÎñ¿ªÊ¼µØÖ·
+				DWORD pStartAddr = gcall.GetTaskStartAddr();//è·å–ä»»åŠ¡å¼€å§‹åœ°å€
 
-
-				DWORD info = gcall.GetPresentTaskIndexes(0, pStartAddr);//»ñµÃµ±Ç°×öµ½µÚ¼¸¸öĞ¡ÈÎÎñ
-
+				DWORD info = gcall.GetPresentTaskIndexes(0, pStartAddr);//è·å¾—å½“å‰åšåˆ°ç¬¬å‡ ä¸ªå°ä»»åŠ¡
 
 				if (info != 9)
 				{
 					break;
 				}
 			}
-			gcall.Stepto(L"???");
+			gcall.Stepto(L"í•˜ì¤€ê´‘");
 			if(gcall.GetRangeMonsterCount(200) >= 1){
 				gcall.FindThenKill(0,200,modeNormal | modeAoe | modePickup );
 			}
@@ -4485,26 +4455,26 @@ void TaskScript::Task_309(int zid,int taskid)
 		gcall.Stepto(-14912,-46840,-2877);
 		gcall.Stepto(-15085,-46590,-2877);
 
-		gcall.Stepto(L"???");
+		gcall.Stepto(L"í•˜ì¤€ê´‘");
 		gcall.FindThenKill(0,900,modeNormal | modeAoe | modePickup );
 		Sleep(1000);
 		gcall.Stepto(-15129,-46716,-2877);
 		gcall.Stepto(-15079,-46579,-2877);
 		Sleep(1000);
-		log(_T("×¼±¸¼ñµÚÁù¸öÎïÆ·"));
-		gcall.PickupSpecTypeTask(200,0x20,L"????");
+		log(_T("å‡†å¤‡æ¡ç¬¬å…­ä¸ªç‰©å“"));
+		gcall.PickupSpecTypeTask(200,0x20,L"ê¸°í­ì¥ì¹˜");
 		Sleep(5000);
 		gcall.FindThenKill(0,600,modeNormal | modeAoe | modePickup);
 		gcall.Stepto(-15129,-46716,-2877);
 		gcall.Stepto(-15079,-46579,-2877);
 		Sleep(1000);
-		gcall.PickupSpecTypeTask(200,0x20,L"????");
+		gcall.PickupSpecTypeTask(200,0x20,L"ê¸°í­ì¥ì¹˜");
 		Sleep(5000);
 		gcall.FindThenKill(0,600,modeNormal | modeAoe | modePickup);
 		gcall.Stepto(-15129,-46716,-2877);
 		gcall.Stepto(-15079,-46579,-2877);
 		Sleep(1000);
-		gcall.PickupSpecTypeTask(200,0x20,L"????");
+		gcall.PickupSpecTypeTask(200,0x20,L"ê¸°í­ì¥ì¹˜");
 		Sleep(2000);
 
 		gcall.Stepto(-15077,-46574,-2877);
@@ -4543,7 +4513,7 @@ void TaskScript::Task_309(int zid,int taskid)
 		gcall.Stepto(-36688,-38075,-369);
 		gcall.Stepto(-36866,-38110,-379);
 		Sleep(1000);
-		gcall.DeliverQuests(309,taskid,L"???");
+		gcall.DeliverQuests(309,taskid,L"ì—­ê¸°ì‚°");
 		Sleep(3000);
 		break;
 	}
@@ -4716,7 +4686,7 @@ void TaskScript::Task_310(int zid,int taskid)
 		gcall.Stepto(-7561,-31017,-2688);
 		gcall.NewSpend(1);
 		Sleep(1000);
-		gcall.DeliverQuests(310,taskid,L"??? ????");
+		gcall.DeliverQuests(310,taskid,L"ì“°ëŸ¬ì§„ ì–´ì´Œì£¼ë¯¼");
 		Sleep(2000);
 		break;
 	case 2:
@@ -4812,9 +4782,9 @@ void TaskScript::Task_310(int zid,int taskid)
 		gcall.Stepto(610,-32384,-2874);
 		gcall.Stepto(600,-32404,-2874);
 		gcall.NewSpend(1);
-		//¹ıÂË¹ÖÎï(??,1);
+		//è¿‡æ»¤æ€ªç‰©(ì„ ì¤€,1);
 		gcall.FindThenKill(0,900,modeNormal | modeAoe | modePickup | modeTask,2);
-		//¹ıÂË¹ÖÎï(??,3);
+		//è¿‡æ»¤æ€ªç‰©(ì„ ì¤€,3);
 		Sleep(3000);
 		break;
 	case 3:
@@ -4843,7 +4813,7 @@ void TaskScript::Task_310(int zid,int taskid)
 		gcall.Stepto(-600,-31351,-2826);
 		gcall.NewSpend(1);
 		gcall.Stepto(268,-31644,-2853,10,20,3000);
-		gcall.Stepto(L"???");
+		gcall.Stepto(L"ë„ì²œí’");
 		Sleep(3000);
 		break;
 	case 4:
@@ -4889,7 +4859,7 @@ void TaskScript::Task_310(int zid,int taskid)
 		gcall.Stepto(-1134,-32156,-2780);
 		gcall.Stepto(-1682,-32191,-2764);
 		Sleep(2000);
-		gcall.PickupSpecTypeTask(200,0x4,L"??? ????");
+		gcall.PickupSpecTypeTask(200,0x4,L"ê³ ë¦½ëœ ì–´ì´Œì£¼ë¯¼");
 		Sleep(2000);
 		gcall.Stepto(-1727,-32107,-2764);
 		gcall.Stepto(-1830,-31884,-2764);
@@ -4905,7 +4875,7 @@ void TaskScript::Task_310(int zid,int taskid)
 		gcall.Stepto(-2703,-31655,-2657);
 		gcall.Stepto(-2718,-31814,-2664);
 		Sleep(2000);
-		gcall.PickupSpecTypeTask(200,0x4,L"??? ????");
+		gcall.PickupSpecTypeTask(200,0x4,L"ê³ ë¦½ëœ ì–´ì´Œì£¼ë¯¼");
 		Sleep(2000);
 		gcall.Stepto(-2769,-31667,-2658);
 		gcall.Stepto(-2821,-31426,-2647);
@@ -4916,7 +4886,7 @@ void TaskScript::Task_310(int zid,int taskid)
 		gcall.Stepto(-2818,-31411,-2647);
 		gcall.Stepto(-2872,-31271,-2648);
 		Sleep(2000);
-		gcall.PickupSpecTypeTask(200,0x4,L"??? ????");
+		gcall.PickupSpecTypeTask(200,0x4,L"ê³ ë¦½ëœ ì–´ì´Œì£¼ë¯¼");
 		Sleep(2000);
 		gcall.Stepto(-2896,-31128,-2651);
 		gcall.Stepto(-2996,-30898,-2645);
@@ -4929,7 +4899,7 @@ void TaskScript::Task_310(int zid,int taskid)
 		gcall.Stepto(-3276,-30443,-2574);
 		gcall.Stepto(-3440,-30439,-2566);
 		Sleep(2000);
-		gcall.PickupSpecTypeTask(200,0x4,L"??? ????");
+		gcall.PickupSpecTypeTask(200,0x4,L"ê³ ë¦½ëœ ì–´ì´Œì£¼ë¯¼");
 		Sleep(2000);
 		gcall.Stepto(-3368,-30425,-2568);
 		gcall.Stepto(-3125,-30458,-2587);
@@ -4975,7 +4945,7 @@ void TaskScript::Task_310(int zid,int taskid)
 		gcall.Stepto(-2324,-26548,-2231);
 		gcall.NewSpend(1);
 		Sleep(1000);
-		gcall.DeliverQuests(310,taskid,L"???");
+		gcall.DeliverQuests(310,taskid,L"ì˜¥ê²½ì›");
 		Sleep(2000);
 		break;
 	case 6:
@@ -5147,18 +5117,18 @@ void TaskScript::Task_310(int zid,int taskid)
 		gcall.Stepto(-11048,-29797,-3672);
 		gcall.Stepto(-11220,-29930,-3651);
 		gcall.NewSpend(1);
-		gcall.Stepto(L"???");
+		gcall.Stepto(L"ë„ì²œí’");
 		gcall.FindThenKill(0,500,modeNormal | modeAoe | modePickup);
 		Sleep(5000);
 		gcall.FindThenKill(0,500,modeNormal | modeAoe | modePickup);
 		gcall.Stepto(-11678,-30308,-3604);
 		Sleep(1000);
-		gcall.DeliverQuests(310,taskid,L"???");
+		gcall.DeliverQuests(310,taskid,L"ë„ì²œí’");
 		Sleep(17000);
-		gcall.KeyPress(52);//°´4
+		gcall.KeyPress(52);//æŒ‰4
 		break;
 	case 9:
-		gcall.Stepto(L"???");
+		gcall.Stepto(L"ë„ì²œí’");
 		gcall.FindThenKill(0,500,modeNormal | modeAoe);
 		break;
 	case 10:
@@ -5207,7 +5177,7 @@ void TaskScript::Task_310(int zid,int taskid)
 		gcall.Stepto(-2055,-27144,-2245);
 		gcall.Stepto(-2133,-27053,-2233);
 		Sleep(1000);
-		gcall.DeliverQuests(310,0xA,L"???");
+		gcall.DeliverQuests(310,0xA,L"ë„ì²œí’");
 		Sleep(3000);
 		gcall.Stepto(-2214,-27051,-2230);
 		gcall.Stepto(-2608,-26840,-2227);
@@ -5215,11 +5185,11 @@ void TaskScript::Task_310(int zid,int taskid)
 		Sleep(1000);
 		gcall.FenJieByConfig();
 		Sleep(1000);
-		gcall.BuyItem(8,0,L"???");
+		gcall.BuyItem(8,0,L"í•œë§ì¹˜");
 		Sleep(1000);
-		gcall.SellItemByConfig(L"???");
+		gcall.SellItemByConfig(L"í•œë§ì¹˜");
 		Sleep(1000);
-		gcall.JiaBaoShi(1,L"??? ?? ??");
+		gcall.JiaBaoShi(1,L"ê±°ì™€ì˜ ì‚¼ê° í™©ì˜¥");
 		Sleep(1000);
 		gcall.SortBag();
 		Sleep(1000);
@@ -5233,11 +5203,9 @@ void TaskScript::Task_311(int zid,int taskid)
 	switch (taskid)
 	{
 	case 1:
-		//gcall.ChiYao(L"???? ?? ???");//Ê¹ÓÃµÄÊÇ%60µÄ¾­ÑéÒ© ??? ?? ??? Ğ¡¾­ÑéÒ©
+		//gcall.ChiYao(L"ìê²½ë‹¨ì˜ í•œë°© ìš©ë´‰íƒ•");//ä½¿ç”¨çš„æ˜¯%60çš„ç»éªŒè¯ ì œë£¡ë¦¼ íŠ¹ì œ ìš©ë´‰íƒ• å°ç»éªŒè¯
 
-
-		//ÔÚ¸±±¾ÖĞ¼Ó¼ì²â¾­ÑéÒ©µÄ×´Ì¬£¬ÈçºÎÅĞ¶Ï¸÷ÖÖ¾­ÑéÒ©×´Ì¬£¿
-
+		//åœ¨å‰¯æœ¬ä¸­åŠ æ£€æµ‹ç»éªŒè¯çš„çŠ¶æ€ï¼Œå¦‚ä½•åˆ¤æ–­å„ç§ç»éªŒè¯çŠ¶æ€ï¼Ÿ
 
 		lianji10_go();
 		while (1)
@@ -5279,8 +5247,7 @@ void TaskScript::Task_311(int zid,int taskid)
 			}
 		}
 		
-		//10¼¶Õ½¶·µÄµØ·½³ö¸±±¾ÃÅ
-
+		//10çº§æˆ˜æ–—çš„åœ°æ–¹å‡ºå‰¯æœ¬é—¨
 
 		//BOOL flaggo = gcall.Stepto(5629,-10419,-3271,10,20,1500);
 		//if (flaggo)
@@ -5323,16 +5290,14 @@ void TaskScript::Task_311(int zid,int taskid)
 		//	gcall.Stepto(-1203,-15487,-1314);
 		//	gcall.Stepto(-1392,-15563,-1310);
 		//	gcall.Stepto(-1573,-15669,-1338);
-		//	//³ö10¼¶¸±±¾ÃÅ¡£
-
+		//	//å‡º10çº§å‰¯æœ¬é—¨ã€‚
 
 		//}
 		
 		
-		////ÕâÀïÖ´ĞĞ10¼¶¸±±¾ ÏÈÉÏ¹ÜËû
+		////è¿™é‡Œæ‰§è¡Œ10çº§å‰¯æœ¬ å…ˆä¸Šç®¡ä»–
 
-
-		////Ö´ĞĞ½Å±¾(10¼¶µØÏÂ¿Ó-ÉÏ¼ñ.inf,11);
+		////æ‰§è¡Œè„šæœ¬(10çº§åœ°ä¸‹å‘-ä¸Šæ¡.inf,11);
 		//gcall.NewSpend(2.5);
 		//gcall.Stepto(-1499,-15595,-1314);
 		//gcall.Stepto(-1617,-15671,-1346);
@@ -5502,11 +5467,11 @@ void TaskScript::Task_311(int zid,int taskid)
 		gcall.Stepto(-11003,-7390,595);
 		gcall.Stepto(-11076,-7585,594);
 		Sleep(1000);
-		gcall.DeliverQuests(311,taskid,L"???");
+		gcall.DeliverQuests(311,taskid,L"ë„ì²œí’");
 		Sleep(1000);
 		break;
 	case 2:
-		gcall.DeliverQuests(311,taskid,L"???");
+		gcall.DeliverQuests(311,taskid,L"ìœ„ì›í™");
 		Sleep(1000);
 		break;
 	case 3:
@@ -5608,8 +5573,7 @@ void TaskScript::Task_311(int zid,int taskid)
 		gcall.Stepto(-27200,-3011,356);
 		gcall.Stepto(-27229,-2784,382);
 		Sleep(1000);
-		gcall.PickupTask();//¿ÉÄÜÎÊÌâ
-
+		gcall.PickupTask();//å¯èƒ½é—®é¢˜
 
 		Sleep(6000);
 		gcall.FindThenKill(0,400,modeNormal | modeAoe | modePickup);
@@ -5707,7 +5671,7 @@ void TaskScript::Task_311(int zid,int taskid)
 		gcall.Stepto(-9476,-7282,603);
 		gcall.NewSpend(1);
 		Sleep(1000);
-		gcall.DeliverQuests(311,taskid,L"???");
+		gcall.DeliverQuests(311,taskid,L"ì„íŒŒì†Œ");
 		Sleep(2000);
 		break;
 	case 5:
@@ -5727,7 +5691,7 @@ void TaskScript::Task_311(int zid,int taskid)
 		gcall.Stepto(-11120,-7579,595);
 		gcall.NewSpend(1);
 		Sleep(1000);
-		gcall.DeliverQuests(311,taskid,L"???");
+		gcall.DeliverQuests(311,taskid,L"ìœ„ì›í™");
 		Sleep(2000);
 		break;
 	case 6:
@@ -5741,7 +5705,7 @@ void TaskScript::Task_311(int zid,int taskid)
 		gcall.Stepto(-11287,-7592,597);
 		gcall.NewSpend(1);
 		Sleep(1000);
-		gcall.DeliverQuests(311,taskid,L"???");
+		gcall.DeliverQuests(311,taskid,L"í•˜ì¤€ê´‘");
 		Sleep(2000);
 		break;
 	case 7:
@@ -5953,9 +5917,9 @@ void TaskScript::Task_311(int zid,int taskid)
 		gcall.NewSpend(1);
 		gcall.Stepto(-9457,-7279,602);
 		Sleep(1000);
-		gcall.DeliverQuests(311,taskid,L"???");
+		gcall.DeliverQuests(311,taskid,L"ì„íŒŒì†Œ");
 		Sleep(1000);
-		gcall.WearEquipment(L"???? 1??",EQUITMENT_POS::JIEZHI);
+		gcall.WearEquipment(L"í™ë¬¸ë°˜ì§€ 1ë‹¨ê³„",EQUITMENT_POS::JIEZHI);
 		Sleep(1000);
 		
 		IsGoonHecheng(EQUITMENT_POS::JIEZHI);
@@ -6026,18 +5990,17 @@ void TaskScript::Task_312(int zid,int taskid)
 		gcall.sendcall(id_msg_OverShunyi,(LPVOID)0);//hook
 		Sleep(3000);
 		/*Sleep(3000);
-		Ö´ĞĞ½Å±¾(13¼¶ÃØÃÜ¼Ó¹¤³§-my-ÉÏ¼ñ.inf,13);
-		ÁìÈ¡Àñ°ü(14);
+		æ‰§è¡Œè„šæœ¬(13çº§ç§˜å¯†åŠ å·¥å‚-my-ä¸Šæ¡.inf,13);
+		é¢†å–ç¤¼åŒ…(14);
 		Sleep(2000);
-		Ê¹ÓÃÎïÆ·(???? ?? ???);
+		ä½¿ç”¨ç‰©å“(ìê²½ë‹¨ì˜ í•œë°© ìš©ë´‰íƒ•);
 		Sleep(3000);
-		Ê¹ÓÃÎïÆ·(??? ?? ???);
+		ä½¿ç”¨ç‰©å“(ì œë£¡ë¦¼ ì•½ì„  ìš©ë´‰íƒ•);
 		Sleep(2000);
-		ÎäÆ÷Ç¿»¯();
+		æ­¦å™¨å¼ºåŒ–();
 		Sleep(1000);
-		Ö´ĞĞ½Å±¾(13¼¶ÃØÃÜ¼Ó¹¤³§-my-ÉÏ¼ñ.inf,14);
-		//Ö´ĞĞÁ·µ½14¼¶£¬ÉÏÖªµÀ»¹ÓÃÉÏÓÃÁ·¡£
-
+		æ‰§è¡Œè„šæœ¬(13çº§ç§˜å¯†åŠ å·¥å‚-my-ä¸Šæ¡.inf,14);
+		//æ‰§è¡Œç»ƒåˆ°14çº§ï¼Œä¸ŠçŸ¥é“è¿˜ç”¨ä¸Šç”¨ç»ƒã€‚
 
 		*/
 		gcall.Stepto(-3612,-6133,621);
@@ -6255,7 +6218,7 @@ void TaskScript::Task_312(int zid,int taskid)
 		gcall.Stepto(13612,14645,-398);
 		gcall.NewSpend(1);
 		Sleep(1000);
-		gcall.DeliverQuests(312,taskid,L"???");
+		gcall.DeliverQuests(312,taskid,L"í’ëŒ€í˜œ");
 		Sleep(3000);
 		break;
 	case 2:
@@ -6341,7 +6304,7 @@ void TaskScript::Task_312(int zid,int taskid)
 		gcall.Stepto(24342,13414,-16);
 		gcall.NewSpend(1);
 		Sleep(1000);
-		gcall.DeliverQuests(312,taskid,L"????");
+		gcall.DeliverQuests(312,taskid,L"ë…ì´ˆê±°ì‚¬");
 		Sleep(1000);
 		break;
 	case 3:
@@ -6439,7 +6402,7 @@ void TaskScript::Task_312(int zid,int taskid)
 		gcall.Stepto(24212,13178,-16);
 		gcall.Stepto(24310,13304,-16);
 		Sleep(1000);
-		gcall.DeliverQuests(312,taskid,L"????");
+		gcall.DeliverQuests(312,taskid,L"ë…ì´ˆê±°ì‚¬");
 		Sleep(2000);
 		break;
 	}
@@ -6774,7 +6737,7 @@ void TaskScript::Task_491(int zid,int taskid)
 		gcall.sendcall(id_msg_attack, (LPVOID)0x5dca);
 		gcall.FindThenKill(0,300,modeNormal | modeAoe | modePickup);
 		Sleep(1000);
-		gcall.DeliverQuests(491,taskid,L"???");
+		gcall.DeliverQuests(491,taskid,L"ë¬´ëª…ì¸");
 		Sleep(2000);
 		break;
 	case 2:
@@ -6906,7 +6869,7 @@ void TaskScript::Task_491(int zid,int taskid)
 		gcall.Stepto(12596,13988,-408);
 		gcall.Stepto(12675,14019,-407);
 		Sleep(1000);
-		gcall.DeliverQuests(zid,taskid,L"????");
+		gcall.DeliverQuests(zid,taskid,L"ë…ì´ˆê±°ì‚¬");
 		Sleep(2000);
 		gcall.Stepto(12633,14045,-408);
 		gcall.Stepto(12485,14091,-409);
@@ -6916,7 +6879,7 @@ void TaskScript::Task_491(int zid,int taskid)
 		gcall.Stepto(11531,14356,-409);
 		gcall.Stepto(11489,14344,-409);
 		gcall.Stepto(11378,14248,-409);
-		gcall.SellItemByConfig(L"????");
+		gcall.SellItemByConfig(L"ë§ˆì„ì²˜ë…€");
 		gcall.Stepto(11457,14317,-409);
 		gcall.Stepto(11591,14329,-409);
 		gcall.Stepto(11792,14327,-409);
@@ -6979,7 +6942,7 @@ void TaskScript::Task_492(int zid,int taskid)
 		gcall.Stepto(25009,18956,298);
 		gcall.NewSpend(1);
 		Sleep(1000);
-		gcall.DeliverQuests(zid,taskid,L"???");
+		gcall.DeliverQuests(zid,taskid,L"ì£¼ë…¸ì¸");
 		Sleep(1000);
 		break;
 	case 2:
@@ -7013,9 +6976,8 @@ void TaskScript::Task_492(int zid,int taskid)
 		gcall.Stepto(23336,27188,1959);
 		gcall.Stepto(23423,27421,1975);
 		gcall.Stepto(23496,27604,2008);
-		//¹ıÂË¹ÖÎï(????,1);
-		//¹ıÂË¹ÖÎï(???,2);2ÊÇÓÅÏÈ
-
+		//è¿‡æ»¤æ€ªç‰©(ê·¸ëŠ˜ë²„ì„¯,1);
+		//è¿‡æ»¤æ€ªç‰©(ì•¼ìƒê³°,2);2æ˜¯ä¼˜å…ˆ
 
 		Sleep(1000);
 		gcall.FindThenKill(0,450,modeNormal | modeAoe | modePickup);
@@ -7070,9 +7032,8 @@ void TaskScript::Task_492(int zid,int taskid)
 		gcall.FindThenKill(0,450,modeNormal | modeAoe | modePickup);
 		gcall.randXianlu(0);
 		Sleep(1000);
-		//¹ıÂË¹ÖÎï(????,3);
-		//¹ıÂË¹ÖÎï(???,3);3ÊÇÕı³£
-
+		//è¿‡æ»¤æ€ªç‰©(ê·¸ëŠ˜ë²„ì„¯,3);
+		//è¿‡æ»¤æ€ªç‰©(ì•¼ìƒê³°,3);3æ˜¯æ­£å¸¸
 
 		break;
 	case 3:
@@ -7120,7 +7081,7 @@ void TaskScript::Task_492(int zid,int taskid)
 		gcall.Stepto(18196,35692,1131);
 		gcall.NewSpend(1);
 		Sleep(1000);
-		gcall.DeliverQuests(zid,taskid,L"????");
+		gcall.DeliverQuests(zid,taskid,L"ë…ì´ˆê±°ì‚¬");
 		Sleep(1000);
 		break;
 	case 4:
@@ -7207,17 +7168,17 @@ void TaskScript::Task_313(int zid,int taskid)
 		Sleep(1000);
 		gcall.FindThenKill(0,600,modeNormal | modeAoe | modePickup);
 		Sleep(2000);
-		gcall.Stepto(L"??");
+		gcall.Stepto(L"í™ì‚¼");
 		Sleep(1000);
 		gcall.FindThenKill(0,300,modeNormal | modeAoe | modePickup);
-		gcall.Stepto(L"??");
+		gcall.Stepto(L"í™ì‚¼");
 		Sleep(1000);
 		gcall.FindThenKill(0,300,modeNormal | modeAoe | modePickup);
 		break;
 	case 2:
-		gcall.Stepto(L"??");
+		gcall.Stepto(L"í™ì‚¼");
 		Sleep(1000);
-		gcall.DeliverQuests(zid,taskid,L"??");
+		gcall.DeliverQuests(zid,taskid,L"í™ì‚¼");
 		Sleep(1000);
 		break;
 	case 3:
@@ -7277,7 +7238,7 @@ void TaskScript::Task_313(int zid,int taskid)
 		gcall.Stepto(22290,48380,540);
 		gcall.Stepto(22448,48505,544,30,10,5000);
 		Sleep(1000);
-		gcall.DeliverQuests(zid,taskid,L"??");
+		gcall.DeliverQuests(zid,taskid,L"í™ì‚¼");
 		Sleep(1000);
 		break;
 	case 5:
@@ -7339,7 +7300,7 @@ void TaskScript::Task_313(int zid,int taskid)
 		gcall.Stepto(32444,23116,1903);
 		gcall.Stepto(32439,22969,1916);
 		Sleep(1000);
-		gcall.DeliverQuests(zid,taskid,L"????");
+		gcall.DeliverQuests(zid,taskid,L"ë…ì´ˆê±°ì‚¬");
 		Sleep(2000);
 		break;
 	case 8:
@@ -7351,7 +7312,7 @@ void TaskScript::Task_313(int zid,int taskid)
 		gcall.Stepto(34282,22744,1856);
 		gcall.Stepto(34242,22670,1859);
 		Sleep(1000);
-		gcall.PickupSpecTypeTask(200,0x20,L"???? ??");
+		gcall.PickupSpecTypeTask(200,0x20,L"ê¸°ì—°ì ˆë²½ ìš©ë§¥");
 		Sleep(15000);
 		break;
 	case 9:
@@ -7362,7 +7323,7 @@ void TaskScript::Task_313(int zid,int taskid)
 		gcall.Stepto(44583,19817,1714);
 		gcall.Stepto(44678,19899,1722);
 		Sleep(1000);
-		gcall.PickupSpecTypeTask(200,0x20,L"???? ??");
+		gcall.PickupSpecTypeTask(200,0x20,L"ì ˆë²½ê¸°ì§€ ìš©ë§¥");
 		Sleep(20000);
 		break;
 	case 10:
@@ -7371,7 +7332,7 @@ void TaskScript::Task_313(int zid,int taskid)
 		gcall.Stepto(53106,22227,1479);
 		gcall.Stepto(53056,22242,1479);
 		Sleep(1000);
-		gcall.PickupSpecTypeTask(200,0x20,L"??? ??");
+		gcall.PickupSpecTypeTask(200,0x20,L"ë¶€ìœ ì„ ìš©ë§¥");
 		Sleep(20000);
 		break;
 	case 11:
@@ -7380,7 +7341,7 @@ void TaskScript::Task_313(int zid,int taskid)
 		gcall.Stepto(40723,28741,574);
 		gcall.Stepto(40724,28742,574);
 		Sleep(1000);
-		gcall.DeliverQuests(zid,0xB,L"??");
+		gcall.DeliverQuests(zid,0xB,L"ë²ˆì•„");
 		Sleep(2000);
 		break;
 	}
@@ -7431,7 +7392,7 @@ void TaskScript::Task_494(int zid,int taskid)
 		gcall.Stepto(44435,33885,497);
 		gcall.NewSpend(1);
 		Sleep(1000);
-		gcall.DeliverQuests(zid,taskid,L"????");
+		gcall.DeliverQuests(zid,taskid,L"ë…ì´ˆê±°ì‚¬");
 		Sleep(1000);
 		break;
 	case 3:
@@ -7440,7 +7401,7 @@ void TaskScript::Task_494(int zid,int taskid)
 		gcall.Stepto(44237,34207,489);
 		gcall.Stepto(44145,34366,501);
 		Sleep(1000);
-		gcall.DeliverQuests(zid,taskid,L"??? ??",4);
+		gcall.DeliverQuests(zid,taskid,L"íŒŒë¥œì„± ì§„ì›…",4);
 		Sleep(2000);
 		break;
 	case 4:
@@ -7483,14 +7444,14 @@ void TaskScript::Task_494(int zid,int taskid)
 		gcall.Stepto(42508,36119,553);
 		gcall.Stepto(42493,36186,550);
 		Sleep(10000);
-		gcall.Stepto(L"??");
+		gcall.Stepto(L"í™ì‚¼");
 		Sleep(1000);
 		gcall.FindThenKill(0,800,modeNormal | modeAoe | modeGoback | modePickup);
 		Sleep(1000);
 		gcall.FindThenKill(0,800,modeNormal | modeAoe | modeGoback | modePickup);
-		gcall.Stepto(L"??");
+		gcall.Stepto(L"í™ì‚¼");
 		Sleep(1000);
-		gcall.DeliverQuests(zid,taskid,L"??");
+		gcall.DeliverQuests(zid,taskid,L"í™ì‚¼");
 		Sleep(2000);
 		break;
 	case 5:
@@ -7645,7 +7606,7 @@ void TaskScript::Task_494(int zid,int taskid)
 		gcall.Stepto(44577,39818,744);
 		gcall.NewSpend(1);
 		Sleep(10000);
-		gcall.Stepto(L"??");
+		gcall.Stepto(L"ìˆ˜ì‚¼");
 		Sleep(1000);
 		gcall.sendcall(id_msg_attack, (LPVOID)0x5dc1);//r
 		Sleep(100);
@@ -7653,7 +7614,7 @@ void TaskScript::Task_494(int zid,int taskid)
 		Sleep(1000);
 		gcall.sendcall(id_msg_attack, (LPVOID)0x5dca);//tab
 		Sleep(1000);
-		gcall.Stepto(L"??");
+		gcall.Stepto(L"ìˆ˜ì‚¼");
 		Sleep(1000);
 		gcall.sendcall(id_msg_attack, (LPVOID)0x5dc1);//r
 		Sleep(100);
@@ -7661,7 +7622,7 @@ void TaskScript::Task_494(int zid,int taskid)
 		Sleep(1000);
 		gcall.sendcall(id_msg_attack, (LPVOID)0x5dca);//tab
 		Sleep(1000);
-		gcall.Stepto(L"??");
+		gcall.Stepto(L"ìˆ˜ì‚¼");
 		Sleep(1000);
 		gcall.sendcall(id_msg_attack, (LPVOID)0x5dc1);//r
 		Sleep(100);
@@ -7669,12 +7630,11 @@ void TaskScript::Task_494(int zid,int taskid)
 		Sleep(1000);
 		gcall.sendcall(id_msg_attack, (LPVOID)0x5dca);//tab
 		Sleep(1000);
-		//gcall.FindThenKill(0,1000,modeNormal | modeAoe | modePickup);//ÒÔºó¿ÉÔö¼Ó±ØÉ±
-
+		//gcall.FindThenKill(0,1000,modeNormal | modeAoe | modePickup);//ä»¥åå¯å¢åŠ å¿…æ€
 
 		//Sleep(1500);
-		gcall.Stepto(L"??");
-		gcall.DeliverQuests(zid,taskid,L"??");
+		gcall.Stepto(L"ìˆ˜ì‚¼");
+		gcall.DeliverQuests(zid,taskid,L"ìˆ˜ì‚¼");
 		Sleep(1500);
 		break;
 	case 7:
@@ -7846,7 +7806,7 @@ void TaskScript::Task_494(int zid,int taskid)
 		gcall.Stepto(44351,33695,510);
 		gcall.NewSpend(1);
 		Sleep(1000);
-		gcall.DeliverQuests(zid,taskid,L"??");
+		gcall.DeliverQuests(zid,taskid,L"í™ì‚¼");
 		Sleep(2000);
 		break;
 	case 9:
@@ -7854,7 +7814,7 @@ void TaskScript::Task_494(int zid,int taskid)
 		gcall.Stepto(44431,33677,509);
 		gcall.Stepto(44447,33674,510);
 		Sleep(1000);
-		gcall.DeliverQuests(zid,taskid,L"??");
+		gcall.DeliverQuests(zid,taskid,L"ìˆ˜ì‚¼");
 		Sleep(2000);
 		break;
 	case 10:
@@ -7881,9 +7841,9 @@ void TaskScript::Task_494(int zid,int taskid)
 		Sleep(1000);
 		gcall.NPCJieRenWu(0x3c6,0,0x3c6,0,0);
 		Sleep(2000);
-		gcall.DeliverQuests(966, 2, L"??");
+		gcall.DeliverQuests(966, 2, L"ìˆ˜ì‚¼");
 		Sleep(1000);
-		gcall.DeliverQuests(966, 1, L"??");
+		gcall.DeliverQuests(966, 1, L"ìˆ˜ì‚¼");
 		Sleep(1000);
 		/*gcall.NewSpend(2.5);
 		gcall.Stepto(46722,35685,936,20,20,1500);
@@ -7914,18 +7874,17 @@ void TaskScript::Task_494(int zid,int taskid)
 		gcall.Stepto(44457,33881,499);*/
 		gcall.Stepto(44444,33890,497);
 		Sleep(1000);
-		gcall.DeliverQuests(zid,0xA,L"????");
+		gcall.DeliverQuests(zid,0xA,L"ë…ì´ˆê±°ì‚¬");
 		Sleep(1000);
 		
 		break;
 	case 11:
 		gcall.Stepto(44470,33730,511);
 		Sleep(1000);
-		gcall.DeliverQuests(zid,0xB,L"??");//ÓÅÏÈ½øÈë»ëÌì
-
+		gcall.DeliverQuests(zid,0xB,L"ìˆ˜ì‚¼");//ä¼˜å…ˆè¿›å…¥æµ‘å¤©
 
 		Sleep(1000);
-		gcall.DeliverQuests(zid,0xC,L"??");
+		gcall.DeliverQuests(zid,0xC,L"ìˆ˜ì‚¼");
 		Sleep(1000);
 		gcall.NewBag();
 		Sleep(1000);
@@ -7938,7 +7897,7 @@ void TaskScript::Task_494(int zid,int taskid)
 		Sleep(1000);
 		gcall.NewBag();
 		Sleep(1000);
-		gcall.DeliverQuests(zid,0xD,L"??? ??",4,0);
+		gcall.DeliverQuests(zid,0xD,L"íŒŒë¥œì„± ì§„ì›…",4,0);
 		Sleep(1000);
 		break;
 	case 13:
@@ -7947,7 +7906,7 @@ void TaskScript::Task_494(int zid,int taskid)
 		gcall.Stepto(44322,34111,487);
 		gcall.Stepto(44425,33995,490);
 		Sleep(1000);
-		gcall.DeliverQuests(zid,0xE,L"????");
+		gcall.DeliverQuests(zid,0xE,L"ë…ì´ˆê±°ì‚¬");
 		Sleep(1000);
 		break;
 	}
@@ -7958,13 +7917,13 @@ void TaskScript::Task_314(int zid,int taskid)
 	switch (taskid)
 	{
 	case 1:
-		gcall.HeChengWuQi_Po5(EQUITMENT_POS::WUQI,L"????");
+		gcall.HeChengWuQi_Po5(EQUITMENT_POS::WUQI,L"ì²œë ¹ë„ë¼");
 		Sleep(1000);
 		gcall.HeChengWuQi(EQUITMENT_POS::WUQI);
 		Sleep(1000);
 		IsGoonHecheng(EQUITMENT_POS::WUQI);
-		//Ö´ĞĞ3´ÎºÏ³ÉÎä»ê£¬±£Ö¤µ½10.
-		gcall.WearEquipment(L"????? 1??",EQUITMENT_POS::XIANGLIAN);
+		//æ‰§è¡Œ3æ¬¡åˆæˆæ­¦é­‚ï¼Œä¿è¯åˆ°10.
+		gcall.WearEquipment(L"í™ë¬¸ëª©ê±¸ì´ 1ë‹¨ê³„",EQUITMENT_POS::XIANGLIAN);
 		Sleep(1000);
 		IsGoonHecheng(EQUITMENT_POS::XIANGLIAN);
 		Sleep(1000);
@@ -8029,7 +7988,7 @@ void TaskScript::Task_314(int zid,int taskid)
 		gcall.Stepto(44436,34009,489);
 		gcall.NewSpend(1);
 		gcall.Stepto(44393,33983,493);
-		gcall.DeliverQuests(zid,taskid,L"????");
+		gcall.DeliverQuests(zid,taskid,L"ë…ì´ˆê±°ì‚¬");
 		Sleep(2000);
 		break;
 	case 3:
@@ -8075,7 +8034,7 @@ void TaskScript::Task_314(int zid,int taskid)
 		gcall.Stepto(41310,28934,570);
 		gcall.Stepto(41306,28919,570);
 		Sleep(1000);
-		gcall.PickupSpecTypeTask(300,0x20,L"???? ??");
+		gcall.PickupSpecTypeTask(300,0x20,L"ìš©ë§¥ë™êµ´ ìš©ë§¥");
 		Sleep(20000);
 		gcall.NewSpend(2.5);
 		gcall.Stepto(33264,26240,2143);
@@ -8204,12 +8163,12 @@ void TaskScript::Task_314(int zid,int taskid)
 		gcall.Stepto(45582,25393,-1435);
 		gcall.NewSpend(1);
 		Sleep(1000);
-		gcall.DeliverQuests(zid,taskid,L"???");
+		gcall.DeliverQuests(zid,taskid,L"ì˜¤êµ­ì¶˜");
 		Sleep(1000);
 		gcall.Stepto(45328,25488,-1436);
 		gcall.SortBag();
 		Sleep(1000);
-		gcall.SellItemByConfig(L"???");
+		gcall.SellItemByConfig(L"ì´í˜¸ë¦¬");
 		Sleep(1000);
 		break;
 	case 4:
@@ -8256,7 +8215,7 @@ void TaskScript::Task_314(int zid,int taskid)
 		gcall.Stepto(45487,25308,-1439);
 		gcall.NewSpend(1);
 		Sleep(1000);
-		gcall.DeliverQuests(zid,taskid,L"???");
+		gcall.DeliverQuests(zid,taskid,L"ì˜¤êµ­ì¶˜");
 		Sleep(1000);
 		break;
 	case 6:
@@ -8289,7 +8248,7 @@ void TaskScript::Task_496(int zid,int taskid)
 		gcall.Stepto(8911,15755,91);
 		gcall.NewSpend(1);
 		Sleep(1000);
-		gcall.DeliverQuests(zid,taskid,L"???");
+		gcall.DeliverQuests(zid,taskid,L"í’ëŒ€í˜œ");
 		Sleep(1000);
 		break;
 	case 3:
@@ -8484,7 +8443,7 @@ void TaskScript::Task_496(int zid,int taskid)
 		gcall.Stepto(8964,15931,90);
 		gcall.Stepto(8895,15710,90);
 		Sleep(1000);
-		gcall.DeliverQuests(zid,taskid+1,L"???");
+		gcall.DeliverQuests(zid,taskid+1,L"í’ëŒ€í˜œ");
 		Sleep(1000);
 		break;
 	case 5:
@@ -8554,9 +8513,9 @@ void TaskScript::Task_496(int zid,int taskid)
 		gcall.Stepto(9142,27985,-244);
 		gcall.Stepto(8906,28060,-282);
 		gcall.Stepto(8577,28387,-333);
-		//¹ıÂË¹ÖÎï(???,1);
+		//è¿‡æ»¤æ€ªç‰©(ì œìêµ°,1);
 		gcall.FindThenKill(0,1500,modeNormal | modeAoe | modeTask | modeGoback,6);
-		//ÈÎÎñÇå¹Ö1(1000,6,1);
+		//ä»»åŠ¡æ¸…æ€ª1(1000,6,1);
 		Sleep(2000);
 		gcall.Stepto(8580,28393,-334);
 		gcall.Stepto(8410,28508,-347);
@@ -8565,7 +8524,7 @@ void TaskScript::Task_496(int zid,int taskid)
 		Sleep(1000);
 		gcall.PickupTask();
 		Sleep(1000);
-		//¹ıÂË¹ÖÎï(???,3);
+		//è¿‡æ»¤æ€ªç‰©(ì œìêµ°,3);
 		break;
 	case 7:
 		gcall.NewSpend(2.5);
@@ -8669,12 +8628,12 @@ void TaskScript::Task_496(int zid,int taskid)
 		Sleep(1000);
 		gcall.SortBag();
 		Sleep(1000);
-		gcall.SellItemByConfig(L"???");
-		/*¶Ô×¼½Ç¶È(8428,13254,-162);
+		gcall.SellItemByConfig(L"ë³‘ê¸°ì°½");
+		/*å¯¹å‡†è§’åº¦(8428,13254,-162);
 		Sleep(1000);
-		°´¼ü(F);
+		æŒ‰é”®(F);
 		Sleep(15000);
-		Âô(???);*/
+		å–(ë³‘ê¸°ì°½);*/
 		Sleep(1000);
 		gcall.NewSpend(2.5);
 		gcall.Stepto(8428,13254,-162);
@@ -8705,7 +8664,7 @@ void TaskScript::Task_496(int zid,int taskid)
 		gcall.Stepto(13545,14453,-398);
 		gcall.NewSpend(1);
 		Sleep(1000);
-		gcall.DeliverQuests(zid,taskid+1,L"???");
+		gcall.DeliverQuests(zid,taskid+1,L"í’ëŒ€í˜œ");
 		Sleep(1000);
 		break;
 	case 8:
@@ -8722,7 +8681,7 @@ void TaskScript::Task_315(int zid,int taskid)
 	switch (taskid)
 	{
 	case 1:
-		gcall.WearEquipment(L"????? 1??",EQUITMENT_POS::ERHUAN);
+		gcall.WearEquipment(L"í™ë¬¸ê·€ê±¸ì´ 1ë‹¨ê³„",EQUITMENT_POS::ERHUAN);
 		Sleep(1000);
 		IsGoonHecheng(EQUITMENT_POS::ERHUAN);
 		Sleep(1000);
@@ -8832,7 +8791,7 @@ void TaskScript::Task_315(int zid,int taskid)
 		gcall.Stepto(22928,1729,1323);
 		gcall.Stepto(22960,1706,1323);
 		Sleep(2000);
-		gcall.PickupSpecTypeTask(300,0x20,L"??? ??");
+		gcall.PickupSpecTypeTask(300,0x20,L"ë…¹ëª…ì´Œ ìš©ë§¥");
 		Sleep(8000);
 		gcall.WaitPlans();
 		gcall.Stepto(29524,-2512,1042);
@@ -8929,7 +8888,7 @@ void TaskScript::Task_315(int zid,int taskid)
 		gcall.Stepto(49948,-8065,226);
 		gcall.NewSpend(1);
 		Sleep(1000);
-		gcall.DeliverQuests(zid,taskid,L"??");
+		gcall.DeliverQuests(zid,taskid,L"ë¶€ìš©");
 		Sleep(2000);
 		break;
 	case 2:
@@ -9005,7 +8964,7 @@ void TaskScript::Task_315(int zid,int taskid)
 		gcall.Stepto(47348,-6291,-2217);
 		gcall.Stepto(47348,-6290,-2217);
 		Sleep(1000);
-		gcall.DeliverQuests(zid,taskid,L"??");
+		gcall.DeliverQuests(zid,taskid,L"ê³ ë´‰");
 		Sleep(1000);
 		break;
 	case 3:
@@ -9023,7 +8982,7 @@ void TaskScript::Task_315(int zid,int taskid)
 		gcall.Stepto(46230,-6397,-2201);
 		gcall.Stepto(46152,-6421,-2202);
 		Sleep(1000);
-		gcall.PickupSpecTypeTask(200,0x20,L"??? ???");
+		gcall.PickupSpecTypeTask(200,0x20,L"í‘ë£¡ì±„ ê°ì˜¥ë¬¸");
 		Sleep(1000);
 		break;
 	case 5:
@@ -9073,7 +9032,7 @@ void TaskScript::Task_315(int zid,int taskid)
 		gcall.NewSpend(1);
 		gcall.Stepto(46061,-6449,-2201);
 		Sleep(1000);
-		gcall.DeliverQuests(zid,taskid,L"???");
+		gcall.DeliverQuests(zid,taskid,L"ë„ë‹¨í•˜");
 		Sleep(1000);
 		break;
 	case 6:
@@ -9150,10 +9109,10 @@ void TaskScript::Task_315(int zid,int taskid)
 		gcall.Stepto(42392,-6653,-2064);
 		gcall.FindThenKill(0,500,modeNormal | modeAoe | modeGoback | modePickup);
 
-		gcall.Stepto(L"???");
+		gcall.Stepto(L"ë„ë‹¨í•˜");
 		gcall.FindThenKill(0,300,modeNormal | modeAoe | modeGoback | modePickup);
 		Sleep(2000);
-		gcall.Stepto(L"???");
+		gcall.Stepto(L"ë„ë‹¨í•˜");
 		gcall.FindThenKill(0,300,modeNormal | modeAoe | modeGoback | modePickup);
 		break;
 	case 7:
@@ -9271,9 +9230,9 @@ void TaskScript::Task_315(int zid,int taskid)
 		gcall.FindThenKill(0,300,modeNormal | modeAoe | modeGoback | modePickup);
 		break;
 	case 8:
-		gcall.Stepto(L"???");
+		gcall.Stepto(L"ë„ë‹¨í•˜");
 		Sleep(1000);
-		gcall.DeliverQuests(zid,taskid,L"???");
+		gcall.DeliverQuests(zid,taskid,L"ë„ë‹¨í•˜");
 		Sleep(1000);
 		gcall.FenJieByConfig();
 		Sleep(1000);
@@ -9392,7 +9351,7 @@ void TaskScript::Task_315(int zid,int taskid)
 		gcall.Stepto(49960,-8062,225);
 		gcall.NewSpend(1);
 		Sleep(1000);
-		gcall.DeliverQuests(zid,taskid,L"??");
+		gcall.DeliverQuests(zid,taskid,L"ë¶€ìš©");
 		Sleep(2000);
 		break;
 
@@ -9505,7 +9464,7 @@ void TaskScript::Task_316(int zid,int taskid)
 		gcall.Stepto(55884,-14869,-287);
 		gcall.NewSpend(1);
 		Sleep(1000);
-		gcall.DeliverQuests(zid,taskid,L"???");
+		gcall.DeliverQuests(zid,taskid,L"ì„±ì§„í•˜");
 		Sleep(1000);
 		break;
 	case 2:
@@ -9536,7 +9495,7 @@ void TaskScript::Task_316(int zid,int taskid)
 		gcall.Stepto(54767,-17355,-602);
 		gcall.Stepto(54637,-17424,-604);
 		Sleep(1000);
-		gcall.DeliverQuests(zid,taskid,L"??");
+		gcall.DeliverQuests(zid,taskid,L"ë™ë™");
 		Sleep(1000);
 		break;
 	case 3:
@@ -9579,9 +9538,9 @@ void TaskScript::Task_316(int zid,int taskid)
 		gcall.Stepto(47819,-23047,-1412);
 		gcall.Stepto(47502,-23656,-1356);
 		gcall.NewSpend(1);
-		//¹ıÂË¹ÖÎï(??? ???? ???,2);
+		//è¿‡æ»¤æ€ªç‰©(í‘ë£¡ì±„ ìˆœì°°ì¡°ì¥ ìš°ë§ˆì• ,2);
 		gcall.FindThenKill(0,600,modeNormal | modeAoe | modePickup | modeGoback);
-		//¹ıÂË¹ÖÎï(??? ???? ???,3);
+		//è¿‡æ»¤æ€ªç‰©(í‘ë£¡ì±„ ìˆœì°°ì¡°ì¥ ìš°ë§ˆì• ,3);
 		gcall.randXianlu(0);
 		Sleep(1000);
 		break;
@@ -9630,7 +9589,7 @@ void TaskScript::Task_316(int zid,int taskid)
 		gcall.Stepto(54600,-17476,-607);
 		gcall.NewSpend(1);
 		Sleep(1000);
-		gcall.DeliverQuests(zid,taskid,L"??");
+		gcall.DeliverQuests(zid,taskid,L"ë™ë™");
 		Sleep(1000);
 		break;
 	case 5:
@@ -9740,9 +9699,9 @@ void TaskScript::Task_493(int zid,int taskid)
 		
 		gcall.Stepto(37916,-16209,-1871);
 		gcall.Stepto(37783,-16074,-1798);
-		//¹ıÂË¹ÖÎï(??? ???,2);
-		//¹ıÂË¹ÖÎï(??? ???,2);
-		//¹ıÂË¹ÖÎï(?? ????,1);
+		//è¿‡æ»¤æ€ªç‰©(ë„ë¼íŒŒ ë‚ ê°•ë„,2);
+		//è¿‡æ»¤æ€ªç‰©(ë„ë¼íŒŒ ì‚¬ê¸°ê¾¼,2);
+		//è¿‡æ»¤æ€ªç‰©(ìš°ì‚° ê´‘ëŒ€ë²„ì„¯,1);
 		Sleep(1000);
 		gcall.PickupTask();
 		Sleep(1000);
@@ -9952,7 +9911,7 @@ void TaskScript::Task_493(int zid,int taskid)
 		gcall.Stepto(54564,-17492,-608);
 		gcall.NewSpend(1);
 		Sleep(1000);
-		gcall.DeliverQuests(zid,taskid,L"??");
+		gcall.DeliverQuests(zid,taskid,L"ë™ë™");
 		Sleep(1000);
 		break;
 	case 3:
@@ -9976,7 +9935,7 @@ void TaskScript::Task_493(int zid,int taskid)
 		gcall.Stepto(55926,-14988,-290);
 		gcall.Stepto(55910,-14917,-288);
 		Sleep(1000);
-		gcall.DeliverQuests(zid,taskid,L"???");
+		gcall.DeliverQuests(zid,taskid,L"ì„±ì§„í•˜");
 		Sleep(1000);
 		break;
 	case 4:
@@ -9992,7 +9951,7 @@ void TaskScript::Task_493(int zid,int taskid)
 		gcall.Stepto(55074,-14565,-247);
 		gcall.NewSpend(1);
 		Sleep(1000);
-		gcall.DeliverQuests(zid,taskid,L"???");
+		gcall.DeliverQuests(zid,taskid,L"ë„ì²œí’");
 		Sleep(1000);
 		break;
 	case 5:
@@ -10170,7 +10129,7 @@ void TaskScript::Task_317(int zid,int taskid)
 		gcall.Stepto(39161,-17838,-3787);
 		gcall.FindThenKill(0,500,modeAoe | modeNormal | modePickup);
 		Sleep(1000);
-		gcall.DeliverQuests(zid,taskid,L"??");
+		gcall.DeliverQuests(zid,taskid,L"ë²”ë°•");
 		Sleep(1000);
 		break;
 	case 2:
@@ -10294,7 +10253,7 @@ void TaskScript::Task_317(int zid,int taskid)
 		gcall.Stepto(54967,-14651,-247);
 		gcall.Stepto(55077,-14553,-247);
 		Sleep(1000);
-		gcall.DeliverQuests(zid,taskid,L"???");
+		gcall.DeliverQuests(zid,taskid,L"ë„ì²œí’");
 		Sleep(1000);
 		break;
 	case 3:
@@ -10336,9 +10295,9 @@ void TaskScript::Task_317(int zid,int taskid)
 		gcall.Stepto(54989,-14588,-247);
 		gcall.NewSpend(1);
 		Sleep(1000);
-		gcall.DeliverQuests(zid,taskid,L"???",2);
+		gcall.DeliverQuests(zid,taskid,L"ëª©ë°©í˜•",2);
 		Sleep(1000);
-		gcall.DeliverQuests(zid,taskid,L"???");
+		gcall.DeliverQuests(zid,taskid,L"ëª©ë°©í˜•");
 		Sleep(1000);
 		gcall.NewSpend(2.5);
 		gcall.Stepto(55050,-14769,-247);
@@ -10379,10 +10338,9 @@ void TaskScript::Task_317(int zid,int taskid)
 		gcall.Stepto(54372,-20189,-607);
 		gcall.Stepto(54319,-20276,-607);
 		gcall.NewSpend(1);
-		gcall.SellItemByConfig(L"???");
+		gcall.SellItemByConfig(L"ë…¸ì ë°©");
 		Sleep(1000);
-		//Âò(80,1,???);//Ó¦¸ÃÊÇÉÏÓÃÂòÁË¡£ÏÖÔÚ¶¼ÊÇ¼Ó%50µÄÒ©¡£
-
+		//ä¹°(80,1,ë…¸ì ë°©);//åº”è¯¥æ˜¯ä¸Šç”¨ä¹°äº†ã€‚ç°åœ¨éƒ½æ˜¯åŠ %50çš„è¯ã€‚
 
 		break;
 	case 4:
@@ -10416,9 +10374,9 @@ void TaskScript::Task_318(int zid,int taskid)
 		//gcall.ChangeHeight(mypos.z + 800);
 		//gcall.CityConvey(0x8);
 		//gcall.ChangeZ_Status(FALSE);
-		//MessageBox(0, L"Ò¡½±Íê", L"×°°ËØÔ", MB_OK);
-		//gcall.CuncangkuByConfig(L"???");
-		//MessageBox(0, L"Ò¡½±Íê", L"×°°ËØÔ", MB_OK);
+		//MessageBox(0, L"æ‘‡å¥–å®Œ", L"è£…å…«å¦", MB_OK);
+		//gcall.CuncangkuByConfig(L"íŒ”íœ˜ì—°");
+		//MessageBox(0, L"æ‘‡å¥–å®Œ", L"è£…å…«å¦", MB_OK);
 		gcall.AddTalent(0x135);
 		gcall.AddTalent(0x139);
 		if (gcall.isTalentPanelShow())
@@ -10427,8 +10385,7 @@ void TaskScript::Task_318(int zid,int taskid)
 			Sleep(1000);
 		}
 		
-		//Ö´ĞĞ18¼¶¸±±¾
-
+		//æ‰§è¡Œ18çº§å‰¯æœ¬
 
 		lianji18_go();
 		while (true)
@@ -10466,7 +10423,7 @@ void TaskScript::Task_318(int zid,int taskid)
 		}
 		gcall.LinQuJiangLi();
 		Sleep(1000);
-		//gcall.Yaojiang(L"????? ??",L"?????? ???");
+		//gcall.Yaojiang(L"ì²œë ¹ê°•ì‹œì˜ ì •ìˆ˜",L"ë‚¨í•´í•¨ëŒ€ì§€ë¶€ ë³´íŒ¨í•¨");
 		//Sleep(1000);
 		gcall.NewSpend(2.5);
 		gcall.Stepto(57692,-16839,-290);
@@ -10585,7 +10542,7 @@ void TaskScript::Task_318(int zid,int taskid)
 		gcall.NewSpend(1);
 		gcall.Stepto(59070,-31945,-1901);
 		gcall.Stepto(59305,-32025,-1928);
-		gcall.DeliverQuests(zid,taskid,L"???");
+		gcall.DeliverQuests(zid,taskid,L"ì„œë¬¸ë²”");
 		Sleep(2000);
 		gcall.Stepto(59260,-32080,-1922);
 		gcall.Stepto(59165,-32192,-1913);
@@ -10603,7 +10560,7 @@ void TaskScript::Task_318(int zid,int taskid)
 		gcall.Stepto(59171,-32765,-1909);
 		gcall.Stepto(58949,-32775,-1887);
 		gcall.Stepto(58701,-32787,-1851);
-		gcall.CuncangkuByConfig(L"??");
+		gcall.CuncangkuByConfig(L"ì„ë‘");
 		break;
 	case 2:
 		gcall.randXianlu(0);
@@ -10669,11 +10626,11 @@ void TaskScript::Task_318(int zid,int taskid)
 		Sleep(1000);
 		/*gcall.Stepto(70452,-33724,-2758);
 		gcall.Stepto(70620,-33868,-2723);
-		¶Ô×¼½Ç¶È(70707,-33921,-2723);
+		å¯¹å‡†è§’åº¦(70707,-33921,-2723);
 		Sleep(1000);
-		°´¼ü(F);
+		æŒ‰é”®(F);
 		Sleep(3000);
-		°´¼ü(F);*/
+		æŒ‰é”®(F);*/
 		Sleep(1000);
 		gcall.Stepto(70589,-33824,-2733);
 		gcall.Stepto(70511,-33815,-2757);
@@ -10689,8 +10646,8 @@ void TaskScript::Task_318(int zid,int taskid)
 		gcall.Stepto(72053,-33713,-3049);
 		gcall.Stepto(72229,-33806,-3044);
 		gcall.Stepto(72304,-33877,-3038);
-		//¹ıÂË¹ÖÎï(???,1);
-		//¹ıÂË¹ÖÎï(???,1);
+		//è¿‡æ»¤æ€ªç‰©(í’ì•”ê´´,1);
+		//è¿‡æ»¤æ€ªç‰©(ì¤‘ê°‘ê²Œ,1);
 		Sleep(1000);
 		gcall.Kill_Tab();
 		gcall.Kill_Tab();
@@ -10773,7 +10730,7 @@ void TaskScript::Task_318(int zid,int taskid)
 		gcall.Stepto(59520,-31971,-1962);
 		gcall.Stepto(59317,-32054,-1928);
 		Sleep(1000);
-		gcall.DeliverQuests(zid,5,L"???");
+		gcall.DeliverQuests(zid,5,L"ì„œë¬¸ë²”");
 		Sleep(3000);
 		gcall.Stepto(59331,-32020,-1932);
 		gcall.Stepto(59236,-32166,-1918);
@@ -10785,7 +10742,7 @@ void TaskScript::Task_318(int zid,int taskid)
 		gcall.Stepto(58800,-33008,-1850);
 		gcall.FenJieByConfig();
 		Sleep(1000);
-		gcall.SellItemByConfig(L"???");
+		gcall.SellItemByConfig(L"ë§ˆì „í‘œ");
 
 		break;
 	case 4:
@@ -10847,7 +10804,7 @@ void TaskScript::Task_495(int zid,int taskid)
 		gcall.Stepto(58528,-37006,-2537);
 		gcall.NewSpend(1);
 		Sleep(1000);
-		gcall.DeliverQuests(zid,taskid,L"???");
+		gcall.DeliverQuests(zid,taskid,L"ë³µì§„ë¬´");
 		Sleep(1000);
 		gcall.FindThenKill(0,500,modeAoe | modeNormal | modePickup);
 		break;
@@ -10870,8 +10827,8 @@ void TaskScript::Task_495(int zid,int taskid)
 		gcall.Stepto(59642,-35832,-2694);
 		gcall.Stepto(58671,-36561,-2588);
 		gcall.Stepto(58619,-36947,-2555);
-		//¹ıÂË¹ÖÎï(???,2);
-		//¹ıÂË¹ÖÎï(?? ????,1);
+		//è¿‡æ»¤æ€ªç‰©(í’ì•”ê´´,2);
+		//è¿‡æ»¤æ€ªç‰©(ì‚¿ê°“ ë…¹í¬ê²€ê·€,1);
 		gcall.NewSpend(1);
 		gcall.Stepto(59379,-36181,-2659);
 		Sleep(500);
@@ -11191,8 +11148,8 @@ void TaskScript::Task_495(int zid,int taskid)
 		gcall.Stepto(59621,-36960,-2905);
 		gcall.Stepto(59698,-36722,-2803);
 		gcall.Stepto(59760,-36494,-2754);
-		//¹ıÂË¹ÖÎï(???,3);
-		//¹ıÂË¹ÖÎï(?? ????,3);
+		//è¿‡æ»¤æ€ªç‰©(í’ì•”ê´´,3);
+		//è¿‡æ»¤æ€ªç‰©(ì‚¿ê°“ ë…¹í¬ê²€ê·€,3);
 		gcall.FenJieByConfig();
 		break;
 	case 3:
@@ -11219,7 +11176,7 @@ void TaskScript::Task_495(int zid,int taskid)
 		gcall.Stepto(58552,-36996,-2540);
 		gcall.NewSpend(1);
 		Sleep(1000);
-		gcall.DeliverQuests(zid,taskid,L"???");
+		gcall.DeliverQuests(zid,taskid,L"ë³µì§„ë¬´");
 		Sleep(1000);
 		break;
 	case 4:
@@ -11262,7 +11219,7 @@ void TaskScript::Task_495(int zid,int taskid)
 		gcall.Stepto(59373,-32030,-1937);
 		gcall.NewSpend(1);
 		Sleep(1000);
-		gcall.DeliverQuests(zid,taskid,L"???");
+		gcall.DeliverQuests(zid,taskid,L"ì„œë¬¸ë²”");
 		Sleep(1000);
 		gcall.Stepto(59370,-32030,-1937);
 		gcall.Stepto(59241,-32227,-1917);
@@ -11273,7 +11230,7 @@ void TaskScript::Task_495(int zid,int taskid)
 		Sleep(1000);
 		gcall.FenJieByConfig();
 		Sleep(1000);
-		gcall.SellItemByConfig(L"???");
+		gcall.SellItemByConfig(L"ë§ˆì „í‘œ");
 		Sleep(1000);
 		gcall.SortBag();
 		Sleep(1000);
@@ -11298,8 +11255,7 @@ void TaskScript::Task_319(int zid,int taskid)
 	switch (taskid)
 	{
 	case 1:
-		//Í»ÆÆ¾õĞÑ ĞèÒªÏÂ»ØÖØĞÂ×ö¡£
-
+		//çªç ´è§‰é†’ éœ€è¦ä¸‹å›é‡æ–°åšã€‚
 		//gcall.XieBaoShi(0);
 		//Sleep(1000);
 		//gcall.XieBaoShi(1);
@@ -11314,42 +11270,41 @@ void TaskScript::Task_319(int zid,int taskid)
 		//	
 		//	if (zhu.name != NULL)
 		//	{
-		//		if(_wcsicmp(zhu.name,L"???? 10??") == 0)
+		//		if(_wcsicmp(zhu.name,L"í™ë¬¸ë„ë¼ 10ë‹¨ê³„") == 0)
 		//		{
 		//			if (zhu.m_PingJi == 10 && 
 		//				(zhu.m_DangQianJingYanZhi == zhu.m_DangQianJingYanZongZhi))
 		//			{
-		//				gcall.HeChengWuQi_Po10(EQUITMENT_POS::WUQI,L"????");
+		//				gcall.HeChengWuQi_Po10(EQUITMENT_POS::WUQI,L"ìš”ë§ˆë„ë¼");
 		//				Sleep(1000);
-		//				gcall.WearEquipment(L"?? ???? 1??",EQUITMENT_POS::WUQI);
+		//				gcall.WearEquipment(L"ê°“ê²… ìš”ë§ˆë„ë¼ 1ë‹¨ê³„",EQUITMENT_POS::WUQI);
 		//			}else
 		//			{
 		//				IsGoonHecheng(EQUITMENT_POS::WUQI);
 		//			}
-		//		}else if (_wcsicmp(zhu.name,L"?? ???? 1??") == 0)
+		//		}else if (_wcsicmp(zhu.name,L"ê°“ê²… ìš”ë§ˆë„ë¼ 1ë‹¨ê³„") == 0)
 		//		{
-		//			TRACE("ÆÆ10Íê±Ï");
+		//			TRACE("ç ´10å®Œæ¯•");
 		//			IsGoonHecheng(EQUITMENT_POS::WUQI);
 		//			break;
 		//		}else
 		//		{
-		//			gcall.WearEquipment(L"?? ???? 1??",EQUITMENT_POS::WUQI);
+		//			gcall.WearEquipment(L"ê°“ê²… ìš”ë§ˆë„ë¼ 1ë‹¨ê³„",EQUITMENT_POS::WUQI);
 		//		}
 		//	}
 		//}
 		//_BAGSTU goods;
-		//if(GetGoodsFromBagByName(L"?? ???", &goods))
+		//if(GetGoodsFromBagByName(L"ì˜¤ê° ììˆ˜ì •", &goods))
 		//{
-		//	gcall.JiaBaoShi(0,L"?? ???");
+		//	gcall.JiaBaoShi(0,L"ì˜¤ê° ììˆ˜ì •");
 		//}else
 		//{
-		//	gcall.JiaBaoShi(0,L"??? ?? ???");
+		//	gcall.JiaBaoShi(0,L"ê±°ì™€ì˜ ì‚¼ê° ììˆ˜ì •");
 		//}
 		//Sleep(1000);
-		//gcall.JiaBaoShi(1,L"??? ?? ??");
+		//gcall.JiaBaoShi(1,L"ê±°ì™€ì˜ ì‚¼ê° í™©ì˜¥");
 		//Sleep(1000);
-		//×°±¸Íê
-
+		//è£…å¤‡å®Œ
 
 		gcall.NewSpend(2.5);
 		gcall.Stepto(59433,-32016,-1946,20,20,3000);
@@ -11430,7 +11385,7 @@ void TaskScript::Task_319(int zid,int taskid)
 		gcall.Stepto(67556,-44306,-2203);
 		gcall.NewSpend(1);
 		Sleep(1000);
-		gcall.PickupSpecTypeTask(200,0x20,L"??? ??");
+		gcall.PickupSpecTypeTask(200,0x20,L"ê±°ì•”ê³¨ ìš©ë§¥");
 		Sleep(10000);
 		gcall.NewSpend(2.5);
 		gcall.Stepto(71432,-50681,-1558);
@@ -11600,7 +11555,7 @@ void TaskScript::Task_319(int zid,int taskid)
 		gcall.Stepto(70074,-67462,-2571);
 		gcall.NewSpend(1);
 		Sleep(1000);
-		gcall.DeliverQuests(zid,taskid,L"??");
+		gcall.DeliverQuests(zid,taskid,L"ê³ ë´‰");
 		Sleep(2000);
 		break;
 	case 2:
@@ -11705,7 +11660,7 @@ void TaskScript::Task_319(int zid,int taskid)
 	case 4:
 		gcall.Stepto(69008,-70114,-3137);
 		Sleep(1000);
-		gcall.DeliverQuests(zid,taskid,L"???");
+		gcall.DeliverQuests(zid,taskid,L"ë‚¨ì†Œìœ ");
 		Sleep(7000);
 		break;
 	case 5:
@@ -11740,7 +11695,7 @@ void TaskScript::Task_319(int zid,int taskid)
 		gcall.Stepto(70091,-67438,-2571);
 		gcall.Stepto(70092,-67438,-2571);
 		Sleep(1000);
-		gcall.DeliverQuests(zid,taskid,L"??");
+		gcall.DeliverQuests(zid,taskid,L"ê³ ë´‰");
 		Sleep(5000);
 		gcall.FindThenKill(0,300,modeAoe | modeNormal | modePickup);
 		break;
@@ -11802,7 +11757,7 @@ void TaskScript::Task_320(int zid,int taskid)
 		Sleep(2000);
 		break;
 	case 2:
-		gcall.DeliverQuests(zid,taskid,L"???");
+		gcall.DeliverQuests(zid,taskid,L"ê³½ëŒ€ê·œ");
 		Sleep(2000);
 		break;
 	case 3:
@@ -11814,7 +11769,7 @@ void TaskScript::Task_320(int zid,int taskid)
 		Sleep(2000);
 		gcall.Stepto(-51461,-54695,-3055);
 		Sleep(1000);
-		gcall.DeliverQuests(zid,taskid,L"???");
+		gcall.DeliverQuests(zid,taskid,L"ì¥í˜¸ì—„");
 		Sleep(1000);
 		break;
 	case 4:
@@ -11989,7 +11944,7 @@ void TaskScript::Task_320(int zid,int taskid)
 		gcall.Stepto(-51506,-54673,-3056);
 		gcall.NewSpend(1);
 		Sleep(1000);
-		gcall.DeliverQuests(zid,6,L"???");
+		gcall.DeliverQuests(zid,6,L"ì¥í˜¸ì—„");
 		Sleep(1000);
 		break;
 	case 6:
@@ -12031,7 +11986,7 @@ void TaskScript::Task_320(int zid,int taskid)
 		gcall.Stepto(-51606,-49589,-2106);
 
 		gcall.WaitPlans();
-		gcall.DeliverQuests(zid,7,L"??");
+		gcall.DeliverQuests(zid,7,L"ìš©ìˆ™");
 		Sleep(1000);
 		break;
 	case 7:
@@ -12059,7 +12014,7 @@ void TaskScript::Task_320(int zid,int taskid)
 		gcall.Stepto(-51630,-49201,-2156);
 		gcall.Stepto(-51603,-49425,-2106);
 		Sleep(1000);
-		gcall.DeliverQuests(zid,8,L"??");
+		gcall.DeliverQuests(zid,8,L"ìš©ìˆ™");
 		Sleep(2000);
 		break;
 	case 8:
@@ -12075,7 +12030,7 @@ void TaskScript::Task_320(int zid,int taskid)
 		gcall.NewSpend(1);
 		gcall.Stepto(-50329,-49650,-2372);
 		Sleep(1000);
-		gcall.DeliverQuests(zid,9,L"??");
+		gcall.DeliverQuests(zid,9,L"ê³ ë´‰");
 		Sleep(1000);
 		break;
 	case 9:
@@ -12111,7 +12066,7 @@ void TaskScript::Task_320(int zid,int taskid)
 		gcall.Stepto(-56098,-49861,-2539);
 		gcall.NewSpend(1);
 		Sleep(1000);
-		gcall.DeliverQuests(zid,0xB,L"???");
+		gcall.DeliverQuests(zid,0xB,L"ë„ì²œí’");
 		Sleep(1000);
 		break;
 	case 10:
@@ -12196,7 +12151,7 @@ void TaskScript::Task_320(int zid,int taskid)
 		gcall.Stepto(-55832,-50213,-2539);
 		gcall.Stepto(-55760,-50336,-2576);
 		Sleep(1000);
-		gcall.DeliverQuests(zid,0xE,L"??");
+		gcall.DeliverQuests(zid,0xE,L"ê³ ë´‰");
 		Sleep(3000);
 		break;
 	}
@@ -12221,7 +12176,7 @@ void TaskScript::Task_501(int zid,int taskid)
 		gcall.Stepto(-54593,-50146,-2667);
 		gcall.NewSpend(1);
 		Sleep(1000);
-		gcall.DeliverQuests(zid,taskid,L"???");
+		gcall.DeliverQuests(zid,taskid,L"ì•ˆë‘ë§¤");
 		Sleep(1000);
 		break;
 	case 2:
@@ -12233,7 +12188,7 @@ void TaskScript::Task_501(int zid,int taskid)
 		gcall.Stepto(-55347,-50962,-2687);
 		gcall.Stepto(-55456,-51098,-2675);
 		Sleep(1000);
-		gcall.DeliverQuests(zid,taskid,L"???");
+		gcall.DeliverQuests(zid,taskid,L"ì˜¤ë°±ì–¸");
 		Sleep(1000);
 		gcall.Stepto(-55317,-51208,-2687);
 		gcall.Stepto(-55148,-51389,-2697);
@@ -12241,14 +12196,14 @@ void TaskScript::Task_501(int zid,int taskid)
 		gcall.Stepto(-54842,-51780,-2671);
 		gcall.Stepto(-54782,-51863,-2664);
 		Sleep(1000);
-		gcall.DeliverQuests(zid,3,L"???");
+		gcall.DeliverQuests(zid,3,L"í•œë¯¸ë°±");
 		Sleep(1000);
 		gcall.Stepto(-54747,-51843,-2669);
 		gcall.Stepto(-54539,-51757,-2691);
 		gcall.Stepto(-54390,-51584,-2701);
 		gcall.Stepto(-54265,-51401,-2673);
 		Sleep(1000);
-		gcall.DeliverQuests(zid,4,L"???");
+		gcall.DeliverQuests(zid,4,L"ê´€ì² ìˆ˜");
 		Sleep(1000);
 		break;
 	case 3:
@@ -12269,14 +12224,14 @@ void TaskScript::Task_501(int zid,int taskid)
 		gcall.Stepto(-54519,-50097,-2669);
 		gcall.NewSpend(1);
 		Sleep(1000);
-		gcall.DeliverQuests(zid,5,L"???");
+		gcall.DeliverQuests(zid,5,L"ì•ˆë‘ë§¤");
 		gcall.WaitPlans();
 		gcall.Stepto(-62440,-43804,-1741);
 		break;
 	case 4:
 		gcall.Stepto(-62573,-43786,-1741);
 		Sleep(1000);
-		gcall.DeliverQuests(zid,6,L"??");
+		gcall.DeliverQuests(zid,6,L"ë°±ë¬´");
 		Sleep(1000);
 		break;
 	case 5:
@@ -12321,7 +12276,7 @@ void TaskScript::Task_501(int zid,int taskid)
 		gcall.Stepto(-62600,-43828,-1741);
 		gcall.NewSpend(1);
 		Sleep(1000);
-		gcall.PickupSpecTypeTask(200,0x4,L"???");
+		gcall.PickupSpecTypeTask(200,0x4,L"í•œì‹œë‘");
 		Sleep(1000);
 		break;
 	case 7:
@@ -12340,7 +12295,7 @@ void TaskScript::Task_501(int zid,int taskid)
 		gcall.Stepto(-62444,-43826,-1741);
 		gcall.Stepto(-62594,-43866,-1741);
 		Sleep(1000);
-		gcall.DeliverQuests(zid,0xA,L"???");
+		gcall.DeliverQuests(zid,0xA,L"í•œì‹œë‘");
 		Sleep(2000);
 		gcall.Stepto(-62571,-43818,-1741);
 		gcall.Stepto(-62467,-43843,-1741);
@@ -12365,18 +12320,18 @@ void TaskScript::Task_501(int zid,int taskid)
 		Sleep(1000);
 		gcall.FenJieByConfig();
 		Sleep(1000);
-		gcall.SellItemByConfig(L"???");
+		gcall.SellItemByConfig(L"í•œëƒ¥í•´");
 		Sleep(1000);
 		gcall.SortBag();
 		Sleep(1000);
-		/*Âò(200,1,???);
+		/*ä¹°(200,1,í•œëƒ¥í•´);
 		Sleep(1000);
-		Âô(???);
+		å–(í•œëƒ¥í•´);
 		Sleep(1000);
-		ÕûÀí±³°ü();
+		æ•´ç†èƒŒåŒ…();
 		Sleep(1000);
-		°´¼ü(ESC);
-		°´¼ü(ESC);
+		æŒ‰é”®(ESC);
+		æŒ‰é”®(ESC);
 		gcall.Stepto(-61949,-46506,-1938);
 		gcall.Stepto(-61934,-46452,-1935);
 		gcall.Stepto(-61932,-46443,-1934);
@@ -12390,7 +12345,7 @@ void TaskScript::Task_501(int zid,int taskid)
 		gcall.Stepto(-61291,-45854,-1923);
 		gcall.Stepto(-61182,-45861,-1923);
 		Sleep(1000);
-		Âò(60,0,???);
+		ä¹°(60,0,ë¬´ìŠ¹íœ´);
 		Sleep(1000);*/
 		break;
 	case 9:
@@ -12653,7 +12608,7 @@ void TaskScript::Task_540(int zid,int taskid)
 		gcall.Stepto(-81305,-66596,349);
 		gcall.Stepto(-81279,-66350,331);
 		Sleep(1000);
-		gcall.SellItemByConfig(L"???");
+		gcall.SellItemByConfig(L"ì´ˆìœ ë‘");
 		Sleep(1000);
 		gcall.SortBag();
 		Sleep(1000);
@@ -12668,17 +12623,17 @@ void TaskScript::Task_540(int zid,int taskid)
 		Sleep(1000);
 		
 
-		/*ÁìÈ¡Àñ°ü(19);
+		/*é¢†å–ç¤¼åŒ…(19);
 		Sleep(1000);
-		ÕûÀí±³°ü();
+		æ•´ç†èƒŒåŒ…();
 		Sleep(1000);
-		Ö´ĞĞ½Å±¾(22¼¶Á·¼¶2.inf,22);
+		æ‰§è¡Œè„šæœ¬(22çº§ç»ƒçº§2.inf,22);
 		Sleep(1000);
-		ÁìÈ¡Àñ°ü(23);
+		é¢†å–ç¤¼åŒ…(23);
 		Sleep(1000);
-		Ê¹ÓÃÎïÆ·(??? ?? ???);
+		ä½¿ç”¨ç‰©å“(ëŒ€ì‚¬ë§‰ ì•½ì„  ìš©ë´‰íƒ•);
 		Sleep(1000);
-		Ö´ĞĞ½Å±¾(22¼¶Á·¼¶2.inf,24);*/
+		æ‰§è¡Œè„šæœ¬(22çº§ç»ƒçº§2.inf,24);*/
 		/*Sleep(1000);
 		gcall.Stepto(-74852,-64520,-959);
 		gcall.Stepto(-74842,-64309,-952);
@@ -12791,14 +12746,14 @@ void TaskScript::Task_540(int zid,int taskid)
 		gcall.Stepto(-81292,-66306,330);
 		gcall.FenJieByConfig();
 		Sleep(1000);
-		gcall.SellItemByConfig(L"???");
+		gcall.SellItemByConfig(L"ì´ˆìœ ë‘");
 		Sleep(1000);
 		gcall.Stepto(-81334,-66367,331);
 		gcall.Stepto(-81476,-66569,345);
 		gcall.Stepto(-81679,-66709,338);*/
 		gcall.Stepto(-81834,-66793,338,10,10,3000);
 		Sleep(1000);
-		gcall.DeliverQuests(zid,taskid,L"???");
+		gcall.DeliverQuests(zid,taskid,L"ê±°ë§Œí•˜");
 		Sleep(1000);
 		
 		break;
@@ -13075,7 +13030,7 @@ void TaskScript::Task_502(int zid,int taskid)
 		gcall.Stepto(-81854,-66793,337);
 		gcall.NewSpend(1);
 		Sleep(1000);
-		gcall.DeliverQuests(zid,taskid,L"???");
+		gcall.DeliverQuests(zid,taskid,L"ê±°ë§Œí•˜");
 		Sleep(1000);
 		break;
 	case 3:
@@ -13165,14 +13120,14 @@ void TaskScript::Task_502(int zid,int taskid)
 		gcall.Stepto(-83112,-65182,-294);
 		gcall.Stepto(-83068,-65240,-245);
 		Sleep(1000);
-		//MessageBox(0, L"Ò¡½±Íê", L"×°°ËØÔ", MB_OK);
+		//MessageBox(0, L"æ‘‡å¥–å®Œ", L"è£…å…«å¦", MB_OK);
 		gcall.Shunyi(L"2-3-3");
 		Sleep(2000);
 		gcall.sendcall(id_msg_OverShunyi,(LPVOID)0);
 		Sleep(2000);
-		//°´¼ü(Jump);
-		//ĞÅÏ¢¿ò(ÊÖ¶¯ÓÃÇá¹¦·ÉÉÏÇ°ÃæµÄ¸ßÌ¨ºóµãÈ·¶¨,ÈÎÎñÉÏÓÃÄã½»~);
-		gcall.DeliverQuests(zid,taskid,L"??");
+		//æŒ‰é”®(Jump);
+		//ä¿¡æ¯æ¡†(æ‰‹åŠ¨ç”¨è½»åŠŸé£ä¸Šå‰é¢çš„é«˜å°åç‚¹ç¡®å®š,ä»»åŠ¡ä¸ç”¨ä½ äº¤~);
+		gcall.DeliverQuests(zid,taskid,L"ê¸¸ë™");
 		Sleep(1000);
 		break;
 	case 4:
@@ -13289,7 +13244,7 @@ void TaskScript::Task_503(int zid,int taskid)
 		gcall.Stepto(-73386,-68588,-778);
 		gcall.Stepto(-73465,-68793,-779);
 		Sleep(1000);
-		gcall.DeliverQuests(zid,taskid,L"???");
+		gcall.DeliverQuests(zid,taskid,L"ìµœì§„ì•„");
 		Sleep(1000);
 		break;
 	case 2:
@@ -13300,8 +13255,8 @@ void TaskScript::Task_503(int zid,int taskid)
 		Sleep(1000);
 		break;
 	case 3:
-		//¹ıÂË¹ÖÎï(??? ??,1);
-		//¹ıÂË¹ÖÎï(???,1);
+		//è¿‡æ»¤æ€ªç‰©(ì œë¬¼ìš© ë¼ì§€,1);
+		//è¿‡æ»¤æ€ªç‰©(í•´íƒˆì´,1);
 		gcall.Stepto(-73448,-68853,-779);
 		gcall.Stepto(-73454,-68921,-779);
 		gcall.Stepto(-73477,-69166,-779);
@@ -13327,14 +13282,14 @@ void TaskScript::Task_503(int zid,int taskid)
 		gcall.Stepto(-73372,-71028,-779);
 		gcall.Stepto(-73351,-71038,-779);
 		Sleep(1000);
-		gcall.PickupSpecTypeTask(200,0x4,L"????");
+		gcall.PickupSpecTypeTask(200,0x4,L"ë¹„ë°€ì¥ë¶€");
 		Sleep(1000);
 		break;
 	case 4:
-		//¹ıÂË¹ÖÎï(??? ??,3);
-		//¹ıÂË¹ÖÎï(???,3);
-		gcall.DeliverQuests(zid,taskid,L"???");
-		//MessageBox(0, L"Ò¡½±Íê", L"×°°ËØÔ", MB_OK);
+		//è¿‡æ»¤æ€ªç‰©(ì œë¬¼ìš© ë¼ì§€,3);
+		//è¿‡æ»¤æ€ªç‰©(í•´íƒˆì´,3);
+		gcall.DeliverQuests(zid,taskid,L"ìµœì§„ì•„");
+		//MessageBox(0, L"æ‘‡å¥–å®Œ", L"è£…å…«å¦", MB_OK);
 		Sleep(2000);
 		break;
 	case 5:
@@ -13417,7 +13372,7 @@ void TaskScript::Task_503(int zid,int taskid)
 		gcall.Stepto(-74266,-73504,-782);
 		gcall.Stepto(-74196,-73521,-782);
 		Sleep(1000);
-		gcall.DeliverQuests(zid,6,L"??? ? ???");
+		gcall.DeliverQuests(zid,6,L"ê¸¸ë™ì˜ ë”¸ ì†Œì—°í™”");
 		Sleep(1000);
 		break;
 	case 6:
@@ -13442,7 +13397,7 @@ void TaskScript::Task_503(int zid,int taskid)
 		gcall.Stepto(-62455,-43847,-1741);
 		gcall.Stepto(-62597,-43855,-1741);
 		gcall.WaitPlans();
-		gcall.DeliverQuests(zid,7,L"???");
+		gcall.DeliverQuests(zid,7,L"í•œì‹œë‘");
 		Sleep(1000);
 		break;
 	case 7:
@@ -13468,7 +13423,7 @@ void TaskScript::Task_504(int zid,int taskid)
 			gcall.WaitPlans();
 			gcall.Stepto(-62550,-43836,-1741);
 		}
-		gcall.DeliverQuests(zid,taskid,L"??");
+		gcall.DeliverQuests(zid,taskid,L"í™ì‚¼");
 		Sleep(1000);
 		break;
 	case 2:
@@ -13479,7 +13434,7 @@ void TaskScript::Task_504(int zid,int taskid)
 			gcall.WaitPlans();
 			gcall.Stepto(-62550,-43836,-1741);
 		}
-		gcall.DeliverQuests(zid,taskid,L"??");
+		gcall.DeliverQuests(zid,taskid,L"ìˆ˜ì‚¼");
 		Sleep(1000);
 		break;
 	case 3:
@@ -13540,7 +13495,7 @@ void TaskScript::Task_504(int zid,int taskid)
 		gcall.Stepto(-61765,-59284,-1943);
 		gcall.Stepto(-61756,-59326,-1943);
 		Sleep(1000);
-		gcall.DeliverQuests(zid,taskid,L"??");
+		gcall.DeliverQuests(zid,taskid,L"ë´‰ì°¬");
 		Sleep(1000);
 		break;
 	case 4:
@@ -13573,7 +13528,7 @@ void TaskScript::Task_504(int zid,int taskid)
 		gcall.randXianlu(0);
 		break;
 	case 5:
-		gcall.GoodsQuests(zid,taskid,L"???? ???");
+		gcall.GoodsQuests(zid,taskid,L"ì •ì°°ë³‘ì˜ ë³´ê³ ì„œ");
 		Sleep(1000);
 		break;
 	case 6:
@@ -13644,7 +13599,7 @@ void TaskScript::Task_504(int zid,int taskid)
 		gcall.WaitPlans();
 		gcall.Stepto(-62633,-43846,-1741);
 		Sleep(1000);
-		gcall.DeliverQuests(zid,taskid,L"???");
+		gcall.DeliverQuests(zid,taskid,L"í•œì‹œë‘");
 		Sleep(1000);
 		break;
 	case 7:
@@ -13671,7 +13626,7 @@ void TaskScript::Task_505(int zid,int taskid)
 		gcall.Stepto(-62418,-45857,-1940,10,10,5000);
 		gcall.NewSpend(1);
 		Sleep(1000);
-		gcall.DeliverQuests(zid,2,L"??");
+		gcall.DeliverQuests(zid,2,L"í™ì¼");
 		Sleep(1000);
 		gcall.NewSpend(2.5);
 		gcall.Stepto(-62937,-45918,-1957);
@@ -13679,7 +13634,7 @@ void TaskScript::Task_505(int zid,int taskid)
 		gcall.Stepto(-64252,-46212,-2008);
 		gcall.NewSpend(1);
 		Sleep(1000);
-		gcall.DeliverQuests(zid,taskid,L"??");
+		gcall.DeliverQuests(zid,taskid,L"ì²­ì›”");
 		Sleep(1000);
 		break;
 	case 2:
@@ -13814,15 +13769,15 @@ void TaskScript::Task_505(int zid,int taskid)
 		gcall.WaitPlans();
 		gcall.Stepto(-75199,-47255,-824);
 		Sleep(1000);
-		gcall.DeliverQuests(zid,3,L"??");
+		gcall.DeliverQuests(zid,3,L"ë°±ë¬´");
 		Sleep(1000);
 		break;
 	case 3:
-		gcall.DeliverQuests(zid,4,L"???");
+		gcall.DeliverQuests(zid,4,L"í•œì‹œë‘");
 		Sleep(1000);
 		break;
 	case 4:
-		gcall.DeliverQuests(zid,5,L"??");
+		gcall.DeliverQuests(zid,5,L"ë°±ë¬´");
 		Sleep(1000);
 		break;
 	case 5:
@@ -13934,65 +13889,63 @@ void TaskScript::Task_505(int zid,int taskid)
 		gcall.TurnToNear(500);
 		Sleep(300);
 		gcall.sendcall(id_msg_attack, (LPVOID)0x5e74);//1
-		//ÈÎÎñ¼ñÎï5(300,??? ???);
+		//ä»»åŠ¡æ¡ç‰©5(300,ì„œë‚­ë‹¹ ì²œë‘¥ê·€);
 		gcall.FindThenKill(0,300,modeAoe | modeNormal | modePickup);
-		gcall.PickupSpecTypeTask(200,0x90,L"???? ?");
+		gcall.PickupSpecTypeTask(200,0x90,L"ì²œë‘¥ê·€ì˜ ë¶");
 		gcall.Stepto(-89242,-53012,-3087);
 		gcall.Stepto(-89120,-53132,-3087);
 		gcall.Stepto(-89413,-53364,-3087);
 		gcall.Stepto(-90003,-53689,-3087);
 		Sleep(1000);
-		gcall.PickupSpecTypeTask(200,0x20,L"???");
+		gcall.PickupSpecTypeTask(200,0x20,L"ë´‰ì¸ì„");
 		Sleep(1000);
 		
 		//2
 		gcall.Stepto(-90259,-53355,-3087);
-		//ÈÎÎñ¼ñÎï5(400,??? ???);
+		//ä»»åŠ¡æ¡ç‰©5(400,ì„œë‚­ë‹¹ ì²œë‘¥ê·€);
 		gcall.FindThenKill(0,300,modeAoe | modeNormal | modePickup);
-		gcall.PickupSpecTypeTask(200,0x90,L"???? ?");
+		gcall.PickupSpecTypeTask(200,0x90,L"ì²œë‘¥ê·€ì˜ ë¶");
 		gcall.Stepto(-90395,-53460,-3087);
 		Sleep(1000);
-		gcall.PickupSpecTypeTask(200,0x20,L"???");
+		gcall.PickupSpecTypeTask(200,0x20,L"ë´‰ì¸ì„");
 		Sleep(1000);
 
 		//3
 		gcall.Stepto(-90810,-53465,-3087);
-		//ÈÎÎñ¼ñÎï5(400,??? ???);
+		//ä»»åŠ¡æ¡ç‰©5(400,ì„œë‚­ë‹¹ ì²œë‘¥ê·€);
 		gcall.FindThenKill(0,300,modeAoe | modeNormal | modePickup);
-		gcall.PickupSpecTypeTask(200,0x90,L"???? ?");
+		gcall.PickupSpecTypeTask(200,0x90,L"ì²œë‘¥ê·€ì˜ ë¶");
 		gcall.Stepto(-90710,-53695,-3087);
 		Sleep(1000);
-		gcall.PickupSpecTypeTask(200,0x20,L"???");
+		gcall.PickupSpecTypeTask(200,0x20,L"ë´‰ì¸ì„");
 		Sleep(1000);
 
 		//4
 		gcall.Stepto(-90998,-53908,-3087);
-		//ÈÎÎñ¼ñÎï5(400,??? ???);
+		//ä»»åŠ¡æ¡ç‰©5(400,ì„œë‚­ë‹¹ ì²œë‘¥ê·€);
 		gcall.FindThenKill(0,300,modeAoe | modeNormal | modePickup);
-		gcall.PickupSpecTypeTask(200,0x90,L"???? ?");
+		gcall.PickupSpecTypeTask(200,0x90,L"ì²œë‘¥ê·€ì˜ ë¶");
 		gcall.Stepto(-90581,-54097,-3087);
 		Sleep(1000);
-		gcall.PickupSpecTypeTask(200,0x20,L"???");
+		gcall.PickupSpecTypeTask(200,0x20,L"ë´‰ì¸ì„");
 		Sleep(1000);
 
-		//Çå
-
+		//æ¸…
 		gcall.Stepto(-90720,-54301,-3086);
 		gcall.FindThenKill(0,300,modeAoe | modeNormal | modePickup);
 
 		//5
 		gcall.Stepto(-90300,-54518,-3086);
-		//ÈÎÎñ¼ñÎï5(200,??? ???);
+		//ä»»åŠ¡æ¡ç‰©5(200,ì„œë‚­ë‹¹ ì²œë‘¥ê·€);
 		gcall.FindThenKill(0,300,modeAoe | modeNormal | modePickup);
-		gcall.PickupSpecTypeTask(200,0x90,L"???? ?");
+		gcall.PickupSpecTypeTask(200,0x90,L"ì²œë‘¥ê·€ì˜ ë¶");
 		gcall.Stepto(-90124,-54114,-3054);
 		Sleep(1000);
-		gcall.PickupSpecTypeTask(200,0x20,L"???");
+		gcall.PickupSpecTypeTask(200,0x20,L"ë´‰ì¸ì„");
 		gcall.sendcall(id_msg_attack, (LPVOID)0x5DFC);//v
 
 
-		//BOSS£¿
-
+		//BOSSï¼Ÿ
 		gcall.Stepto(-90346,-53846,-3087);
 		gcall.FindThenKill(0,300,modeAoe | modeNormal | modePickup);
 		Sleep(2000);
@@ -14011,7 +13964,7 @@ void TaskScript::Task_505(int zid,int taskid)
 		gcall.WaitPlans();
 		gcall.Stepto(-75189,-47229,-824);
 		Sleep(1000);
-		gcall.DeliverQuests(zid,7,L"??");
+		gcall.DeliverQuests(zid,7,L"ë°±ë¬´");
 		Sleep(1000);
 		break;
 	case 7:
@@ -14043,7 +13996,7 @@ void TaskScript::Task_505(int zid,int taskid)
 		gcall.WaitPlans();
 		gcall.Stepto(-75188,-47226,-824);
 		Sleep(1000);
-		gcall.DeliverQuests(zid,9,L"??");
+		gcall.DeliverQuests(zid,9,L"ë°±ë¬´");
 		Sleep(1000);
 		break;
 	case 9:
@@ -14145,7 +14098,7 @@ void TaskScript::Task_506(int zid,int taskid)
 		gcall.Stepto(-71283,-35758,-642);
 		gcall.Stepto(-71377,-35657,-639);
 		Sleep(1000);
-		gcall.DeliverQuests(zid,taskid,L"??");
+		gcall.DeliverQuests(zid,taskid,L"ì§€í˜œ");
 		Sleep(1000);
 		break;
 	case 2:
@@ -14213,8 +14166,8 @@ void TaskScript::Task_506(int zid,int taskid)
 		Sleep(1000);
 		gcall.FindThenKill(0,300,modeAoe | modeNormal | modePickup );
 		Sleep(4000);
-		gcall.Stepto(L"???");
-		gcall.DeliverQuests(zid,taskid,L"???");
+		gcall.Stepto(L"ì¥ê¸ˆë´‰");
+		gcall.DeliverQuests(zid,taskid,L"ì¥ê¸ˆë´‰");
 		Sleep(1000);
 		break;
 	case 3:
@@ -14316,7 +14269,7 @@ void TaskScript::Task_506(int zid,int taskid)
 		gcall.Stepto(-71156,-35673,-647);
 		gcall.Stepto(-71367,-35684,-639);
 		Sleep(1000);
-		gcall.DeliverQuests(zid,taskid,L"??");
+		gcall.DeliverQuests(zid,taskid,L"ì§€í˜œ");
 		Sleep(1000);
 		break;
 	case 5:
@@ -14442,12 +14395,12 @@ void TaskScript::Task_507(int zid,int taskid)
 		gcall.Stepto(-52150,-39950,-142);
 		gcall.Stepto(-52204,-39997,-142);
 		Sleep(1000);
-		gcall.DeliverQuests(zid,taskid,L"???");
+		gcall.DeliverQuests(zid,taskid,L"ë°•ë²”ì§„");
 		Sleep(1000);
 		break;
 	case 2:
 		gcall.Stepto(-52185,-39931,-142);
-		gcall.DeliverQuests(zid,taskid,L"???");
+		gcall.DeliverQuests(zid,taskid,L"í•œì‹œë‘");
 		Sleep(1000);
 		break;
 	case 3:
@@ -14619,8 +14572,7 @@ void TaskScript::Task_507(int zid,int taskid)
 
 
 
-		//8 ÉÏ¼ÓËÙ
-
+		//8 ä¸åŠ é€Ÿ
 		gcall.Stepto(-59903,-29092,1051);
 		gcall.Stepto(-60068,-28907,1080);
 		gcall.Stepto(-60180,-28782,1093);
@@ -14727,12 +14679,12 @@ void TaskScript::Task_507(int zid,int taskid)
 		gcall.Stepto(-52135,-39941,-142);
 		gcall.Stepto(-52283,-39971,-142);
 		Sleep(1000);
-		gcall.PickupSpecTypeTask(200,0x4,L"??");
+		gcall.PickupSpecTypeTask(200,0x4,L"ì†Œí˜„");
 		Sleep(1000);
 		break;
 	case 5:
 		Sleep(1000);
-		gcall.DeliverQuests(zid,taskid,L"??");
+		gcall.DeliverQuests(zid,taskid,L"ì†Œí˜„");
 		Sleep(1000);
 		break;
 	case 6:
@@ -14744,7 +14696,7 @@ void TaskScript::Task_507(int zid,int taskid)
 		}
 		gcall.Stepto(-52191,-39941,-142);
 		Sleep(1000);
-		gcall.DeliverQuests(zid,taskid,L"???");
+		gcall.DeliverQuests(zid,taskid,L"í•œì‹œë‘");
 		Sleep(1000);
 		break;
 	case 7:
@@ -14945,7 +14897,7 @@ void TaskScript::Task_508(int zid,int taskid)
 		gcall.Stepto(-74192,-19664,2666);
 		gcall.Stepto(-74193,-19666,2666);
 		Sleep(1000);
-		gcall.Stepto(L"???");
+		gcall.Stepto(L"ìµœì§„ì•„");
 		Sleep(1000);
 		gcall.sendcall(id_msg_attack, (LPVOID)0x5E06);//3
 		Sleep(1500);
@@ -14955,17 +14907,17 @@ void TaskScript::Task_508(int zid,int taskid)
 		gcall.TurnToNear(500);
 		gcall.sendcall(id_msg_attack, (LPVOID)0x5e74);//1
 		gcall.FindThenKill(0,500,modeAoe | modeNormal | modePickup);
-		gcall.Stepto(L"???");
+		gcall.Stepto(L"ìµœì§„ì•„");
 		Sleep(1000);
-		gcall.DeliverQuests(zid,taskid,L"???");
+		gcall.DeliverQuests(zid,taskid,L"ìµœì§„ì•„");
 		Sleep(1000);
 		gcall.Stepto(-74193,-19666,2666);
 		Sleep(1000);
-		gcall.DeliverQuests(zid,taskid,L"???");
+		gcall.DeliverQuests(zid,taskid,L"ìµœì§„ì•„");
 		Sleep(1000);
 		break;
 	case 3:
-		//¹ıÂË¹ÖÎï(???,1);
+		//è¿‡æ»¤æ€ªç‰©(ìµœì§„ì•„,1);
 		Sleep(1000);
 		gcall.Stepto(-74246,-19708,2667);
 		gcall.Stepto(-74368,-19724,2664);
@@ -15122,20 +15074,20 @@ void TaskScript::Task_508(int zid,int taskid)
 		gcall.Stepto(-79335,-20650,3103);
 		gcall.Stepto(-79679,-20507,3140);
 		Sleep(2000);
-		//¹ıÂË¹ÖÎï(???,1);
+		//è¿‡æ»¤æ€ªç‰©(ìµœì§„ì•„,1);
 		gcall.FindThenKill(0,1000,modeAoe | modeNormal | modePickup );
 		gcall.Stepto(-79871,-20751,3130);
 		gcall.Stepto(-79792,-20657,3132);
 		gcall.Stepto(-79730,-20589,3135);
 		gcall.Stepto(-79709,-20559,3137);
 		Sleep(1000);
-		gcall.PickupSpecTypeTask(200,0x4,L"????");
+		gcall.PickupSpecTypeTask(200,0x4,L"ê±°ë˜ì¥ë¶€");
 		Sleep(1000);
 		break;
 	case 5:
-		gcall.Stepto(L"???");
+		gcall.Stepto(L"ìµœì§„ì•„");
 		Sleep(1000);
-		gcall.DeliverQuests(zid,taskid,L"???");
+		gcall.DeliverQuests(zid,taskid,L"ìµœì§„ì•„");
 		Sleep(1000);
 		break;
 	case 6:
@@ -15240,12 +15192,12 @@ void TaskScript::Task_509(int zid,int taskid)
 		gcall.Stepto(-65592,-17583,3360);
 		gcall.Stepto(-65491,-17589,3360);
 		Sleep(1000);
-		gcall.DeliverQuests(zid,taskid,L"???");
+		gcall.DeliverQuests(zid,taskid,L"ìµœì§„ì•„");
 		Sleep(1000);
 		break;
 	case 3:
-		//¹ıÂË¹ÖÎï(??,1);
-		//¹ıÂË¹ÖÎï(???,1);
+		//è¿‡æ»¤æ€ªç‰©(ì†Œí˜„,1);
+		//è¿‡æ»¤æ€ªç‰©(ìµœì§„ì•„,1);
 		
 		gcall.Stepto(-65491,-17589,3360,30,30,5000);
 		gcall.NewSpend(1);
@@ -15288,7 +15240,7 @@ void TaskScript::Task_509(int zid,int taskid)
 		gcall.PickupTask();
 		gcall.randXianlu(0);
 		gcall.NewSpend(2.5);
-		//¹ıÂË¹ÖÎï(??,3);
+		//è¿‡æ»¤æ€ªç‰©(ì†Œí˜„,3);
 		break;
 	case 4:
 		gcall.NewSpend(2.5);
@@ -15330,7 +15282,7 @@ void TaskScript::Task_509(int zid,int taskid)
 		gcall.Stepto(-69014,-23494,4138);
 		
 		Sleep(1000);
-		gcall.DeliverQuests(zid,5,L"???");
+		gcall.DeliverQuests(zid,5,L"í•œì‹œë‘");
 		Sleep(1000);
 		break;
 	case 5:
@@ -15431,7 +15383,7 @@ void TaskScript::Task_509(int zid,int taskid)
 	case 6:
 		gcall.Stepto(-72550,-27397,3611);
 		Sleep(1000);
-		gcall.DeliverQuests(zid,7,L"???");
+		gcall.DeliverQuests(zid,7,L"í•œì‹œë‘");
 		Sleep(1000);
 		break;
 	case 7:
@@ -15497,14 +15449,14 @@ void TaskScript::Task_509(int zid,int taskid)
 		gcall.Stepto(-59756,-44017,-1799);
 		
 		Sleep(1000);
-		gcall.DeliverQuests(zid,9,L"???");
+		gcall.DeliverQuests(zid,9,L"í•œì‹œë‘");
 		Sleep(2000);
 		break;
 	case 9:
 		gcall.Stepto(-59567,-44097,-1805);
 		gcall.Stepto(-59517,-44121,-1806);
 		Sleep(1000);
-		gcall.DeliverQuests(zid,0xA,L"???? ??");
+		gcall.DeliverQuests(zid,0xA,L"ê±°ì§€ë…¸ì¸ ì²­ìš´");
 		Sleep(1000);
 		break;
 	case 10:
@@ -15520,7 +15472,7 @@ void TaskScript::Task_509(int zid,int taskid)
 		gcall.Stepto(-59578,-43873,-1780);
 		gcall.Stepto(-59557,-44035,-1802);
 		Sleep(1000);
-		gcall.DeliverQuests(zid,0xC,L"???? ??");
+		gcall.DeliverQuests(zid,0xC,L"ê±°ì§€ë…¸ì¸ ì²­ìš´");
 		Sleep(1000);
 		break;
 	}
@@ -15555,7 +15507,7 @@ void TaskScript::Task_510(int zid,int taskid)
 		gcall.Stepto(-62883,-46529,-1961);
 		gcall.Stepto(-62964,-46764,-1968);
 		Sleep(1000);
-		gcall.CuncangkuByConfig(L"???");
+		gcall.CuncangkuByConfig(L"ì˜¤ëŠ˜ì¤€");
 		Sleep(1000);
 		gcall.Stepto(-62758,-46671,-1968);
 		gcall.Stepto(-62563,-46518,-1965);
@@ -15563,7 +15515,7 @@ void TaskScript::Task_510(int zid,int taskid)
 		gcall.Stepto(-62128,-46366,-1936);
 		gcall.Stepto(-61956,-46521,-1938);
 		Sleep(1000);
-		gcall.SellItemByConfig(L"???");
+		gcall.SellItemByConfig(L"í•œëƒ¥í•´");
 		Sleep(1000);
 		gcall.SortBag();
 		Sleep(1000);
@@ -15588,8 +15540,7 @@ void TaskScript::Task_510(int zid,int taskid)
 		gcall.Stepto(-59962,-44211,-1803);
 		gcall.NewSpend(1);
 		gcall.Stepto(-59735,-44112,-1802);
-		//ÂòÂô£¬´æÍê
-
+		//ä¹°å–ï¼Œå­˜å®Œ
 
 		gcall.NewSpend(2.5);
 		gcall.Stepto(-59354,-44554,-1833);
@@ -15846,7 +15797,7 @@ void TaskScript::Task_510(int zid,int taskid)
 		gcall.Stepto(-19556,-64057,-2114);
 		gcall.NewSpend(1);
 		Sleep(1000);
-		gcall.DeliverQuests(zid,taskid,L"???? ??");
+		gcall.DeliverQuests(zid,taskid,L"ì ˆì‚¬ëª…ì˜ ë°±ìš´");
 		Sleep(2000);
 		break;
 	case 2:
@@ -16109,7 +16060,7 @@ void TaskScript::Task_510(int zid,int taskid)
 		gcall.Stepto(-19512,-64389,-2114);
 		gcall.NewSpend(1);
 		Sleep(1000);
-		gcall.DeliverQuests(zid,taskid,L"?? ??");
+		gcall.DeliverQuests(zid,taskid,L"ê³ ì•„ ì¹œì¹œ");
 		Sleep(1000);
 		break;
 	case 4:
@@ -16117,7 +16068,7 @@ void TaskScript::Task_510(int zid,int taskid)
 		gcall.Stepto(-19561,-64145,-2114);
 		gcall.Stepto(-19570,-64025,-2114);
 		Sleep(1000);
-		gcall.DeliverQuests(zid,taskid,L"???? ??");
+		gcall.DeliverQuests(zid,taskid,L"ì ˆì‚¬ëª…ì˜ ë°±ìš´");
 		Sleep(1000);
 		break;
 	case 5:
@@ -16186,7 +16137,7 @@ void TaskScript::Task_511(int zid,int taskid)
 	case 2:
 		gcall.Stepto(-23673,-67309,-1349);
 		Sleep(1000);
-		gcall.DeliverQuests(zid,taskid,L"??");
+		gcall.DeliverQuests(zid,taskid,L"ë¯¸ë ¹");
 		Sleep(1000);
 		break;
 	case 3:
@@ -16253,7 +16204,7 @@ void TaskScript::Task_511(int zid,int taskid)
 	case 5:
 		gcall.Stepto(-23679,-67294,-1349);
 		Sleep(1000);
-		gcall.DeliverQuests(zid,taskid,L"?? ??");
+		gcall.DeliverQuests(zid,taskid,L"ê³ ì•„ ì¹œì¹œ");
 		Sleep(1000);
 		break;
 	case 6:
@@ -16629,7 +16580,7 @@ void TaskScript::Task_512(int zid,int taskid)
 	case 3:
 		gcall.Stepto(-23620,-67286,-1349);
 		Sleep(1000);
-		gcall.DeliverQuests(zid,taskid,L"?? ??");
+		gcall.DeliverQuests(zid,taskid,L"ê³ ì•„ ì¹œì¹œ");
 		Sleep(1000);
 		break;
 	case 4:
@@ -16673,7 +16624,7 @@ void TaskScript::Task_513(int zid,int taskid)
 		gcall.Stepto(-21214,-67404,-2147);
 		gcall.NewSpend(1);
 		Sleep(1000);
-		gcall.DeliverQuests(zid,taskid,L"??? ??");
+		gcall.DeliverQuests(zid,taskid,L"ìœ ê°€ì´Œ ì£¼ë¯¼");
 		Sleep(1000);
 		break;
 	case 2:
@@ -16709,13 +16660,13 @@ void TaskScript::Task_513(int zid,int taskid)
 		gcall.Stepto(-19541,-64354,-2114);
 		gcall.Stepto(-19558,-64300,-2114);
 		Sleep(1000);
-		gcall.PickupSpecTypeTaskts(200,0x4,L"??? ??");
+		gcall.PickupSpecTypeTaskts(200,0x4,L"ìœ ê°€ì´Œ ì£¼ë¯¼");
 		Sleep(1000);
 		break;
 	case 4:
 		gcall.Stepto(-19608,-64231,-2114);
 		Sleep(1000);
-		gcall.DeliverQuests(zid,taskid,L"???? ??");
+		gcall.DeliverQuests(zid,taskid,L"ì ˆì‚¬ëª…ì˜ ë°±ìš´");
 		Sleep(1000);
 		break;
 	case 5:
@@ -16728,8 +16679,7 @@ void TaskScript::Task_513(int zid,int taskid)
 		Sleep(4000);
 		break;
 	case 6:
-		//ÕâÀï¼Ó¹ıÂË£¬Ç¿ÖÆÉ±Ä³¸ö¹ÖÎï¡£ ÎÊÌâ
-
+		//è¿™é‡ŒåŠ è¿‡æ»¤ï¼Œå¼ºåˆ¶æ€æŸä¸ªæ€ªç‰©ã€‚ é—®é¢˜
 		gcall.Kill_Tab();
 		gcall.FindThenKill(0,500,modeAoe | modeNormal);
 		gcall.Stepto(-20029,-64767,-2130);
@@ -16771,7 +16721,7 @@ void TaskScript::Task_513(int zid,int taskid)
 	case 7:
 		gcall.KeyPress(87);
 		Sleep(1000);
-		gcall.DeliverQuests(zid,taskid,L"???? ??");
+		gcall.DeliverQuests(zid,taskid,L"ì ˆì‚¬ëª…ì˜ ë°±ìš´");
 		Sleep(1000);
 		break;
 	case 8:
@@ -16782,7 +16732,7 @@ void TaskScript::Task_513(int zid,int taskid)
 		gcall.Stepto(-19597,-64259,-2114);
 		gcall.Stepto(-19554,-64333,-2114);
 		Sleep(1000);
-		gcall.DeliverQuests(zid,taskid,L"?? ??");
+		gcall.DeliverQuests(zid,taskid,L"ê³ ì•„ ì¹œì¹œ");
 		Sleep(1000);
 		break;
 	case 9:
@@ -16923,7 +16873,7 @@ void TaskScript::Task_513(int zid,int taskid)
 		gcall.Stepto(-5241,-59439,-1183);
 		gcall.randXianlu(3);
 		Sleep(1000);
-		gcall.DeliverQuests(zid,taskid,L"???");
+		gcall.DeliverQuests(zid,taskid,L"ë§ˆì˜ê°•");
 		Sleep(1000);
 		gcall.LinQuJiangLi();
 		Sleep(1000);
@@ -16980,8 +16930,7 @@ void TaskScript::Task_514(int zid,int taskid)
 			}
 		}
 		
-		//³ö28¼¶¸±±¾
-
+		//å‡º28çº§å‰¯æœ¬
 		flag = gcall.Stepto(29903,-41454,-2275,10,10,3000);
 		if (flag)
 		{
@@ -17007,11 +16956,10 @@ void TaskScript::Task_514(int zid,int taskid)
 		gcall.WaitPlans();
 		gcall.LinQuJiangLi();
 		Sleep(1000);
-		gcall.SellItemByConfig(L"???");
+		gcall.SellItemByConfig(L"í•œì •ê°€");
 		Sleep(1000);
 		gcall.KeyPress(27);
-		//×ßµ½×ªÅÌÈ¥
-
+		//èµ°åˆ°è½¬ç›˜å»
 		gcall.Stepto(8567,-38900,-2318);
 		gcall.Stepto(8652,-39076,-2322);
 		gcall.Stepto(8754,-39288,-2326);
@@ -17021,14 +16969,14 @@ void TaskScript::Task_514(int zid,int taskid)
 		Sleep(2000);
 		
 		_BAGSTU jingqi;
-		while (gcall.GetGoodsFromBagByName(L"????? ??", &jingqi))
+		while (gcall.GetGoodsFromBagByName(L"ê¸ˆê°•ì—­ì‚¬ì˜ ì •ìˆ˜", &jingqi))
 		{
-			gcall.Yaojiang(L"????? ??",L"????");
+			gcall.Yaojiang(L"ê¸ˆê°•ì—­ì‚¬ì˜ ì •ìˆ˜",L"ê¸ˆê°•ë³´íŒ¨");
 		}
 		gcall.Stepto(8549,-39129,-2318);
 		gcall.Stepto(8633,-38847,-2320);
 		Sleep(1000);
-		gcall.SellItemByConfig(L"???");
+		gcall.SellItemByConfig(L"í•œì •ê°€");
 		Sleep(1000);
 		gcall.KeyPress(27);
 		Sleep(1000);
@@ -17036,15 +16984,12 @@ void TaskScript::Task_514(int zid,int taskid)
 		Sleep(1000);
 		gcall.XieBaoShi(1);
 		Sleep(1000);
-		gcall.JiaBaoShi(0,L"??? ?? ???");//5½Ç×Ï±¦Ê¯
-
+		gcall.JiaBaoShi(0,L"ë¹›ë‚˜ëŠ” ì˜¤ê° ììˆ˜ì •");//5è§’ç´«å®çŸ³
 		Sleep(1000);
-		gcall.JiaBaoShi(1,L"??? ?? ??");//4½Çºì±¦Ê¯
-
+		gcall.JiaBaoShi(1,L"ë¹›ë‚˜ëŠ” ì‚¬ê° í™ì˜¥");//4è§’çº¢å®çŸ³
 		Sleep(1000);
 
-		//ÈÎÎñµÄ´«ËÍ
-
+		//ä»»åŠ¡çš„ä¼ é€
 		gcall.CityConvey(0x12);
 		//gcall.randXianlu(3);
 		//gcall.Stepto(8650,-39021,-2321);
@@ -17061,16 +17006,16 @@ void TaskScript::Task_514(int zid,int taskid)
 			gcall.randXianlu(3);
 			Sleep(2000);
 		}
-		gcall.DeliverQuests(zid,taskid,L"???");
+		gcall.DeliverQuests(zid,taskid,L"ì¢…ë¦¬ì¶”");
 		Sleep(1000);
 		break;
 	case 2:
-		//¹ıÂË¹ÖÎï(???? ??,2);
-		//¹ıÂË¹ÖÎï(???? ??,1);
-		//¹ıÂË¹ÖÎï(??? ???,1);
-		//¹ıÂË¹ÖÎï(?????,1);
-		//¹ıÂË¹ÖÎï(??? ??,1);
-		//¹ıÂË¹ÖÎï(???,1);
+		//è¿‡æ»¤æ€ªç‰©(í™©í’ì‚¬ë§‰ ì¤€ì˜¤,2);
+		//è¿‡æ»¤æ€ªç‰©(í™©í’ì‚¬ë§‰ ëª©ê´´,1);
+		//è¿‡æ»¤æ€ªç‰©(ì ë£¡ì±„ ì•½íƒˆê¾¼,1);
+		//è¿‡æ»¤æ€ªç‰©(ìœ ì ì‚¬ì•”ê´´,1);
+		//è¿‡æ»¤æ€ªç‰©(êµ¶ì£¼ë¦° ì¤€ì˜¤,1);
+		//è¿‡æ»¤æ€ªç‰©(ìˆ˜í˜¸ëŒ€,1);
 
 		gcall.NewSpend(2.5);
 		gcall.Stepto(-5095,-58933,-1238);
@@ -17457,12 +17402,12 @@ void TaskScript::Task_514(int zid,int taskid)
 		gcall.Stepto(-5156,-59199,-1198);
 		gcall.Stepto(-5317,-59256,-1193);
 
-		//¹ıÂË¹ÖÎï(???? ??,3);
-		//¹ıÂË¹ÖÎï(???? ??,3);
-		//¹ıÂË¹ÖÎï(??? ???,3);
-		//¹ıÂË¹ÖÎï(?????,3);
-		//¹ıÂË¹ÖÎï(??? ??,3);
-		//¹ıÂË¹ÖÎï(???,3);
+		//è¿‡æ»¤æ€ªç‰©(í™©í’ì‚¬ë§‰ ì¤€ì˜¤,3);
+		//è¿‡æ»¤æ€ªç‰©(í™©í’ì‚¬ë§‰ ëª©ê´´,3);
+		//è¿‡æ»¤æ€ªç‰©(ì ë£¡ì±„ ì•½íƒˆê¾¼,3);
+		//è¿‡æ»¤æ€ªç‰©(ìœ ì ì‚¬ì•”ê´´,3);
+		//è¿‡æ»¤æ€ªç‰©(êµ¶ì£¼ë¦° ì¤€ì˜¤,3);
+		//è¿‡æ»¤æ€ªç‰©(ìˆ˜í˜¸ëŒ€,3);
 
 
 		gcall.NewSpend(2.5);
@@ -17499,7 +17444,7 @@ void TaskScript::Task_514(int zid,int taskid)
 		gcall.Stepto(-6689,-59529,-1143);
 		gcall.NewSpend(1);
 		Sleep(1000);
-		gcall.DeliverQuests(zid,taskid,L"???");
+		gcall.DeliverQuests(zid,taskid,L"ë°˜ì°¬í†µ");
 		Sleep(1000);
 		break;
 	case 4:
@@ -17517,7 +17462,7 @@ void TaskScript::Task_514(int zid,int taskid)
 		gcall.Stepto(-5015,-59297,-1197);
 		
 		Sleep(1000);
-		gcall.DeliverQuests(zid,taskid,L"???");
+		gcall.DeliverQuests(zid,taskid,L"ì¢…ë¦¬ì¶”");
 		Sleep(1000);
 		break;
 	case 5:
@@ -17588,7 +17533,7 @@ void TaskScript::Task_515(int zid,int taskid)
 		gcall.Stepto(7664,-58679,-1056);
 		gcall.NewSpend(1);
 		Sleep(1000);
-		gcall.DeliverQuests(zid,taskid,L"???");
+		gcall.DeliverQuests(zid,taskid,L"ì¸ì ˆë¯¸");
 		Sleep(1000);
 		break;
 	case 2:
@@ -17598,7 +17543,7 @@ void TaskScript::Task_515(int zid,int taskid)
 		Sleep(1000);
 		gcall.sendcall(id_msg_OverShunyi,(LPVOID)FALSE);
 		Sleep(3000);
-		gcall.DeliverQuests(zid,taskid,L"???");
+		gcall.DeliverQuests(zid,taskid,L"ì§„ì†Œì•„");
 		Sleep(1000);
 		break;
 	case 3:
@@ -17700,7 +17645,7 @@ void TaskScript::Task_515(int zid,int taskid)
 			gcall.randXianlu(3);
 		}
 		Sleep(1000);
-		gcall.DeliverQuests(zid,taskid,L"???");
+		gcall.DeliverQuests(zid,taskid,L"ì§„ì†Œì•„");
 		Sleep(1000);
 		break;
 	case 5:
@@ -18084,11 +18029,11 @@ void TaskScript::Task_516(int zid,int taskid)
 		gcall.Stepto(8013,-58512,-1054);
 		
 		Sleep(1000);
-		gcall.DeliverQuests(zid,3,L"???");
+		gcall.DeliverQuests(zid,3,L"ì§„ì†Œì•„");
 		Sleep(1000);
 		gcall.Stepto(8185,-58402,-1047);
 		gcall.FenJieByConfig();
-		gcall.SellItemByConfig(L"???");
+		gcall.SellItemByConfig(L"ë°±í™”ì •");
 		gcall.SortBag();
 		break;
 	case 3:
@@ -18205,7 +18150,7 @@ void TaskScript::Task_517(int zid,int taskid)
 			gcall.randXianlu(3);
 		}
 		Sleep(1000);
-		gcall.DeliverQuests(zid,taskid,L"??");
+		gcall.DeliverQuests(zid,taskid,L"ê¸¸ë™");
 		Sleep(1000);
 		break;
 	case 2:
@@ -18255,7 +18200,7 @@ void TaskScript::Task_517(int zid,int taskid)
 		{
 			gcall.randXianlu(3);
 		}
-		gcall.DeliverQuests(zid,taskid,L"??");
+		gcall.DeliverQuests(zid,taskid,L"ê¸¸ë™");
 		Sleep(1000);
 		break;
 	case 4:
@@ -18372,7 +18317,7 @@ void TaskScript::Task_518(int zid,int taskid)
 		break;
 	case 2:
 		Sleep(1000);
-		gcall.DeliverQuests(zid,taskid,L"???");
+		gcall.DeliverQuests(zid,taskid,L"ë§ˆê¶ìƒ");
 		Sleep(1000);
 		break;
 	case 3:
@@ -18426,7 +18371,7 @@ void TaskScript::Task_518(int zid,int taskid)
 		gcall.Stepto(2900,-11985,-271);
 		gcall.Stepto(2836,-11965,-272);
 		Sleep(1000);
-		gcall.DeliverQuests(zid,taskid,L"???");
+		gcall.DeliverQuests(zid,taskid,L"ì§„ì†Œì•„");
 		Sleep(1000);
 		break;
 	case 4:
@@ -18464,13 +18409,12 @@ void TaskScript::Task_518(int zid,int taskid)
 		gcall.Kill_Tab();
 		gcall.TurnToNear(500);
 		gcall.sendcall(id_msg_attack, (LPVOID)0x5e74);//1
-		//±ØÉ± ???
-
+		//å¿…æ€ ì†Œì—°í™”
 		gcall.FindThenKill(0,500,modeNormal);
 		Sleep(1000);
 		gcall.Stepto(5643,-12289,-272);
 		Sleep(1000);
-		gcall.DeliverQuests(zid,taskid,L"???");
+		gcall.DeliverQuests(zid,taskid,L"ì†Œì—°í™”");
 		Sleep(1000);
 		break;
 	case 5:
@@ -18580,12 +18524,12 @@ void TaskScript::Task_518(int zid,int taskid)
 		gcall.Stepto(-6070,-19049,-1114);
 		gcall.Stepto(-6170,-19079,-1141);
 		//gcall.NewSpend(1);
-		//¹ıÂË¹ÖÎï(?????,2);
-		//¹ıÂË¹ÖÎï(?????,1);
-		//¹ıÂË¹ÖÎï(???,1);
-		//¹ıÂË¹ÖÎï(???,1);
-		//¹ıÂË¹ÖÎï(?????,1);
-		//¹ıÂË¹ÖÎï(???? ??,1);
+		//è¿‡æ»¤æ€ªç‰©(ê·¸ëŠ˜ì‚¬ì•”ê´´,2);
+		//è¿‡æ»¤æ€ªç‰©(í™ë¨¼ì§€ì „ê°ˆ,1);
+		//è¿‡æ»¤æ€ªç‰©(ë•í›„íŒŒ,1);
+		//è¿‡æ»¤æ€ªç‰©(ìœ ë•í›„,1);
+		//è¿‡æ»¤æ€ªç‰©(ì¸ê°„ì‚¬ëƒ¥ê¾¼,1);
+		//è¿‡æ»¤æ€ªç‰©(ìœ ë•í›„ì˜ ì¡¸ê°œ,1);
 		gcall.FindThenKill(0,900,modeAoe | modeNormal | modePickup );
 		gcall.sendcall(id_msg_attack, (LPVOID)0x5DFC);//v
 
@@ -18647,12 +18591,12 @@ void TaskScript::Task_518(int zid,int taskid)
 		gcall.sendcall(id_msg_attack, (LPVOID)0x5DFC);//v
 		break;
 	case 6:
-		//¹ıÂË¹ÖÎï(?????,3);
-		//¹ıÂË¹ÖÎï(?????,3);
-		//¹ıÂË¹ÖÎï(???,3);
-		//¹ıÂË¹ÖÎï(???,3);
-		//¹ıÂË¹ÖÎï(?????,3);
-		//¹ıÂË¹ÖÎï(???? ??,3);
+		//è¿‡æ»¤æ€ªç‰©(ê·¸ëŠ˜ì‚¬ì•”ê´´,3);
+		//è¿‡æ»¤æ€ªç‰©(í™ë¨¼ì§€ì „ê°ˆ,3);
+		//è¿‡æ»¤æ€ªç‰©(ë•í›„íŒŒ,3);
+		//è¿‡æ»¤æ€ªç‰©(ìœ ë•í›„,3);
+		//è¿‡æ»¤æ€ªç‰©(ì¸ê°„ì‚¬ëƒ¥ê¾¼,3);
+		//è¿‡æ»¤æ€ªç‰©(ìœ ë•í›„ì˜ ì¡¸ê°œ,3);
 		gcall.NewSpend(2.5);
 		gcall.Stepto(-5911,-19019,-1076,10,30,5000);
 		gcall.Stepto(-5861,-19011,-1065,10,30,5000);
@@ -18754,7 +18698,7 @@ void TaskScript::Task_518(int zid,int taskid)
 		gcall.Stepto(3930,-15886,-276);
 		
 		Sleep(1000);
-		gcall.DeliverQuests(zid,taskid,L"???");
+		gcall.DeliverQuests(zid,taskid,L"ì˜ˆí•˜ë‘");
 		Sleep(1000);
 		break;
 	case 7:
@@ -18799,7 +18743,7 @@ void TaskScript::Task_518(int zid,int taskid)
 		gcall.Stepto(5477,-12344,-272);
 		gcall.Stepto(5675,-12330,-272);
 		Sleep(1000);
-		gcall.DeliverQuests(zid,taskid,L"???");
+		gcall.DeliverQuests(zid,taskid,L"ì†Œì—°í™”");
 		Sleep(1000);
 		break;
 	case 8:
@@ -18821,9 +18765,9 @@ void TaskScript::Task_519(int zid,int taskid)
 			gcall.GetGoodsByEquipPos(EQUITMENT_POS::WUQI, &wuqi);
 			if(wuqi.name != NULL)
 			{
-				int len = wcslen(L"?? ????");//ÅĞ¶ÏÊÇÉÏÊÇµ±Ç°ÄÃµÄÕâ¸öÎäÆ÷
+				int len = wcslen(L"ê°ì„± ìš”ë§ˆë„ë¼");//åˆ¤æ–­æ˜¯ä¸æ˜¯å½“å‰æ‹¿çš„è¿™ä¸ªæ­¦å™¨
 				wchar_t* fixName = new wchar_t[len + 1];
-				wcscpy(fixName, L"?? ????");
+				wcscpy(fixName, L"ê°ì„± ìš”ë§ˆë„ë¼");
 				fixName[len] = L' ';
 				fixName[len + 1] = L'\0';
 				if(wcsstr(wuqi.name, fixName) != NULL)
@@ -18831,7 +18775,7 @@ void TaskScript::Task_519(int zid,int taskid)
 					if (wuqi.m_PingJi == 5 &&
 						wuqi.m_DangQianJingYanZhi == wuqi.m_DangQianJingYanZongZhi)
 					{
-						gcall.HeChengWuQi_Po5(EQUITMENT_POS::WUQI,L"????");
+						gcall.HeChengWuQi_Po5(EQUITMENT_POS::WUQI,L"ì œë£¡ë„ë¼");
 						Sleep(1000);
 						/*gcall.XieBaoShi(0);
 						Sleep(1000);
@@ -18840,13 +18784,11 @@ void TaskScript::Task_519(int zid,int taskid)
 					}else if (wuqi.m_PingJi == 10 &&
 						wuqi.m_DangQianJingYanZhi == wuqi.m_DangQianJingYanZongZhi)
 					{
-						gcall.HeChengWuQi_Po10(EQUITMENT_POS::WUQI,L"????");
+						gcall.HeChengWuQi_Po10(EQUITMENT_POS::WUQI,L"ê¸ˆê°•ë„ë¼");
 						Sleep(1000);
-						//gcall.JiaBaoShi(0,L"");//À¶É«5½Ç×Ï
-
+						//gcall.JiaBaoShi(0,L"");//è“è‰²5è§’ç´«
 						//Sleep(1000);
-						//gcall.JiaBaoShi(1,L"");//À¶É«4½Çºì
-
+						//gcall.JiaBaoShi(1,L"");//è“è‰²4è§’çº¢
 						//Sleep(1000);
 						break;
 					}else
@@ -18859,13 +18801,11 @@ void TaskScript::Task_519(int zid,int taskid)
 				}
 			}else
 			{
-				//¿ÉÄÜ³ö´í
-
+				//å¯èƒ½å‡ºé”™
 				break;
 			}
 		}
-		//ÕâÀïÌø³öÊ±Ó¦¸ÃÊÇÆÆ5ÁË¡£
-
+		//è¿™é‡Œè·³å‡ºæ—¶åº”è¯¥æ˜¯ç ´5äº†ã€‚
 
 
 		_BAGSTU wuqi;
@@ -18874,7 +18814,7 @@ void TaskScript::Task_519(int zid,int taskid)
 		{
 			if (gcall.GetGoodsByEquipPos(EQUITMENT_POS::WUQI, &wuqi) == FALSE)
 			{
-				gcall.WearEquipment(L"? ???? 1??",EQUITMENT_POS::WUQI);
+				gcall.WearEquipment(L"ì§„ ìš”ë§ˆë„ë¼ 1ë‹¨ê³„",EQUITMENT_POS::WUQI);
 				Sleep(1000);
 			}
 			if (wuqi.m_DangQianJingYanZhi != wuqi.m_DangQianJingYanZongZhi )
@@ -18921,7 +18861,7 @@ void TaskScript::Task_519(int zid,int taskid)
 		gcall.Stepto(3854,-15721,-822);
 		gcall.NewSpend(1);
 		Sleep(1000);
-		gcall.DeliverQuests(zid,taskid,L"???");
+		gcall.DeliverQuests(zid,taskid,L"ë§ˆê¶ìƒ");
 		Sleep(1000);
 		
 		break;
@@ -19082,7 +19022,7 @@ void TaskScript::Task_519(int zid,int taskid)
 		gcall.Stepto(-25185,-25266,-679);
 		gcall.NewSpend(1);
 		Sleep(1000);
-		gcall.DeliverQuests(zid,taskid,L"???");
+		gcall.DeliverQuests(zid,taskid,L"ì§„ì†Œì•„");
 		Sleep(1000);
 		break;
 	case 3:
@@ -19154,30 +19094,30 @@ void TaskScript::Task_519(int zid,int taskid)
 		gcall.Stepto(-29207,-16286,-1477);
 		gcall.NewSpend(1);
 		Sleep(1000);
-		gcall.DeliverQuests(zid,taskid,L"???");
+		gcall.DeliverQuests(zid,taskid,L"ì†Œì—°í™”");
 		Sleep(1000);
 		break;
 	case 5:
-		//¹ıÂË¹ÖÎï(?? ??,2);
-		//¹ıÂË¹ÖÎï(?? ???,2);
-		//¹ıÂË¹ÖÎï(??? ???,1);
+		//è¿‡æ»¤æ€ªç‰©(í•´ê³¨ ëŒ€ì¥,2);
+		//è¿‡æ»¤æ€ªç‰©(í•´ê³¨ ì£¼ìˆ ì‚¬,2);
+		//è¿‡æ»¤æ€ªç‰©(ë‹¹ì—¬ì›” ì¹œìœ„ëŒ€,1);
 		Sleep(1000);
 		gcall.Stepto(-29884,-16122,-1480,10,10,3000);
 		Sleep(2000);
 		gcall.FindThenKill(0,500,modeAoe | modeNormal);
-		gcall.Stepto(L"???");
+		gcall.Stepto(L"ì†Œì—°í™”");
 		gcall.FindThenKill(0,500,modeAoe | modeNormal);
 
 		gcall.Stepto(-30387,-15980,-1480,10,10,3000);
 		Sleep(2000);
 		gcall.FindThenKill(0,600,modeAoe | modeNormal);
-		gcall.Stepto(L"???");
+		gcall.Stepto(L"ì†Œì—°í™”");
 		gcall.FindThenKill(0,500,modeAoe | modeNormal);
 
 		gcall.Stepto(-31025,-15511,-1475,10,10,3000);
 		Sleep(2000);
 		gcall.FindThenKill(0,600,modeAoe | modeNormal);
-		gcall.Stepto(L"???");
+		gcall.Stepto(L"ì†Œì—°í™”");
 		gcall.FindThenKill(0,500,modeAoe | modeNormal);
 
 		gcall.Stepto(-31048,-15403,-1472,10,10,3000);
@@ -19189,7 +19129,7 @@ void TaskScript::Task_519(int zid,int taskid)
 		gcall.Stepto(-31185,-14483,-1373);
 		Sleep(2000);
 		gcall.FindThenKill(0,500,modeAoe | modeNormal);
-		gcall.Stepto(L"???");
+		gcall.Stepto(L"ì†Œì—°í™”");
 		gcall.FindThenKill(0,500,modeAoe | modeNormal);
 
 		gcall.Stepto(-31175,-14372,-1373,10,10,3000);
@@ -19206,7 +19146,7 @@ void TaskScript::Task_519(int zid,int taskid)
 		Sleep(2000);
 		
 		gcall.FindThenKill(0,500,modeAoe | modeNormal);
-		gcall.Stepto(L"???");
+		gcall.Stepto(L"ì†Œì—°í™”");
 		gcall.FindThenKill(0,500,modeAoe | modeNormal);
 
 
@@ -19219,7 +19159,7 @@ void TaskScript::Task_519(int zid,int taskid)
 		gcall.Stepto(-31183,-11085,-1162);
 		Sleep(2000);
 		gcall.FindThenKill(0,600,modeAoe | modeNormal);
-		gcall.Stepto(L"???");
+		gcall.Stepto(L"ì†Œì—°í™”");
 		gcall.FindThenKill(0,500,modeAoe | modeNormal);
 
 
@@ -19240,7 +19180,7 @@ void TaskScript::Task_519(int zid,int taskid)
 		gcall.Stepto(-31016,-7485,-1125);
 		Sleep(3000);
 		gcall.FindThenKill(0,500,modeAoe | modeNormal);
-		gcall.Stepto(L"???");
+		gcall.Stepto(L"ì†Œì—°í™”");
 		gcall.FindThenKill(0,500,modeAoe | modeNormal);
 
 		gcall.NewSpend(2.5);
@@ -19279,14 +19219,14 @@ void TaskScript::Task_519(int zid,int taskid)
 		gcall.Stepto(-29988,-16496,-1480);
 		gcall.Stepto(-29880,-16583,-1480);
 		gcall.NewSpend(1);
-		gcall.Stepto(L"???");
+		gcall.Stepto(L"ì†Œì—°í™”");
 		gcall.FindThenKill(0,300,modeAoe | modeNormal);
 		
 		break;
 	case 6:
-		//¹ıÂË¹ÖÎï(?? ??,3);
-		//¹ıÂË¹ÖÎï(?? ???,3);
-		//¹ıÂË¹ÖÎï(??? ???,3);
+		//è¿‡æ»¤æ€ªç‰©(í•´ê³¨ ëŒ€ì¥,3);
+		//è¿‡æ»¤æ€ªç‰©(í•´ê³¨ ì£¼ìˆ ì‚¬,3);
+		//è¿‡æ»¤æ€ªç‰©(ë‹¹ì—¬ì›” ì¹œìœ„ëŒ€,3);
 		gcall.NewSpend(2.5);
 		gcall.Stepto(-30119,-16996,-1480);
 		gcall.Stepto(-30146,-16950,-1480);
@@ -19332,13 +19272,13 @@ void TaskScript::Task_519(int zid,int taskid)
 		gcall.Stepto(-31083,-7707,-1125);
 		gcall.Stepto(-31067,-7557,-1125);
 		Sleep(1000);
-		gcall.DeliverQuests(zid,taskid,L"????");
+		gcall.DeliverQuests(zid,taskid,L"ë°±ìš´ì„ ì‚¬");
 		Sleep(1000);
 		break;
 	case 7:
 		gcall.Stepto(-31007,-7656,-1125);
 		Sleep(1000);
-		gcall.DeliverQuests(zid,taskid,L"???");
+		gcall.DeliverQuests(zid,taskid,L"ì†Œì—°í™”");
 		Sleep(1000);
 		break;
 	case 8:
@@ -19417,7 +19357,7 @@ void TaskScript::Task_519(int zid,int taskid)
 		gcall.Stepto(-25295,-25360,-679);
 		gcall.Stepto(-25095,-25358,-679);
 		Sleep(1000);
-		gcall.DeliverQuests(zid,taskid,L"???");
+		gcall.DeliverQuests(zid,taskid,L"ì§„ì†Œì•„");
 		Sleep(1000);
 		break;
 	case 9:
@@ -19600,7 +19540,7 @@ void TaskScript::Task_520(int zid,int taskid)
 		Sleep(1000);
 		gcall.FenJieByConfig();
 		Sleep(1000);
-		gcall.SellItemByConfig(L"???");
+		gcall.SellItemByConfig(L"í•œì •ê°€");
 		Sleep(1000);
 		gcall.SortBag();
 		/*gcall.NewSpend(2.5);
@@ -19654,7 +19594,7 @@ void TaskScript::Task_520(int zid,int taskid)
 		Sleep(1000);
 		gcall.FixWuqi();
 		Sleep(1000);
-		gcall.SellItemByConfig(L"???");
+		gcall.SellItemByConfig(L"ë‚´í•˜ë¦¬");
 		Sleep(1000);*/
 		gcall.CityConvey(0x16);
 		Sleep(3000);
@@ -19708,7 +19648,7 @@ void TaskScript::Task_520(int zid,int taskid)
 		gcall.Stepto(3065,-11828,-272);
 		gcall.Stepto(3030,-11616,-272);
 		Sleep(1000);
-		gcall.DeliverQuests(zid,taskid,L"???");
+		gcall.DeliverQuests(zid,taskid,L"ì§„ì†Œì•„");
 		Sleep(1000);
 		break;
 	case 3:
@@ -19742,7 +19682,7 @@ void TaskScript::Task_521(int zid,int taskid)
 		Sleep(1000);
 		break;
 	case 2:
-		gcall.GoodsQuests(zid,taskid,L"?? ???");
+		gcall.GoodsQuests(zid,taskid,L"ìˆ ê°’ ê³„ì‚°ì„œ");
 		Sleep(2000);
 		break;
 	case 3:
@@ -19784,7 +19724,7 @@ void TaskScript::Task_521(int zid,int taskid)
 		gcall.Stepto(3927,-15900,-276);
 		
 		Sleep(1000);
-		gcall.DeliverQuests(zid,taskid,L"???");
+		gcall.DeliverQuests(zid,taskid,L"ì˜ˆí•˜ë‘");
 		Sleep(1000);
 		break;
 	case 4:
@@ -19831,13 +19771,13 @@ void TaskScript::Task_521(int zid,int taskid)
 		gcall.Stepto(5607,-12372,-272);
 		gcall.Stepto(5695,-12381,-272);
 		Sleep(1000);
-		gcall.DeliverQuests(zid,taskid,L"???");
+		gcall.DeliverQuests(zid,taskid,L"ì†Œì—°í™”");
 		Sleep(1000);
 		break;
 	case 5:
 		gcall.Stepto(5666,-12248,-272);
 		Sleep(1000);
-		gcall.DeliverQuests(zid,taskid,L"??");
+		gcall.DeliverQuests(zid,taskid,L"ê¸¸ë™");
 		Sleep(1000);
 		break;
 	case 6:
@@ -19968,7 +19908,7 @@ void TaskScript::Task_522(int zid,int taskid)
 			gcall.randXianlu(3);
 		}
 		Sleep(1000);
-		gcall.Yaojiang(L"????? ??",L"????");
+		gcall.Yaojiang(L"ê·€ì—¼ì§‘ê²Œì˜ ì •ìˆ˜",L"ì „ê°ˆë³´íŒ¨");
 		Sleep(1000);
 		gcall.FenJieByConfig();
 		Sleep(1000);
@@ -19976,11 +19916,9 @@ void TaskScript::Task_522(int zid,int taskid)
 		Sleep(1000);
 		gcall.XieBaoShi(1);
 		Sleep(1000);
-		gcall.JiaBaoShi(1,L"??? ?? ???");//¼Ó°×5½Ç±¦Ê¯
-
+		gcall.JiaBaoShi(1,L"ë¹›ë‚˜ëŠ” ì˜¤ê° ê¸ˆê°•ì„");//åŠ ç™½5è§’å®çŸ³
 		Sleep(1000);
-		gcall.JiaBaoShi(2,L"??? ?? ??");//¼Óºì4½Ç±¦Ê¯
-
+		gcall.JiaBaoShi(2,L"ë¹›ë‚˜ëŠ” ì‚¬ê° í™ì˜¥");//åŠ çº¢4è§’å®çŸ³
 		Sleep(1000);
 		gcall.SortBag();
 		Sleep(1000);
@@ -20218,11 +20156,11 @@ void TaskScript::Task_522(int zid,int taskid)
 		gcall.Stepto(-16920,10011,-85);
 		gcall.Stepto(-16941,10061,-87);
 		Sleep(1000);
-		gcall.DeliverQuests(zid,taskid,L"??");
+		gcall.DeliverQuests(zid,taskid,L"ì¶˜ì‚¼");
 		Sleep(1000);
 		break;
 	case 2:
-		//¹ıÂË¹ÖÎï( ???;???;???;
+		//è¿‡æ»¤æ€ªç‰©( ë•…ë•…ì´;ë¬¼ë¬¼ì´;ë¶ˆë¶ˆì´;
 		gcall.NewSpend(2.5);
 		gcall.Stepto(-17103,10001,-86);
 		gcall.Stepto(-17150,9955,-88);
@@ -20434,7 +20372,7 @@ void TaskScript::Task_522(int zid,int taskid)
 		gcall.Stepto(-16760,9935,-85);
 		gcall.Stepto(-16787,10060,-82);
 		Sleep(1000);
-		gcall.DeliverQuests(zid,taskid,L"??");
+		gcall.DeliverQuests(zid,taskid,L"ì¶˜ì‚¼");
 		Sleep(1000);
 		break;
 	case 4:
@@ -20575,7 +20513,7 @@ void TaskScript::Task_523(int zid,int taskid)
 		gcall.Stepto(-36929,13628,-208);
 		gcall.Stepto(-37049,13617,-212);
 		Sleep(1000);
-		gcall.DeliverQuests(zid,taskid,L"??");
+		gcall.DeliverQuests(zid,taskid,L"í¬ì²­");
 		Sleep(1000);
 		break;
 	case 4:
@@ -20680,7 +20618,7 @@ void TaskScript::Task_524(int zid,int taskid)
 		gcall.Stepto(-33091,18805,446);
 		gcall.Stepto(-33006,18947,446);
 		Sleep(1000);
-		gcall.DeliverQuests(zid,taskid,L"?? ??");
+		gcall.DeliverQuests(zid,taskid,L"ê´´ì¸ ì ìš´");
 		Sleep(1000);
 		break;
 	case 2:
@@ -20766,7 +20704,7 @@ void TaskScript::Task_524(int zid,int taskid)
 		gcall.Stepto(-40454,13818,-483);
 		gcall.NewSpend(1);
 		Sleep(2000);
-		//¹ıÂË¹ÖÎï(???,1);
+		//è¿‡æ»¤æ€ªç‰©(ì˜ì•„ë ¹,1);
 		gcall.FindThenKill(0,300,modeAoe | modeNormal);
 		gcall.Stepto(-40318,13781,-475);
 		gcall.Stepto(-40188,13926,-458);
@@ -20778,15 +20716,15 @@ void TaskScript::Task_524(int zid,int taskid)
 		Sleep(1000);
 		gcall.PickupTask();
 		Sleep(1000);
-		//¹ıÂË¹ÖÎï(???,3);
+		//è¿‡æ»¤æ€ªç‰©(ì˜ì•„ë ¹,3);
 		gcall.Stepto(-40357,14439,-453);
 		Sleep(1000);
-		/*¶Ô×¼¹ÖÎï();
+		/*å¯¹å‡†æ€ªç‰©();
 		Sleep(1000);
-		°´¼ü(R);
-		¶Ô×¼¹ÖÎï();
+		æŒ‰é”®(R);
+		å¯¹å‡†æ€ªç‰©();
 		Sleep(1000);
-		°´¼ü(R);
+		æŒ‰é”®(R);
 		Sleep(4000);*/
 		//gcall.FindThenKill(0,300,modeAoe | modeNormal);
 		gcall.TurnToNear(500);
@@ -20797,11 +20735,11 @@ void TaskScript::Task_524(int zid,int taskid)
 		Sleep(500);
 		gcall.KeyPress(82);
 		Sleep(2000);
-		gcall.PickupSpecTypeTask(200,0x4,L"???");
+		gcall.PickupSpecTypeTask(200,0x4,L"ì˜ì•„ì´ˆ");
 		Sleep(1000);
 		gcall.Stepto(-40291,14448,-453);
 		Sleep(1000);
-		gcall.PickupSpecTypeTask(200,0x4,L"???");
+		gcall.PickupSpecTypeTask(200,0x4,L"ì˜ì•„ì´ˆ");
 		Sleep(1000);
 
 
@@ -20812,12 +20750,12 @@ void TaskScript::Task_524(int zid,int taskid)
 		gcall.Stepto(-40745,14653,-463);
 		gcall.Stepto(-40927,14826,-435);
 		Sleep(1000);
-		/*	¶Ô×¼¹ÖÎï();
+		/*	å¯¹å‡†æ€ªç‰©();
 		Sleep(1000);
-		°´¼ü(R);
-		¶Ô×¼¹ÖÎï();
+		æŒ‰é”®(R);
+		å¯¹å‡†æ€ªç‰©();
 		Sleep(1000);
-		°´¼ü(R);
+		æŒ‰é”®(R);
 		Sleep(4000);*/
 		gcall.TurnToNear(500);
 		Sleep(500);
@@ -20827,11 +20765,11 @@ void TaskScript::Task_524(int zid,int taskid)
 		Sleep(500);
 		gcall.KeyPress(82);
 		Sleep(2000);
-		gcall.PickupSpecTypeTask(200,0x4,L"???");
+		gcall.PickupSpecTypeTask(200,0x4,L"ì˜ì•„ì´ˆ");
 		Sleep(1000);
 		gcall.Stepto(-41019,14893,-420);
 		Sleep(1000);
-		gcall.PickupSpecTypeTask(200,0x4,L"???");
+		gcall.PickupSpecTypeTask(200,0x4,L"ì˜ì•„ì´ˆ");
 		Sleep(1000);
 
 		gcall.Stepto(-40681,14434,-488);
@@ -20841,12 +20779,12 @@ void TaskScript::Task_524(int zid,int taskid)
 		gcall.Stepto(-41148,14495,-471);
 		gcall.Stepto(-41235,14218,-490);
 		Sleep(1000);
-		/*¶Ô×¼¹ÖÎï();
+		/*å¯¹å‡†æ€ªç‰©();
 		Sleep(1000);
-		°´¼ü(R);
-		¶Ô×¼¹ÖÎï();
+		æŒ‰é”®(R);
+		å¯¹å‡†æ€ªç‰©();
 		Sleep(1000);
-		°´¼ü(R);
+		æŒ‰é”®(R);
 		Sleep(4000);*/
 		gcall.TurnToNear(500);
 		Sleep(500);
@@ -20856,11 +20794,11 @@ void TaskScript::Task_524(int zid,int taskid)
 		Sleep(500);
 		gcall.KeyPress(82);
 		Sleep(2000);
-		gcall.PickupSpecTypeTask(200,0x4,L"???");
+		gcall.PickupSpecTypeTask(200,0x4,L"ì˜ì•„ì´ˆ");
 		Sleep(1000);
 		gcall.Stepto(-41309,14339,-480);
 		Sleep(1000);
-		gcall.PickupSpecTypeTask(200,0x4,L"???");
+		gcall.PickupSpecTypeTask(200,0x4,L"ì˜ì•„ì´ˆ");
 		Sleep(1000);
 		break;
 	case 3:
@@ -20990,7 +20928,7 @@ void TaskScript::Task_524(int zid,int taskid)
 		gcall.Stepto(-37122,13581,-215);
 		gcall.NewSpend(1);
 		Sleep(1000);
-		gcall.DeliverQuests(zid,taskid,L"??");
+		gcall.DeliverQuests(zid,taskid,L"í¬ì²­");
 		Sleep(1000);
 		break;
 	case 4:
@@ -21014,7 +20952,7 @@ void TaskScript::Task_525(int zid,int taskid)
 	switch (taskid)
 	{
 	case 1:
-		MessageBox(0, L"525", L"×°°ËØÔ", MB_OK);
+		MessageBox(0, L"525", L"è£…å…«å¦", MB_OK);
 		break;
 	case 2:
 		break;
@@ -21041,7 +20979,7 @@ void TaskScript::Task_526(int zid,int taskid)
 	switch (taskid)
 	{
 	case 1:
-		MessageBox(0, L"526", L"×°°ËØÔ", MB_OK);
+		MessageBox(0, L"526", L"è£…å…«å¦", MB_OK);
 		break;
 	case 2:
 		break;
@@ -21068,7 +21006,7 @@ void TaskScript::Task_294(int zid,int taskid)
 	switch (taskid)
 	{
 	case 1:
-		MessageBox(0, L"Ò¡½±Íê", L"×°°ËØÔ", MB_OK);
+		MessageBox(0, L"æ‘‡å¥–å®Œ", L"è£…å…«å¦", MB_OK);
 		break;
 	case 2:
 		break;
@@ -21089,26 +21027,23 @@ void TaskScript::Task_294(int zid,int taskid)
 
 	}
 }
-/////////////////////Ö÷Ïß½áÊøÏß///////////////////////////////
+/////////////////////ä¸»çº¿ç»“æŸçº¿///////////////////////////////
 
-////////////////////Taskº¯ÊıÏß///////////////////////////////
+////////////////////Taskå‡½æ•°çº¿///////////////////////////////
 /************************************************************************/
-/* ³öÏÖ30ÃëÒÔÉÏµÄ¿ÉÄÜ¾ÍÊÇ¿¨ÃÅÁË£¬¿¨ÃÅºó±ØĞëÒªÍË³öÓÎÏ·ÖØĞÂ½ø²ÅÄÜ½â¾ö¡£
+/* å‡ºç°30ç§’ä»¥ä¸Šçš„å¯èƒ½å°±æ˜¯å¡é—¨äº†ï¼Œå¡é—¨åå¿…é¡»è¦é€€å‡ºæ¸¸æˆé‡æ–°è¿›æ‰èƒ½è§£å†³ã€‚
 
-
-¾ßÌå³öÏÖµÄÔ­Òò:´ó¸ÅÊÇVPNµÄÎÊÌâ£¬µ«»¹ÉÏÄÜÈ·¶¨¡£*/
+å…·ä½“å‡ºç°çš„åŸå› :å¤§æ¦‚æ˜¯VPNçš„é—®é¢˜ï¼Œä½†è¿˜ä¸Šèƒ½ç¡®å®šã€‚*/
 /************************************************************************/
 BOOL TaskScript::ShunYiResult(DWORD CityId,wchar_t* FileName,BOOL Hook_flag)
 {
-	Sleep(1000);//ÏÈĞİÏ¢1ÃëºóÔÙË²ÒÆ,·ñÔòÌ«¿ì¿ÉÄÜ»¹Ã»×ßµ½µã¾ÍÖ´ĞĞË²ÒÆÁË¡£
-
+	Sleep(1000);//å…ˆä¼‘æ¯1ç§’åå†ç¬ç§»,å¦åˆ™å¤ªå¿«å¯èƒ½è¿˜æ²¡èµ°åˆ°ç‚¹å°±æ‰§è¡Œç¬ç§»äº†ã€‚
 
 	int shunyirs = 0;
 	BOOL resultsy = FALSE;
 	BOOL returnflag = TRUE;
-	log(_T("Ö´ĞĞShunYiResult"));
-	//ÏÈÖ´ĞĞÒ»´Î
-
+	log(_T("æ‰§è¡ŒShunYiResult"));
+	//å…ˆæ‰§è¡Œä¸€æ¬¡
 	int shunyics = 0;
 	//gcall.Shunyi(FileName);
 	//Sleep(1000);
@@ -21123,7 +21058,7 @@ BOOL TaskScript::ShunYiResult(DWORD CityId,wchar_t* FileName,BOOL Hook_flag)
 		}
 		if (gcall.GetCityID() == CityId)
 		{
-			log(L"µ±Ç°µØÍ¼ID:%d,Óë´«ÈëID:%d,ÏàÍ¬break",gcall.GetCityID(),CityId);
+			log(L"å½“å‰åœ°å›¾ID:%d,ä¸ä¼ å…¥ID:%d,ç›¸åŒbreak",gcall.GetCityID(),CityId);
 			if (returnflag)
 			{
 				Sleep(1000);
@@ -21144,13 +21079,12 @@ BOOL TaskScript::ShunYiResult(DWORD CityId,wchar_t* FileName,BOOL Hook_flag)
 				resultsy = TRUE;
 				shunyics++;
 			}
-			log(L"µ±Ç°µØÍ¼ID:%d,Óë´«ÈëID:%d,Ö´ĞĞË²ÒÆÎÄ¼şµõ:%s",gcall.GetCityID(),CityId,FileName);
+			log(L"å½“å‰åœ°å›¾ID:%d,ä¸ä¼ å…¥ID:%d,æ‰§è¡Œç¬ç§»æ–‡ä»¶åŠ:%s",gcall.GetCityID(),CityId,FileName);
 			Sleep(1000);
 			if (shunyirs > 30)
 			{
-				//MessageBox(NULL,L"ÕâÀïĞŞ¸ÄÈ«¾Ö±äÁ¿Í¨Öª¿ØÖÆÌ¨ÍË³ö",NULL,NULL);
-				log(L"ÕâÀïĞŞ¸ÄÈ«¾Ö±äÁ¿Í¨Öª¿ØÖÆÌ¨ÍË³ö");//µÈ´ıÊ±¼äN·ÖÖÓ»òÍË³ö¡£
-
+				//MessageBox(NULL,L"è¿™é‡Œä¿®æ”¹å…¨å±€å˜é‡é€šçŸ¥æ§åˆ¶å°é€€å‡º",NULL,NULL);
+				log(L"è¿™é‡Œä¿®æ”¹å…¨å±€å˜é‡é€šçŸ¥æ§åˆ¶å°é€€å‡º");//ç­‰å¾…æ—¶é—´Nåˆ†é’Ÿæˆ–é€€å‡ºã€‚
 
 				resultsy = FALSE;
 				returnflag = FALSE;
@@ -21180,9 +21114,9 @@ void TaskScript::UseExperience()
 		gcall.GetAllGoodsToVector(GoodsVec);
 		for (int i=0;i<GoodsVec.size();i++)
 		{
-			if (_wcsicmp(GoodsVec[i].name,L"???? ?? ???") == 0)//%60
+			if (_wcsicmp(GoodsVec[i].name,L"ìê²½ë‹¨ì˜ í•œë°© ìš©ë´‰íƒ•") == 0)//%60
 			{
-				gcall.ChiYao(L"???? ?? ???");
+				gcall.ChiYao(L"ìê²½ë‹¨ì˜ í•œë°© ìš©ë´‰íƒ•");
 				Sleep(1000);
 				gcall.sendcall(id_msg_attack, (LPVOID)0x5dc1);
 				return;
@@ -21191,9 +21125,9 @@ void TaskScript::UseExperience()
 
 		for (int i=0;i<GoodsVec.size();i++)
 		{
-			if(_wcsicmp(GoodsVec[i].name,L"??? ?? ???") == 0)//%40
+			if(_wcsicmp(GoodsVec[i].name,L"ëŒ€ì‚¬ë§‰ ì•½ì„  ìš©ë´‰íƒ•") == 0)//%40
 			{
-				gcall.ChiYao(L"??? ?? ???");
+				gcall.ChiYao(L"ëŒ€ì‚¬ë§‰ ì•½ì„  ìš©ë´‰íƒ•");
 				Sleep(1000);
 				gcall.sendcall(id_msg_attack, (LPVOID)0x5dc1);
 				return;
@@ -21202,9 +21136,9 @@ void TaskScript::UseExperience()
 
 		for (int i=0;i<GoodsVec.size();i++)
 		{
-			if(_wcsicmp(GoodsVec[i].name,L"??? ?? ???") == 0)//%30
+			if(_wcsicmp(GoodsVec[i].name,L"ì œë£¡ë¦¼ ì•½ì„  ìš©ë´‰íƒ•") == 0)//%30
 			{
-				gcall.ChiYao(L"??? ?? ???");
+				gcall.ChiYao(L"ì œë£¡ë¦¼ ì•½ì„  ìš©ë´‰íƒ•");
 				Sleep(1000);
 				gcall.sendcall(id_msg_attack, (LPVOID)0x5dc1);
 				return;
@@ -21213,9 +21147,9 @@ void TaskScript::UseExperience()
 
 		for (int i=0;i<GoodsVec.size();i++)
 		{
-			if(_wcsicmp(GoodsVec[i].name,L"??? ?? ???") == 0)//%20
+			if(_wcsicmp(GoodsVec[i].name,L"ì œë£¡ë¦¼ íŠ¹ì œ ìš©ë´‰íƒ•") == 0)//%20
 			{
-				gcall.ChiYao(L"??? ?? ???");
+				gcall.ChiYao(L"ì œë£¡ë¦¼ íŠ¹ì œ ìš©ë´‰íƒ•");
 				Sleep(1000);
 				gcall.sendcall(id_msg_attack, (LPVOID)0x5dc1);
 				return;
@@ -21226,15 +21160,14 @@ void TaskScript::UseExperience()
 
 void TaskScript::IsGoonHecheng(DWORD pos)
 {
-	//¿ÉÄÜ³öÎÊÌâ
-
+	//å¯èƒ½å‡ºé—®é¢˜
 
 	for (int i = 0;i < 10;i++)
 	{
 		_BAGSTU zhu;
 		if(gcall.GetGoodsByEquipPos(pos, &zhu) == FALSE)
 		{
-			log(_T("×°±¸Î»ÖÃÃ»ÓĞÎïÆ·:%d"),pos);
+			log(_T("è£…å¤‡ä½ç½®æ²¡æœ‰ç‰©å“:%d"),pos);
 			return;
 		}else
 		{
@@ -21244,27 +21177,25 @@ void TaskScript::IsGoonHecheng(DWORD pos)
 				(zhu.m_PingJi == 10 &&
 				zhu.m_DangQianJingYanZhi == zhu.m_DangQianJingYanZongZhi))
 			{
-				log(_T("ÒªÇ¿»¯µÄÎïÆ·ÒÑÂú¼¶:%d"),pos);
+				log(_T("è¦å¼ºåŒ–çš„ç‰©å“å·²æ»¡çº§:%d"),pos);
 				Sleep(1000);
 				return;
 			}else
 			{
-				gcall.HeChengWuQiByHun((EQUITMENT_POS)pos);//????36¼¶Ê×ÊÎ»ê
-
+				gcall.HeChengWuQiByHun((EQUITMENT_POS)pos);//ìˆ˜ë ¨ë³´ì˜¥36çº§é¦–é¥°é­‚
 
 				Sleep(1000);
 			}
 		}
 	}
 }
-////////////////////Taskº¯ÊıÏß///////////////////////////////
+////////////////////Taskå‡½æ•°çº¿///////////////////////////////
 
 
-/////////////////////¸±±¾·Ö½çÏß///////////////////////////////
+/////////////////////å‰¯æœ¬åˆ†ç•Œçº¿///////////////////////////////
 void TaskScript::Lianji6_go()
 {
-	//½ø¸±±¾
-
+	//è¿›å‰¯æœ¬
 
 	gcall.NewSpend(2.5);
 	gcall.Stepto(-36188, -38116, -376,10,20,3000,TRUE);
@@ -21368,15 +21299,13 @@ void TaskScript::Lianji6_go()
 	gcall.Stepto(-39007, -23055, -1362);
 	gcall.NewSpend(1);
 	Sleep(2000);
-	//½ø¸±±¾½áÊø
-
+	//è¿›å‰¯æœ¬ç»“æŸ
 
 
 }
 void TaskScript::Lianji6()
 {
-	//ËÀÍö
-
+	//æ­»äº¡
 
 	if (gcall.GetPlayerDeadStatus() == 1 ||
 		gcall.GetPlayerDeadStatus() == 2)
@@ -21510,7 +21439,7 @@ void TaskScript::Lianji6()
 		gcall.Stepto(-30475, -25619, -991);
 		gcall.NewSpend(1);
 		Sleep(1000);
-		gcall.SellItemByConfig(L"???");
+		gcall.SellItemByConfig(L"ì´í™”ìƒ");
 		Sleep(1000);
 		gcall.NewSpend(2.5);
 		gcall.Stepto(-30580, -25474, -990);
@@ -21564,7 +21493,7 @@ void TaskScript::Lianji6()
 	gcall.Stepto(-40042, -20675, -933);
 	gcall.Stepto(-40263, -20564, -934);
 	gcall.Stepto(-40475, -20435, -935);*/
-	//MessageBox(0, L"Ò¡½±Íê", L"×°°ËØÔ", MB_OK);
+	//MessageBox(0, L"æ‘‡å¥–å®Œ", L"è£…å…«å¦", MB_OK);
 	Sleep(1000);
 	gcall.Shunyi(L"Lianji6");
 	Sleep(2000);
@@ -21626,19 +21555,18 @@ void TaskScript::Lianji6()
 		Sleep(2000);
 	}
 
-	//´ò¹ÖÍê
+	//æ‰“æ€ªå®Œ
 
-
-	//ÑÓÊ±(5000);
+	//å»¶æ—¶(5000);
 	gcall.HeChengWuQi(EQUITMENT_POS::WUQI);
 	Sleep(500);
-	gcall.BuqiBaGua(L"?? ????");
+	gcall.BuqiBaGua(L"ì¶©ê° ì¹˜ëª…ë³´íŒ¨");
 	Sleep(500);
 	//gcall.TihuanBaGua(L"");
 	gcall.FenJieByConfig();
 	Sleep(4000);
 	gcall.Stepto(-38939, -22910, -1329,120);
-	//ÕûÀí±³°ü();
+	//æ•´ç†èƒŒåŒ…();
 	Sleep(4000);
 
 }
@@ -21762,9 +21690,8 @@ void TaskScript::lianji8_go()
 
 void TaskScript::lianji8()
 {
-	//¸±±¾ÀïA2A ¸±±¾Íâ 2000
-	//ËÀÍö
-
+	//å‰¯æœ¬é‡ŒA2A å‰¯æœ¬å¤– 2000
+	//æ­»äº¡
 
 	if (gcall.GetPlayerDeadStatus() == 1 ||
 		gcall.GetPlayerDeadStatus() == 2)
@@ -21778,21 +21705,19 @@ void TaskScript::lianji8()
 		gcall.Stepto(-29580, -16292, -697);
 	}
 
-	//ĞŞÀí
-
+	//ä¿®ç†
 
 	_BAGSTU stu;
 	gcall.GetGoodsByEquipPos(EQUITMENT_POS::WUQI, &stu);
-	//MessageBox(0, L"Ò¡½±Íê", L"×°°ËØÔ", MB_OK);
+	//MessageBox(0, L"æ‘‡å¥–å®Œ", L"è£…å…«å¦", MB_OK);
 	if (stu.m_Lasting < 10)
 	{
-		//ÕâÀïÊ×ÏÈÒª±£Ö¤ÄÜ×ßµ½Ë²ÒÆµÄµãÉÏ£¬Èç¹ûÓĞ×Ô¶¯Ñ°Â·µÄ»°¾Í¿ÉÒÔºÜ¾«×¼¡£
-
+		//è¿™é‡Œé¦–å…ˆè¦ä¿è¯èƒ½èµ°åˆ°ç¬ç§»çš„ç‚¹ä¸Šï¼Œå¦‚æœæœ‰è‡ªåŠ¨å¯»è·¯çš„è¯å°±å¯ä»¥å¾ˆç²¾å‡†ã€‚
 
 		BOOL flagrs = gcall.Stepto(-35566, -12217, -1713,10,20,2500);
 		if (flagrs)
 		{
-			ShunYiResult(2000,L"Lianji8-end",TRUE);//ÕâÀïÊÇ±£Ö¤ÒÑ¾­Ë²ÒÆµ½8¼¶¸±±¾ÍâÁË¡£µØÍ¼ID£º2000
+			ShunYiResult(2000,L"Lianji8-end",TRUE);//è¿™é‡Œæ˜¯ä¿è¯å·²ç»ç¬ç§»åˆ°8çº§å‰¯æœ¬å¤–äº†ã€‚åœ°å›¾IDï¼š2000
 			gcall.Shunyi(L"Lianji8-mai-men");
 			Sleep(3000);
 			gcall.sendcall(id_msg_OverShunyi,(LPVOID)0);//hook
@@ -21800,7 +21725,7 @@ void TaskScript::lianji8()
 			gcall.WaitPlans();
 			gcall.HeChengWuQi(EQUITMENT_POS::WUQI);
 			Sleep(1000);
-			gcall.BuqiBaGua(L"?? ????");
+			gcall.BuqiBaGua(L"ì¶©ê° ì¹˜ëª…ë³´íŒ¨");
 			Sleep(1000);
 			gcall.FenJieByConfig();
 		}
@@ -21825,15 +21750,14 @@ void TaskScript::lianji8()
 		Sleep(3000);
 	}
 
-	//Âô
-
+	//å–
 
 	if (gcall.GetBagGridNumberLast() < 5)
 	{
 		BOOL flagrs = gcall.Stepto(-35566, -12217, -1713,10,20,2500);
 		if (flagrs)
 		{
-			ShunYiResult(2000,L"Lianji8-end",TRUE);//ÕâÀïÊÇ±£Ö¤ÒÑ¾­Ë²ÒÆµ½8¼¶¸±±¾ÍâÁË¡£µØÍ¼ID£º2000
+			ShunYiResult(2000,L"Lianji8-end",TRUE);//è¿™é‡Œæ˜¯ä¿è¯å·²ç»ç¬ç§»åˆ°8çº§å‰¯æœ¬å¤–äº†ã€‚åœ°å›¾IDï¼š2000
 			Sleep(1000);
 			gcall.Shunyi(L"Lianji8-mai-men");
 			Sleep(3000);
@@ -21842,7 +21766,7 @@ void TaskScript::lianji8()
 			gcall.WaitPlans();
 			gcall.HeChengWuQi(EQUITMENT_POS::WUQI);
 			Sleep(1000);
-			gcall.BuqiBaGua(L"?? ????");
+			gcall.BuqiBaGua(L"ì¶©ê° ì¹˜ëª…ë³´íŒ¨");
 			Sleep(1000);
 			gcall.FenJieByConfig();
 		}
@@ -21854,7 +21778,7 @@ void TaskScript::lianji8()
 		Sleep(1000);
 		gcall.Stepto(-30513, -25672, -991);
 		Sleep(1000);
-		gcall.SellItemByConfig(L"???");
+		gcall.SellItemByConfig(L"ì´í™”ìƒ");
 		Sleep(1000);
 		gcall.Stepto(-30578, -25431, -987);
 		Sleep(1000);
@@ -21879,15 +21803,15 @@ void TaskScript::lianji8()
 		//Sleep(1000);
 		//gcall.sendcall(id_msg_OverShunyi,(LPVOID)1);//hook
 		//Sleep(1000);
-		ShunYiResult(2000,L"Lianji8-end",TRUE);//ÕâÀïÊÇ±£Ö¤ÒÑ¾­Ë²ÒÆµ½8¼¶¸±±¾ÍâÁË¡£µØÍ¼ID£º2000
+		ShunYiResult(2000,L"Lianji8-end",TRUE);//è¿™é‡Œæ˜¯ä¿è¯å·²ç»ç¬ç§»åˆ°8çº§å‰¯æœ¬å¤–äº†ã€‚åœ°å›¾IDï¼š2000
 		gcall.HeChengWuQi(EQUITMENT_POS::WUQI);
 		Sleep(1000);
-		gcall.BuqiBaGua(L"?? ????");
+		gcall.BuqiBaGua(L"ì¶©ê° ì¹˜ëª…ë³´íŒ¨");
 		Sleep(1000);
 		gcall.FenJieByConfig();
 		Sleep(1000);
 
-		ShunYiResult(2602,L"Lianji8-go",TRUE);//ÕâÀïÊÇ±£Ö¤ÒÑ¾­Ë²ÒÆµ½8¼¶¸±±¾ÀïÁË¡£µØÍ¼ID£º2602
+		ShunYiResult(2602,L"Lianji8-go",TRUE);//è¿™é‡Œæ˜¯ä¿è¯å·²ç»ç¬ç§»åˆ°8çº§å‰¯æœ¬é‡Œäº†ã€‚åœ°å›¾IDï¼š2602
 		//gcall.Shunyi(L"Lianji8-go");
 		//Sleep(1000);
 		//gcall.sendcall(id_msg_OverShunyi,(LPVOID)1);//hook
@@ -21901,7 +21825,7 @@ void TaskScript::lianji8()
 		while (1)
 		{
 			gcall.Stepto(-29580, -16292, -697);
-			BOOL flag = ShunYiResult(2602,L"Lianji8-go",FALSE);//ÕâÀïÊÇ±£Ö¤ÒÑ¾­Ë²ÒÆµ½8¼¶¸±±¾ÀïÁË¡£µØÍ¼ID£º2602
+			BOOL flag = ShunYiResult(2602,L"Lianji8-go",FALSE);//è¿™é‡Œæ˜¯ä¿è¯å·²ç»ç¬ç§»åˆ°8çº§å‰¯æœ¬é‡Œäº†ã€‚åœ°å›¾IDï¼š2602
 			if (flag)
 			{
 				Sleep(3000);
@@ -21924,8 +21848,7 @@ void TaskScript::lianji8()
 
 	Sleep(2000);
 	gcall.Stepto(-32935, -14344, -1650);
-	//Òı¹Ö
-
+	//å¼•æ€ª
 
 	gcall.Stepto(-33182, -14357, -1697);
 	gcall.Stepto(-33433, -14355, -1704);
@@ -22002,7 +21925,7 @@ void TaskScript::lianji8()
 		{
 			Sleep(1000);
 			_BAGSTU yaoshi;
-			if (gcall.GetGoodsFromBagByName(L"??? ??",&yaoshi))
+			if (gcall.GetGoodsFromBagByName(L"ì œë£¡ë¦¼ ì—´ì‡ ",&yaoshi))
 			{
 				gcall.Stepto(-35540 , -12119 , -1713);
 				Sleep(1000);
@@ -22035,19 +21958,17 @@ void TaskScript::lianji8()
 			}
 		}
 	}
-	//´ò¹ÖÍê
+	//æ‰“æ€ªå®Œ
 
-
-	//ÑÓÊ±(5000);
+	//å»¶æ—¶(5000);
 	/*gcall.HeChengWuQi(EQUITMENT_POS::WUQI);
 	Sleep(1000);
-	gcall.BuqiBaGua(L"?? ????");
+	gcall.BuqiBaGua(L"ì¶©ê° ì¹˜ëª…ë³´íŒ¨");
 	Sleep(1000);
 	gcall.FenJieByConfig();
 	Sleep(1000);*/
 	//Sleep(4000);
-	////×ßµ½ÃÅ¿ÚµÄ×ø±ê
-
+	////èµ°åˆ°é—¨å£çš„åæ ‡
 
 	//gcall.Stepto(-29590, -16033, -713,120);
 	//gcall.Stepto(-29561, -16406, -689,120);
@@ -22146,9 +22067,8 @@ void TaskScript::lianji10_go()
 
 void TaskScript::lianji10()
 {
-	//¸±±¾ÀïÊÇA2C ÍâÊÇ89B
-	//ËÀÍö
-
+	//å‰¯æœ¬é‡Œæ˜¯A2C å¤–æ˜¯89B
+	//æ­»äº¡
 
 	if (gcall.GetPlayerDeadStatus() == 1 ||
 		gcall.GetPlayerDeadStatus() == 2)
@@ -22163,8 +22083,7 @@ void TaskScript::lianji10()
 		gcall.Stepto(-1423,-15563,-1310);
 	}
 
-	//ĞŞÀí
-
+	//ä¿®ç†
 
 	_BAGSTU stu;
 	gcall.GetGoodsByEquipPos(EQUITMENT_POS::WUQI, &stu);
@@ -22212,8 +22131,7 @@ void TaskScript::lianji10()
 		Sleep(2000);
 	}
 
-	//Âô
-
+	//å–
 
 	if (gcall.GetBagGridNumberLast() < 5)
 	{
@@ -22269,7 +22187,7 @@ void TaskScript::lianji10()
 		gcall.Stepto(-7165,-14388,-1703);
 		gcall.NewSpend(1);
 		Sleep(2000);
-		gcall.SellItemByConfig(L"???");
+		gcall.SellItemByConfig(L"ì´ì§„ìƒ");
 		Sleep(2000);
 		gcall.Stepto(-7165,-14388,-1703);
 		gcall.NewSpend(2.5);
@@ -22317,7 +22235,7 @@ void TaskScript::lianji10()
 		Sleep(1000);
 		gcall.HeChengWuQi(EQUITMENT_POS::WUQI);
 		Sleep(1000);
-		gcall.BuqiBaGua(L"?? ????");
+		gcall.BuqiBaGua(L"ì¶©ê° ì¹˜ëª…ë³´íŒ¨");
 		Sleep(1000);
 		gcall.FenJieByConfig();
 		Sleep(2000);
@@ -22434,9 +22352,8 @@ void TaskScript::lianji14_go()
 
 void TaskScript::lianji14()
 {
-	//¸±±¾ÀïA3C ¸±±¾Íâ89B
-	//ËÀÍö
-
+	//å‰¯æœ¬é‡ŒA3C å‰¯æœ¬å¤–89B
+	//æ­»äº¡
 
 	if (gcall.GetPlayerDeadStatus() == 1 ||
 		gcall.GetPlayerDeadStatus() == 2)
@@ -22449,8 +22366,7 @@ void TaskScript::lianji14()
 		gcall.Stepto(-3385,-6251,623);
 	}
 
-	//ĞŞÀí
-
+	//ä¿®ç†
 
 	_BAGSTU stu;
 	gcall.GetGoodsByEquipPos(EQUITMENT_POS::WUQI, &stu);
@@ -22491,8 +22407,7 @@ void TaskScript::lianji14()
 		Sleep(2000);
 	}
 
-	//Âô
-
+	//å–
 
 	if (gcall.GetBagGridNumberLast() < 5)
 	{
@@ -22547,7 +22462,7 @@ void TaskScript::lianji14()
 		gcall.NewSpend(1);
 		gcall.Stepto(-9592,-3448,601);
 		Sleep(2000);
-		gcall.SellItemByConfig(L"???");
+		gcall.SellItemByConfig(L"ì´ì‡ ëŒ");
 		Sleep(2000);
 		gcall.Stepto(-9592,-3448,601);
 		gcall.Stepto(-9586,-3626,602);
@@ -22591,7 +22506,7 @@ void TaskScript::lianji14()
 		Sleep(1000);
 		gcall.HeChengWuQi(EQUITMENT_POS::WUQI);
 		Sleep(1000);
-		//gcall.BuqiBaGua(L"?? ????");
+		//gcall.BuqiBaGua(L"ì¶©ê° ì¹˜ëª…ë³´íŒ¨");
 		//Sleep(1000);
 		gcall.FenJieByConfig();
 		Sleep(2000);
@@ -22806,9 +22721,8 @@ void TaskScript::lianji18_go()
 
 void TaskScript::lianji18()
 {
-	//¸±±¾Àï2615 ¸±±¾Íâ2440
-	//ËÀÍö
-
+	//å‰¯æœ¬é‡Œ2615 å‰¯æœ¬å¤–2440
+	//æ­»äº¡
 
 	if (gcall.GetPlayerDeadStatus() == 1 ||
 		gcall.GetPlayerDeadStatus() == 2)
@@ -22823,8 +22737,7 @@ void TaskScript::lianji18()
 		gcall.Stepto(35946,-21921,-2991);
 	}
 
-	//ĞŞÀí
-
+	//ä¿®ç†
 
 	_BAGSTU stu;
 	gcall.GetGoodsByEquipPos(EQUITMENT_POS::WUQI, &stu);
@@ -22860,8 +22773,7 @@ void TaskScript::lianji18()
 		lianji18_go();
 	}
 
-	//Âô
-
+	//å–
 
 	if (gcall.GetBagGridNumberLast() < 5)
 	{
@@ -22892,7 +22804,7 @@ void TaskScript::lianji18()
 		gcall.Stepto(54214,-19968,-612);
 		gcall.Stepto(54191,-20170,-608);
 		Sleep(2000);
-		gcall.SellItemByConfig(L"???");
+		gcall.SellItemByConfig(L"ì´ë¬´ê¸°");
 		Sleep(2000);
 		lianji18_go();
 	}
@@ -23055,9 +22967,8 @@ void TaskScript::lianji22_go()
 
 void TaskScript::lianji22()
 {
-	//¸±±¾Àï3060 ¸±±¾Íâ3000
-	//ËÀÍö
-
+	//å‰¯æœ¬é‡Œ3060 å‰¯æœ¬å¤–3000
+	//æ­»äº¡
 
 	if (gcall.GetPlayerDeadStatus() == 1 ||
 		gcall.GetPlayerDeadStatus() == 2)
@@ -23073,8 +22984,7 @@ void TaskScript::lianji22()
 		gcall.Stepto(-74901,-64637,-979);
 	}
 
-	//ĞŞÀí
-
+	//ä¿®ç†
 
 	_BAGSTU stu;
 	gcall.GetGoodsByEquipPos(EQUITMENT_POS::WUQI, &stu);
@@ -23110,8 +23020,7 @@ void TaskScript::lianji22()
 		gcall.Stepto(-74901,-64637,-979);
 	}
 
-	//Âô
-
+	//å–
 
 	if (gcall.GetBagGridNumberLast() < 5)
 	{
@@ -23121,7 +23030,7 @@ void TaskScript::lianji22()
 		gcall.Stepto(-81305,-66596,349);
 		gcall.Stepto(-81279,-66350,331);
 		Sleep(2000);
-		gcall.SellItemByConfig(L"???");
+		gcall.SellItemByConfig(L"ì´ˆìœ ë‘");
 		Sleep(2000);
 		lianji22_go();
 	}
@@ -23448,9 +23357,8 @@ void TaskScript::lianji28_go()
 
 void TaskScript::lianji28()
 {
-	//¸±±¾Àï3072 ¸±±¾Íâ3010
-	//ËÀÍö
-
+	//å‰¯æœ¬é‡Œ3072 å‰¯æœ¬å¤–3010
+	//æ­»äº¡
 
 	if (gcall.GetPlayerDeadStatus() == 1 ||
 		gcall.GetPlayerDeadStatus() == 2)
@@ -23467,8 +23375,7 @@ void TaskScript::lianji28()
 		gcall.Stepto(27315,-43375,-1609);
 	}
 
-	//ĞŞÀí
-
+	//ä¿®ç†
 
 	_BAGSTU stu;
 	gcall.GetGoodsByEquipPos(EQUITMENT_POS::WUQI, &stu);
@@ -23509,8 +23416,7 @@ void TaskScript::lianji28()
 		gcall.Stepto(27315,-43375,-1609);
 	}
 
-	//Âô
-
+	//å–
 
 	if (gcall.GetBagGridNumberLast() < 5)
 	{
@@ -23534,7 +23440,7 @@ void TaskScript::lianji28()
 		Sleep(1000);
 		gcall.sendcall(id_msg_OverShunyi,(LPVOID)FALSE);
 		Sleep(3000);
-		gcall.SellItemByConfig(L"???");
+		gcall.SellItemByConfig(L"í•œì •ê°€");
 		Sleep(1000);
 		gcall.Stepto(8863,-38969,-2329);
 		Sleep(1000);
@@ -23594,7 +23500,7 @@ void TaskScript::lianji28()
 		//		break;
 		//	}else
 		//	{
-		//		//¼ÓË«S
+		//		//åŠ åŒS
 		//		gcall.Stepto(27312,-43336,-1618);
 		//	}
 		//}
@@ -23706,9 +23612,8 @@ void TaskScript::lianji30_go()
 
 void TaskScript::lianji30()
 {
-	//¸±±¾Àï3080 ¸±±¾Íâ3047
-	//ËÀÍö
-
+	//å‰¯æœ¬é‡Œ3080 å‰¯æœ¬å¤–3047
+	//æ­»äº¡
 
 	if (gcall.GetPlayerDeadStatus() == 1 ||
 		gcall.GetPlayerDeadStatus() == 2)
@@ -23737,8 +23642,7 @@ void TaskScript::lianji30()
 		gcall.Stepto(-32493,-20109,-1410);
 	}
 
-	//ĞŞÀí
-
+	//ä¿®ç†
 
 	_BAGSTU stu;
 	gcall.GetGoodsByEquipPos(EQUITMENT_POS::WUQI, &stu);
@@ -23777,8 +23681,7 @@ void TaskScript::lianji30()
 		gcall.Stepto(-32493,-20109,-1410);
 	}
 
-	//Âô
-
+	//å–
 
 	if (gcall.GetBagGridNumberLast() < 5)
 	{
@@ -23802,7 +23705,7 @@ void TaskScript::lianji30()
 		Sleep(3000);
 		gcall.Stepto(-23932,-24614,-679);
 		Sleep(1000);
-		gcall.SellItemByConfig(L"???");
+		gcall.SellItemByConfig(L"í•œì •ê°€");
 		Sleep(1000);
 		gcall.Stepto(-24082,-24648,-679);
 		Sleep(1000);
@@ -23875,7 +23778,7 @@ void TaskScript::lianji30()
 		//		break;
 		//	}else
 		//	{
-		//		//¼ÓË«S
+		//		//åŠ åŒS
 		//		gcall.Stepto(27312,-43336,-1618);
 		//	}
 		//}
