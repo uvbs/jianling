@@ -102,7 +102,19 @@ SOURCE=.\gamedef.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\GameHepler.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\GameHook.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\GameInit.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\GameSpend.cpp
 # End Source File
 # Begin Source File
 
@@ -179,7 +191,19 @@ SOURCE=.\gamedef.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\GameHepler.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\GameHook.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\GameInit.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\GameSpend.h
 # End Source File
 # Begin Source File
 

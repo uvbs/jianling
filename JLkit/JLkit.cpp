@@ -54,6 +54,7 @@ BOOL CJLkitApp::InitInstance()
     // 		AfxMessageBox(_T("这个程序已经在执行"));
     // 		return FALSE;
     // 	}
+
     if(LoadLibrary(_T("JLnp")) == NULL)
     {
         AfxMessageBox(_T("没有找到 JLNP.DLL"));
@@ -73,7 +74,7 @@ BOOL CJLkitApp::InitInstance()
     //  the specific initialization routines you do not need.
     LoadStdProfileSettings();
 
-    CSingleDocTemplate*		pDocTemplate;
+    CSingleDocTemplate*	pDocTemplate;
     pDocTemplate = new CSingleDocTemplate(IDR_MAINFRAME, RUNTIME_CLASS(CJLkitDoc), RUNTIME_CLASS(CMainFrame), // main SDI frame window
                                           RUNTIME_CLASS(CJLkitView));
     AddDocTemplate(pDocTemplate);

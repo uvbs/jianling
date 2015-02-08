@@ -7,8 +7,14 @@
 #if _MSC_VER > 1000
 #pragma once
 #endif // _MSC_VER > 1000
+
+
+
+
 #include "../common/ShareMem.h"
 #include "../common/protocol.h"
+
+
 
 enum
 {
@@ -21,6 +27,7 @@ enum
     COLUMN_TEXT_NUMS
 };
 
+
 enum
 {
     RESULT_FAIL_INJECT = 100,
@@ -28,6 +35,8 @@ enum
     RESULT_ALREADY_RUNNING,
     RESULT_FAIL_CREATEGAMEPROCESS
 };
+
+
 
 class CLaunchThread;;
 class CJLkitDoc;
@@ -51,14 +60,15 @@ public:
     // Overrides
     // ClassWizard generated virtual function overrides
     //{{AFX_VIRTUAL(CJLkitView)
-public:
+protected:
     virtual void	OnInitialUpdate();
     virtual BOOL	PreCreateWindow(CREATESTRUCT& cs);
-    virtual BOOL DestroyWindow();
-protected:
+    virtual BOOL    DestroyWindow();
     virtual void	OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint);
     //}}AFX_VIRTUAL
 // Generated message map functions
+
+
 public:
     //{{AFX_MSG(CJLkitView)
     afx_msg int		OnCreate(LPCREATESTRUCT lpCreateStruct);
@@ -70,8 +80,8 @@ public:
     afx_msg void	OnUpdateSelectall(CCmdUI* pCmdUI);
     afx_msg void	OnReportbug();
     afx_msg void	OnTimer(UINT nIDEvent);
-    afx_msg void OnUpdateStart(CCmdUI* pCmdUI);
-    afx_msg void OnUpdateGetandactive(CCmdUI* pCmdUI);
+    afx_msg void    OnUpdateStart(CCmdUI* pCmdUI);
+    afx_msg void    OnUpdateGetandactive(CCmdUI* pCmdUI);
     //}}AFX_MSG
     DECLARE_MESSAGE_MAP()
 

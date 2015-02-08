@@ -43,7 +43,7 @@ void CDataDlg::DoDataExchange(CDataExchange* pDX)
 {
     CDialog::DoDataExchange(pDX);
     //{{AFX_DATA_MAP(CDataDlg)
-    //DDX_Control(pDX, IDC_LIST, m_ListCtrl);
+    DDX_Control(pDX, IDC_LIST, m_ListCtrl);
     DDX_Control(pDX, IDC_EDITINFO, m_hEdit);
     DDX_Control(pDX, IDC_COMBO_DATATYPE, m_ComBox);
     DDX_Text(pDX, IDC_EDITMEMINPUT, m_nRange);
@@ -176,6 +176,15 @@ static TCHAR* cli_Loots[] =
 
 
 
+static void ShowHookRet(LPVOID lpParam, TCHAR szText[])
+{
+    CDataDlg *pDlg = (CDataDlg*)lpParam;
+    pDlg->AddInfo2(szText);
+}
+
+
+
+
 /////////////////////////////////////////////////////////////////////////////
 // CDataDlg message handlers
 
@@ -218,6 +227,15 @@ void CDataDlg::CheckHook()
 }
 
 
+void CDataDlg::AddInfo2(TCHAR szText[])
+{
+
+    int len = m_hEdit.GetWindowTextLength();
+    m_hEdit.SetSel(len, -1);
+    m_hEdit.ReplaceSel(szText);
+
+}
+
 void CDataDlg::AddInfo(TCHAR szFormat[], ...)
 {
     TCHAR buffer[BUFSIZ] = {0};
@@ -256,7 +274,16 @@ BOOL CDataDlg::OnInitDialog()
     m_ComBox.AddString(_T("范围怪物(配置文件)"));
 
     m_ListCtrl.SetExtendedStyle(LVS_EX_FULLROWSELECT);
+
+
+
+
     CheckHook();
+
+    m_lpParam = this;
+    m_showHookRet = ShowHookRet;
+
+
     return TRUE;  // return TRUE unless you set the focus to a control
     // EXCEPTION: OCX Property Pages should return FALSE
 }
@@ -305,11 +332,11 @@ void CDataDlg::OnGetpalyerinfo()
     AddInfo(_T("角色最大体力: %d"), (int)gcall.GetPlayerMaxVit());
     AddInfo(_T("角色体力: %d"), (int) gcall.GetPlayerVit());
     AddInfo(_T("角色视角: %d"), (int)gcall.GetPlayerViewPoint());
-	AddInfo(_T("人物UI状态: %d"), gcall.GetPlayerQuestUIStatus());
-	AddInfo(_T("人物UI状态2: %d"), gcall.GetPlayerQuestUIStatusts());
-	AddInfo(_T("角色坐标: x:%d y:%d z:%d"), (int)PlayerPos.x, (int)PlayerPos.y, (int)PlayerPos.z);
-	AddInfo(_T("角色坐标2: x:%d y:%d z:%d"), (int)PlayerPos2.x, (int)PlayerPos2.y, (int)PlayerPos2.z);
-	
+    AddInfo(_T("人物UI状态: %d"), gcall.GetPlayerQuestUIStatus());
+    AddInfo(_T("人物UI状态2: %d"), gcall.GetPlayerQuestUIStatusts());
+    AddInfo(_T("角色坐标: x:%d y:%d z:%d"), (int)PlayerPos.x, (int)PlayerPos.y, (int)PlayerPos.z);
+    AddInfo(_T("角色坐标2: x:%d y:%d z:%d"), (int)PlayerPos2.x, (int)PlayerPos2.y, (int)PlayerPos2.z);
+
 }
 
 
@@ -318,8 +345,8 @@ void CDataDlg::PrintfAllObject()
 {
     std::vector<ObjectNode*> RangeObject;
     gcall.GetAllObjectToVector(gcall.GetObjectBinTreeBaseAddr(), RangeObject);
- 
-	m_ListCtrl.SetRedraw(FALSE); 
+
+    m_ListCtrl.SetRedraw(FALSE);
     for(DWORD i = 0; i < RangeObject.size(); i++)
     {
 
@@ -378,7 +405,7 @@ void CDataDlg::PrintfAllObject()
 
         m_ListCtrl.SetItemData(i, (DWORD)pNode);
     }
-	m_ListCtrl.SetRedraw(TRUE); 
+    m_ListCtrl.SetRedraw(TRUE);
 }
 
 void CDataDlg::InertBagItem(DWORD i, _BAGSTU& BagBuff)
@@ -847,7 +874,18 @@ void CDataDlg::OnSpeedx()
 {
     // TODO: Add your control notification handler code here
     UpdateData(TRUE);
-    gcall.NewSpend((float)m_nRange);
+    if(m_nRange == 0)
+    {
+        AfxMessageBox(_T("不能输入0值"));
+    }
+    else if(m_nRange > 50)
+    {
+        AfxMessageBox(_T("太大了, 可能会崩溃游戏"));
+    }
+    else
+    {
+        gcall.NewSpend((float)m_nRange);
+    }
 }
 
 
@@ -965,6 +1003,8 @@ void CDataDlg::OnRefresh()
     OnSelchangeComboDatatype();
 }
 
+
+//走路钩子
 void CDataDlg::OnHookSendstep()
 {
 
@@ -972,6 +1012,7 @@ void CDataDlg::OnHookSendstep()
     if(m_bHook_step)
     {
         backupSendStep = stepHook.hook();
+        TRACE1("step: %08x", backupSendStep);
     }
     else
     {

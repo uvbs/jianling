@@ -13,18 +13,14 @@
 #ifndef _LDASM_
 #define _LDASM_
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+class LDasm
+{
+public:
+    static unsigned long __fastcall SizeOfCode(void* Code, unsigned char** pOpcode);
+    static unsigned long __fastcall SizeOfProc(void* Proc);
+    static char __fastcall IsRelativeCmd(unsigned char* pOpcode);
 
-unsigned long __fastcall SizeOfCode(void* Code, unsigned char** pOpcode);
-unsigned long __fastcall SizeOfProc(void* Proc);
-char __fastcall IsRelativeCmd(unsigned char* pOpcode);
-
-#ifdef __cplusplus
-}
-#endif
-
+};
 
 #define OP_NONE           0x00
 #define OP_MODRM          0x01

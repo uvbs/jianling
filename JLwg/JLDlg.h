@@ -1,7 +1,3 @@
-/*$6*/
-
-
-
 #if !defined(AFX_JLDLG_H__9B29DC05_CA02_4C53_B0F2_D4D00809E70B__INCLUDED_)
 #define AFX_JLDLG_H__9B29DC05_CA02_4C53_B0F2_D4D00809E70B__INCLUDED_
 
@@ -11,7 +7,7 @@
 
 // JLDlg.h : header file
 //
-#include "JLwg.h"
+
 
 /////////////////////////////////////////////////////////////////////////////
 
@@ -28,7 +24,7 @@ public:
     //}}AFX_DATA
 
 
-    CWinThread* g_pTaskThread;
+    CWinThread* m_pTaskThread;
 
 
     // Overrides

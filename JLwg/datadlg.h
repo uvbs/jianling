@@ -18,6 +18,7 @@ class CDataDlg : public CDialog, public GameHook
 public:
     CDataDlg(CWnd* pParent = NULL);   // standard constructor
 
+
 // Dialog Data
     //{{AFX_DATA(CDataDlg)
     enum { IDD = IDD_WGDATA };
@@ -34,7 +35,9 @@ public:
     BOOL	m_bHook_Combat;
     //}}AFX_DATA
 
+
     void CheckHook();
+
 
 // Overrides
     // ClassWizard generated virtual function overrides
@@ -62,12 +65,13 @@ public:
     void PrintfRangeMonster(BOOL bApplyConfig = FALSE);
     void PrintfRangeObject();
     void AddInfo(TCHAR szFormat[], ...);
+    void AddInfo2(TCHAR szText[]);
 
-private:
-    void InsertColumnHelper(TCHAR* column[], int count);
 
 
 protected:
+    void InsertColumnHelper(TCHAR* column[], int count);
+
 
     // Generated message map functions
     //{{AFX_MSG(CDataDlg)

@@ -2,6 +2,7 @@
 //
 
 #include "stdafx.h"
+#include "JLwg.h"
 #include "JLDlg.h"
 #include "TaskScript.h"
 #include "DataDlg.h"
@@ -26,7 +27,10 @@ CJLDlg::CJLDlg(CWnd* pParent /*=NULL*/)
     : CDialog(CJLDlg::IDD, pParent)
 {
     //{{AFX_DATA_INIT(CJLDlg)
+
     //}}AFX_DATA_INIT
+
+    m_pTaskThread = NULL;
 }
 
 
@@ -66,14 +70,15 @@ void CJLDlg::OnGotask()
 {
     //读取配置文件
     //创建任务线程
-    if(g_pTaskThread == NULL)
+    if(m_pTaskThread == NULL)
     {
-        g_pTaskThread = AfxBeginThread(TaskThread, 0);
+        m_pTaskThread = AfxBeginThread(TaskThread, 0);
         SetDlgItemText(IDC_GOTASK, _T("终止任务"));
     }
     else
     {
         OnStopTask();
+        m_pTaskThread = NULL;
         SetDlgItemText(IDC_GOTASK, _T("开始任务"));
     }
 }
@@ -97,11 +102,11 @@ void CJLDlg::OnWgdata()
 
 void CJLDlg::OnStopTask()
 {
-    if(g_pTaskThread != NULL)
+    if(m_pTaskThread != NULL)
     {
-        ::TerminateThread(g_pTaskThread->m_hThread, 0);
-        g_pTaskThread->Delete();
-        g_pTaskThread = NULL;
+        ::TerminateThread(m_pTaskThread->m_hThread, 0);
+        m_pTaskThread->Delete();
+        m_pTaskThread = NULL;
     }
 }
 

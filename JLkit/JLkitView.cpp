@@ -182,6 +182,10 @@ void CJLkitView::SetResult(int nReslt, int i)
     {
         GetListCtrl().SetItemText(i, COLUMN_TEXT_STATUS, _T("创建进程错误"));
     }
+    else if(nReslt == RESULT_FAIL_AUTH)
+    {
+        GetListCtrl().SetItemText(i, COLUMN_TEXT_STATUS, _T("验证失败, 请重试一次"));
+    }
 }
 
 

@@ -9,10 +9,6 @@
 
 
 
-
-extern GamecallEx gcall;
-
-
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
@@ -25,9 +21,11 @@ DWORD* GameHook::backupDunDi = NULL;
 DWORD* GameHook::backupQuest = NULL;
 DWORD* GameHook::backupCombat = NULL;
 
-std::vector<DWORD> GameHook::m_ObjAddrVec;
-SHOWHOOKRESULT GameHook::showHookRet = NULL;
 
+
+LPVOID GameHook::m_lpParam = NULL;
+SHOWHOOKRESULT GameHook::m_showHookRet = NULL;
+std::vector<DWORD> GameHook::m_ObjAddrVec;
 
 static DWORD g_RecordStepRange = 200;
 static fPosition g_fmypos;
@@ -50,15 +48,26 @@ GameHook::~GameHook()
 
 }
 
+
+void GameHook::showHookRet(LPTSTR szFormat, ...)
+{
+    TCHAR szBuf[BUFSIZ] = {0};
+
+    va_list argptr;
+    va_start(argptr, szFormat);
+    wvsprintf(szBuf, szFormat, argptr);
+    va_end(argptr);
+
+    _tcscat(szBuf, _T("\r\n"));
+
+    m_showHookRet(m_lpParam, szBuf);
+
+}
+
 void __stdcall GameHook::mySendStep(SENDSTEP* ftarpos)
 {
 
-    static BOOL bFirst = TRUE;
-    if(bFirst)
-    {
-        GameHook::showHookRet(_T("gcall.Stepto(%d,%d,%d);"), (int)ftarpos->y, (int)ftarpos->x, (int)ftarpos->z);
-        bFirst = !bFirst;
-    }
+    __asm pushad;
 
 
     fPosition tarpos = {ftarpos->x, ftarpos->y, ftarpos->z};
@@ -68,7 +77,7 @@ void __stdcall GameHook::mySendStep(SENDSTEP* ftarpos)
     //多长距离输出一次
     if(Gamecall::CalcC(g_fmypos, tarpos) >= g_RecordStepRange)
     {
-        GameHook::showHookRet(_T("gcall.Stepto(%d,%d,%d);"), (int)ftarpos->y, (int)ftarpos->x, (int)ftarpos->z);
+        showHookRet(_T("gcall.Stepto(%d,%d,%d);"), (int)ftarpos->y, (int)ftarpos->x, (int)ftarpos->z);
         g_fmypos.x = ftarpos->x;
         g_fmypos.y = ftarpos->y;
         g_fmypos.z = ftarpos->z;
@@ -76,41 +85,44 @@ void __stdcall GameHook::mySendStep(SENDSTEP* ftarpos)
 
 
     //追加
-    FILE* file = _tfopen(gcall.GetLujingTest(), _T("a+b"));
+    FILE* file = _tfopen(Gamecall::GetLujingTest(), _T("a+b"));
     if(file == NULL)
     {
         OutputDebugString(_T("打开文件失败"));
-        goto exitf;
     }
-
-    int i;
-    for(i = 0; i < 34; i++)
+    else
     {
-
-        BYTE buff[512];
-        //从参数中复制512字节到缓冲区
-        memcpy(buff, backup, 512);
-
-        //把这512字节写到文件中
-        size_t count = fwrite(buff, 512, 1, file);
-        if(count == 0)
+        
+        for(int i = 0; i < 34; i++)
         {
-            TRACE(_T("写入失败"));
-            break;
+
+            BYTE buff[512];
+            //从参数中复制512字节到缓冲区
+            memcpy(buff, backup, 512);
+
+            //把这512字节写到文件中
+            size_t count = fwrite(buff, 512, 1, file);
+            if(count == 0)
+            {
+                OutputDebugString(_T("写入失败"));
+                break;
+            }
+
+            fflush(file);
+            backup += 512;
         }
 
-        fflush(file);
-        backup += 512;
+        fclose(file);
+
     }
 
-    fclose(file);
 
 
-exitf:
-
-    void* jmpTo = GameHook::backupSendStep;
+    DWORD jmpTo = (DWORD)backupSendStep;
     __asm
     {
+
+        popad;
         leave;
         jmp jmpTo;
     }
@@ -125,7 +137,7 @@ void __stdcall GameHook::myWearEquipment(DWORD argv1, DWORD value, DWORD argv3, 
     //根据value的高16位 是背包物品的id;
     //通过各自数获取名字
     std::vector<_BAGSTU> GoodsVector;
-    gcall.GetAllGoodsToVector(GoodsVector);
+    Gamecall::GetAllGoodsToVector(GoodsVector);
 
     wchar_t* name = NULL;
     DWORD GridPos = value >> 16;
@@ -148,7 +160,7 @@ void __stdcall GameHook::myWearEquipment(DWORD argv1, DWORD value, DWORD argv3, 
         showHookRet(_T("穿装备失败"));
     }
 
-    void* jmpTo = GameHook::backupWearEquipment;
+    void* jmpTo = backupWearEquipment;
     __asm
     {
         leave;
@@ -180,7 +192,7 @@ void __stdcall GameHook::myCombatFilter()
         }
     }
 
-    void* jmpTo = GameHook::backupCombat;
+    void* jmpTo = backupCombat;
     __asm
     {
         leave;
@@ -205,7 +217,7 @@ void __stdcall GameHook::myYiCiJianWu(DWORD argv1,
         showHookRet(_T("esp+%d %08x"), i, *(pEsp + i));
     }
 
-    void* jmpTo = GameHook::backupYiciJianWu;
+    void* jmpTo = backupYiciJianWu;
     __asm
     {
         leave;
@@ -226,7 +238,7 @@ void __stdcall GameHook::myDunDi()
 
     showHookRet(_T("eax = %08x"), eax_value);
 
-    void* jmpTo = GameHook::backupDunDi;
+    void* jmpTo = backupDunDi;
     __asm
     {
         leave;
@@ -237,13 +249,8 @@ void __stdcall GameHook::myDunDi()
 
 
 //交任务钩子函数
-void __stdcall GameHook::myDeliveQuest(DWORD unknow,
-                                       DWORD questID,
-                                       UCHAR questStep,
-                                       DWORD argv3,
-                                       DWORD argv4,
-                                       DWORD npcid1,
-                                       DWORD npcid2)
+void __stdcall GameHook::myDeliveQuest(DWORD unknow, DWORD questID, UCHAR questStep,
+                                       DWORD argv3, DWORD argv4, DWORD npcid1, DWORD npcid2)
 {
     int edi_value;
     int i;
@@ -275,7 +282,7 @@ void __stdcall GameHook::myDeliveQuest(DWORD unknow,
     wchar_t* name = NULL;
     std::vector<ObjectNode*> RangeObject;
 
-    gcall.GetAllObjectToVector(gcall.GetObjectBinTreeBaseAddr(), RangeObject);
+    Gamecall::GetAllObjectToVector(Gamecall::GetObjectBinTreeBaseAddr(), RangeObject);
     for(i = 0; i < RangeObject.size(); i++)
     {
         ObjectNode* pNode = RangeObject[i];
@@ -283,7 +290,7 @@ void __stdcall GameHook::myDeliveQuest(DWORD unknow,
         if((pNode->id == npcid1) && (pNode->id2 == npcid2))
         {
             //只要对比到NPCID就跳出去
-            name = gcall.GetObjectName(pNode->ObjAddress);
+            name = Gamecall::GetObjectName(pNode->ObjAddress);
             bFined = TRUE;
 
             //此处break逻辑无误
@@ -308,7 +315,7 @@ void __stdcall GameHook::myDeliveQuest(DWORD unknow,
                             NULL, MB_OKCANCEL);
 
 
-    void* jmpTo = GameHook::backupQuest;
+    void* jmpTo = backupQuest;
     if(result == IDOK)
     {
         __asm
@@ -331,13 +338,8 @@ void __stdcall GameHook::myDeliveQuest(DWORD unknow,
 
 
 //交任务钩子函数
-void __stdcall GameHook::myAcceptQuest(DWORD questID,
-                                       UCHAR questStep,
-                                       DWORD argv3,
-                                       DWORD argv4,
-                                       DWORD npcid1,
-                                       DWORD npcid2,
-                                       DWORD argv7)
+void __stdcall GameHook::myAcceptQuest(DWORD questID, UCHAR questStep, DWORD argv3,
+                                       DWORD argv4, DWORD npcid1, DWORD npcid2, DWORD argv7)
 {
     DWORD* pEsp = &questID;
 

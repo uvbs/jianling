@@ -22,6 +22,8 @@ public:
 	CListCtrl	m_FilterList;
 	CListCtrl	m_BagList;
 	//}}AFX_DATA
+
+
 	void GetSelToFilterList(TCHAR szName[]);
 
 

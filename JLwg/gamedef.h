@@ -50,10 +50,25 @@
 #define body                0x1             //身上装备 0xFA6CE4
 #define CAN_OPERATOR        155             //可以操作的距离, 游戏内次距离就可以按F等等
 
+
+
 //自定的消息, 用来执行游戏 call
 #define WM_CUSTOM_GCALL         (WM_USER + 0x300)
 
 #define SHENXINGBAIBIANCHAZHI   0x1EE4F18   //神行百变差值
+
+
+
+enum EQUITMENT_POS
+{
+    WUQI = 1,
+    YIFU = 2,
+    YAODAI,
+    XIANGLIAN = 7,
+    JIEZHI = 6,
+    ERHUAN = 3
+};
+
 
 //消息
 enum CUSTOMMSGID
@@ -114,7 +129,9 @@ enum CUSTOMMSGID
     id_msg_OpenTalentUI,
     id_msg_ConfirmDeletePalentPanelShowOk,
     id_msg_OpenDeleteTalentPanel,
-    id_msg_NPCJieRenWu
+    id_msg_NPCJieRenWu,
+    id_msg_GetObjectNameByIndex,
+    id_msg_Pickup2ts
 };
 
 
@@ -153,6 +170,14 @@ const wchar_t hun4[] = L"\xd64d\xbb38\xbb34\xd63c";
 
 //千魂武器
 const wchar_t qianhun[] = L"\xcc9c\xb839\xb3c4\xb07c";
+
+
+
+
+#define JINGDIANMOSHICALL_JIEGOUTOU     0x0A7CD0A4      // 经典模式CALL的结构头  
+#define QUDINGYAOJIANG_JIEGOUTOU		0x0A7CD0A4      // 确定摇奖CALL的结构头  
+#define ShuaXinBeiBao_JIEGOUTOU			0x0A7BD0A4      // 刷新背包CALL的结构头  
+#define GUANBICHUANGKOUCALL_JIEGOUTOU   0x0AD2D0A4      // 关闭窗口CALL的结构头  
 
 
 

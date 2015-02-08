@@ -17,7 +17,6 @@ public:
 	BOOL PickupSpecTypeTaskts(DWORD range, DWORD type, wchar_t* name = NULL);
     void PickupTask(DWORD range, DWORD taskid, DWORD taskstep);
     void Pickdown();    //这个当前用来一个任务中放尸体到火堆中, 暂时不知能不能通用
-    void CloseXiaoDongHua();
     void LinQuJiangLi();
 
 

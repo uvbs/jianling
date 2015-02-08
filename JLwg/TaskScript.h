@@ -3,9 +3,9 @@
 class TaskScript
 {
 public:
-	TaskScript(void);
-	~TaskScript(void);
-	void BeginTask();
+	TaskScript(void){};
+	~TaskScript(void){};
+    void BeginTask(){};
 	void log(TCHAR szFormat[], ...);
 	void Task_221(int zid,int taskid);//新手任务1
 	void Task_222(int zid,int taskid);//新手任务2
