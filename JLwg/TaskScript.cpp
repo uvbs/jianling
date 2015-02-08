@@ -20705,7 +20705,9 @@ void TaskScript::Task_524(int zid,int taskid)
 		gcall.NewSpend(1);
 		Sleep(2000);
 		//过滤怪物(영아령,1);
+		gcall.AddCustomKill(L"영아령",DONTKILL);
 		gcall.FindThenKill(0,300,modeAoe | modeNormal);
+		gcall.ClearCustom();
 		gcall.Stepto(-40318,13781,-475);
 		gcall.Stepto(-40188,13926,-458);
 		gcall.Stepto(-40182,14078,-460);
