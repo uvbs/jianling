@@ -9,27 +9,27 @@
 
 typedef struct _PCDATA
 {
-	BYTE cpu[20];
-	BYTE mac[MAX_ADAPTER_ADDRESS_LENGTH];
-	BYTE hid[12];
-	BYTE mbid[12];
-	BYTE bios[20];
-}PCDATA, *PPCDATA;
+    BYTE cpu[20];
+    BYTE mac[MAX_ADAPTER_ADDRESS_LENGTH];
+    BYTE hid[12];
+    BYTE mbid[12];
+    BYTE bios[20];
+} PCDATA, *PPCDATA;
 
 
 
 class CCUserInfo
 {
 public:
-	CCUserInfo();
-	~CCUserInfo();
+    CCUserInfo();
+    ~CCUserInfo();
 
     BOOL Get();
 
-	CString m_strUser;
-	CString m_strPw;
-	CString m_strIp;
-	PCDATA stPcData;
+    CString m_strUser;
+    CString m_strPw;
+    CString m_strIp;
+    PCDATA stPcData;
 };
 
 

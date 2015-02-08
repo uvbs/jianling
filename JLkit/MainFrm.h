@@ -34,7 +34,6 @@ protected:
     //{{AFX_MSG(CMainFrame)
     afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
     afx_msg void OnClose();
-    afx_msg void OnTimer(UINT nIDEvent);
 	//}}AFX_MSG
     DECLARE_MESSAGE_MAP()
 

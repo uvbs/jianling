@@ -12,7 +12,6 @@
 
 #include <Dbghelp.h>
 
-
 #define CALLTRACE_OPT_INFO_CHILDEBP           0x1
 #define CALLTRACE_OPT_INFO_SEPT               0x4
 #define CALLTRACE_OPT_INFO_MODULE_FUNC        0x8
@@ -26,29 +25,41 @@
 #define CALLTRACE_OPT_INFO_LEAN               CALLTRACE_OPT_INFO_MODULE_FUNC
 #define CALLTRACE_OPT_INFO_ALL                0xFFFFFFFF
 
-typedef void (* PFN_SHOWFRAME)(LPCTSTR szText,PVOID pParam);
+typedef void (* PFN_SHOWFRAME)(LPCTSTR szText, PVOID pParam);
 
-
-
-
-class CCallTracer //: public CD4dObject  
+class CCallTracer //: public CD4dObject
 {
 public:
-	LPCTSTR GetSymType(DWORD dwSymType);
-	HRESULT ShowFrame(STACKFRAME64 * pFrame,
-		PFN_SHOWFRAME pfnShowFrame, PVOID pParam);
-	HRESULT WalkStack(PFN_SHOWFRAME pfnShowFrame, 
-		PVOID pParam,int nMaxFrames,PCONTEXT pContext=NULL);
-	HRESULT FreeSymbols();
-	DWORD GetOptions(){return m_dwOptions;}
-	void SetOptions(DWORD dwOptions){m_dwOptions=dwOptions;}
-	HRESULT InitSymbols();
-	CCallTracer();
-	virtual ~CCallTracer();
-	static DWORD m_dwSymClients; // counter of symbol clients 
+    CCallTracer();
+    virtual ~CCallTracer();
+
+
+    LPCTSTR GetSymType(DWORD dwSymType);
+    HRESULT ShowFrame(STACKFRAME64* pFrame,
+                      PFN_SHOWFRAME pfnShowFrame, PVOID pParam);
+    HRESULT WalkStack(PFN_SHOWFRAME pfnShowFrame,
+                      PVOID pParam, int nMaxFrames, PCONTEXT pContext = NULL);
+    HRESULT FreeSymbols();
+
+
+    DWORD GetOptions()
+    {
+        return m_dwOptions;
+    }
+
+
+    void SetOptions(DWORD dwOptions)
+    {
+        m_dwOptions = dwOptions;
+    }
+
+
+    HRESULT InitSymbols();
+
+    static DWORD m_dwSymClients; // counter of symbol clients
 protected:
-	CONTEXT m_Context;
-	DWORD   m_dwOptions;
+    CONTEXT m_Context;
+    DWORD   m_dwOptions;
 };
 
 #endif // !defined(AFX_CALLTRACER_H__011E66DE_47A6_4BFA_A4B2_70048EBEA677__INCLUDED_)

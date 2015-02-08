@@ -3,13 +3,13 @@
 //////////////////////////////////////////////////////////////////////
 
 #include "StdAfx.h"
-#include "..\common\logger.h"
 #include "ShareMem.h"
 
+#include <assert.h>
 
 #ifdef _DEBUG
 #undef THIS_FILE
-static char THIS_FILE[]=__FILE__;
+static char THIS_FILE[] = __FILE__;
 #define new DEBUG_NEW
 #endif
 
@@ -27,28 +27,29 @@ ShareMem::ShareMem(HANDLE hFileMap)
 
 SHAREINFO* ShareMem::IsLogined(DWORD pid)
 {
-	SHAREINFO *share = GetMemAddr();
-
-    for(unsigned i = 0; i < m_dwMaxCount; i++){
-        if(share->pid == pid){
+    SHAREINFO* share = GetMemAddr();
+    for(unsigned i = 0; i < m_dwMaxCount; i++)
+    {
+        if(share->pid == pid)
+        {
             return share;
         }
     }
 
-	return NULL;
-
+    return NULL;
 }
 
 
 
 //判断一个名称是否已经存在
-SHAREINFO* ShareMem::IsLogined(const char *name)
+SHAREINFO* ShareMem::IsLogined(const char* name)
 {
-    
-    SHAREINFO *share = GetMemAddr();
 
-    for(unsigned i = 0; i < m_dwMaxCount; i++){
-        if(strcmp(share->szName, name) == 0){
+    SHAREINFO* share = GetMemAddr();
+    for(unsigned i = 0; i < m_dwMaxCount; i++)
+    {
+        if(strcmp(share->szName, name) == 0)
+        {
             return share;
         }
     }
@@ -62,63 +63,74 @@ SHAREINFO* ShareMem::IsLogined(const char *name)
 BOOL ShareMem::Create(DWORD dwCount, TCHAR szObjName[])
 {
 
-	BOOL bRet = FALSE;
+    BOOL bRet = FALSE;
 
     __try
     {
-        
+
         DWORD MemSize = dwCount * sizeof(SHAREINFO) + sizeof(DWORD);
-        
-        
+
+
         //创建共享对象
         m_hFileMap = CreateFileMapping(INVALID_HANDLE_VALUE, NULL, PAGE_READWRITE, 0, MemSize, szObjName);
-        if(m_hFileMap == NULL) __leave;
-        
-        m_lpMem = (SHAREINFO *)MapViewOfFile(m_hFileMap, FILE_MAP_ALL_ACCESS, 0, 0, 0);
-        if(m_lpMem == NULL) __leave;
-        
-        
+        if(m_hFileMap == NULL)
+        {
+            __leave;
+        }
+
+        m_lpMem = (SHAREINFO*)MapViewOfFile(m_hFileMap, FILE_MAP_ALL_ACCESS, 0, 0, 0);
+        if(m_lpMem == NULL)
+        {
+            __leave;
+        }
+
+
         ZeroMemory(m_lpMem, MemSize);
-        *(DWORD *)m_lpMem = MemSize;
-        m_lpMem = (SHAREINFO *)((DWORD)m_lpMem + sizeof(DWORD));
+        *(DWORD*)m_lpMem = MemSize;
+        m_lpMem = (SHAREINFO*)((DWORD)m_lpMem + sizeof(DWORD));
         m_dwMaxCount = dwCount;
-        
+
         bRet = TRUE;
-        
+
     }
-	__finally
-	{
-		if(bRet == FALSE){
-			if(m_hFileMap != NULL){
-				CloseHandle(m_hFileMap);
-				m_hFileMap = NULL;
-			}
-			
-			if(m_lpMem){
-				UnmapViewOfFile(m_lpMem);
-				m_lpMem = NULL;
-			}
-		}
-		
-	}
+    __finally
+    {
+        if(bRet == FALSE)
+        {
+            if(m_hFileMap != NULL)
+            {
+                CloseHandle(m_hFileMap);
+                m_hFileMap = NULL;
+            }
+
+            if(m_lpMem)
+            {
+                UnmapViewOfFile(m_lpMem);
+                m_lpMem = NULL;
+            }
+        }
+
+    }
 
 
-	return bRet;
+    return bRet;
 }
 
 void ShareMem::Close()
 {
-	if(m_lpMem != NULL){
-		m_lpMem = (SHAREINFO *)((DWORD)m_lpMem - sizeof(DWORD));
-		UnmapViewOfFile(m_lpMem);
-		m_lpMem = NULL;
-	}
-	
-	
-	if(m_hFileMap != NULL){
-		CloseHandle(m_hFileMap);
-		m_hFileMap = NULL;
-	}
+    if(m_lpMem != NULL)
+    {
+        m_lpMem = (SHAREINFO*)((DWORD)m_lpMem - sizeof(DWORD));
+        UnmapViewOfFile(m_lpMem);
+        m_lpMem = NULL;
+    }
+
+
+    if(m_hFileMap != NULL)
+    {
+        CloseHandle(m_hFileMap);
+        m_hFileMap = NULL;
+    }
 
     m_dwMaxCount = 0;
 }
@@ -126,33 +138,36 @@ void ShareMem::Close()
 
 ShareMem::~ShareMem()
 {
-	Close();
+    Close();
 }
 
 
-SHAREINFO* ShareMem::Add(SHAREINFO *pShareInfo)
+SHAREINFO* ShareMem::Add(SHAREINFO* pShareInfo)
 {
 
-    SHAREINFO *pItor = m_lpMem;
+    SHAREINFO* pItor = m_lpMem;
 
-    for(DWORD i = 0; i < m_dwMaxCount; i++){
-        if(pItor->pid == 0){
-			memcpy((void *)pItor, (void *)pShareInfo, sizeof(SHAREINFO));
+    for(DWORD i = 0; i < m_dwMaxCount; i++)
+    {
+        if(pItor->pid == 0)
+        {
+            memcpy((void*)pItor, (void*)pShareInfo, sizeof(SHAREINFO));
             break;
         }
-    
+
         pItor++;
     }
 
-	return pItor;
+    return pItor;
 }
 
 
-void ShareMem::Del(const char *name)
+void ShareMem::Del(const char* name)
 {
-    
-    SHAREINFO *pItor = IsLogined(name);
-    if(pItor != NULL){
+
+    SHAREINFO* pItor = IsLogined(name);
+    if(pItor != NULL)
+    {
         ZeroMemory(pItor, sizeof(SHAREINFO));
     }
 
@@ -161,17 +176,19 @@ void ShareMem::Del(const char *name)
 
 void ShareMem::Del(DWORD dwPid)
 {
-    
-    SHAREINFO *pItor = m_lpMem;
 
-    for(DWORD i = 0; i < m_dwMaxCount; i++){
-        if(pItor->pid == dwPid){
+    SHAREINFO* pItor = m_lpMem;
+
+    for(DWORD i = 0; i < m_dwMaxCount; i++)
+    {
+        if(pItor->pid == dwPid)
+        {
             ZeroMemory(pItor, sizeof(SHAREINFO));
             break;
         }
 
         pItor++;
-    
+
     }
 }
 
@@ -182,19 +199,23 @@ DWORD ShareMem::GetLoginedCount()
 {
 
     if(m_lpMem == NULL)
+    {
         return 0;
+    }
 
-	DWORD count = 0;
-	SHAREINFO *pItor = m_lpMem;
-	for(DWORD i = 0; i < m_dwMaxCount; i++){
-		if(pItor->pid != 0){
-			count++;
-		}
+    DWORD count = 0;
+    SHAREINFO* pItor = m_lpMem;
+    for(DWORD i = 0; i < m_dwMaxCount; i++)
+    {
+        if(pItor->pid != 0)
+        {
+            count++;
+        }
 
-		pItor++;
-	}
-	
-	return count;
+        pItor++;
+    }
+
+    return count;
 }
 
 
@@ -204,94 +225,118 @@ DWORD ShareMem::GetLoginedCount()
 //获取指定的共享数据
 SHAREINFO* ShareMem::Get(DWORD dwPid)
 {
-	TRACE1("dwpid:%d",dwPid);
-	if(m_lpMem == NULL ||
-		m_hFileMap == NULL){
-		return NULL;
-	}
-	SHAREINFO *pItor = m_lpMem;
-	for(DWORD i = 0; i < m_dwMaxCount; i++){
-		TRACE1("pItor->pid:%d",pItor->pid);
-		if(pItor->pid == dwPid){
-			return pItor;
-		}
+    TRACE1("dwpid:%d", dwPid);
+    if(m_lpMem == NULL ||
+            m_hFileMap == NULL)
+    {
+        return NULL;
+    }
+    SHAREINFO* pItor = m_lpMem;
+    for(DWORD i = 0; i < m_dwMaxCount; i++)
+    {
+        TRACE1("pItor->pid:%d", pItor->pid);
+        if(pItor->pid == dwPid)
+        {
+            return pItor;
+        }
 
-		pItor++;
-	}
+        pItor++;
+    }
 
-	return NULL;
+    TRACE(_T("没能初始化外挂数据"));
+    return NULL;
 }
 
 BOOL ShareMem::Open(TCHAR szObjName[])
 {
     BOOL bRet = FALSE;
-    __try{
+    __try
+    {
         m_hFileMap = OpenFileMapping(FILE_MAP_ALL_ACCESS, FALSE, szObjName);
-        if(m_hFileMap == NULL) __leave;
-        
-        m_lpMem = (SHAREINFO *)MapViewOfFile(m_hFileMap, FILE_MAP_ALL_ACCESS, 0, 0, 0);
-        if(m_lpMem == NULL) __leave;
-        
-        int MemSize = *(DWORD *)m_lpMem;
-        m_lpMem = (SHAREINFO *)((DWORD)m_lpMem + sizeof(DWORD));
-        m_dwMaxCount = (MemSize - sizeof(DWORD))/sizeof(SHAREINFO);   
+        if(m_hFileMap == NULL)
+        {
+            __leave;
+        }
+
+        m_lpMem = (SHAREINFO*)MapViewOfFile(m_hFileMap, FILE_MAP_ALL_ACCESS, 0, 0, 0);
+        if(m_lpMem == NULL)
+        {
+            __leave;
+        }
+
+        int MemSize = *(DWORD*)m_lpMem;
+        m_lpMem = (SHAREINFO*)((DWORD)m_lpMem + sizeof(DWORD));
+        m_dwMaxCount = (MemSize - sizeof(DWORD)) / sizeof(SHAREINFO);
         bRet = TRUE;
     }
-    __finally{
-        if(bRet == FALSE){
-            if(m_hFileMap != NULL){
+    __finally
+    {
+        if(bRet == FALSE)
+        {
+            if(m_hFileMap != NULL)
+            {
                 CloseHandle(m_hFileMap);
                 m_hFileMap = NULL;
             }
-            
-            if(m_lpMem){
+
+            if(m_lpMem)
+            {
                 UnmapViewOfFile(m_lpMem);
                 m_lpMem = NULL;
             }
         }
-        
+
     }
-    
+
+    if(bRet == FALSE)
+    {
+        TRACE(_T("没能打开共享内存"));
+    }
+
     return bRet;
 }
 
 //判断给定名字的pid是否有效, 用来判断是否进程退出了
-DWORD ShareMem::IsPidValid( const char* name )
+DWORD ShareMem::IsPidValid(const char* name)
 {
     SHAREINFO* lpsa = IsLogined(name);
     if(lpsa == NULL)
-        return 0;
-
+    {
+        return FALSE;
+    }
 
     HANDLE hProcessSnap;
     PROCESSENTRY32 pe32;
-    
+
     // Take a snapshot of all processes in the system.
     hProcessSnap = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
-    if(hProcessSnap == INVALID_HANDLE_VALUE){
+    if(hProcessSnap == INVALID_HANDLE_VALUE)
+    {
         return TRUE;
     }
-    
+
     // Set the size of the structure before using it.
-    pe32.dwSize = sizeof( PROCESSENTRY32 );
-    
+    pe32.dwSize = sizeof(PROCESSENTRY32);
+
     // Retrieve information about the first process,
     // and exit if unsuccessful
-    if(!Process32First(hProcessSnap, &pe32)){
+    if(!Process32First(hProcessSnap, &pe32))
+    {
         CloseHandle(hProcessSnap);          // clean the snapshot object
         return TRUE;
     }
-    
-    
-    do{
-        if(pe32.th32ProcessID == lpsa->pid){
+
+
+    do
+    {
+        if(pe32.th32ProcessID == lpsa->pid)
+        {
             return TRUE;
         }
-        
-    } 
+
+    }
     while(Process32Next(hProcessSnap, &pe32));
+
     CloseHandle(hProcessSnap);
     return FALSE;
-    
-    
 }

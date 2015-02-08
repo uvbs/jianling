@@ -2,9 +2,9 @@
 //
 
 #include "stdafx.h"
-#include "jlwg.h"
+#include "JLwg.h"
 #include "ConfigItemPage.h"
-
+#include "GamecallEx.h"
 #include "..\common\common.h"
 #include "..\common\CIniFile.h"
 

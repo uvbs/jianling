@@ -38,6 +38,8 @@
 
 
 #pragma comment(lib, "shlwapi")
+#pragma comment(lib, "dbghelp")
+
 
 #pragma warning(once:4127)
 #pragma warning(once:4100)

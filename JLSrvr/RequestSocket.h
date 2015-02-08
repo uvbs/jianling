@@ -20,44 +20,44 @@ class CRequestSocket : public CAsyncSocket
 public:
     CJLSrvrDoc* m_pDoc;
     CRequest* m_pRequest;
-	SOCKADDR_IN m_soaddr;
+    SOCKADDR_IN m_soaddr;
     CByteArray  m_buf;
     TCHAR m_szName[MAXLEN];
     TCHAR m_szPw[MAXLEN];
 
 // Operations
 public:
-	CRequestSocket(CJLSrvrDoc* pDoc);
-	virtual ~CRequestSocket();
+    CRequestSocket(CJLSrvrDoc* pDoc);
+    virtual ~CRequestSocket();
     BOOL ProcessRequest(BYTE* pRequestBuf);
-    void InitAccept(SOCKADDR_IN &cltsock);
+    void InitAccept(SOCKADDR_IN& cltsock);
 
 
 
-	//数据库处理
-	int GetPwRight(TCHAR szUsername[], TCHAR szPassw[]);
-	BOOL ModifyBind(TCHAR szUserName[], TCHAR szPassword[], TCHAR szOldBind[], TCHAR szNewBind[]);
-	int Unbindkey(KEY_BUF *pKeyBuf,  sockaddr_in *pSocketAddr);
-	BOOL NewRegist(TCHAR szUserName[], TCHAR szPassword[], TCHAR szBindIP[], TCHAR szMac[], TCHAR szClientIp[]);
-	BOOL Querykey(std::vector<QUERYKEY_RET_BUF> &vecKeyInfo, TCHAR szUserName[], TCHAR szPassWord[]);
-	BOOL Bindkey(KEY_BUF *pKeyBuf);
+    //数据库处理
+    int GetPwRight(TCHAR szUsername[], TCHAR szPassw[]);
+    BOOL ModifyBind(TCHAR szUserName[], TCHAR szPassword[], TCHAR szOldBind[], TCHAR szNewBind[]);
+    int Unbindkey(KEY_BUF* pKeyBuf,  sockaddr_in* pSocketAddr);
+    BOOL NewRegist(TCHAR szUserName[], TCHAR szPassword[], TCHAR szBindIP[], TCHAR szMac[], TCHAR szClientIp[]);
+    BOOL Querykey(std::vector<QUERYKEY_RET_BUF>& vecKeyInfo, TCHAR szUserName[], TCHAR szPassWord[]);
+    BOOL Bindkey(KEY_BUF* pKeyBuf);
 
 
 // Overrides
 public:
-	// ClassWizard generated virtual function overrides
-	//{{AFX_VIRTUAL(CRequestSocket)
-	public:
-	virtual void OnReceive(int nErrorCode);
-	virtual int Send(const void* lpBuf, int nBufLen, int nFlags = 0);
-	virtual int Receive(void* lpBuf, int nBufLen, int nFlags = 0);
-	virtual void OnClose(int nErrorCode);
-	//}}AFX_VIRTUAL
+    // ClassWizard generated virtual function overrides
+    //{{AFX_VIRTUAL(CRequestSocket)
+public:
+    virtual void OnReceive(int nErrorCode);
+    virtual int Send(const void* lpBuf, int nBufLen, int nFlags = 0);
+    virtual int Receive(void* lpBuf, int nBufLen, int nFlags = 0);
+    virtual void OnClose(int nErrorCode);
+    //}}AFX_VIRTUAL
 
-	// Generated message map functions
-	//{{AFX_MSG(CRequestSocket)
-		// NOTE - the ClassWizard will add and remove member functions here.
-	//}}AFX_MSG
+    // Generated message map functions
+    //{{AFX_MSG(CRequestSocket)
+    // NOTE - the ClassWizard will add and remove member functions here.
+    //}}AFX_MSG
 
 // Implementation
 protected:

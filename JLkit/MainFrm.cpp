@@ -119,10 +119,6 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	}
     
     RestoreWinPos();
-
-    SetTimer(IDT_HEART, 5000, NULL);
-    SetTimer(IDT_TIMERGAMEEXIT, 2000, NULL);
-    SetTimer(IDT_TIMERPOSTKEYQUERY, 30000, NULL);
     return 0;
 }
 
@@ -148,25 +144,3 @@ void CMainFrame::OnClose()
 	CFrameWnd::OnClose();
 }
 
-
-void CMainFrame::OnTimer(UINT nIDEvent) 
-{
-    CJLkitDoc* pDoc = (CJLkitDoc *)GetActiveDocument();
-    CJLkitView* pView = (CJLkitView *)GetActiveView();
-    if(pDoc == NULL)
-        return;
-
-
-    CJLkitSocket* pSocket = pDoc->m_pSocket;
-    CListCtrl &list = pView->GetListCtrl();
-    
-    if(nIDEvent == IDT_TIMERGAMEEXIT){
-        for(int i = 0; i < list.GetItemCount(); i++){
-            CString strName = list.GetItemText(i, 0);
-            if(pDoc->m_share.IsPidValid((LPCTSTR)strName) == FALSE){
-                pDoc->m_share.Del((LPCTSTR)strName);
-                list.SetItemText(i, COLUMN_TEXT_STATUS, _T("进程退出了"));
-            }
-        }
-    }
-}

@@ -9,26 +9,32 @@
 class CLock
 {
 public:
-	CLock(){
-		__try{
-			InitializeCriticalSection(&m_critical);
-		}
-		__except(EXCEPTION_EXECUTE_HANDLER){
-		}
-	}
-	~CLock(){
-		DeleteCriticalSection(&m_critical);
-	}
+    CLock()
+    {
+        __try
+        {
+            InitializeCriticalSection(&m_critical);
+        }
+        __except(EXCEPTION_EXECUTE_HANDLER)
+        {
+        }
+    }
+    ~CLock()
+    {
+        DeleteCriticalSection(&m_critical);
+    }
 
-	inline void lock(){
-		EnterCriticalSection(&m_critical);
-	}
-	inline void unlock(){
-		LeaveCriticalSection(&m_critical);
-	}
+    inline void lock()
+    {
+        EnterCriticalSection(&m_critical);
+    }
+    inline void unlock()
+    {
+        LeaveCriticalSection(&m_critical);
+    }
 
 private:
-	CRITICAL_SECTION    m_critical; // 系统临界区
+    CRITICAL_SECTION    m_critical; // 系统临界区
 };
 
 #endif

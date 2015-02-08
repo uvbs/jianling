@@ -27,36 +27,34 @@ static char THIS_FILE[] = __FILE__;
 // LoginDlg dialog
 
 
-CDlgLogin::CDlgLogin(CJLkitDoc* pDoc)
-: CDialog(CDlgLogin::IDD, NULL)
+CDlgLogin::CDlgLogin()
+    : CDialog(CDlgLogin::IDD, NULL)
 {
-	//{{AFX_DATA_INIT(LoginDlg)
-	m_strName = _T("");
-	m_strPw = _T("");
-	//}}AFX_DATA_INIT
-
-    m_pDoc = pDoc;
-    m_pSocket = pDoc->m_pSocket;
+    //{{AFX_DATA_INIT(LoginDlg)
+    m_strName = _T("");
+    m_strPw = _T("");
+    m_bRemPw = TRUE;
+    //}}AFX_DATA_INIT
 }
 
 
 void CDlgLogin::DoDataExchange(CDataExchange* pDX)
 {
-	CDialog::DoDataExchange(pDX);
-	//{{AFX_DATA_MAP(CDlgLogin)
-	DDX_Text(pDX, IDC_EDITNAME, m_strName);
-	DDX_Text(pDX, IDC_EDITPASSWORD, m_strPw);
-    DDX_Check(pDX, IDC_REMPASSWORD, bRemPw);
-	//}}AFX_DATA_MAP
+    CDialog::DoDataExchange(pDX);
+    //{{AFX_DATA_MAP(CDlgLogin)
+    DDX_Text(pDX, IDC_EDITNAME, m_strName);
+    DDX_Text(pDX, IDC_EDITPASSWORD, m_strPw);
+    DDX_Check(pDX, IDC_REMPASSWORD, m_bRemPw);
+    //}}AFX_DATA_MAP
 }
 
 
 BEGIN_MESSAGE_MAP(CDlgLogin, CDialog)
-	//{{AFX_MSG_MAP(CDlgLogin)
-	ON_BN_CLICKED(IDC_BUTTONREGISTER, OnBtnRegister)
-	ON_BN_CLICKED(IDC_BTNMODIFYBIND, OnBtnModifybind)
-	ON_WM_CREATE()
-	//}}AFX_MSG_MAP
+    //{{AFX_MSG_MAP(CDlgLogin)
+    ON_BN_CLICKED(IDC_BUTTONREGISTER, OnBtnRegister)
+    ON_BN_CLICKED(IDC_BTNMODIFYBIND, OnBtnModifybind)
+    ON_WM_CREATE()
+    //}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -64,99 +62,61 @@ END_MESSAGE_MAP()
 
 void CDlgLogin::OnBtnRegister()
 {
-	CDlgRegist dlg;
-	if (dlg.DoModal() == IDOK)
-	{
-		//×¢²áµÇÂ¼ÕÊºÅ
-	}
+    CDlgRegist dlg;
 
+    if(dlg.DoModal() == IDOK)
+    {
+        //×¢²áµÇÂ¼ÕÊºÅ
+    }
 }
 
 
 
 void CDlgLogin::LoginResult(int nResult)
 {
-
-    if(nResult == result_ok){
-        m_pSocket->Querykey();
+    if(nResult == result_ok)
+    {
+        CJLkitSocket::GetInstance()->Querykey();
         CDialog::OnOK();
     }
-    else if(nResult == result_login_notuser){
+    else if(nResult == result_login_notuser)
+    {
         AfxMessageBox(_T("²»´æÔÚµÄÓÃ»§Ãû"));
     }
-    else if(nResult == result_login_pwerror){
+    else if(nResult == result_login_pwerror)
+    {
         AfxMessageBox(_T("ÃÜÂë´íÎó"));
     }
-    else if(nResult == result_login_logined){
+    else if(nResult == result_login_logined)
+    {
         AfxMessageBox(_T("ÕÊºÅÒÑ¾­µÇÂ¼"));
     }
-    
 }
 
 
 
 BOOL CDlgLogin::OnInitDialog()
 {
-	CDialog::OnInitDialog();
-
-    //ÅÐ¶ÏÊÇ·ñ¼Ç×¡ÃÜÂë
-    if(bRemPw){
-        UpdateData(FALSE);
-    }
-
-
-
-	return TRUE;  // return TRUE unless you set the focus to a control
-	// EXCEPTION: OCX Property Pages should return FALSE
+    CDialog::OnInitDialog();
+    UpdateData(FALSE);
+    return TRUE;  // return TRUE unless you set the focus to a control
+    // EXCEPTION: OCX Property Pages should return FALSE
 }
 
 void CDlgLogin::OnBtnModifybind()
 {
-	// TODO: Add your control notification handler code here
-	CDlgModifyBind dlg;
-	if(dlg.DoModal() == IDOK){
-		//ÐÞ¸Ä°ó¶¨ÐÅÏ¢
-	}
+    // TODO: Add your control notification handler code here
+    CDlgModifyBind dlg;
 
-
+    if(dlg.DoModal() == IDOK)
+    {
+        //ÐÞ¸Ä°ó¶¨ÐÅÏ¢
+    }
 }
 
-void CDlgLogin::OnOK() 
+void CDlgLogin::OnOK()
 {
     // TODO: Add extra validation here
-    UpdateData();
-
-    m_pDoc->m_bRememberPassWord = bRemPw;
-    if(bRemPw){
-        _tcscpy(m_pDoc->m_szAccountName, (LPCTSTR)m_strName);
-        _tcscpy(m_pDoc->m_szAccountPw, (LPCTSTR)m_strPw);
-        
-    }
-    
-    CString strServer;
-    strServer.LoadString(IDS_CONNECT_SERVER);
-    while(1){
-        m_pSocket->Close();
-        if(m_pSocket->ConnectSrv(strServer, PORT_SRV) == FALSE){
-            if(AfxMessageBox(IDS_RETRY_CONNECT, MB_YESNO) == IDNO)
-                CDialog::OnCancel();
-        }
-
-
-        break;
- 
-    }
-
-}
-
-
-void CDlgLogin::ConnectResult(int nErrorCode)
-{
-    if(nErrorCode == 0){ 
-        m_pSocket->LoginSrv(m_strName, m_strPw);
-    }
-    else{
-        AfxMessageBox(_T("Á¬½ÓÊ§°Ü.."));
-    }
-    
+    UpdateData(TRUE);
+    CJLkitSocket::GetInstance()->LoginSrv(m_strName, m_strPw);
 }

@@ -22,7 +22,7 @@
 #include <afxdao.h>
 
 
-
+#include <assert.h>
 #include <direct.h>
 #include <Iphlpapi.h>
 #include <vector>

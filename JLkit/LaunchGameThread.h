@@ -13,38 +13,61 @@
 // CLaunchGameThread thread
 
 class CJLkitView;
-class CLaunchGameThread : public CWinThread
+class CLaunchThread : public CWinThread
 {
-	DECLARE_DYNCREATE(CLaunchGameThread)
+    DECLARE_DYNCREATE(CLaunchThread)
 protected:
-	CLaunchGameThread();           // protected constructor used by dynamic creation
+    CLaunchThread();           // protected constructor used by dynamic creation
 
 // Attributes
 public:
+    CJLkitView* m_pView;
 
-	CJLkitView* m_pView;
-	void SetOwner(CJLkitView* pOwner) { m_pView = pOwner; };
+    enum FUNCID
+    {
+        GET,
+        ACTIVE,
+        GETANDACTIVE,
+        LAUNCHGAME
+    };
+
+private:
+
+
+    int m_nFuncid;
+    BOOL m_bStop;
+    BOOL m_bIsWorking;
+    HANDLE hEventObj;
+
+
 // Operations
 public:
+    void SetOwner(CJLkitView* pOwner)
+    {
+        m_pView = pOwner;
+    };
 
+    BOOL isWorking();
+    BOOL AddWork(FUNCID id);
 // Overrides
-	// ClassWizard generated virtual function overrides
-	//{{AFX_VIRTUAL(CLaunchGameThread)
-	public:
-	virtual int Run();
-	virtual BOOL InitInstance();
-	//}}AFX_VIRTUAL
+    // ClassWizard generated virtual function overrides
+    //{{AFX_VIRTUAL(CLaunchThread)
+public:
+    virtual int Run();
+    virtual BOOL InitInstance();
+    //}}AFX_VIRTUAL
 
 // Implementation
 protected:
-	virtual ~CLaunchGameThread();
+    virtual ~CLaunchThread();
 
-	// Generated message map functions
-	//{{AFX_MSG(CLaunchGameThread)
-		// NOTE - the ClassWizard will add and remove member functions here.
-	//}}AFX_MSG
+    // Generated message map functions
+    //{{AFX_MSG(CLaunchThread)
+    // NOTE - the ClassWizard will add and remove member functions here.
+    //}}AFX_MSG
 
-	DECLARE_MESSAGE_MAP()
+    DECLARE_MESSAGE_MAP()
+
 };
 
 /////////////////////////////////////////////////////////////////////////////

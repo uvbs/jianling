@@ -13,50 +13,52 @@ class CJLSrvrDoc;
 class CJLSrvrView : public CListView
 {
 protected: // create from serialization only
-	CJLSrvrView();
-	DECLARE_DYNCREATE(CJLSrvrView)
+    CJLSrvrView();
+    DECLARE_DYNCREATE(CJLSrvrView)
 
 // Attributes
 public:
-	CJLSrvrDoc* GetDocument();
-	
+    CJLSrvrDoc* GetDocument();
+
 // Operations
 public:
     void AutoColumnWidth();
 // Overrides
-	// ClassWizard generated virtual function overrides
-	//{{AFX_VIRTUAL(CJLSrvrView)
-	public:
-	virtual void OnDraw(CDC* pDC);  // overridden to draw this view
-	virtual BOOL PreCreateWindow(CREATESTRUCT& cs);
-	virtual BOOL Create(LPCTSTR lpszClassName, LPCTSTR lpszWindowName, DWORD dwStyle, const RECT& rect, CWnd* pParentWnd, UINT nID, CCreateContext* pContext = NULL);
-	protected:
-	virtual void OnInitialUpdate(); // called first time after construct
-	virtual void OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint);
-	//}}AFX_VIRTUAL
+    // ClassWizard generated virtual function overrides
+    //{{AFX_VIRTUAL(CJLSrvrView)
+public:
+    virtual void OnDraw(CDC* pDC);  // overridden to draw this view
+    virtual BOOL PreCreateWindow(CREATESTRUCT& cs);
+    virtual BOOL Create(LPCTSTR lpszClassName, LPCTSTR lpszWindowName, DWORD dwStyle, const RECT& rect, CWnd* pParentWnd, UINT nID, CCreateContext* pContext = NULL);
+protected:
+    virtual void OnInitialUpdate(); // called first time after construct
+    virtual void OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint);
+    //}}AFX_VIRTUAL
 
 // Implementation
 public:
-	virtual ~CJLSrvrView();
+    virtual ~CJLSrvrView();
 #ifdef _DEBUG
-	virtual void AssertValid() const;
-	virtual void Dump(CDumpContext& dc) const;
+    virtual void AssertValid() const;
+    virtual void Dump(CDumpContext& dc) const;
 #endif
 
 protected:
 
 // Generated message map functions
 protected:
-	//{{AFX_MSG(CJLSrvrView)
-	afx_msg void OnTimer(UINT nIDEvent);
-	//}}AFX_MSG
-	DECLARE_MESSAGE_MAP()
-        
+    //{{AFX_MSG(CJLSrvrView)
+    afx_msg void OnTimer(UINT nIDEvent);
+    //}}AFX_MSG
+    DECLARE_MESSAGE_MAP()
+
 };
 
 #ifndef _DEBUG  // debug version in JLSrvrView.cpp
 inline CJLSrvrDoc* CJLSrvrView::GetDocument()
-   { return (CJLSrvrDoc*)m_pDocument; }
+{
+    return (CJLSrvrDoc*)m_pDocument;
+}
 #endif
 
 /////////////////////////////////////////////////////////////////////////////

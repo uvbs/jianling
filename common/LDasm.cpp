@@ -524,7 +524,7 @@ static UCHAR OpcodeFlagsExt[256] =
 };
 
 
-unsigned long __fastcall SizeOfCode(void *Code, unsigned char **pOpcode)
+unsigned long __fastcall LDasm::SizeOfCode(void *Code, unsigned char **pOpcode)
 {
 	PUCHAR cPtr;
 	UCHAR Flags;
@@ -605,7 +605,8 @@ unsigned long __fastcall SizeOfCode(void *Code, unsigned char **pOpcode)
 	return (ULONG)cPtr - (ULONG)Code;
 }
 
-unsigned long __fastcall SizeOfProc(void *Proc)
+
+unsigned long __fastcall LDasm::SizeOfProc(void *Proc)
 {
 	ULONG  Length;
 	PUCHAR pOpcode;
@@ -622,7 +623,8 @@ unsigned long __fastcall SizeOfProc(void *Proc)
 	return Result;
 }
 
-static char __fastcall IsRelativeCmd(unsigned char *pOpcode)
+
+char __fastcall LDasm::IsRelativeCmd(unsigned char *pOpcode)
 {
 	UCHAR Flags;
 	if (*pOpcode == 0x0F) Flags = OpcodeFlagsExt[*(PUCHAR)((ULONG)pOpcode + 1)]; 

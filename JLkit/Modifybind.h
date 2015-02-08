@@ -6,30 +6,38 @@
 #endif // _MSC_VER > 1000
 
 // CDlgModifyBind dialog
-
+class CJLkitSocket;
 class CDlgModifyBind : public CDialog
 {
-	DECLARE_DYNAMIC(CDlgModifyBind)
-
 public:
-	CDlgModifyBind(CWnd* pParent = NULL);   // standard constructor
-	virtual ~CDlgModifyBind();
+    CDlgModifyBind(CWnd* pParent = NULL);   // standard constructor
+    virtual ~CDlgModifyBind();
 
 // Dialog Data
-	enum { IDD = IDD_MODIFYBIND };
+    //{{AFX_DATA(CDlgModifyBind)
+    enum { IDD = IDD_MODIFYBIND };
+    CString m_strPw;
+    CString m_strName;
+    CString m_strOldbind;
+    CString m_strNewbind;
+    //}}AFX_DATA
 
+    // ClassWizard generated virtual function overrides
+    //{{AFX_VIRTUAL(CDlgModifyBind)
 protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+    virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+    //}}AFX_VIRTUAL
 
-	DECLARE_MESSAGE_MAP()
+
+    // Generated message map functions
+
 public:
-	afx_msg void OnBnClickedOk();
+    //{{AFX_MSG(CDlgModifyBind)
+    virtual void OnOK();
+    //}}AFX_MSG
+    DECLARE_MESSAGE_MAP()
 
 private:
-	CString m_strPw;
-	CString m_strName;
-	CString m_strOldbind;
-	CString m_strNewbind;
 
 };
 

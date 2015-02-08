@@ -4,68 +4,28 @@
 
 #include "..\common\CIniFile.h"
 
-BYTE Gamecall::ReadByte(DWORD addr)
-{
-    if(!IsBadReadPtr((void*)addr, sizeof(BYTE)))
     {
-        return *(BYTE*)addr;
     }
-    return 0;
-}
 
-WORD Gamecall::ReadWORD(DWORD addr)
-{
-    if(!IsBadReadPtr((void*)addr, sizeof(WORD)))
     {
-        return *(WORD*)addr;
     }
-    return 0;
-}
 
-DWORD Gamecall::ReadDWORD(DWORD addr)
-{
-    if(!IsBadReadPtr((void*)addr, sizeof(DWORD)))
     {
-        return *(DWORD*)addr;
     }
-    return 0;
-}
-
-int Gamecall::ReadInt(DWORD addr)
-{
-    if(!IsBadReadPtr((void*)addr, sizeof(int)))
     {
-        return *(int*)addr;
     }
-    return 0;
-}
 
-float Gamecall::ReadFloat(DWORD addr)
-{
-    if(!IsBadReadPtr((void*)addr, sizeof(float)))
     {
-        return *(float*)addr;
     }
-    return 0;
-}
 
-char* Gamecall::ReadStr(DWORD addr)
+Gamecall::Gamecall():
+    log(_T("gcall"))
 {
-    if(!IsBadReadPtr((void*)addr, sizeof(char)))
     {
-        return (char*)addr;
     }
-    return 0;
-}
 
-Gamecall::Gamecall(): log(_T("gcall"))
-{
-    m_pfnInitSpeed = NULL;
     m_pShareMem = NULL;
 
-    ZeroMemory(m_szLujingPath, MAX_PATH);
-    ZeroMemory(m_szConfigPath, MAX_PATH);
-    ZeroMemory(m_szLujingTest, MAX_PATH);
 
 }
 
@@ -120,11 +80,16 @@ void Gamecall::Fuhuo(DWORD uiAddr)
     }
 }
 
+
+
 //打开天赋ui
 void Gamecall::OpenTalentUI()
 {
     sendcall(id_msg_OpenTalentUI, 0);
 }
+
+
+
 //打开天赋ui
 void Gamecall::_OpenTalentUI()
 {
@@ -767,19 +732,6 @@ BOOL Gamecall::GetGoodsFromBagByName(const wchar_t* name, _BAGSTU* goods)
     return FALSE;
 }
 
-//初始化外挂
-//这个函数应该从外怪被注入开始就调用
-//等待游戏窗口建立
-//等待协议说明, 点进去
-//等待角色选择界面, 点进去
-//等待蓝条
-//摇奖
-//关掉摇奖
-//参数1: 使用第几个角色进入游戏
-void Gamecall::SetIniPath(TCHAR* szPath)
-{
-    _tcscpy(m_szConfigPath, szPath);
-}
 
 
 //放下尸体
@@ -808,57 +760,6 @@ void Gamecall::PickdownBody()
 }
 
 
-void Gamecall::InitSpeed()
-{
-    //先加载这个DLL
-    m_hack = GetModuleHandle(_T("speedhack-i386"));
-    if(m_hack == NULL)
-    {
-        log.logdv(_T("load speedhack-i386 err: %d"), GetLastError());
-        return;
-    }
-
-
-    HMODULE hWinmm = GetModuleHandle(_T("Winmm"));
-    BYTE* pfntimeGetTime = (BYTE*)GetProcAddress(hWinmm, "timeGetTime");
-
-
-    m_pfnInitSpeed = (_InitializeSpeedhack)GetProcAddress(m_hack, "InitializeSpeedhack");
-    int* realGetTickCount = (int*)GetProcAddress(m_hack, "realGetTickCount");
-    int* realQueryPerformance = (int*)GetProcAddress(m_hack, "realQueryPerformanceCounter");
-
-    int* ce_gettickcount = (int*)GetProcAddress(m_hack, "speedhackversion_GetTickCount");
-    int* ce_querytime = (int*)GetProcAddress(m_hack, "speedhackversion_QueryPerformanceCounter");
-
-
-    HMODULE hKernel = GetModuleHandle(_T("Kernel32"));
-    DWORD GetTickCount_addr = (DWORD)GetProcAddress(hKernel, "GetTickCount");
-    DWORD Query_addr = (DWORD)GetProcAddress(hKernel, "QueryPerformanceCounter");
-
-
-    ce_hooktimeGetTime.Init((void*)pfntimeGetTime, ce_gettickcount, FALSE);
-    ce_hookGetTickCount.Init((void*)GetTickCount_addr, ce_gettickcount, FALSE);
-    ce_hookQueryPerformanceCounter.Init((void*)Query_addr, ce_querytime, FALSE);
-
-
-    if(*realGetTickCount == 0)
-    {
-        ce_hooktimeGetTime.hook();
-        void* result1 = ce_hookGetTickCount.hook();
-        *realGetTickCount = (DWORD)result1;
-
-
-    }
-
-    if(*realQueryPerformance == 0)
-    {
-        void* result2 = ce_hookQueryPerformanceCounter.hook();
-        *realQueryPerformance = (DWORD)result2;
-    }
-
-}
-
-
 //登录游戏, 参数是登录的角色
 BOOL Gamecall::LoginInGame(DWORD index)
 {
@@ -867,29 +768,39 @@ BOOL Gamecall::LoginInGame(DWORD index)
     if(isLoadingMap() != 3)
     {
 
-        ConfirmAgreement();	//确认游戏使用协议
-        LoginGame(index);		//进入游戏
-        WaitPlans();		//等待读条
-        //CloseAttendance();	//关掉老虎机
+        ConfirmAgreement(); //确认游戏使用协议
+        LoginGame(index);       //进入游戏
+        WaitPlans();        //等待读条
+        //CloseAttendance();    //关掉老虎机
     }
 
-    //SetMouseMode();			//TODO: 暂时不能用
+    //SetMouseMode();           //TODO: 暂时不能用
 
 
     return TRUE;
 }
 
 
+UINT Gamecall::KeepAliveThread(LPVOID pParam)
+{
 
-void __stdcall ShunyiQietu()
+    Gamecall* pCall = (Gamecall*)pParam;
+    while(1)
+    {
+
+        pCall->GetHealth(60);
+        pCall->CloseXiaoDongHua();
+
+        Sleep(3000);
+    }
+
+}
+
+UINT Gamecall::AttackThread(LPVOID pParam)
 {
 
 
-    __asm
-    {
-        leave;
-        retn 12;
-    }
+    return 0;
 }
 
 
@@ -902,92 +813,25 @@ BOOL Gamecall::Init()
     try
     {
 
-        BOOL bGetShareMem = FALSE;
-        if(g_share.Open(SHAREOBJNAME))
         {
-            Sleep(2000);
-            m_pShareMem = g_share.Get(GetCurrentProcessId());
-            if(m_pShareMem)
             {
-                bGetShareMem = TRUE;
-            }
-
-        }
-
-        if(bGetShareMem == FALSE)
         {
-            TRACE(_T("没能初始化外挂数据"));
-            return FALSE;
-        }
-
-
-        //配置文件路径
-        GetModuleFileName(GetModuleHandle(_T("JLwg")), m_szConfigPath, MAX_PATH);
-        PathRemoveFileSpec(m_szConfigPath);
-
-        //模块的路径
-        TCHAR szExePath[MAX_PATH] = {0};
-        _tcscpy(szExePath, m_szConfigPath);
-
-
-        //配置文件路径
-        PathAppend(m_szConfigPath, _T("配置"));
-        if(PathFileExists(m_szConfigPath) == FALSE)
         {
-            _wmkdir(m_szConfigPath);
-        }
-
-        //顺义的路径
-        _tcscpy(m_szLujingPath, szExePath);
-        PathAppend(m_szLujingPath, _T("路径"));
-        if(PathFileExists(m_szLujingPath) == FALSE)
         {
-            _wmkdir(m_szLujingPath);
-        }
-
-        //录制瞬移的默认路径
-        _tcscpy(m_szLujingTest, m_szLujingPath);
-        PathAppend(m_szLujingTest, _T("test.bin"));
-
-
-        //默认配置文件的路径
-        TCHAR szConfigTemp[MAX_PATH] = {0};
-        CString strConfig = m_pShareMem->szConfig;
-        _tcscpy(szConfigTemp, (LPCTSTR)strConfig);
-        _tcscat(szConfigTemp, _T(".ini"));
-        PathAppend(m_szConfigPath, szConfigTemp);
-
-        //如果配置文件不存在
-        if(PathFileExists(m_szConfigPath) == FALSE)
         {
-            FILE* configFile = _tfopen(_T("default.ini"), _T("w+"));
-            if(configFile == NULL)
             {
-                TRACE(_T("创建配置文件失败"));
-                return FALSE;
-            }
-
-            WORD hdr = 0xfeff;
-            if(fwrite(&hdr, 1, sizeof(WORD), configFile) != sizeof(WORD))
             {
-                return FALSE;
-            }
 
-            fclose(configFile);
-
-        }
+        GameInit::Init();
+        GameSpend::Init();      //初始化加速
 
 
-        log.logdv(_T("%s"), m_szConfigPath);
-        log.logdv(_T("%s"), m_szLujingTest);
+        _beginthreadex(0, 0, KeepAliveThread, this, 0, 0);
+        _beginthreadex(0, 0, AttackThread, this, 0, 0);
 
 
-        WaitGameCreate();	//等待游戏窗口
-        InitSpeed();		//初始化加速
-        hookQietu.Init((void*)hook_dont_leave_dungeons, ShunyiQietu);
         //获取加载的游戏dll的地址
         m_hModuleBsEngine = GetModuleHandle(_T("bsengine_Shipping"));
-
 
         return TRUE;
     }
@@ -1152,38 +996,6 @@ void Gamecall::HeChengWuQi_Po5(_BAGSTU& zhu, _BAGSTU& fu) //合成武器破5
     }
 }
 
-
-//判断游戏窗口是否创建
-HWND Gamecall::isGameWndCreated(DWORD dwPid)
-{
-    HWND hGameWnd = FindWindowEx(NULL, NULL, _T("LaunchUnrealUWindowsClient"), NULL);
-
-    if(hGameWnd == NULL)
-    {
-        //没有找到
-        return NULL;
-    }
-
-    //判断游戏窗口创建完成
-    for(;;)
-    {
-        DWORD dwWndOfPid;
-        GetWindowThreadProcessId(hGameWnd, &dwWndOfPid);
-
-        if(dwPid == dwWndOfPid)
-        {
-            //找到了, 保存
-            m_hGameWnd = hGameWnd;
-            return hGameWnd;
-        }
-
-        hGameWnd = FindWindowEx(NULL, hGameWnd, _T("LaunchUnrealUWindowsClient"), NULL);
-        if(hGameWnd == NULL)
-        {
-            return NULL;
-        }
-    }
-}
 
 
 void Gamecall::_GetAcceptedQuestToVector(std::vector<Quest>& QuestVec)
@@ -2408,7 +2220,7 @@ void Gamecall::SellItem(_BAGSTU& bag, DWORD adress)
 
     int nums = bag.m_Num;
     //if(nums == 0)
-    //	nums += 1;
+    //  nums += 1;
 
     __try
     {
@@ -2542,7 +2354,7 @@ void Gamecall::GetStrikeName(DWORD ID, DWORD IDD, STRIKENAME* pName)
 
             mov edi, eax;
             mov edx, [edi + 0x18];   //TODO 固定
-            mov ecx, [edi + 0x1C];	//TODO 固定
+            mov ecx, [edi + 0x1C];  //TODO 固定
             mov eax, IDD;
             push eax;
 
@@ -4354,7 +4166,7 @@ BOOL Gamecall::isLoading()
 
 //
 //wchar_t *NAME = L"AreaInfoPanel";
-//	canshu2 = ReadDWORD(JIEGOU.adress+0x58);
+//  canshu2 = ReadDWORD(JIEGOU.adress+0x58);
 void Gamecall::OpenXianluUI()
 {
     DWORD uiAddr = 0;
@@ -4527,8 +4339,8 @@ BOOL Gamecall::isQuestItem(DWORD pAddr)
 }
 
 //[[[player_base]+0x34]+0x78]+0x110] == （取一个字节）
-//5		说明在开启任务物品状态
-//2		表示那个拾取的ui弹出来了, 可以二次捡物品
+//5     说明在开启任务物品状态
+//2     表示那个拾取的ui弹出来了, 可以二次捡物品
 DWORD Gamecall::GetPlayerQuestUIStatus()
 {
     DWORD pAddr = GetPlayerDataAddr();
@@ -5028,10 +4840,10 @@ BOOL Gamecall::CloseAttendance()
 void Gamecall::SetMouseMode()
 {
     //"OptionPanel" 这个名字的控件
-    //	1:进入游戏后判断是经典模式还是键盘模式[["OptionPanel" 首地址 + 0x36D1C] + 0x1C]  等于 1  是经典模式  等于0是键盘模式
-    //	2 : [0xFE3280] 等于 1  是经典模式  等于0是键盘模式
-    //	二种方法判断经典模式的状态都可以
-    //	参数5是 控件的首地址 + 0x36F28
+    //  1:进入游戏后判断是经典模式还是键盘模式[["OptionPanel" 首地址 + 0x36D1C] + 0x1C]  等于 1  是经典模式  等于0是键盘模式
+    //  2 : [0xFE3280] 等于 1  是经典模式  等于0是键盘模式
+    //  二种方法判断经典模式的状态都可以
+    //  参数5是 控件的首地址 + 0x36F28
 
     //判断当前模式
     //UCHAR isClass = *(UCHAR *)0xfe3280;
@@ -5047,30 +4859,6 @@ void Gamecall::SetMouseMode()
 
     sendcall(id_msg_JingDianMoShi, &uiop);
 }
-
-//等待游戏窗口创建
-//等待时间25秒
-void Gamecall::WaitGameCreate()
-{
-    bool bIsCreate = false;
-
-    //判断当前游戏的窗口是否创建
-    //25秒内没有游戏窗口产生就使外挂不加载
-    for(int i = 0; i < 20; i++)
-    {
-        if(isGameWndCreated(GetCurrentProcessId()) != NULL)
-        {
-            bIsCreate = true;
-            break;
-        }
-
-        Sleep(2000);
-    }
-
-    log.logdv(_T("游戏窗口已经创建"));
-    return;
-}
-
 
 //判断过蓝条
 //dd [[[[对象基址]+2C]+0C]+4] = 5 表示读条 1 刚进游戏 2 选择角色界面 3游戏内
@@ -5264,6 +5052,73 @@ UCHAR Gamecall::GetPlayerLevel() //获得角色等级
     return LV;
 }
 
+
+//判断一个名字在自定义列表中是否存在
+BOOL Gamecall::isCustomKill_DontKill(wchar_t *name)
+{
+
+    //从自定义的列表中匹配
+    for(int i = 0; i < CustomName.size(); i++)
+    {
+        
+        //根据名字来匹配, 匹配到一个
+        if(wcscmp(CustomName[i].name, name) == 0)
+        {
+            //开始根据设置的类型分别处理
+            if(CustomName[i].type == DONTKILL)
+            {
+                return TRUE;
+            }
+        }
+    }
+
+    return FALSE;
+}
+
+
+//判断一个名字在自定义列表中是否存在
+BOOL Gamecall::isCustomKill_AlwaysKill(wchar_t *name)
+{
+
+    //从自定义的列表中匹配
+    for(int i = 0; i < CustomName.size(); i++)
+    {
+        
+        //根据名字来匹配, 匹配到一个
+        if(wcscmp(CustomName[i].name, name) == 0)
+        {
+            //开始根据设置的类型分别处理
+            if(CustomName[i].type == ALWAYSKILL)
+            {
+                return TRUE;
+            }
+        }
+    }
+
+    return FALSE;
+}
+
+//判断一个名字在自定义列表中是否存在
+BOOL Gamecall::isCustomKill_HaveName(wchar_t *name)
+{
+
+    //从自定义的列表中匹配
+    for(int i = 0; i < CustomName.size(); i++)
+    {
+        
+        //根据名字来匹配, 匹配到一个
+        if(wcscmp(CustomName[i].name, name) == 0)
+        {
+            return TRUE;
+        }
+    }
+
+    return FALSE;
+}
+
+
+
+
 //应用配置文件的杀怪设置
 //一些是否怪物的判断放到这里是要让遍历范围怪物尽可能多的遍历出来, 然后
 //让配置文件去过滤, 不然就需要多写一个范围所有目标过滤. 因为有配置文件
@@ -5301,6 +5156,7 @@ BOOL Gamecall::Kill_ApplyConfig(std::vector<ObjectNode*>& ObjectVec)
                     it = ObjectVec.erase(it);
                     continue;
                 }
+            {
             }
             it++;
         }
@@ -5337,7 +5193,7 @@ BOOL Gamecall::Kill_ApplyConfig(std::vector<ObjectNode*>& ObjectVec)
             it++;
         }
 
-        //TRACE("config循环3");
+        //TRACE("_T(config循环3)");
         for(it = ObjectVec.begin(); it != ObjectVec.end();)
         {
             ObjectNode* pNode = *it;
@@ -5352,16 +5208,64 @@ BOOL Gamecall::Kill_ApplyConfig(std::vector<ObjectNode*>& ObjectVec)
             }
             else
             {
-                if(fileConfig.isHave(strCombat, strDontKill, objName))
+
+                //应用全局之前先判断自定义                
+                if(isCustomKill_HaveName(objName) == FALSE)
                 {
-                    //删掉这个元素
-                    //TRACE1("%d",__LINE__);
-                    it = ObjectVec.erase(it);
-                    continue;
+                    if(fileConfig.isHave(strCombat, strDontKill, objName))
+                    {
+                        //删掉这个元素
+                        //TRACE1("%d",__LINE__);
+                        it = ObjectVec.erase(it);
+                        continue;
+                    }
+                    
                 }
+
             }
+
+
             it++;
         }
+
+
+        //TRACE("_T(config循环3)");
+        for(it = ObjectVec.begin(); it != ObjectVec.end();)
+        {
+            ObjectNode* pNode = *it;
+            //TRACE1("%d",__LINE__);
+            wchar_t* objName = GetObjectName(pNode->ObjAddress);
+            //assert(objName!=NULL);
+            //TRACE1("%d",__LINE__);
+
+            //从自定义的列表中匹配
+            for(int i = 0; i < CustomName.size(); i++)
+            {
+
+                //根据名字来匹配, 匹配到一个
+                if(wcscmp(CustomName[i].name, objName) == 0)
+                {
+                    //开始根据设置的类型分别处理
+                    if(CustomName[i].type == DONTKILL)
+                    {
+                        it = ObjectVec.erase(it);
+                        continue;
+                    }
+                    else if(CustomName[i].type == ALWAYSKILL)
+                    {
+                        
+                    }
+                    else if(CustomName[i].type == KILLFIRST)
+                    {
+                        
+                    }
+                }
+            }
+
+            it++;
+        }
+
+
 
     }
     catch(...)
@@ -5462,8 +5366,8 @@ void Gamecall::PickupDeadbody(DWORD id1, DWORD id2)
 }
 
 //[[[player_base]+0x34]+0x78]+0x110] == （取一个字节）
-//5		说明在开启任务物品状态
-//2		表示那个拾取的ui弹出来了, 可以二次捡物品
+//5     说明在开启任务物品状态
+//2     表示那个拾取的ui弹出来了, 可以二次捡物品
 BOOL Gamecall::isPlayerHasPickupQuestItemUI()
 {
     DWORD status = 0;
@@ -5524,7 +5428,7 @@ float Gamecall::GetPlayerViewPoint()
     return (float)value;
 }
 
-DWORD stdaa = 0;
+
 //遍历周围所有的对象到容器
 void Gamecall::GetAllObjectToVector(ObjectNode* pNote, std::vector<ObjectNode*>& RangeObject)
 {
@@ -5537,13 +5441,12 @@ void Gamecall::GetAllObjectToVector(ObjectNode* pNote, std::vector<ObjectNode*>&
 
         //加到vector中
         RangeObject.push_back(pNote);
-        stdaa++;
         GetAllObjectToVector(pNote->left, RangeObject);
         GetAllObjectToVector(pNote->right, RangeObject);
     }
     __except(1)
     {
-        log.logdv(_T("%s: 遍历异常"), FUNCNAME);
+        TRACE1("%s: 遍历异常", FUNCNAME);
     }
 }
 
@@ -5695,7 +5598,7 @@ void Gamecall::_GetRangeObjectToVector(ObjectNode* pNote, DWORD range, std::vect
         {
             fPosition fmypos;
             GetPlayerPos(&fmypos);
-            if(fpos.x == 0 || fpos.y == 0 || fpos.z	 == 0)
+            if(fpos.x == 0 || fpos.y == 0 || fpos.z  == 0)
             {
                 RangeObject.push_back(pNote);
             }
@@ -5785,9 +5688,9 @@ DWORD Gamecall::GetRangeMonsterCount(DWORD range)
     //判断是否用aoe
     std::vector<ObjectNode*> RangeObject;
     GetRangeMonsterToVector(range, RangeObject);
-    //TRACE("Kill_ApplyConfig");
+    //TRACE("_T(Kill_ApplyConfig)");
     Kill_ApplyConfig(RangeObject);
-    //TRACE("RangeObject.size()");
+    //TRACE("_T(RangeObject.size())");
     return RangeObject.size();
 }
 
@@ -5800,20 +5703,6 @@ DWORD Gamecall::GetRangeLootCount(DWORD range)
     return RangeObject.size();
 }
 
-
-void Gamecall::HookQietu(BOOL bEnable)
-{
-    if(bEnable)
-    {
-        hookQietu.hook();
-
-    }
-    else
-    {
-        hookQietu.unhook();
-    }
-
-}
 
 void Gamecall::OverShunyi(BOOL bEnable) //过图
 {
@@ -6337,11 +6226,13 @@ void Gamecall::_GetAllGoodsToVector(std::vector<_BAGSTU>& RangeObject)
     }
 }
 
+
 //遍历背包数据到容器
 void Gamecall::GetAllGoodsToVector(std::vector<_BAGSTU>& RangeObject)
 {
     sendcall(id_msg_GetAllGoodsToVector, &RangeObject);
 }
+
 
 void Gamecall::_GetAllBodyEquipToVector(std::vector<_BAGSTU>& RangeObject)
 {
@@ -7154,7 +7045,6 @@ void Gamecall::_OpenDeleteTalentPanel()
 
     if(canshu2 > 0)
     {
-        TRACE("123");
         DaKaiQingChuQuanBuJiNengJieMian(dwUIAddr, canshu2); //打开清除全部技能界面
     }
 }
@@ -7482,7 +7372,7 @@ BOOL Gamecall::isCanLook(DWORD pAddr)
         }
         /*if (temp == 9)
         {
-        	return TRUE;
+            return TRUE;
         }*/
     }
     __except(1)
@@ -7561,7 +7451,7 @@ BOOL Gamecall::GetPlayExperienceStatus()
     //wchar_t *str = L"";  //ItemGrowth2Panel
     //GetUIAddrByName(L"", pUiAddr);
     //if(*pUiAddr == 0)
-    //	return FALSE;
+    //  return FALSE;
     KONGJIAN_JIEGOU jiegou = {NULL};
     jiegou.adress = (DWORD)GetUIBinTreeBaseAddr();
     jiegou.name = L"Normal";
@@ -7778,13 +7668,13 @@ void Gamecall::ChangeHeight(float how)
     }
     __except(1)
     {
-        TRACE("飞起错误");
+        TRACE(_T("飞起错误"));
     }
 }
 
 DWORD Gamecall::GetObjectSy_90(DWORD pObjAddress)
 {
-    TRACE("GetObjectSy_90");
+    TRACE(_T("GetObjectSy_90"));
     DWORD result;
     result = 0;
     __try
@@ -7825,7 +7715,7 @@ DWORD Gamecall::GetPlayerQuestUIStatusts()
 
 BOOL Gamecall::PickupTaskts(ObjectNode* pNode)
 {
-    TRACE("执行ts");
+    TRACE(_T("执行ts"));
     sendcall(id_msg_PickupTask, pNode);
 
     DWORD uiaddr;
@@ -7847,14 +7737,14 @@ BOOL Gamecall::PickupTaskts(ObjectNode* pNode)
         {
             if(isPlayPickupUiStatus())
             {
-                TRACE("执行upckup2");
+                TRACE(_T("执行upckup2"));
                 sendcall(id_msg_Pickup2ts, (LPVOID)0);
                 return TRUE;
             }
         }
         Sleep(1000);
     }
-    TRACE("未找到UI,跳出");
+    TRACE(_T("未找到UI,跳出"));
 
     return FALSE;
 }
@@ -7906,7 +7796,26 @@ void Gamecall::Pickup2ts()
     }
     __except(1)
     {
-        TRACE("特殊二次捡物出错");
+        TRACE(_T("特殊二次捡物出错"));
     }
 
 }
+
+
+void Gamecall::CloseXiaoDongHua()
+{
+    DWORD dtzt;
+    dtzt = (DWORD)ReadByte(ReadDWORD(ReadDWORD(ReadDWORD(move_status_base) + move_status_offset1) + move_status_offset2) + move_status_offset3 + move_status_offset31); //是否有小动画 0是有 1是没有
+    //TRACE1("小动画状态:%d",dtzt);
+    if(dtzt == 1)
+    {
+        //TRACE(_T("动画状态中"));
+        //KeyPress(VK_ESCAPE);
+        Sleep(100);
+        KeyPress(27);
+        Sleep(1000);
+    }
+
+}
+
+

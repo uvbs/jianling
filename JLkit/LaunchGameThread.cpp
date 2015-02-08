@@ -20,21 +20,26 @@ static char THIS_FILE[] = __FILE__;
 /////////////////////////////////////////////////////////////////////////////
 // CLaunchGameThread
 
-IMPLEMENT_DYNCREATE(CLaunchGameThread, CWinThread)
+IMPLEMENT_DYNCREATE(CLaunchThread, CWinThread)
 
-CLaunchGameThread::CLaunchGameThread()
+CLaunchThread::CLaunchThread()
 {
+    m_bIsWorking = FALSE;
+    m_bStop = FALSE;
 }
 
-CLaunchGameThread::~CLaunchGameThread()
+CLaunchThread::~CLaunchThread()
 {
+    m_bStop = TRUE;
+    
+    CloseHandle(hEventObj);
 }
 
 
-BEGIN_MESSAGE_MAP(CLaunchGameThread, CWinThread)
-	//{{AFX_MSG_MAP(CLaunchGameThread)
-		// NOTE - the ClassWizard will add and remove mapping macros here.
-	//}}AFX_MSG_MAP
+BEGIN_MESSAGE_MAP(CLaunchThread, CWinThread)
+    //{{AFX_MSG_MAP(CLaunchThread)
+    // NOTE - the ClassWizard will add and remove mapping macros here.
+    //}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
 
@@ -42,38 +47,77 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // CLaunchGameThread message handlers
 
-int CLaunchGameThread::Run() 
+BOOL CLaunchThread::AddWork(FUNCID id)
+{
+
+    //先判断当前是否工作
+    if(isWorking())
+    {
+        return FALSE;
+    }
+
+    //激活等待的事件
+    m_nFuncid = id;
+    SetEvent(hEventObj);
+    TRACE(_T("AddWork Done."));
+    return TRUE;
+}
+
+BOOL CLaunchThread::isWorking()
+{
+    return m_bIsWorking;
+};
+
+
+int CLaunchThread::Run()
 {
     // TODO: Add your specialized code here and/or call the base class
     if(m_pView == NULL)
+    {
         return -1;
-    
-    Webpost::InitCom();
-    CJLkitDoc* pDoc = m_pView->GetDocument();
-    CListCtrl &list = m_pView->GetListCtrl();
-    //当前选中的条目
-    for(int i = 0; i < list.GetItemCount(); i++){
-        
-        if(list.GetCheck(i)){
-            CString strName = list.GetItemText(i, COLUMN_TEXT_ACCOUNT);
-            CString strPw = list.GetItemText(i, COLUMN_TEXT_PASSWORD);
-            CString strConfig = list.GetItemText(i, COLUMN_TEXT_CONFIG);
-            CString strScript = list.GetItemText(i, COLUMN_TEXT_SCRIPT);
-            
-            list.SetItemText(i, COLUMN_TEXT_STATUS, _T("开始运行.."));
-            int nReslt = pDoc->LaunchGame(strName, strPw, strConfig, strScript);
-            m_pView->SetResult(nReslt, i);	
-        }
-    
     }
-    Webpost::UnInitCom();
+
+
+    while(m_bStop == FALSE)
+    {
+        TRACE(_T("waiting..."));
+        if(WaitForSingleObject(hEventObj, INFINITE) == WAIT_OBJECT_0)
+        {
+            m_bIsWorking = TRUE;
+
+            if(m_nFuncid == LAUNCHGAME)
+            {
+                m_pView->LaunchGame();
+            }
+            else if(m_nFuncid == GET)
+            {
+                m_pView->OnGet();
+            }
+            else if(m_nFuncid == ACTIVE)
+            {
+                m_pView->OnActive();
+            }
+            else if(m_nFuncid == GETANDACTIVE)
+            {
+                m_pView->OnGetAndActive();
+            }
+
+
+            m_bIsWorking = FALSE;
+        }
+    }
+
     return 0;
 }
 
-BOOL CLaunchGameThread::InitInstance() 
+BOOL CLaunchThread::InitInstance()
 {
-	// TODO: Add your specialized code here and/or call the base class
-	
-	CWinThread::InitInstance();
+    // TODO: Add your specialized code here and/or call the base class
+
+    //初始化事件对象
+    hEventObj = CreateEvent(NULL, FALSE, FALSE, NULL);
+
+
+    CWinThread::InitInstance();
     return TRUE;
 }

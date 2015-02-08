@@ -6,28 +6,30 @@
 #endif // _MSC_VER > 1000
 
 
-class Logger;
 
-class CCInject  
+class CCInject
 {
 public:
-	CCInject(const char* name);
-	~CCInject() { delete m_path; }
+    CCInject(const char* name);
+    ~CCInject()
+    {
+        delete m_path;
+    }
 
     BOOL InjectTo(TCHAR szProcess[]);
-	BOOL InjectTo(DWORD pid);
-	BOOL Call(TCHAR szCall[], LPVOID lpParam = NULL);
+    BOOL InjectTo(DWORD pid);
+    BOOL Call(TCHAR szCall[], LPVOID lpParam = NULL);
 
 
 private:
 
-	char* m_path;
-	DWORD m_pathlen;
-	PTHREAD_START_ROUTINE pfnLoadLibraryA;
+    char* m_path;
+    DWORD m_pathlen;
+    PTHREAD_START_ROUTINE pfnLoadLibraryA;
 
-	void *mem;
-	HANDLE process;
-	HMODULE hModule;
+    void* mem;
+    HANDLE process;
+    HMODULE hModule;
 };
 
 #endif
