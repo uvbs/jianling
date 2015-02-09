@@ -14,7 +14,7 @@
     <SccProjectName />
     <SccLocalPath />
     <Keyword>MFCProj</Keyword>
-    <ProjectGuid>{BD89E6F6-3591-478B-B2E6-F9B1C71CA6D6}</ProjectGuid>
+    <ProjectGuid>{C7747123-E386-49EA-9163-6FF70CF72A31}</ProjectGuid>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Template|Win32'" Label="Configuration">
@@ -97,6 +97,11 @@
     <ClCompile Include="DataDlg.cpp" />
     <ClCompile Include="gamecall.cpp" />
     <ClCompile Include="GamecallEx.cpp" />
+    <ClCompile Include="gamedef.cpp" />
+    <ClCompile Include="GameHepler.cpp" />
+    <ClCompile Include="GameHook.cpp" />
+    <ClCompile Include="GameInit.cpp" />
+    <ClCompile Include="GameSpend.cpp" />
     <ClCompile Include="JLDlg.cpp" />
     <ClCompile Include="JLwg.cpp" />
     <ClCompile Include="..\common\LDasm.cpp" />
@@ -106,9 +111,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">stdafx.h</PrecompiledHeaderFile>
     </ClCompile>
-    <ClCompile Include="TaskScript.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
-    </ClCompile>
+    <ClCompile Include="TaskScript.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\common\CIniFile.h" />
@@ -121,6 +124,11 @@
     <ClInclude Include="DataDlg.h" />
     <ClInclude Include="gamecall.h" />
     <ClInclude Include="GamecallEx.h" />
+    <ClInclude Include="gamedef.h" />
+    <ClInclude Include="GameHepler.h" />
+    <ClInclude Include="GameHook.h" />
+    <ClInclude Include="GameInit.h" />
+    <ClInclude Include="GameSpend.h" />
     <ClInclude Include="gamestruct.h" />
     <ClInclude Include="JLDlg.h" />
     <ClInclude Include="JLkitDoc.h" />
@@ -130,9 +138,7 @@
     <ClInclude Include="resource.h" />
     <ClInclude Include="..\common\ShareMem.h" />
     <ClInclude Include="StdAfx.h" />
-    <ClInclude Include="TaskScript.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
-    </ClInclude>
+    <ClInclude Include="TaskScript.h" />
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="default1.bin" />
@@ -147,9 +153,4 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
-  <ProjectExtensions>
-    <VisualStudio>
-      <UserProperties RESOURCE_FILE="JLwg.rc" />
-    </VisualStudio>
-  </ProjectExtensions>
 </Project>

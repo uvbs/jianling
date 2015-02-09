@@ -32,7 +32,7 @@ static fPosition g_fmypos;
 
 static DWORD* jmpTo;
 GameHook::GameHook():
-    stepHook((void*)shunyi_call, mySendStep),
+	stepHook((void*)shunyi_call, mySendStep),
     deQuestHook((void*)deliver_quest_call, myDeliveQuest),
     aeQuestHook((void*)npc_quest_call, myAcceptQuest),
     WearHook((void*)chuanzhuangbei_call, myWearEquipment),
@@ -63,6 +63,9 @@ void GameHook::showHookRet(LPTSTR szFormat, ...)
     m_showHookRet(m_lpParam, szBuf);
 
 }
+
+
+
 
 void __stdcall GameHook::mySendStep(SENDSTEP* ftarpos)
 {

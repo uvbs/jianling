@@ -17,9 +17,7 @@ Gamecall::Gamecall()
 
 Gamecall::~Gamecall()
 {
-
     UnInit();
-
 }
 
 void Gamecall::UnInit()
@@ -855,7 +853,6 @@ BOOL Gamecall::Init()
     try
     {
 
-
         GameInit::Init();
         GameSpend::Init();      //初始化加速
 
@@ -884,7 +881,6 @@ BOOL Gamecall::Init()
 
     return FALSE;
 }
-
 
 //整理背包ui
 BOOL Gamecall::SortBag()
@@ -4910,12 +4906,13 @@ void Gamecall::WaitPlans()
     {
         if(isLoadingMap() == 3)
         {
+            Sleep(6000);
             break;
         }
         log.logdv(_T("等待蓝条"));
         Sleep(1000);
     }
-    Sleep(8000);
+    Sleep(2000);
 }
 
 
@@ -5166,128 +5163,133 @@ BOOL Gamecall::isCustomKill_HaveName(wchar_t* name)
 //中存在但是原本范围过滤中不存在的情况.
 BOOL Gamecall::Kill_ApplyConfig(std::vector<ObjectNode*>& ObjectVec)
 {
-    try
-    {
-        CCIniFile fileConfig;
-        fileConfig.Open(m_szConfigPath);
-        std::vector<ObjectNode*>::iterator it;
+	try
+	{
+		CCIniFile fileConfig;
+		fileConfig.Open(m_szConfigPath);
+		std::vector<ObjectNode*>::iterator it;
         ObjectNode* pNode;
 
 
         //必杀
-        for(it = ObjectVec.begin(); it != ObjectVec.end();)
-        {
-            //要是即不可杀配置文件又没有指定要杀就删掉这个元素
-            pNode = *it;
-            wchar_t* objName = GetObjectName(pNode->ObjAddress);
-            if((isCanKill(pNode) == FALSE &&
-                    fileConfig.isHave(strCombat, strAlwaysKill, objName) == FALSE) ||
-                    (objName == NULL))
-            {
-                it = ObjectVec.erase(it);
-                continue;
-            }
-
-            it++;
+		for(it = ObjectVec.begin(); it != ObjectVec.end();)
+		{
+			if(objName == NULL)
+			{
+				it = ObjectVec.erase(it);
+				continue;
+			}
+			else
+			{
+				//要是即不可杀配置文件又没有指定要杀就删掉这个元素
+				if(isCanKill(pNode) == FALSE &&
+					fileConfig.isHave(strCombat, strAlwaysKill, objName) == FALSE)
+				{
+					//TRACE1("%d",__LINE__);
+					it = ObjectVec.erase(it);
+					continue;
         }
+			}
+			it++;
+		}
 
-
+		//TRACE("config循环2");
         //优先的
-        for(it = ObjectVec.begin(); it != ObjectVec.end();)
-        {
+		for(it = ObjectVec.begin(); it != ObjectVec.end();)
+		{
             pNode = *it;
-            wchar_t* objName = GetObjectName(pNode->ObjAddress);
-            if(objName == NULL)
-            {
-                it = ObjectVec.erase(it);
-                continue;
-            }
-            else
-            {
-                if(fileConfig.isHave(strCombat, strFirst, objName))
-                {
-                    ObjectNode* pBack = pNode;
-                    it = ObjectVec.erase(it);
-                    ObjectVec.insert(ObjectVec.begin(), pBack);
-                    continue;
-                }
+			wchar_t* objName = GetObjectName(pNode->ObjAddress);
+			if(objName == NULL)
+			{
+				it = ObjectVec.erase(it);
+				continue;
+			}
+			else
+			{
+				if(fileConfig.isHave(strCombat, strFirst, objName))
+				{
+					ObjectNode* pBack = pNode;
+					it = ObjectVec.erase(it);
+					ObjectVec.insert(ObjectVec.begin(), pBack);
+					continue;
+				}
 
-            }
+			}
 
-            it++;
-        }
+			it++;
+		}
 
 
-        for(it = ObjectVec.begin(); it != ObjectVec.end();)
-        {
+		for(it = ObjectVec.begin(); it != ObjectVec.end();)
+		{
             pNode = *it;
 
-            wchar_t* objName = GetObjectName(pNode->ObjAddress);
-            if(objName == NULL)
-            {
-                it = ObjectVec.erase(it);
-                continue;
-            }
-            else
-            {
+			wchar_t* objName = GetObjectName(pNode->ObjAddress);
+			if(objName == NULL)
+			{
+				it = ObjectVec.erase(it);
+				continue;
+			}
+			else
+			{
 
-                //应用全局之前先判断自定义
+				//应用全局之前先判断自定义                
                 if(isCustomKill_HaveName(objName) == FALSE)
-                {
-                    if(fileConfig.isHave(strCombat, strDontKill, objName))
-                    {
-                        //删掉这个元素
-                        it = ObjectVec.erase(it);
-                        continue;
-                    }
+				{
+					if(fileConfig.isHave(strCombat, strDontKill, objName))
+					{
+						//删掉这个元素
+						it = ObjectVec.erase(it);
+						continue;
+					}
 
-                }
+				}
 
-            }
-
-
-            it++;
-        }
+			}
 
 
-        for(it = ObjectVec.begin(); it != ObjectVec.end();)
-        {
+			it++;
+		}
+
+
+		for(it = ObjectVec.begin(); it != ObjectVec.end();)
+		{
             pNode = *it;
             wchar_t* objName = GetObjectName(pNode->ObjAddress);
 
-            //从自定义的列表中匹配
-            for(int i = 0; i < CustomName.size(); i++)
-            {
+			//从自定义的列表中匹配
+			for(int i = 0; i < CustomName.size(); i++)
+			{
 
-                //根据名字来匹配, 匹配到一个
-                if(wcscmp(CustomName[i].name, objName) == 0)
-                {
-                    //开始根据设置的类型分别处理
-                    if(CustomName[i].type == DONTKILL)
-                    {
-                        it = ObjectVec.erase(it);
-                        continue;
-                    }
-                    else if(CustomName[i].type == ALWAYSKILL)
-                    {
+				//根据名字来匹配, 匹配到一个
+				if(wcscmp(CustomName[i].name, objName) == 0)
+				{
+					//开始根据设置的类型分别处理
+					if(CustomName[i].type == DONTKILL)
+					{
+						it = ObjectVec.erase(it);
+						continue;
+					}
+					else if(CustomName[i].type == ALWAYSKILL)
+					{
 
-                    }
-                    else if(CustomName[i].type == KILLFIRST)
-                    {
+					}
+					else if(CustomName[i].type == KILLFIRST)
+					{
 
-                    }
-                }
-            }
+					}
+				}
+			}
 
-            it++;
-        }
+			it++;
+		}
 
-    }
-    catch(...)
-    {
-        TRACE(_T("应用配置文件错误"));
-    }
-    return TRUE;
+	}
+	catch(...)
+	{
+		TRACE(_T("应用配置文件错误"));
+	}
+	return TRUE;
 }
 
 
@@ -5550,11 +5552,7 @@ void Gamecall::GetRangeMonsterToVector(DWORD range, std::vector<ObjectNode*>& Mo
         {
             ObjectNode* pNode = RangeObject[i];
             //log.logdv(_T("执行GetObjectName"));
-            wchar_t* objName = GetObjectName(pNode->ObjAddress);
-            if(objName == NULL)
-            {
-                continue;
-            }
+
 
             fPosition fpos;
             //过滤掉距离远的和没距离的
@@ -5573,6 +5571,11 @@ void Gamecall::GetRangeMonsterToVector(DWORD range, std::vector<ObjectNode*>& Mo
             {
                 continue;
             }
+            wchar_t* objName = GetObjectName(pNode->ObjAddress);
+            if(objName == NULL)
+            {
+                continue;
+            }
             //log.logdv(_T("执行isCanLook"));
             if(isCanLook(pNode->ObjAddress) == FALSE)
             {
@@ -5586,7 +5589,7 @@ void Gamecall::GetRangeMonsterToVector(DWORD range, std::vector<ObjectNode*>& Mo
             MonsterVec.push_back(pNode);
             //TRACE1("当前循环:%d",i);
         }
-        TRACE1("MonsterVec:%d", MonsterVec.size());
+        //TRACE1("MonsterVec:%d",MonsterVec.size());
     }
     catch(...)
     {
@@ -6105,8 +6108,8 @@ BOOL Gamecall::FillGoods(_BAGSTU& BagBuff)
     BagBuff.m_NameID  =   GetGoodsNameID(BagBuff.m_Base);            //获取物品的名字ID
 
 
-    //BagBuff.name   =    (wchar_t *)sendcall(id_msg_GatBagGoodrName, (LPVOID)BagBuff.m_NameID);
-    BagBuff.name   =      GatBagGoodrName(BagBuff.m_NameID);
+    //BagBuff.name   =	  (wchar_t *)sendcall(id_msg_GatBagGoodrName, (LPVOID)BagBuff.m_NameID);
+    BagBuff.name   =	  GatBagGoodrName(BagBuff.m_NameID);
     if(BagBuff.name == NULL)
     {
         return FALSE;
@@ -6114,10 +6117,10 @@ BOOL Gamecall::FillGoods(_BAGSTU& BagBuff)
 
     BagBuff.m_Type    =   GetGoodsType(BagBuff.m_Base);              //获取物品的类型
     BagBuff.m_Info    =   GetGoodsInfo(BagBuff.m_Base);              //获取物品的所在格子数
-    BagBuff.m_Num     =   GetGoodsNum(BagBuff.m_Base);               //获取物品的数量
-    BagBuff.m_Lasting =   GetGoodsLasting(BagBuff.m_Base);           //获取物品的持久
+    BagBuff.m_Num	  =   GetGoodsNum(BagBuff.m_Base);               //获取物品的数量
+    BagBuff.m_Lasting =	  GetGoodsLasting(BagBuff.m_Base);           //获取物品的持久
     BagBuff.m_LV      =   GetGoodsLLV(BagBuff.m_Base);               //获取物品的等级
-    //BagBuff.m_Site      =   GetCanshu_a(BagBuff.m_Base);               //吃药和穿装备需要的一个参数
+    //BagBuff.m_Site	  =   GetCanshu_a(BagBuff.m_Base);               //吃药和穿装备需要的一个参数
 
 
 
@@ -6625,6 +6628,8 @@ void Gamecall::JiaBaoShi(DWORD canshu1, DWORD canshu2, DWORD canshu3, DWORD cans
 
 DWORD Gamecall::sendcall(DWORD id, LPVOID pParam)
 {
+
+
     return SendMessage(GetGamehWnd(), WM_CUSTOM_GCALL, id, (LPARAM)pParam);
 }
 

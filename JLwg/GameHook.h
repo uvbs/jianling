@@ -67,7 +67,6 @@ public:
 
     static std::vector<DWORD> m_ObjAddrVec;
 
-    CCHook stepHook;
     CCHook deQuestHook;
     CCHook aeQuestHook;
     CCHook WearHook;
@@ -75,6 +74,7 @@ public:
     CCHook Yicjw;
     CCHook CombatHook;
 
+	CCHook stepHook;
 
     //╫схннЯ
     static void __stdcall myAcceptQuest(DWORD questID, UCHAR questStep, DWORD argv3, DWORD argv4,

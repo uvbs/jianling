@@ -2,20 +2,20 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="Source Files">
-      <UniqueIdentifier>{8389ff76-5fb7-4859-a301-bf3d96494302}</UniqueIdentifier>
+      <UniqueIdentifier>{a6ed1fe6-3482-4888-a912-02559986ef33}</UniqueIdentifier>
       <Extensions>cpp;c;cxx;rc;def;r;odl;idl;hpj;bat</Extensions>
     </Filter>
     <Filter Include="Header Files">
-      <UniqueIdentifier>{cf894f4d-59bf-43c2-9afe-a79a8a561c77}</UniqueIdentifier>
+      <UniqueIdentifier>{dacf528d-99e6-4eb2-9b70-f16db3896090}</UniqueIdentifier>
       <Extensions>h;hpp;hxx;hm;inl</Extensions>
     </Filter>
     <Filter Include="Resource Files">
-      <UniqueIdentifier>{2c0a3d17-196d-4023-8320-b20d46323b6c}</UniqueIdentifier>
+      <UniqueIdentifier>{05591af8-361b-4c6e-9c21-ff1611b0b755}</UniqueIdentifier>
       <Extensions>ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe</Extensions>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="DBLoginDlg.cpp">
+    <ClCompile Include="..\common\CallTracer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="JLSrvr.cpp">
@@ -55,7 +55,7 @@
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="DBLoginDlg.h">
+    <ClInclude Include="..\common\CallTracer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="JLSrvr.h">

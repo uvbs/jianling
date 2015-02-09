@@ -13,7 +13,7 @@
   <PropertyGroup Label="Globals">
     <SccProjectName />
     <SccLocalPath />
-    <ProjectGuid>{EF3F8D1D-E31B-4484-9B86-1457B38E57EB}</ProjectGuid>
+    <ProjectGuid>{0BBDB357-E5C0-4D22-82EA-55531F02ED51}</ProjectGuid>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Template|Win32'" Label="Configuration">
@@ -97,7 +97,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\common\HookSystemcallx86tox64.h" />
-    <ClInclude Include="common.h" />
     <ClInclude Include="StdAfx.h" />
   </ItemGroup>
   <ItemGroup>

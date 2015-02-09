@@ -40,20 +40,21 @@ BOOL GamecallEx::HeChengWuQi_Po5(EQUITMENT_POS pos, wchar_t* name)
 
 
     //参数有, 再判断合成目标有没有已经满5
-    BOOL isFull5_fu = FALSE;
-    if(_wcsicmp(fu.name, qianhun) == 0)
-    {
-        isFull5_fu = TRUE;
-    }
-    else
-    {
-        if(fu.m_PingJi == 5 &&
-                (fu.m_DangQianJingYanZhi == fu.m_DangQianJingYanZongZhi))
-        {
-            //已经满5
-            isFull5_fu = TRUE;
-        }
-    }
+	BOOL isFull5_fu = TRUE;
+
+	//破5的武器貌似都改成蓝颜色了，并且无需强化
+	//if (_wcsicmp(fu.name,qianhun) == 0)
+	//{
+	//	isFull5_fu = TRUE;
+	//}else
+	//{
+	//	if(fu.m_PingJi == 5 &&
+	//		(fu.m_DangQianJingYanZhi == fu.m_DangQianJingYanZongZhi))
+	//	{
+	//		//已经满5
+	//		isFull5_fu = TRUE;
+	//	}
+	//}
 
 
     if(isFull5_fu)
@@ -2129,149 +2130,155 @@ void GamecallEx::AttackAOE()
 //canKillRange 设定多远距离可直接攻击
 int GamecallEx::KillObject(DWORD range, ObjectNode* pNode, DWORD mode, DWORD canKillRange)
 {
-    //记录当下状态来判断目标是否死亡或者杀怪超时
-    DWORD oriTime = GetTickCount();
-    DWORD tarHealth = GetType4HP(pNode->ObjAddress);;
+	//记录当下状态来判断目标是否死亡或者杀怪超时
+	DWORD oriTime = GetTickCount();
+	DWORD tarHealth = GetType4HP(pNode->ObjAddress);;
 
-    fPosition mypos;
-    fPosition targetpos;
-    for(;;)
-    {
+	fPosition mypos;
+	fPosition targetpos;
+	for(;;)
+	{
  
-        //TRACE(_T("判断人物死亡"));
-        if(GetPlayerHealth() <= 0)
-        {
-            log.logdv(_T("%s: 人物死亡了"), FUNCNAME);
-            return RESULT_KILL_PLAYDEAD;
-        }
+		//TRACE(_T("判断人物死亡"));
+		if(GetPlayerHealth() <= 0)
+		{
+			log.logdv(_T("%s: 人物死亡了"), FUNCNAME);
+			return RESULT_KILL_PLAYDEAD;
+		}
 
-        //整个逻辑根据距离来作为输入数据来做判断
-        //TRACE(_T("执行血量判断"));
-        if(GetType4HP(pNode->ObjAddress) == -1 || GetType4HP(pNode->ObjAddress) == 0)
-        {
-            log.logdv(_T("%s: 血量判断怪死了"), FUNCNAME);
-            return RESULT_KILL_OK;
-        }
-
-
-        ZeroMemory(&mypos, sizeof(fPosition));
-        GetPlayerPos(&mypos);
-
-        //通过距离判断目标死亡
-        //TRACE(_T("执行类型判断"));
-        ZeroMemory(&targetpos, sizeof(fPosition));
-
-        if(GetObjectType(pNode->ObjAddress) != 0x4)
-        {
-            log.logdv(_T("%s: 类型判断怪死了"), FUNCNAME);
-            return RESULT_KILL_OK;
-        }
-
-        //TRACE(_T("执行坐标判断"));
-        if(_GetObjectPos(pNode->ObjAddress, &targetpos) == FALSE)
-        {
-            log.logdv(_T("%s: 坐标判断怪死了"), FUNCNAME);
-            return RESULT_KILL_OK;
-        }
-        DWORD dis = (DWORD)CalcC(targetpos, mypos);
-        //TRACE(_T("执行距离判断"));
-        if(dis >= range)
-        {
-            log.logdv(_T("%s: 距离判断怪死了"), FUNCNAME);
-            return RESULT_KILL_OK;
-        }
+		//整个逻辑根据距离来作为输入数据来做判断
+		//TRACE(_T("执行血量判断"));
+		if(GetType4HP(pNode->ObjAddress) == -1 || GetType4HP(pNode->ObjAddress) == 0)
+		{
+			log.logdv(_T("%s: 血量判断怪死了"), FUNCNAME);
+			return RESULT_KILL_OK;
+		}
 
 
+		ZeroMemory(&mypos, sizeof(fPosition));
+		GetPlayerPos(&mypos);
 
-        /*
-        不可用
-        if(GetObject_0x14(pNode->ObjAddress) == 0){
-        log.logdv(_T("%s: 0x14判断怪死了"), FUNCNAME);
-        return RESULT_KILL_OK;
-        }*/
+		//通过距离判断目标死亡
+		//TRACE(_T("执行类型判断"));
+		ZeroMemory(&targetpos, sizeof(fPosition));
+
+		if(GetObjectType(pNode->ObjAddress) != 0x4)
+		{
+			log.logdv(_T("%s: 类型判断怪死了"), FUNCNAME);
+			return RESULT_KILL_OK;
+		}
+
+		//TRACE(_T("执行坐标判断"));
+		if(_GetObjectPos(pNode->ObjAddress, &targetpos) == FALSE)
+		{
+			log.logdv(_T("%s: 坐标判断怪死了"), FUNCNAME);
+			return RESULT_KILL_OK;
+		}
+		DWORD dis = (DWORD)CalcC(targetpos, mypos);
+		//TRACE(_T("执行距离判断"));
+		if(dis >= range)
+		{
+			log.logdv(_T("%s: 距离判断怪死了"), FUNCNAME);
+			return RESULT_KILL_OK;
+		}
 
 
-        //可继续走
-        if(dis > canKillRange)
-        {
-            targetpos.x = targetpos.x - 10;
-            targetpos.y = targetpos.y - 10;
-            Gamecall::Stepto(targetpos, 10, CAN_OPERATOR, range);
-            /*}else if(dis <= 2){
-            	log.logdv(_T("自己的坐标X:%d,y:%d,怪物的坐标X:%d,Y:%d"),(int)mypos.x,(int)mypos.y,(int)targetpos.x,(int)targetpos.y);
-            	log.logdv(_T("%s: 重叠怪物"), FUNCNAME);
-            	RandomStep(30);*/
-        }
-        else if(dis <= canKillRange)
-        {
-            //判断倒地状态
-            if(isPlayerDaodi())
-            {
-                //5E60->5EA6->5EB0->5E9C
-                TRACE(_T("进入倒地状态"));
-                Sleep(500);
-                if(isStrikeCd(0x5e60) == TRUE)
-                {
-                    TRACE(_T("进入倒地状态:0x5e60"));
-                    sendcall(id_msg_attack, (LPVOID)0x5e60);
-                    Sleep(1000);
-                }
-                else if(isStrikeCd(0x5EA6) == TRUE)
-                {
-                    TRACE(_T("进入倒地状态:0x5EA6"));
-                    sendcall(id_msg_attack, (LPVOID)0x5EA6);
-                }
-                else if(isStrikeCd(0x5E9C) == TRUE)
-                {
-                    TRACE(_T("进入倒地状态:0x5E9C"));
-                    sendcall(id_msg_attack, (LPVOID)0x5E9C);
-                }
-                else if(isStrikeCd(0x5EB0) == TRUE)
-                {
-                    TRACE(_T("进入倒地状态:0x5EB0"));
-                    sendcall(id_msg_attack, (LPVOID)0x5EB0);
-                }
 
-            }
-            //杀怪时才需要转向
-            Gamecall::TurnTo(targetpos);
-            if(mode & modeAoe)
-            {
+		/*
+		不可用
+		if(GetObject_0x14(pNode->ObjAddress) == 0){
+		log.logdv(_T("%s: 0x14判断怪死了"), FUNCNAME);
+		return RESULT_KILL_OK;
+		}*/
+
+
+		//可继续走
+		if(dis > canKillRange)
+		{
+			targetpos.x = targetpos.x - 10;
+			targetpos.y = targetpos.y - 10;
+			Gamecall::Stepto(targetpos, 10, CAN_OPERATOR, range);
+			/*}else if(dis <= 2){
+			log.logdv(_T("自己的坐标X:%d,y:%d,怪物的坐标X:%d,Y:%d"),(int)mypos.x,(int)mypos.y,(int)targetpos.x,(int)targetpos.y);
+			log.logdv(_T("%s: 重叠怪物"), FUNCNAME);
+			RandomStep(30);*/
+		}
+		else if(dis <= canKillRange)
+		{
+			//判断倒地状态
+			if(isPlayerDaodi())
+			{
+				//5E60->5EA6->5EB0->5E9C
+				TRACE(_T("进入倒地状态"));
+				Sleep(500);
+				if(isStrikeCd(0x5e60) == TRUE)
+				{
+					TRACE(_T("进入倒地状态:0x5e60"));
+					sendcall(id_msg_attack, (LPVOID)0x5e60);
+					Sleep(1000);
+				}
+				else if(isStrikeCd(0x5EA6) == TRUE)
+				{
+					TRACE(_T("进入倒地状态:0x5EA6"));
+					sendcall(id_msg_attack, (LPVOID)0x5EA6);
+				}
+				else if(isStrikeCd(0x5E9C) == TRUE)
+				{
+					TRACE(_T("进入倒地状态:0x5E9C"));
+					sendcall(id_msg_attack, (LPVOID)0x5E9C);
+				}
+				else if(isStrikeCd(0x5EB0) == TRUE)
+				{
+					TRACE(_T("进入倒地状态:0x5EB0"));
+					sendcall(id_msg_attack, (LPVOID)0x5EB0);
+				}
+
+			}
+			//杀怪时才需要转向
+			Gamecall::TurnTo(targetpos);
+			if (mode & modeOnlyAoe)
+			{
+				AttackAOE();
+			}else
+			{
+				if(mode & modeAoe)
+				{
                 if(Gamecall::m_bCanAoe)
-                {
-                    AttackAOE();
-                }
-                else
-                {
-                    //TRACE(_T("执行RT"));
-                    AttackNormal();
-                }
-            }
-            else
-            {
-                //TRACE(_T("执行AOE外的RT"));
-                AttackNormal();
-            }
-            TRACE(_T("判断AEO退"));
-            //5秒没能打掉血就退
-            DWORD curTime = GetTickCount();
-            if((curTime - oriTime) >= 5000)
-            {
-                DWORD curHealth = GetType4HP(pNode->ObjAddress);
-                if(curHealth == tarHealth)
-                {
-                    log.logdv(_T("%s: 超时退出"), FUNCNAME);
-                    return RESULT_KILL_TIMEOUT;
-                }
-                else
-                {
-                    oriTime = GetTickCount();
-                    tarHealth = GetType4HP(pNode->ObjAddress);
-                }
-            }
-        }
-        Sleep(50);
-    }//for
+					{
+						//TRACE("执行AEO");
+						AttackAOE();
+					}else
+					{
+						//TRACE("执行RT");
+						//TRACE(_T("执行RT"));
+						AttackNormal();
+					}
+				}
+				else{
+					//TRACE("执行AOE外的RT");
+					//TRACE(_T("执行AOE外的RT"));
+					AttackNormal();
+				}
+			}
+			//5秒没能打掉血就退
+			DWORD curTime = GetTickCount();
+			if((curTime - oriTime) >= 5000)
+			{
+				DWORD curHealth = GetType4HP(pNode->ObjAddress);
+				if(curHealth == tarHealth)
+				{
+					log.logdv(_T("%s: 超时退出"), FUNCNAME);
+					return RESULT_KILL_TIMEOUT;
+				}
+				else
+				{
+					oriTime = GetTickCount();
+					tarHealth = GetType4HP(pNode->ObjAddress);
+				}
+			}
+			Sleep(50);
+		}//for
+	}
 }
 
 void GamecallEx::CityConvey(DWORD cityid)
@@ -2394,7 +2401,7 @@ BOOL GamecallEx::HeChengWuQi_Po10(EQUITMENT_POS pos, wchar_t* name)
         sendcall(id_msg_HeChengWuQi_Po10, &temp);
         Sleep(2000);
         //破5级后继续强化
-        HeChengWuQi(pos);
+		//HeChengWuQi(pos);
     }
     else
     {

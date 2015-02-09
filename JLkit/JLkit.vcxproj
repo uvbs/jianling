@@ -14,7 +14,7 @@
     <SccProjectName />
     <SccLocalPath />
     <Keyword>MFCProj</Keyword>
-    <ProjectGuid>{E596A61E-973B-41DB-8AFA-EE5A94ADC2BA}</ProjectGuid>
+    <ProjectGuid>{5218B3A4-7841-4ACB-BA28-955F4FDC5EBD}</ProjectGuid>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Template|Win32'" Label="Configuration">
@@ -39,7 +39,6 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <OutDir>.\Release\</OutDir>
     <IntDir>.\Release\</IntDir>
     <LinkIncremental>false</LinkIncremental>
   </PropertyGroup>
@@ -86,6 +85,7 @@
   <ItemGroup>
     <ClCompile Include="BindKeyDlg.cpp" />
     <ClCompile Include="BugRepDlg.cpp" />
+    <ClCompile Include="..\common\CallTracer.cpp" />
     <ClCompile Include="CVPNFile.cpp" />
     <ClCompile Include="..\common\Inject.cpp" />
     <ClCompile Include="JLkit.cpp" />
@@ -114,6 +114,7 @@
   <ItemGroup>
     <ClInclude Include="BindKeyDlg.h" />
     <ClInclude Include="BugRepDlg.h" />
+    <ClInclude Include="..\common\CallTracer.h" />
     <ClInclude Include="CVPNFile.h" />
     <ClInclude Include="..\common\inject.h" />
     <ClInclude Include="JLkit.h" />

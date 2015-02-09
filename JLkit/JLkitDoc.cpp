@@ -457,6 +457,7 @@ int CJLkitDoc::CreateGameProcess(CString& strName, CString& strPw, BOOL bProfile
 {
 
     STARTUPINFO si;
+	ZeroMemory(&si,sizeof(STARTUPINFO));
     si.cb = sizeof(si);
 
     Webpost poster(strName, strPw);
@@ -501,6 +502,7 @@ int CJLkitDoc::CreateGameProcess(CString& strName, CString& strPw, BOOL bProfile
     {
         if(CreateProcess(NULL, szGameCmdLine, NULL,  NULL, FALSE, CREATE_SUSPENDED, NULL, NULL, &si, lppi) == FALSE)
         {
+			TRACE1("%d",GetLastError());
             return RESULT_FAIL_CREATEGAMEPROCESS;
         }
     }
