@@ -67,8 +67,23 @@ public:
 	void Task_522(int zid,int taskid);//23장. 번갯불을 찾는 도공
 	void Task_523(int zid,int taskid);//24장. 가마의 제
 	void Task_524(int zid,int taskid);//25장. 주정뱅이 기인
-	void Task_525(int zid,int taskid);//
-	void Task_526(int zid,int taskid);//
+	void Task_525(int zid,int taskid);//26장. 천씨 성을 지닌 자
+	void Task_526(int zid,int taskid);//27장. 죽음 위의 연꽃
+	void Task_527(int zid,int taskid);//28장. 명장의 석상
+	void Task_528(int zid,int taskid);//29장. 은조패
+	void Task_541(int zid,int taskid);//30장. 배신한 사형과 만남
+	void Task_529(int zid,int taskid);//31장. 애꾸눈의 사연
+	void Task_530(int zid,int taskid);//32장. 무신을 가리키는 나침반
+	void Task_531(int zid,int taskid);//33장. 춤추는 바늘
+	void Task_532(int zid,int taskid);//34장. 이이제이
+	void Task_533(int zid,int taskid);//35장. 무신의 후예
+	void Task_542(int zid,int taskid);//36장. 다시 만난 거지 노인
+	void Task_534(int zid,int taskid);//37장. 뼈가면의 전사들
+	void Task_535(int zid,int taskid);//38장. 앙숙
+	void Task_536(int zid,int taskid);//39장. 무신의 날개
+	void Task_537(int zid,int taskid);//
+	void Task_538(int zid,int taskid);//
+	
 	void Task_294(int zid,int taskid);//魔道4-19
 	void Lianji6();//6级副本
 	void Lianji6_go();//6级副本 进
@@ -86,6 +101,8 @@ public:
 	void lianji28_go();//28级副本 进
 	void lianji30();//30级副本
 	void lianji30_go();//30级副本 进
+	void lianji36();//36级副本
+	void lianji36_go();//36级副本 进
 	BOOL ShunYiResult(DWORD CityId,wchar_t* FileName,BOOL Hook_flag);//瞬移等待逻辑的封装函数
 	void UseExperience();//使用经验药
 	void IsGoonHecheng(DWORD pos);//逻辑循环强化物品
