@@ -176,7 +176,11 @@ BOOL CJLSrvrDoc::StartListening()
     {
         if(m_pListen->Create(PORT_SRV, SOCK_STREAM, FD_ACCEPT))
         {
-            bOk = m_pListen->Listen();
+            if(m_pListen->EnableKeepAlive())
+            {
+                bOk = m_pListen->Listen();
+            }
+
         }
 
         if(!bOk)
@@ -300,4 +304,10 @@ void CJLSrvrDoc::OnCloseDocument()
     }
 
     CDocument::OnCloseDocument();
+}
+
+BOOL CJLSrvrDoc::IdleProc(LONG lCount)
+{
+    //TRACE(_T("一个Idle调用"));
+    return FALSE;
 }

@@ -21,6 +21,7 @@ CRequestSocket::CRequestSocket(CJLSrvrDoc* pDoc)
 {
     m_pDoc = pDoc;
     m_pRequest = NULL;
+    NoRecvTimes = 0; //几次没回应
 }
 
 CRequestSocket::~CRequestSocket()

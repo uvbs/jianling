@@ -30,12 +30,13 @@ public:
 	//{{AFX_VIRTUAL(CJLSrvrApp)
 	public:
 	virtual BOOL InitInstance();
+	virtual BOOL OnIdle(LONG lCount);
 	//}}AFX_VIRTUAL
 
 	//Êý¾Ý
 public:
 	CString m_strDefSvr;
-
+    static void ShowFrame(LPCTSTR szText, PVOID pParam);
 
 // Implementation
 	//{{AFX_MSG(CJLSrvrApp)

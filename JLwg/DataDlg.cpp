@@ -192,36 +192,36 @@ void CDataDlg::CheckHook()
 {
     if(m_bHook_Combat)
     {
-        CombatHook.unhook();
+        GameHook::GetInstance()->CombatHook.unhook();
     }
     if(m_bHook_Accquest)
     {
-        aeQuestHook.unhook();
+        GameHook::GetInstance()->aeQuestHook.unhook();
     }
 
     if(m_bHook_Dundi)
     {
-        DundiHook.unhook();
+        GameHook::GetInstance()->DundiHook.unhook();
     }
 
     if(m_bHook_Pickup1)
     {
-        Yicjw.unhook();
+        GameHook::GetInstance()->Yicjw.unhook();
     }
 
     if(m_bHook_quest)
     {
-        deQuestHook.unhook();
+        GameHook::GetInstance()->deQuestHook.unhook();
     }
 
     if(m_bHook_Weaquit)
     {
-        WearHook.unhook();
+        GameHook::GetInstance()->WearHook.unhook();
     }
 
     if(m_bHook_step)
     {
-        stepHook.unhook();
+        GameHook::GetInstance()->stepHook.unhook();
     }
 
 }
@@ -280,8 +280,8 @@ BOOL CDataDlg::OnInitDialog()
 
     CheckHook();
 
-    m_lpParam = this;
-    m_showHookRet = ShowHookRet;
+    GameHook::GetInstance()->m_lpParam = this;
+    GameHook::GetInstance()->m_showHookRet = ShowHookRet;
 
 
     return TRUE;  // return TRUE unless you set the focus to a control
@@ -1013,12 +1013,11 @@ void CDataDlg::OnHookSendstep()
     UpdateData(TRUE);
     if(m_bHook_step)
     {
-        backupSendStep = stepHook.hook();
-        TRACE1("step: %08x", backupSendStep);
+        GameHook::GetInstance()->backupSendStep = GameHook::GetInstance()->stepHook.hook();
     }
     else
     {
-        stepHook.unhook();
+        GameHook::GetInstance()->stepHook.unhook();
     }
 
 }
@@ -1030,12 +1029,12 @@ void CDataDlg::OnHookYicijianwu()
     UpdateData(TRUE);
     if(m_bHook_Pickup1)
     {
-        backupYiciJianWu = Yicjw.hook();
+        GameHook::GetInstance()->backupYiciJianWu = GameHook::GetInstance()->Yicjw.hook();
 
     }
     else
     {
-        Yicjw.unhook();
+        GameHook::GetInstance()->Yicjw.unhook();
     }
 }
 
@@ -1046,12 +1045,12 @@ void CDataDlg::OnHookDequest()
     UpdateData(TRUE);
     if(m_bHook_quest)
     {
-        backupQuest = deQuestHook.hook();
+        GameHook::GetInstance()->backupQuest = GameHook::GetInstance()->deQuestHook.hook();
 
     }
     else
     {
-        deQuestHook.unhook();
+        GameHook::GetInstance()->deQuestHook.unhook();
     }
 }
 
@@ -1061,12 +1060,12 @@ void CDataDlg::OnHookChuanzhuangbei()
     UpdateData(TRUE);
     if(m_bHook_Weaquit)
     {
-        backupWearEquipment = WearHook.hook();
+        GameHook::GetInstance()->backupWearEquipment = GameHook::GetInstance()->WearHook.hook();
 
     }
     else
     {
-        WearHook.unhook();
+        GameHook::GetInstance()->WearHook.unhook();
     }
 
 }
@@ -1077,12 +1076,12 @@ void CDataDlg::OnHookDundi()
     UpdateData(TRUE);
     if(m_bHook_Dundi)
     {
-        backupDunDi = DundiHook.hook();
+        GameHook::GetInstance()->backupDunDi = GameHook::GetInstance()->DundiHook.hook();
 
     }
     else
     {
-        DundiHook.unhook();
+        GameHook::GetInstance()->DundiHook.unhook();
     }
 
 }
@@ -1182,11 +1181,11 @@ void CDataDlg::OnHookAcceptquest()
     UpdateData(TRUE);
     if(m_bHook_Accquest)
     {
-        aeQuestHook.hook();
+        GameHook::GetInstance()->aeQuestHook.hook();
     }
     else
     {
-        aeQuestHook.unhook();
+        GameHook::GetInstance()->aeQuestHook.unhook();
     }
 }
 
@@ -1200,7 +1199,7 @@ void CDataDlg::OnHookstrike()
         int nItem = m_ListCtrl.GetNextSelectedItem(pos);
         ObjectNode* pNode = (ObjectNode*)m_ListCtrl.GetItemData(nItem);
 
-        m_ObjAddrVec.push_back(pNode->ObjAddress);
+        GameHook::GetInstance()->m_ObjAddrVec.push_back(pNode->ObjAddress);
     }
 }
 
@@ -1210,11 +1209,11 @@ void CDataDlg::OnHookCombat()
     UpdateData(TRUE);
     if(m_bHook_Combat)
     {
-        m_ObjAddrVec.clear();
-        backupCombat = CombatHook.hook();
+        GameHook::GetInstance()->m_ObjAddrVec.clear();
+        GameHook::GetInstance()->backupCombat = GameHook::GetInstance()->CombatHook.hook();
     }
     else
     {
-        CombatHook.unhook();
+        GameHook::GetInstance()->CombatHook.unhook();
     }
 }

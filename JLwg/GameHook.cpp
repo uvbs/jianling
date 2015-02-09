@@ -21,7 +21,7 @@ DWORD* GameHook::backupDunDi = NULL;
 DWORD* GameHook::backupQuest = NULL;
 DWORD* GameHook::backupCombat = NULL;
 
-
+GameHook* GameHook::_Instance = NULL;
 
 LPVOID GameHook::m_lpParam = NULL;
 SHOWHOOKRESULT GameHook::m_showHookRet = NULL;
@@ -30,7 +30,7 @@ std::vector<DWORD> GameHook::m_ObjAddrVec;
 static DWORD g_RecordStepRange = 200;
 static fPosition g_fmypos;
 
-
+static DWORD* jmpTo;
 GameHook::GameHook():
 	stepHook((void*)shunyi_call, mySendStep),
     deQuestHook((void*)deliver_quest_call, myDeliveQuest),
@@ -70,8 +70,6 @@ void GameHook::showHookRet(LPTSTR szFormat, ...)
 void __stdcall GameHook::mySendStep(SENDSTEP* ftarpos)
 {
 
-
-
     fPosition tarpos = {ftarpos->x, ftarpos->y, ftarpos->z};
 
     BYTE* backup = (BYTE*)ftarpos;
@@ -94,7 +92,7 @@ void __stdcall GameHook::mySendStep(SENDSTEP* ftarpos)
     }
     else
     {
-        
+
         for(int i = 0; i < 34; i++)
         {
 
@@ -118,13 +116,11 @@ void __stdcall GameHook::mySendStep(SENDSTEP* ftarpos)
 
     }
 
-
-
-  // sss = (DWORD)backupSendStep;
+    jmpTo = backupSendStep;
     __asm
     {
         leave;
-        jmp backupSendStep;
+        jmp jmpTo;
     }
 }
 
@@ -160,11 +156,11 @@ void __stdcall GameHook::myWearEquipment(DWORD argv1, DWORD value, DWORD argv3, 
         showHookRet(_T("´©×°±¸Ê§°Ü"));
     }
 
-    //void* jmpTo = backupWearEquipment;
+    jmpTo = backupWearEquipment;
     __asm
     {
         leave;
-        jmp backupWearEquipment;
+        jmp jmpTo;
     }
 }
 
@@ -174,6 +170,8 @@ void __stdcall GameHook::myCombatFilter()
 
     DWORD objAddr;
     DWORD id;
+
+
     __asm
     {
         mov objAddr, ebx;
@@ -192,11 +190,11 @@ void __stdcall GameHook::myCombatFilter()
         }
     }
 
-    //void* jmpTo = backupCombat;
+    jmpTo = backupCombat;
     __asm
     {
         leave;
-        jmp backupCombat;
+        jmp jmpTo;
     }
 
 }
@@ -217,11 +215,11 @@ void __stdcall GameHook::myYiCiJianWu(DWORD argv1,
         showHookRet(_T("esp+%d %08x"), i, *(pEsp + i));
     }
 
-    //void* jmpTo = backupYiciJianWu;
+    jmpTo = backupYiciJianWu;
     __asm
     {
         leave;
-        jmp backupYiciJianWu;
+        jmp jmpTo;
     }
 }
 
@@ -238,11 +236,11 @@ void __stdcall GameHook::myDunDi()
 
     showHookRet(_T("eax = %08x"), eax_value);
 
-    //void* jmpTo = backupDunDi;
+    jmpTo = backupDunDi;
     __asm
     {
         leave;
-        jmp backupDunDi;
+        jmp jmpTo;
     }
 }
 
@@ -315,14 +313,14 @@ void __stdcall GameHook::myDeliveQuest(DWORD unknow, DWORD questID, UCHAR questS
                             NULL, MB_OKCANCEL);
 
 
-    //void* jmpTo = backupQuest;
+    jmpTo = backupQuest;
     if(result == IDOK)
     {
         __asm
         {
             popad;
             leave;
-            jmp backupQuest;
+            jmp jmpTo;
         }
     }
     else

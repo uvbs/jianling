@@ -28,6 +28,8 @@
 #include <tchar.h>
 #pragma comment(lib, "dbghelp")
 
+#include <vector>
+
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.

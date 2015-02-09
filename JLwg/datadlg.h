@@ -12,7 +12,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // CDataDlg dialog
 
-class CDataDlg : public CDialog, public GameHook
+class CDataDlg : public CDialog 
 {
 // Construction
 public:
@@ -96,7 +96,6 @@ protected:
     afx_msg void OnHookCombat();
     //}}AFX_MSG
     DECLARE_MESSAGE_MAP()
-
 };
 
 //{{AFX_INSERT_LOCATION}}

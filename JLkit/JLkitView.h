@@ -56,7 +56,7 @@ public:
     void			SerializeText(CArchive& ar);
     CLaunchThread*	m_lpLaunchThread;
     void			LaunchGame();
-
+    void GetAndActive();
     // Overrides
     // ClassWizard generated virtual function overrides
     //{{AFX_VIRTUAL(CJLkitView)
@@ -71,6 +71,7 @@ protected:
 
 public:
     //{{AFX_MSG(CJLkitView)
+    afx_msg void OnLookShareMem();
     afx_msg int		OnCreate(LPCREATESTRUCT lpCreateStruct);
     afx_msg void	OnStart();
     afx_msg void	OnRclick(NMHDR* pNMHDR, LRESULT* pResult);

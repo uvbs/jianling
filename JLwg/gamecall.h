@@ -20,7 +20,7 @@ public:
     Gamecall();
     ~Gamecall();
 
-
+    void UnInit();
     BOOL Init();
 
     //等待
@@ -29,13 +29,16 @@ public:
 
 
     //判断对象可杀的数据
-    DWORD m_Get11C(DWORD m_Adress);   //是 ==1 红名
-    DWORD m_Get110(DWORD m_Adress); //==1 进行下面判断, ==2是npc
-    DWORD m_Get2E4(DWORD m_Adress);   //==0 npc, else 黄名
+    static DWORD m_Get11C(DWORD m_Adress);   //是 ==1 红名
+    static DWORD m_Get110(DWORD m_Adress); //==1 进行下面判断, ==2是npc
+    static DWORD m_Get2E4(DWORD m_Adress);   //==0 npc, else 黄名
+
+
 
 
 
     //工具
+    void HookQietu(BOOL bEnable);   //hook 切图
     void SetShuyiPath(TCHAR* szPath);
     void SetIniPath(TCHAR* szPath);
     void KeyPress(WPARAM vk);
@@ -95,10 +98,10 @@ public:
     static void GetAllObjectToVector(ObjectNode* pNode, std::vector<ObjectNode*>& RangeObject);
     DWORD GetRangeLootCount(DWORD range);
     void _GetRangeObjectToVector(ObjectNode* pNode, DWORD range, std::vector<ObjectNode*>& RangeObject);
-    void GetRangeMonsterToVector(DWORD range, std::vector<ObjectNode*>& MonsterVec);
-    void GetRangeObjectToVector(ObjectNode* pNode, DWORD range, std::vector<ObjectNode*>& RangeObject);
+    static void GetRangeMonsterToVector(DWORD range, std::vector<ObjectNode*>& MonsterVec);
+    static void GetRangeObjectToVector(ObjectNode* pNode, DWORD range, std::vector<ObjectNode*>& RangeObject);
     void GetRangeLootObjectToVector(DWORD range, std::vector<ObjectNode*>& LootVec);
-    DWORD GetRangeMonsterCount(DWORD range = CAN_OPERATOR); //取范围内怪物数量, 一般用来判断是否用aoe攻击
+    static DWORD GetRangeMonsterCount(DWORD range = CAN_OPERATOR); //取范围内怪物数量, 一般用来判断是否用aoe攻击
     void GetRangeTaskItemToVectr(std::vector<ObjectNode*>& TastItemVector, DWORD range);
     ObjectNode* GetObjectByName(wchar_t szName[], DWORD range = 500);
     static BYTE GetObjectType(DWORD pObjAddress);       //对象类型
@@ -146,8 +149,8 @@ public:
     DWORD isStrikeLocked(int index, DWORD pAddr);
     DWORD isStrikeCanUse(int index, DWORD pAddr);
     BOOL isBagFull();
-    BOOL isCanKill(ObjectNode* pNode);
-    BOOL isCanLook(DWORD pAddr);    //可以看到的
+    static BOOL isCanKill(ObjectNode* pNode);
+    static BOOL isCanLook(DWORD pAddr);    //可以看到的
 
 
     //任务
@@ -342,18 +345,27 @@ public:
 
     //排序, 配置文件的优先级过滤
     static BOOL UDgreater(ObjectNode* elem1, ObjectNode* elem2);
-    BOOL Kill_ApplyConfig(std::vector<ObjectNode*>& ObjectVec);
+    static BOOL Kill_ApplyConfig(std::vector<ObjectNode*>& ObjectVec);
 
 
     static UINT CALLBACK KeepAliveThread(LPVOID pParam);
-    static UINT CALLBACK AttackThread(LPVOID pParam);
+    static UINT CALLBACK AttackHelperThread(LPVOID pParam);
+
+
     BOOL isCustomKill_DontKill(wchar_t *name);
     BOOL isCustomKill_AlwaysKill(wchar_t *name);
-    BOOL isCustomKill_HaveName(wchar_t *name);
+    static BOOL isCustomKill_HaveName(wchar_t *name);
+
+
 protected:
-    Logger log;
+    HANDLE hThreads[2];
+    static BOOL m_bStopThread;
+    static BOOL m_bCanAoe;
+    static void __stdcall ShunyiQietu();
+    CCHook hookQietu;
+    static Logger log;
     HANDLE m_hModuleBsEngine;
-    std::vector<CUSTOMKILL> CustomName;
+    static CustKillVector CustomName;
 };
 
 

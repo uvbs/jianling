@@ -55,6 +55,7 @@ public:
 
 // Implementation
 public:
+	BOOL IdleProc(LONG lCount);
 	void DocHit(LPARAM lHint, CRequest* pObject);
 	virtual ~CJLSrvrDoc();
 #ifdef _DEBUG

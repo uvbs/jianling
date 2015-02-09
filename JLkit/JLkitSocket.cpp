@@ -17,7 +17,6 @@ CJLkitSocket* CJLkitSocket::_Instance = NULL;
 CJLkitSocket::CJLkitSocket(CJLkitDoc* pDoc)
 {
     m_pDoc = pDoc;
-    AfxGetApp();
 }
 
 CJLkitSocket::~CJLkitSocket()

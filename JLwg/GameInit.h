@@ -61,13 +61,8 @@ public:
         return m_pShareMem;
     }
 
-    void HookQietu(BOOL bEnable);   //hook ÇĞÍ¼
 
 protected:
-    static void __stdcall ShunyiQietu();
-    CCHook hookQietu;
-
-
     static HWND m_hGameWnd;
 
     //ÅäÖÃÎÄ¼ş

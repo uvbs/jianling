@@ -5,15 +5,33 @@
 #include "..\common\CIniFile.h"
 
 
+CustKillVector Gamecall::CustomName;
+BOOL Gamecall::m_bCanAoe = FALSE;
+Logger Gamecall::log(_T("gcall"));
+BOOL Gamecall::m_bStopThread = FALSE;
 
-Gamecall::Gamecall():
-    log(_T("gcall"))
+Gamecall::Gamecall()
 {
     m_pShareMem = NULL;
 }
 
 Gamecall::~Gamecall()
 {
+    UnInit();
+}
+
+void Gamecall::UnInit()
+{
+    m_bStopThread = TRUE;
+
+    //等待所有线程退出
+    WaitForMultipleObjects(sizeof(hThreads), (HANDLE*)&hThreads, TRUE, INFINITE);
+
+    for(int i = 0; i < sizeof(hThreads); i++)
+    {
+        CloseHandle(hThreads[i]);
+
+    }
 }
 
 
@@ -768,7 +786,7 @@ UINT Gamecall::KeepAliveThread(LPVOID pParam)
 {
 
     Gamecall* pCall = (Gamecall*)pParam;
-    while(1)
+    while(m_bStopThread == FALSE)
     {
 
         pCall->GetHealth(60);
@@ -777,14 +795,53 @@ UINT Gamecall::KeepAliveThread(LPVOID pParam)
         Sleep(1000);
     }
 
+    return 0;
 }
 
-UINT Gamecall::AttackThread(LPVOID pParam)
+UINT Gamecall::AttackHelperThread(LPVOID pParam)
 {
+
+    while(m_bStopThread == FALSE)
+    {
+
+        if(GetRangeMonsterCount() >= 2)
+        {
+            Gamecall::m_bCanAoe = TRUE;
+        }
+        Sleep(3000);
+    }
 
 
     return 0;
 }
+
+
+
+void Gamecall::HookQietu(BOOL bEnable)
+{
+    if(bEnable)
+    {
+        hookQietu.hook();
+    }
+    else
+    {
+        hookQietu.unhook();
+    }
+
+}
+
+
+void __stdcall Gamecall::ShunyiQietu()
+{
+
+
+    __asm
+    {
+        leave;
+        retn 12;
+    }
+}
+
 
 
 //初始化函数
@@ -800,8 +857,16 @@ BOOL Gamecall::Init()
         GameSpend::Init();      //初始化加速
 
 
-        //_beginthreadex(0, 0, KeepAliveThread, this, 0, 0);
-        //_beginthreadex(0, 0, AttackThread, this, 0, 0);
+        //等待进入游戏
+        WaitPlans();
+
+
+        hThreads[0] = (HANDLE)_beginthreadex(0, 0, KeepAliveThread, this, 0, 0);
+        hThreads[1] = (HANDLE)_beginthreadex(0, 0, AttackHelperThread, this, 0, 0);
+
+
+
+        hookQietu.Init((void*)hook_dont_leave_dungeons, ShunyiQietu);
 
         //获取加载的游戏dll的地址
         m_hModuleBsEngine = GetModuleHandle(_T("bsengine_Shipping"));
@@ -5027,13 +5092,13 @@ UCHAR Gamecall::GetPlayerLevel() //获得角色等级
 
 
 //判断一个名字在自定义列表中是否存在
-BOOL Gamecall::isCustomKill_DontKill(wchar_t *name)
+BOOL Gamecall::isCustomKill_DontKill(wchar_t* name)
 {
 
     //从自定义的列表中匹配
     for(int i = 0; i < CustomName.size(); i++)
     {
-        
+
         //根据名字来匹配, 匹配到一个
         if(wcscmp(CustomName[i].name, name) == 0)
         {
@@ -5050,13 +5115,13 @@ BOOL Gamecall::isCustomKill_DontKill(wchar_t *name)
 
 
 //判断一个名字在自定义列表中是否存在
-BOOL Gamecall::isCustomKill_AlwaysKill(wchar_t *name)
+BOOL Gamecall::isCustomKill_AlwaysKill(wchar_t* name)
 {
 
     //从自定义的列表中匹配
     for(int i = 0; i < CustomName.size(); i++)
     {
-        
+
         //根据名字来匹配, 匹配到一个
         if(wcscmp(CustomName[i].name, name) == 0)
         {
@@ -5072,13 +5137,13 @@ BOOL Gamecall::isCustomKill_AlwaysKill(wchar_t *name)
 }
 
 //判断一个名字在自定义列表中是否存在
-BOOL Gamecall::isCustomKill_HaveName(wchar_t *name)
+BOOL Gamecall::isCustomKill_HaveName(wchar_t* name)
 {
 
     //从自定义的列表中匹配
     for(int i = 0; i < CustomName.size(); i++)
     {
-        
+
         //根据名字来匹配, 匹配到一个
         if(wcscmp(CustomName[i].name, name) == 0)
         {
@@ -5509,11 +5574,9 @@ void Gamecall::GetRangeMonsterToVector(DWORD range, std::vector<ObjectNode*>& Mo
     {
         //这个函数简写了,  直接从范围对象中遍历的过滤
         std::vector<ObjectNode*> RangeObject;
-        //log.logdv(_T("执行GetRangeObjectToVector"));
         GetRangeObjectToVector(GetObjectBinTreeBaseAddr(), range, RangeObject);
 
         fPosition fmypos;
-        //log.logdv(_T("执行GetPlayerPos"));
         GetPlayerPos(&fmypos);
         //TRACE1("RangeObject.size():%d",RangeObject.size());
         for(DWORD i = 0; i < RangeObject.size(); i++)
@@ -7808,5 +7871,4 @@ void Gamecall::CloseXiaoDongHua()
     }
 
 }
-
 

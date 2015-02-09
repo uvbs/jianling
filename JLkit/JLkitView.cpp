@@ -9,9 +9,9 @@
 #include "JLkitDoc.h"
 #include "JLkitSocket.h"
 #include "LaunchGameThread.h"
-#include "MyWork.h"
 #include "BugRepDlg.h"
 
+#include "CVPNFile.h"
 #include "..\common\common.h"
 #include "..\common\Inject.h"
 #include "..\common\Webpost.h"
@@ -39,6 +39,7 @@ BEGIN_MESSAGE_MAP(CJLkitView, CListView)
     ON_WM_RBUTTONUP()
     ON_COMMAND(ID_GET, OnGet)
     ON_COMMAND(ID_ACTIVE, OnActive)
+    ON_COMMAND(ID_LOOKSHAREMEM, OnLookShareMem)
     ON_UPDATE_COMMAND_UI(ID_PROFILE, OnUpdateProfile)
     ON_UPDATE_COMMAND_UI(ID_SELECTALL, OnUpdateSelectall)
     ON_UPDATE_COMMAND_UI(ID_GET, OnUpdateStart)
@@ -57,9 +58,10 @@ CJLkitView::CJLkitView()
 
 CJLkitView::~CJLkitView()
 {
+
 }
 
-CJLkitDoc*	CJLkitView::GetDocument()
+CJLkitDoc*  CJLkitView::GetDocument()
 {
     return (CJLkitDoc*)m_pDocument;
 }
@@ -114,15 +116,15 @@ void CJLkitView::OnProfile()
 
 
 // RESULT_FAIL_EXCEPTION,
-// RESULT_FAIL_CAPTCHA		,
-// RESULT_FAIL_IPBLOCK	,
-// RESULT_FAIL_PWERROR	,
-// RESULT_FAIL_AUTH		,
+// RESULT_FAIL_CAPTCHA      ,
+// RESULT_FAIL_IPBLOCK  ,
+// RESULT_FAIL_PWERROR  ,
+// RESULT_FAIL_AUTH     ,
 // RESULT_FAIL_NOACTIVEITEMS,
-// RESULT_FAIL_ACTIVEITEMSERR	,
-// RESULT_FAIL_TIMEOUT	,
+// RESULT_FAIL_ACTIVEITEMSERR   ,
+// RESULT_FAIL_TIMEOUT  ,
 // RESULT_SUCCESS,
-// RESULT_GET_ALEADY	,
+// RESULT_GET_ALEADY    ,
 // RESULT_GET_ERROR,
 // RESULT_LOGIN_NOUKEY
 // };
@@ -131,7 +133,7 @@ void CJLkitView::SetResult(int nReslt, int i)
 {
     if(nReslt == RESULT_SUCCESS)
     {
-        GetListCtrl().SetItemText(i, COLUMN_TEXT_STATUS, _T("运行中.."));
+        GetListCtrl().SetItemText(i, COLUMN_TEXT_STATUS, _T("完成"));
         GetListCtrl().SetCheck(i);
     }
     else if(nReslt == RESULT_FAIL_CAPTCHA)
@@ -197,7 +199,7 @@ void CJLkitView::OnStart()
 
 void CJLkitView::LaunchGame()
 {
-    Webpost::InitCom();
+
     CJLkitDoc* pDoc = GetDocument();
     CListCtrl& list = GetListCtrl();
 
@@ -216,7 +218,6 @@ void CJLkitView::LaunchGame()
         }
     }
 
-    Webpost::UnInitCom();
 }
 
 
@@ -317,21 +318,90 @@ void CJLkitView::OnInitialUpdate()
     SetTimer(IDT_TIMERPOSTKEYQUERY, 30000, NULL);
 }
 
+void CJLkitView::GetAndActive()
+{
+    //准备
+    GetDocument()->GetandActive();
+
+    //开始
+    for(int i = 0; i < GetListCtrl().GetItemCount(); i++)
+    {
+        CString strName = GetListCtrl().GetItemText(i, COLUMN_TEXT_ACCOUNT);
+        CString strPw = GetListCtrl().GetItemText(i, COLUMN_TEXT_PASSWORD);
+
+        CString strLine = strName + _T(", ") + strPw + _T("\n");
+        Webpost poster(strName, strPw);
+
+        int LoginTimes = 0;
+        BOOL bError = FALSE;
+
+_Again:
+        GetListCtrl().SetItemText(i, COLUMN_TEXT_STATUS, _T("正在登录"));
+        int nResult = poster.Login();
+        SetResult(nResult, i);
+        if(nResult != RESULT_SUCCESS)
+        {
+
+            if(nResult == RESULT_FAIL_CAPTCHA ||
+                    nResult == RESULT_FAIL_IPBLOCK)
+            {
+                //这两种情况直接换ip
+                GetDocument()->m_lpVpnFile->AlwaysConnect();
+                LoginTimes = 0;
+            }
+            else if(nResult == RESULT_FAIL_PWERROR)
+            {
+                //这种情况直接退
+                strLine.Remove(_T('\n'));
+                strLine += _T(" : 密码错误");
+                strLine += _T("\n");
+                goto _WriteError;
+            }
+            else
+            {
+                //剩余情况等两次
+                TRACE1("失败%d次", LoginTimes++);
+                if(LoginTimes == 2)
+                {
+                    GetDocument()->m_lpVpnFile->AlwaysConnect();
+                    LoginTimes = 0;
+                }
+            }
+
+            goto _Again;
+        }
+
+        //登录完成, 开始领取操作
+        GetListCtrl().SetItemText(i, COLUMN_TEXT_STATUS, _T("正在领取激活"));
+        nResult = poster.Get();
+        SetResult(nResult, i);
+        if(nResult != RESULT_SUCCESS)
+        {
+            bError = TRUE;
+        }
+
+        nResult = poster.Active();
+        SetResult(nResult, i);
+        if(nResult == RESULT_SUCCESS)
+        {
+            bError = TRUE;
+        }
+
+
+_WriteError:
+        if(bError)
+        {
+            GetDocument()->errfile.WriteString(strLine);
+        }
+
+    }
+}
+
+
 
 void CJLkitView::OnGetAndActive()
 {
-    CJLkitDoc* pDoc = GetDocument();
-    CThreadPool* lpTpool = pDoc->m_lpTPool;
-    pDoc->GetandActive();
-    int count = GetListCtrl().GetItemCount();
-
-    for(int i = 0; i < count; i++)
-    {
-        if(GetListCtrl().GetCheck(i))
-        {
-            lpTpool->AddWork(new MyCWork(i, this));
-        }
-    }
+    m_lpLaunchThread->AddWork(CLaunchThread::GETANDACTIVE);
 }
 
 
@@ -408,6 +478,28 @@ void CJLkitView::OnReportbug()
     CDlgBugRep dlg(pDoc);
     dlg.DoModal();
 }
+
+
+void CJLkitView::OnLookShareMem()
+{
+
+    SHAREINFO* pShareInfo = GetDocument()->m_share.GetMemAddr();
+    if(pShareInfo != NULL)
+    {
+        for(unsigned i = 0; i < GetDocument()->m_share.GetMaxCount(); i++, pShareInfo++)
+        {
+            TCHAR szTemp[BUFSIZ] = {0};
+            wsprintf(szTemp, _T("帐号:%s PID:%d 配置:%s 脚本:%s\n"),
+                     pShareInfo->szName,
+                     pShareInfo->pid,
+                     pShareInfo->szConfig,
+                     pShareInfo->szSript);
+
+            TRACE(szTemp);
+        }
+    }
+}
+
 
 void CJLkitView::OnTimer(UINT nIDEvent)
 {

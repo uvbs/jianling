@@ -95,20 +95,6 @@ HWND GameInit::isGameWndCreated(DWORD dwPid)
 }
 
 
-
-void __stdcall GameInit::ShunyiQietu()
-{
-
-
-    __asm
-    {
-        leave;
-        retn 12;
-    }
-}
-
-
-
 BOOL GameInit::Init()
 {
 
@@ -192,33 +178,9 @@ BOOL GameInit::Init()
     TRACE1("%s", m_szLujingTest);
 
 
-
-
     //等待游戏窗口创建再进行初始化
     WaitGameCreate();
-
-
-
-
-
-    hookQietu.Init((void*)hook_dont_leave_dungeons, ShunyiQietu);
-
-
 
     return TRUE;
 }
 
-
-void GameInit::HookQietu(BOOL bEnable)
-{
-    if(bEnable)
-    {
-        hookQietu.hook();
-
-    }
-    else
-    {
-        hookQietu.unhook();
-    }
-
-}
