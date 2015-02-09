@@ -48,7 +48,6 @@ CJLkitDoc::CJLkitDoc()
     m_pLoginDlg = NULL;
     m_pJob = NULL;
     m_lpVpnFile = NULL;
-    m_lpTPool = NULL;
     m_lpLock = NULL;
 }
 
@@ -86,10 +85,6 @@ BOOL CJLkitDoc::OnNewDocument()
     if(!m_lpVpnFile)
     {
         m_lpVpnFile = new CCVPNFile;
-    }
-    if(!m_lpTPool)
-    {
-        m_lpTPool = new CThreadPool;
     }
     if(!m_lpLock)
     {
@@ -159,7 +154,6 @@ BEGIN_MESSAGE_MAP(CJLkitDoc, CDocument)
     //{{AFX_MSG_MAP(CJLkitDoc)
     ON_COMMAND(ID_LOOKKEY, OnLookkey)
     ON_COMMAND(ID_SETTING, OnSetting)
-    ON_COMMAND(ID_LOOKSHAREMEM, OnLookShareMem)
     ON_UPDATE_COMMAND_UI(ID_INDICATOR_VALIDKEY, OnUpdateValidKey)
     ON_UPDATE_COMMAND_UI(ID_INDICATOR_LOGINED, OnUpdateLoginedNums)
     ON_UPDATE_COMMAND_UI(ID_INDICATOR_ALLNUMS, OnUpdateAllNums)
@@ -233,24 +227,6 @@ void CJLkitDoc::OnUpdateAllNums(CCmdUI* pCmdUI)
     pCmdUI->SetText(strTemp);
 }
 
-void CJLkitDoc::OnLookShareMem()
-{
-    SHAREINFO* pShareInfo = m_share.GetMemAddr();
-    if(pShareInfo != NULL)
-    {
-        for(unsigned i = 0; i < m_share.GetMaxCount(); i++, pShareInfo++)
-        {
-            TCHAR szTemp[BUFSIZ] = {0};
-            wsprintf(szTemp, _T("帐号:%s PID:%d 配置:%s 脚本:%s\n"),
-                     pShareInfo->szName,
-                     pShareInfo->pid,
-                     pShareInfo->szConfig,
-                     pShareInfo->szSript);
-
-            TRACE(szTemp);
-        }
-    }
-}
 
 void CJLkitDoc::OnLookkey()
 {
@@ -398,11 +374,6 @@ void CJLkitDoc::OnCloseDocument()
         delete m_lpVpnFile;
         m_lpVpnFile = NULL;
     }
-    if(m_lpTPool)
-    {
-        delete m_lpTPool;
-        m_lpTPool = NULL;
-    }
     if(m_lpLock)
     {
         delete m_lpLock;
@@ -455,9 +426,6 @@ BOOL CJLkitDoc::OnOpenDocument(LPCTSTR lpszPathName)
 
 void CJLkitDoc::GetandActive()
 {
-    m_lpTPool->SetMaxThreads(1);
-    m_lpTPool->Init();
-
     //如果当前没有连接vpn
     TCHAR szPathName[MAX_PATH];
     GetModuleFileName(NULL, szPathName, MAX_PATH);
@@ -475,7 +443,7 @@ void CJLkitDoc::GetandActive()
     SetCurrentDirectory(szPath);
 
     CTime time = CTime::GetCurrentTime();
-    CString strTime = time.Format("%d-%H-%M");
+    CString strTime = time.Format("%d日-%H时-%M分");
     CreateDirectory(strTime, NULL);
     PathAppend(szPath, strTime);
     SetCurrentDirectory(szPath);

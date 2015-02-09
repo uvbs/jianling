@@ -50,7 +50,6 @@ public:
     CDlgLogin* m_pLoginDlg;
     CJLkitSocket* m_pSocket;
     CLock* m_lpLock;
-    CThreadPool* m_lpTPool;
     CCVPNFile* m_lpVpnFile;
     CJob* m_pJob;
 
@@ -65,7 +64,7 @@ public:
     void ProcessRecevice();
     void ConnectResult(int nErrorCode);
     BOOL IsHaveValidKey();
-        int CreateGameProcess(CString &strName, CString &strPw, BOOL bProfile, PROCESS_INFORMATION* lppi);
+    int CreateGameProcess(CString& strName, CString& strPw, BOOL bProfile, PROCESS_INFORMATION* lppi);
 
 
 // Overrides
@@ -93,7 +92,6 @@ protected:
     //{{AFX_MSG(CJLkitDoc)
     // NOTE - the ClassWizard will add and remove member functions here.
     afx_msg void OnLookkey();
-    afx_msg void OnLookShareMem();
     afx_msg void OnSetting();
     afx_msg void OnUpdateValidKey(CCmdUI* pCmdUI);
     afx_msg void OnUpdateLoginedNums(CCmdUI* pCmdUI);

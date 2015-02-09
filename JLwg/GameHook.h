@@ -16,13 +16,27 @@
 typedef void (*SHOWHOOKRESULT)(LPVOID lpParam, TCHAR szFormat[]);
 
 
-//负责Hook, 遍历窗口继承了这个类
+//负责Hook
 class GameHook
 {
+
 public:
+    static GameHook* GetInstance()
+    {
+        if(_Instance == NULL)
+            new GameHook();
+
+
+        return _Instance;
+    }
+
+private:
+    static GameHook* _Instance;
+
+
+protected:
     GameHook();
     virtual ~GameHook();
-
 
 
     //走路发包的结构
@@ -34,7 +48,7 @@ public:
         float z;
     } SENDSTEP, PSENDSTEP;
 
-
+public:
     static LPVOID m_lpParam;
     static SHOWHOOKRESULT m_showHookRet;
 
@@ -44,11 +58,14 @@ public:
     static void showHookRet(LPTSTR lpText, ...);
 
 
-
-protected:
+    static DWORD* backupSendStep;
+    static DWORD* backupWearEquipment;
+    static DWORD* backupYiciJianWu;
+    static DWORD* backupDunDi;
+    static DWORD* backupQuest;
+    static DWORD* backupCombat;
 
     static std::vector<DWORD> m_ObjAddrVec;
-
 
     CCHook stepHook;
     CCHook deQuestHook;
@@ -57,14 +74,6 @@ protected:
     CCHook DundiHook;
     CCHook Yicjw;
     CCHook CombatHook;
-
-
-    static DWORD* backupSendStep;
-    static DWORD* backupWearEquipment;
-    static DWORD* backupYiciJianWu;
-    static DWORD* backupDunDi;
-    static DWORD* backupQuest;
-    static DWORD* backupCombat;
 
 
     //接任务

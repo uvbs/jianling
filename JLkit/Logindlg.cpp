@@ -91,6 +91,8 @@ void CDlgLogin::LoginResult(int nResult)
     {
         AfxMessageBox(_T("ÕÊºÅÒÑ¾­µÇÂ¼"));
     }
+
+     GetDlgItem(IDOK)->EnableWindow();
 }
 
 
@@ -118,5 +120,6 @@ void CDlgLogin::OnOK()
 {
     // TODO: Add extra validation here
     UpdateData(TRUE);
+    GetDlgItem(IDOK)->EnableWindow(FALSE);
     CJLkitSocket::GetInstance()->LoginSrv(m_strName, m_strPw);
 }

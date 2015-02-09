@@ -616,7 +616,7 @@ BOOL GamecallEx::kill_Task(int MyQuestID, int MyQuestStep)
     }
 }
 
-
+//添加自定义杀怪规则
 void GamecallEx::AddCustomKill(WCHAR* name, DWORD type)
 {
     
@@ -632,8 +632,15 @@ void GamecallEx::AddCustomKill(WCHAR* name, DWORD type)
     CustomName.push_back(cust);
 }
 
+//清空自定义杀怪规则
 int GamecallEx::ClearCustom()
 {
+    //释放掉new的内存
+    for(int i = 0; i < CustomName.size(); i++)
+    {
+        delete []CustomName[i].name;
+    }
+
     CustomName.clear();
     return 0;
 }
@@ -2130,8 +2137,7 @@ int GamecallEx::KillObject(DWORD range, ObjectNode* pNode, DWORD mode, DWORD can
     fPosition targetpos;
     for(;;)
     {
-  
-
+ 
         //TRACE(_T("判断人物死亡"));
         if(GetPlayerHealth() <= 0)
         {
@@ -2231,11 +2237,8 @@ int GamecallEx::KillObject(DWORD range, ObjectNode* pNode, DWORD mode, DWORD can
             Gamecall::TurnTo(targetpos);
             if(mode & modeAoe)
             {
-                TRACE(_T("判断AEO"));
-
-                if(GetRangeMonsterCount() >= 2)
+                if(Gamecall::m_bCanAoe)
                 {
-                    //TRACE(_T("执行AEO"));
                     AttackAOE();
                 }
                 else

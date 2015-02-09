@@ -47,7 +47,7 @@ CJLSrvrApp theApp;
 
 
 
-void ShowFrame(LPCTSTR szText, PVOID pParam)
+void CJLSrvrApp::ShowFrame(LPCTSTR szText, PVOID pParam)
 {
     OutputDebugString(szText);
 }
@@ -57,7 +57,7 @@ void ShowFrame(LPCTSTR szText, PVOID pParam)
 LONG CALLBACK myUnhandledExceptionFilter(EXCEPTION_POINTERS* lpExceptionInfo)
 {
     CCallTracer tracer;
-    tracer.WalkStack(ShowFrame, 0, 20, lpExceptionInfo->ContextRecord);
+    tracer.WalkStack(CJLSrvrApp::ShowFrame, 0, 20, lpExceptionInfo->ContextRecord);
     return 0;
 }
 
@@ -98,9 +98,9 @@ BOOL CJLSrvrApp::InitInstance()
     //  the specific initialization routines you do not need.
 
 #ifdef _AFXDLL
-    Enable3dControls();			// Call this when using MFC in a shared DLL
+    Enable3dControls();         // Call this when using MFC in a shared DLL
 #else
-    Enable3dControlsStatic();	// Call this when linking to MFC statically
+    Enable3dControlsStatic();   // Call this when linking to MFC statically
 #endif
 
     // Change the registry key under which our settings are stored.
@@ -192,3 +192,16 @@ void CJLSrvrApp::OnAppAbout()
 /////////////////////////////////////////////////////////////////////////////
 // CJLSrvrApp message handlers
 
+
+BOOL CJLSrvrApp::OnIdle(LONG lCount)
+{
+    // TODO: Add your specialized code here and/or call the base class
+    // if we still need more processing time, ask for it...
+    int bMore = FALSE;
+    CJLSrvrDoc* pDoc = (CJLSrvrDoc*)(((CFrameWnd*)m_pMainWnd)->GetActiveDocument());
+    if(pDoc->IdleProc(lCount))
+    {
+        bMore = TRUE;
+    }
+    return bMore;
+}

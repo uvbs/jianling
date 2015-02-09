@@ -5,20 +5,35 @@
 #include "..\common\CIniFile.h"
 
 
+CustKillVector Gamecall::CustomName;
+BOOL Gamecall::m_bCanAoe = FALSE;
+Logger Gamecall::log(_T("gcall"));
+BOOL Gamecall::m_bStopThread = FALSE;
 
-
-
-Gamecall::Gamecall():
-    log(_T("gcall"))
+Gamecall::Gamecall()
 {
-
     m_pShareMem = NULL;
-
-
 }
 
 Gamecall::~Gamecall()
 {
+
+    UnInit();
+
+}
+
+void Gamecall::UnInit()
+{
+    m_bStopThread = TRUE;
+
+    //等待所有线程退出
+    WaitForMultipleObjects(sizeof(hThreads), (HANDLE*)&hThreads, TRUE, INFINITE);
+
+    for(int i = 0; i < sizeof(hThreads); i++)
+    {
+        CloseHandle(hThreads[i]);
+
+    }
 }
 
 
@@ -773,7 +788,7 @@ UINT Gamecall::KeepAliveThread(LPVOID pParam)
 {
 
     Gamecall* pCall = (Gamecall*)pParam;
-    while(1)
+    while(m_bStopThread == FALSE)
     {
 
         pCall->GetHealth(60);
@@ -782,14 +797,53 @@ UINT Gamecall::KeepAliveThread(LPVOID pParam)
         Sleep(3000);
     }
 
+    return 0;
 }
 
-UINT Gamecall::AttackThread(LPVOID pParam)
+UINT Gamecall::AttackHelperThread(LPVOID pParam)
 {
+
+    while(m_bStopThread == FALSE)
+    {
+
+        if(GetRangeMonsterCount() >= 2)
+        {
+            Gamecall::m_bCanAoe = TRUE;
+        }
+        Sleep(3000);
+    }
 
 
     return 0;
 }
+
+
+
+void Gamecall::HookQietu(BOOL bEnable)
+{
+    if(bEnable)
+    {
+        hookQietu.hook();
+    }
+    else
+    {
+        hookQietu.unhook();
+    }
+
+}
+
+
+void __stdcall Gamecall::ShunyiQietu()
+{
+
+
+    __asm
+    {
+        leave;
+        retn 12;
+    }
+}
+
 
 
 //初始化函数
@@ -806,9 +860,17 @@ BOOL Gamecall::Init()
         GameSpend::Init();      //初始化加速
 
 
-        _beginthreadex(0, 0, KeepAliveThread, this, 0, 0);
-        _beginthreadex(0, 0, AttackThread, this, 0, 0);
+        //等待进入游戏
+        WaitPlans();
 
+
+
+        hThreads[0] = (HANDLE)_beginthreadex(0, 0, KeepAliveThread, this, 0, 0);
+        hThreads[1] = (HANDLE)_beginthreadex(0, 0, AttackHelperThread, this, 0, 0);
+
+
+
+        hookQietu.Init((void*)hook_dont_leave_dungeons, ShunyiQietu);
 
         //获取加载的游戏dll的地址
         m_hModuleBsEngine = GetModuleHandle(_T("bsengine_Shipping"));
@@ -5033,13 +5095,13 @@ UCHAR Gamecall::GetPlayerLevel() //获得角色等级
 
 
 //判断一个名字在自定义列表中是否存在
-BOOL Gamecall::isCustomKill_DontKill(wchar_t *name)
+BOOL Gamecall::isCustomKill_DontKill(wchar_t* name)
 {
 
     //从自定义的列表中匹配
     for(int i = 0; i < CustomName.size(); i++)
     {
-        
+
         //根据名字来匹配, 匹配到一个
         if(wcscmp(CustomName[i].name, name) == 0)
         {
@@ -5056,13 +5118,13 @@ BOOL Gamecall::isCustomKill_DontKill(wchar_t *name)
 
 
 //判断一个名字在自定义列表中是否存在
-BOOL Gamecall::isCustomKill_AlwaysKill(wchar_t *name)
+BOOL Gamecall::isCustomKill_AlwaysKill(wchar_t* name)
 {
 
     //从自定义的列表中匹配
     for(int i = 0; i < CustomName.size(); i++)
     {
-        
+
         //根据名字来匹配, 匹配到一个
         if(wcscmp(CustomName[i].name, name) == 0)
         {
@@ -5078,13 +5140,13 @@ BOOL Gamecall::isCustomKill_AlwaysKill(wchar_t *name)
 }
 
 //判断一个名字在自定义列表中是否存在
-BOOL Gamecall::isCustomKill_HaveName(wchar_t *name)
+BOOL Gamecall::isCustomKill_HaveName(wchar_t* name)
 {
 
     //从自定义的列表中匹配
     for(int i = 0; i < CustomName.size(); i++)
     {
-        
+
         //根据名字来匹配, 匹配到一个
         if(wcscmp(CustomName[i].name, name) == 0)
         {
@@ -5109,42 +5171,32 @@ BOOL Gamecall::Kill_ApplyConfig(std::vector<ObjectNode*>& ObjectVec)
         CCIniFile fileConfig;
         fileConfig.Open(m_szConfigPath);
         std::vector<ObjectNode*>::iterator it;
+        ObjectNode* pNode;
 
 
-        //TRACE("_T(config循环1)");
+        //必杀
         for(it = ObjectVec.begin(); it != ObjectVec.end();)
         {
-            //如果名字相同, 放到容器起始
-            ObjectNode* pNode = *it;
-            //TRACE1("%d",__LINE__);
-            wchar_t* objName = GetObjectName(pNode->ObjAddress);
-            // TRACE1("%d",__LINE__);
-
             //要是即不可杀配置文件又没有指定要杀就删掉这个元素
+            pNode = *it;
+            wchar_t* objName = GetObjectName(pNode->ObjAddress);
             if((isCanKill(pNode) == FALSE &&
                     fileConfig.isHave(strCombat, strAlwaysKill, objName) == FALSE) ||
                     (objName == NULL))
             {
-                //TRACE1("%d",__LINE__);
                 it = ObjectVec.erase(it);
+                continue;
             }
-            else
-            {
-                it++;
-            }
+
+            it++;
         }
 
 
-        //TRACE("_T(config循环2)");
+        //优先的
         for(it = ObjectVec.begin(); it != ObjectVec.end();)
         {
-
-            ObjectNode* pNode = *it;
-            //TRACE1("%d",__LINE__);
+            pNode = *it;
             wchar_t* objName = GetObjectName(pNode->ObjAddress);
-            //assert(objName!=NULL);
-            //TRACE1("%d",__LINE__);
-
             if(objName == NULL)
             {
                 it = ObjectVec.erase(it);
@@ -5155,9 +5207,7 @@ BOOL Gamecall::Kill_ApplyConfig(std::vector<ObjectNode*>& ObjectVec)
                 if(fileConfig.isHave(strCombat, strFirst, objName))
                 {
                     ObjectNode* pBack = pNode;
-                    //TRACE1("%d",__LINE__);
                     it = ObjectVec.erase(it);
-                    //TRACE1("%d",__LINE__);
                     ObjectVec.insert(ObjectVec.begin(), pBack);
                     continue;
                 }
@@ -5167,14 +5217,12 @@ BOOL Gamecall::Kill_ApplyConfig(std::vector<ObjectNode*>& ObjectVec)
             it++;
         }
 
-        //TRACE("_T(config循环3)");
+
         for(it = ObjectVec.begin(); it != ObjectVec.end();)
         {
-            ObjectNode* pNode = *it;
-            //TRACE1("%d",__LINE__);
+            pNode = *it;
+
             wchar_t* objName = GetObjectName(pNode->ObjAddress);
-            //assert(objName!=NULL);
-            //TRACE1("%d",__LINE__);
             if(objName == NULL)
             {
                 it = ObjectVec.erase(it);
@@ -5184,16 +5232,15 @@ BOOL Gamecall::Kill_ApplyConfig(std::vector<ObjectNode*>& ObjectVec)
             {
 
                 //应用全局之前先判断自定义
-                if(isCustomKill_HaveName(objName))
+                if(isCustomKill_HaveName(objName) == FALSE)
                 {
                     if(fileConfig.isHave(strCombat, strDontKill, objName))
                     {
                         //删掉这个元素
-                        //TRACE1("%d",__LINE__);
                         it = ObjectVec.erase(it);
                         continue;
                     }
-                    
+
                 }
 
             }
@@ -5203,14 +5250,10 @@ BOOL Gamecall::Kill_ApplyConfig(std::vector<ObjectNode*>& ObjectVec)
         }
 
 
-        //TRACE("_T(config循环3)");
         for(it = ObjectVec.begin(); it != ObjectVec.end();)
         {
-            ObjectNode* pNode = *it;
-            //TRACE1("%d",__LINE__);
+            pNode = *it;
             wchar_t* objName = GetObjectName(pNode->ObjAddress);
-            //assert(objName!=NULL);
-            //TRACE1("%d",__LINE__);
 
             //从自定义的列表中匹配
             for(int i = 0; i < CustomName.size(); i++)
@@ -5227,19 +5270,17 @@ BOOL Gamecall::Kill_ApplyConfig(std::vector<ObjectNode*>& ObjectVec)
                     }
                     else if(CustomName[i].type == ALWAYSKILL)
                     {
-                        
+
                     }
                     else if(CustomName[i].type == KILLFIRST)
                     {
-                        
+
                     }
                 }
             }
 
             it++;
         }
-
-
 
     }
     catch(...)
@@ -5500,11 +5541,9 @@ void Gamecall::GetRangeMonsterToVector(DWORD range, std::vector<ObjectNode*>& Mo
     {
         //这个函数简写了,  直接从范围对象中遍历的过滤
         std::vector<ObjectNode*> RangeObject;
-        //log.logdv(_T("执行GetRangeObjectToVector"));
         GetRangeObjectToVector(GetObjectBinTreeBaseAddr(), range, RangeObject);
 
         fPosition fmypos;
-        //log.logdv(_T("执行GetPlayerPos"));
         GetPlayerPos(&fmypos);
         //TRACE1("RangeObject.size():%d",RangeObject.size());
         for(DWORD i = 0; i < RangeObject.size(); i++)
@@ -7788,5 +7827,4 @@ void Gamecall::CloseXiaoDongHua()
     }
 
 }
-
 

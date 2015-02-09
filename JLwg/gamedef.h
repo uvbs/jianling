@@ -23,6 +23,8 @@
 #define FUNCNAME    __L(__FILE__)
 #endif
 
+
+
 #define RESULT_KILL_OK          0
 #define RESULT_KILL_PLAYDEAD    1
 #define RESULT_KILL_TIMEOUT     2
@@ -191,6 +193,10 @@ const wchar_t qianhun[] = L"\xcc9c\xb839\xb3c4\xb07c";
 #define QUDINGYAOJIANG_JIEGOUTOU        0x0A7CD0A4      // 确定摇奖CALL的结构头  
 #define ShuaXinBeiBao_JIEGOUTOU         0x0A7BD0A4      // 刷新背包CALL的结构头  
 #define GUANBICHUANGKOUCALL_JIEGOUTOU   0x0AD2D0A4      // 关闭窗口CALL的结构头  
+
+
+
+typedef std::vector<CUSTOMKILL> CustKillVector;
 
 
 

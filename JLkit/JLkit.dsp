@@ -119,10 +119,6 @@ SOURCE=.\Modifybind.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\MyWork.cpp
-# End Source File
-# Begin Source File
-
 SOURCE=.\registdlg.cpp
 # End Source File
 # Begin Source File
@@ -140,19 +136,11 @@ SOURCE=.\StdAfx.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=..\common\ThreadPool.cpp
-# End Source File
-# Begin Source File
-
 SOURCE=..\common\Userinfo.cpp
 # End Source File
 # Begin Source File
 
 SOURCE=..\common\webpost.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=..\common\Work.cpp
 # End Source File
 # End Group
 # Begin Group "Header Files"
@@ -228,10 +216,6 @@ SOURCE=.\Modifybind.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\MyWork.h
-# End Source File
-# Begin Source File
-
 SOURCE=.\registdlg.h
 # End Source File
 # Begin Source File
@@ -252,19 +236,11 @@ SOURCE=.\StdAfx.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\common\ThreadPool.h
-# End Source File
-# Begin Source File
-
 SOURCE=..\common\Userinfo.h
 # End Source File
 # Begin Source File
 
 SOURCE=..\common\webpost.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\common\Work.h
 # End Source File
 # End Group
 # Begin Group "Resource Files"

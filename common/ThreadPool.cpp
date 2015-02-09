@@ -3,7 +3,6 @@
 //////////////////////////////////////////////////////////////////////
 
 #include "stdafx.h"
-#include "Work.h"
 #include "ThreadPool.h"
 #include "Lock.h"
 

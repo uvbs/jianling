@@ -102,10 +102,7 @@ BEGIN
     END
     POPUP "帮助"
     BEGIN
-        POPUP "工具"
-        BEGIN
-            MENUITEM "查看共享内存",                ID_LOOKSHAREMEM
-        END
+        MENUITEM "共享内存",                    ID_LOOKSHAREMEM
         MENUITEM "报告BUG",                     ID_REPORTBUG
         MENUITEM "更新...",                     ID_UPDATACLIENT
     END
@@ -207,8 +204,8 @@ STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "绑定新卡号"
 FONT 9, "宋体"
 BEGIN
-    DEFPUSHBUTTON   "确认",IDOK,147,75,49,15
     EDITTEXT        IDC_BINDKEY,7,5,245,64,ES_MULTILINE
+    DEFPUSHBUTTON   "确认",IDOK,147,75,49,15
     PUSHBUTTON      "取消",IDCANCEL,203,75,49,15
 END
 

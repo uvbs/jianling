@@ -30,6 +30,12 @@ public:
         GETANDACTIVE,
         LAUNCHGAME
     };
+    
+    void StopThread()
+    {
+        m_bStop = TRUE;
+    }
+
 
 private:
 

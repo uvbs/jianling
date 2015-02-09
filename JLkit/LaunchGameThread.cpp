@@ -31,7 +31,6 @@ CLaunchThread::CLaunchThread()
 CLaunchThread::~CLaunchThread()
 {
     m_bStop = TRUE;
-    
     CloseHandle(hEventObj);
 }
 
@@ -76,7 +75,8 @@ int CLaunchThread::Run()
     {
         return -1;
     }
-
+    
+    Webpost::InitCom();
 
     while(m_bStop == FALSE)
     {
@@ -99,7 +99,7 @@ int CLaunchThread::Run()
             }
             else if(m_nFuncid == GETANDACTIVE)
             {
-                m_pView->OnGetAndActive();
+                m_pView->GetAndActive();
             }
 
 
@@ -107,6 +107,7 @@ int CLaunchThread::Run()
         }
     }
 
+    Webpost::InitCom();
     return 0;
 }
 

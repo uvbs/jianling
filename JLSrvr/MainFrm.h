@@ -9,9 +9,10 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
+
+
 class CMainFrame : public CFrameWnd
 {
-	
 protected: // create from serialization only
 	CMainFrame();
 	DECLARE_DYNCREATE(CMainFrame)
@@ -32,6 +33,7 @@ public:
 	protected:
 	virtual BOOL OnCreateClient(LPCREATESTRUCT lpcs, CCreateContext* pContext);
 	//}}AFX_VIRTUAL
+
 
 // Implementation
 public:

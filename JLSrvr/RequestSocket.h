@@ -7,7 +7,7 @@
 // RequestSocket.h : header file
 //
 
-#include <vector>
+
 #include "..\common\protocol.h"
 
 /////////////////////////////////////////////////////////////////////////////
@@ -25,6 +25,7 @@ public:
     TCHAR m_szName[MAXLEN];
     TCHAR m_szPw[MAXLEN];
 
+    int NoRecvTimes;
 // Operations
 public:
     CRequestSocket(CJLSrvrDoc* pDoc);
