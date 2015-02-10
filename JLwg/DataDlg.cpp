@@ -302,7 +302,9 @@ BOOL CDataDlg::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult)
                 CString strClick = m_ListCtrl.GetItemText(pItem->iItem, pItem->iSubItem);
                 if(strClick.IsEmpty() == FALSE)
                 {
+					strClick += _T("\r\n");
                     m_hEdit.ReplaceSel(strClick);
+
                 }
             }
             break;

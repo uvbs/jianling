@@ -792,7 +792,7 @@ UINT Gamecall::KeepAliveThread(LPVOID pParam)
         pCall->GetHealth(60);
         pCall->CloseXiaoDongHua();
 
-        Sleep(3000);
+        Sleep(1000);
     }
 
     return 0;
@@ -859,7 +859,6 @@ BOOL Gamecall::Init()
 
         //等待进入游戏
         WaitPlans();
-
 
 
         hThreads[0] = (HANDLE)_beginthreadex(0, 0, KeepAliveThread, this, 0, 0);
@@ -4902,6 +4901,7 @@ void Gamecall::SetMouseMode()
 //dd [[[[对象基址]+2C]+0C]+4] = 5 表示读条 1 刚进游戏 2 选择角色界面 3游戏内
 void Gamecall::WaitPlans()
 {
+
     for(;;)
     {
         if(isLoadingMap() == 3)
@@ -5171,9 +5171,14 @@ BOOL Gamecall::Kill_ApplyConfig(std::vector<ObjectNode*>& ObjectVec)
         ObjectNode* pNode;
 
 
-        //必杀
+		TRACE(_T("config循环1"));
 		for(it = ObjectVec.begin(); it != ObjectVec.end();)
 		{
+			//如果名字相同, 放到容器起始
+			pNode = *it;
+			//TRACE1("%d",__LINE__);
+			wchar_t* objName = GetObjectName(pNode->ObjAddress);
+			// TRACE1("%d",__LINE__);
 
 			if(objName == NULL)
 			{
@@ -5182,24 +5187,32 @@ BOOL Gamecall::Kill_ApplyConfig(std::vector<ObjectNode*>& ObjectVec)
 			}
 			else
 			{
-				//要是即不可杀配置文件又没有指定要杀就删掉这个元素
-				if(isCanKill(pNode) == FALSE &&
-					fileConfig.isHave(strCombat, strAlwaysKill, objName) == FALSE)
+				//应用全局之前先判断自定义                
+				if(isCustomKill_HaveName(objName) == FALSE)
 				{
-					//TRACE1("%d",__LINE__);
-					it = ObjectVec.erase(it);
-					continue;
-        }
+					//要是即不可杀配置文件又没有指定要杀就删掉这个元素
+					if(isCanKill(pNode) == FALSE &&
+						fileConfig.isHave(strCombat, strAlwaysKill, objName) == FALSE)
+					{
+						//TRACE1("%d",__LINE__);
+						it = ObjectVec.erase(it);
+						continue;
+					}
+				}
 			}
 			it++;
 		}
 
-		//TRACE("config循环2");
-        //优先的
+		TRACE(_T("config循环2"));
 		for(it = ObjectVec.begin(); it != ObjectVec.end();)
 		{
-            pNode = *it;
+
+			ObjectNode* pNode = *it;
+			//TRACE1("%d",__LINE__);
 			wchar_t* objName = GetObjectName(pNode->ObjAddress);
+			//assert(objName!=NULL);
+			//TRACE1("%d",__LINE__);
+
 			if(objName == NULL)
 			{
 				it = ObjectVec.erase(it);
@@ -5210,8 +5223,10 @@ BOOL Gamecall::Kill_ApplyConfig(std::vector<ObjectNode*>& ObjectVec)
 				if(fileConfig.isHave(strCombat, strFirst, objName))
 				{
 					ObjectNode* pBack = pNode;
+					//TRACE1("%d",__LINE__);
 					it = ObjectVec.erase(it);
-					ObjectVec.insert(ObjectVec.begin(), pBack);
+					//TRACE1("%d",__LINE__);
+					it = ObjectVec.insert(ObjectVec.begin(), pBack);
 					continue;
 				}
 
@@ -5220,12 +5235,14 @@ BOOL Gamecall::Kill_ApplyConfig(std::vector<ObjectNode*>& ObjectVec)
 			it++;
 		}
 
-
+		TRACE(_T("config循环3"));
 		for(it = ObjectVec.begin(); it != ObjectVec.end();)
 		{
-            pNode = *it;
-
+			ObjectNode* pNode = *it;
+			//TRACE1("%d",__LINE__);
 			wchar_t* objName = GetObjectName(pNode->ObjAddress);
+			//assert(objName!=NULL);
+			//TRACE1("%d",__LINE__);
 			if(objName == NULL)
 			{
 				it = ObjectVec.erase(it);
@@ -5235,11 +5252,12 @@ BOOL Gamecall::Kill_ApplyConfig(std::vector<ObjectNode*>& ObjectVec)
 			{
 
 				//应用全局之前先判断自定义                
-                if(isCustomKill_HaveName(objName) == FALSE)
+				if(isCustomKill_HaveName(objName) == FALSE)
 				{
 					if(fileConfig.isHave(strCombat, strDontKill, objName))
 					{
 						//删掉这个元素
+						//TRACE1("%d",__LINE__);
 						it = ObjectVec.erase(it);
 						continue;
 					}
@@ -5253,14 +5271,21 @@ BOOL Gamecall::Kill_ApplyConfig(std::vector<ObjectNode*>& ObjectVec)
 		}
 
 
-		for(it = ObjectVec.begin(); it != ObjectVec.end();)
+		TRACE(_T("config循环4"));
+		for(int i = 0; i < CustomName.size(); i++)
 		{
-            pNode = *it;
-            wchar_t* objName = GetObjectName(pNode->ObjAddress);
-
-			//从自定义的列表中匹配
-			for(int i = 0; i < CustomName.size(); i++)
+			for(it = ObjectVec.begin(); it != ObjectVec.end();)
 			{
+
+
+				ObjectNode* pNode = *it;
+				//TRACE1("%d",__LINE__);
+				wchar_t* objName = GetObjectName(pNode->ObjAddress);
+				//assert(objName!=NULL);
+				//TRACE1("%d",__LINE__);
+
+				//从自定义的列表中匹配
+
 
 				//根据名字来匹配, 匹配到一个
 				if(wcscmp(CustomName[i].name, objName) == 0)
@@ -5271,19 +5296,25 @@ BOOL Gamecall::Kill_ApplyConfig(std::vector<ObjectNode*>& ObjectVec)
 						it = ObjectVec.erase(it);
 						continue;
 					}
-					else if(CustomName[i].type == ALWAYSKILL)
+					/*else if(CustomName[i].type == ALWAYSKILL)
 					{
 
-					}
+					}*/
 					else if(CustomName[i].type == KILLFIRST)
 					{
-
+						ObjectNode* pBack = pNode;
+						//TRACE1("%d",__LINE__);
+						it = ObjectVec.erase(it);
+						//TRACE1("%d",__LINE__);
+						it = ObjectVec.insert(ObjectVec.begin(), pBack);
+						continue;
 					}
 				}
+				it++;
 			}
-
-			it++;
 		}
+
+
 
 	}
 	catch(...)
@@ -7449,7 +7480,15 @@ BOOL Gamecall::isStrikeCd(DWORD id)
         {
             if(StrikeVec[i].isBlock == 1 && StrikeVec[i].canUse == 0)
             {
-                return (StrikeVec[i].cd == 0);
+				//CD= 2是冷却 =1 是释放中
+				if (StrikeVec[i].cd == 0)
+				{
+					return TRUE;
+
+				}else
+				{
+					return FALSE;
+				}
             }
             else
             {

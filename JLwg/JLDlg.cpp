@@ -53,11 +53,12 @@ BEGIN_MESSAGE_MAP(CJLDlg, CDialog)
     //}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
-
+HANDLE hen;
 static UINT TaskThread(LPVOID pParam)
 {
 
     TaskScript task;
+	hen = (HANDLE)_beginthreadex(0,0,gcall.KeepAliveThread,0,0,0);
     task.BeginTask();
 
     return 0;
@@ -77,6 +78,7 @@ void CJLDlg::OnGotask()
     }
     else
     {
+		TerminateThread(hen,0);
         OnStopTask();
         m_pTaskThread = NULL;
         SetDlgItemText(IDC_GOTASK, _T("开始任务"));

@@ -1863,21 +1863,21 @@ void GamecallEx::FenJieByConfig()
     std::vector<_BAGSTU> AllBag;
     GetAllGoodsToVector(AllBag);
 
-    wchar_t* token = wcstok(szFilter, L";");
-    while(token != NULL)
-    {
-        for(int i = 0; i < AllBag.size(); i++)
-            for(int j = 0; j < AllBag[i].m_Num ; j++)
-            {
-                {
-                    sendcall(id_msg_Fenjie, &AllBag[i]);
-                    Sleep(500);
-                }
-            }
-    }
+	wchar_t *token = wcstok(szFilter, L";");
+	while(token != NULL){
+		for(int i = 0; i< AllBag.size(); i++){
+			if(wcscmp(token, AllBag[i].name) == 0){
+				for (int j = 0;j < AllBag[i].m_Num ; j++)
+				{
+					sendcall(id_msg_Fenjie, &AllBag[i]);
+					Sleep(500);
+				}
+			}
+		}
 
-    // Get next token:
-    token = wcstok(NULL, L";");
+		// Get next token: 
+		token = wcstok(NULL, L";");
+	}
 }
 
 //卖掉配置文件中所有物品
@@ -2075,7 +2075,7 @@ void GamecallEx::Kill_Tab()
         {
             return;
         }
-        if(isStrikeCd(0x5dca) == TRUE)
+        if(isStrikeCd(0x5dca))
         {
             break;
         }
