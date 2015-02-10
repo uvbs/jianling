@@ -343,7 +343,7 @@ void CDataDlg::OnGetpalyerinfo()
 //遍历全部对象
 void CDataDlg::PrintfAllObject()
 {
-    std::vector<ObjectNode*> RangeObject;
+    ObjectVector RangeObject;
     gcall.GetAllObjectToVector(gcall.GetObjectBinTreeBaseAddr(), RangeObject);
 
     m_ListCtrl.SetRedraw(FALSE);

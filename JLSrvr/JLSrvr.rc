@@ -120,6 +120,10 @@ BEGIN
         MENUITEM "工具栏(&T)",                  ID_VIEW_TOOLBAR
         MENUITEM "状态栏(&S)",                  ID_VIEW_STATUS_BAR
     END
+    POPUP "充值卡管理"
+    BEGIN
+        MENUITEM "所有卡号",                    ID_KA_ALL
+    END
     POPUP "帮助(&H)"
     BEGIN
         MENUITEM "关于 JLSrvr(&A)...",          ID_APP_ABOUT

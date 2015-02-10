@@ -5167,13 +5167,14 @@ BOOL Gamecall::Kill_ApplyConfig(std::vector<ObjectNode*>& ObjectVec)
 	{
 		CCIniFile fileConfig;
 		fileConfig.Open(m_szConfigPath);
-		std::vector<ObjectNode*>::iterator it;
+        ObjectVector::iterator it;
         ObjectNode* pNode;
 
 
         //±ÿ…±
 		for(it = ObjectVec.begin(); it != ObjectVec.end();)
 		{
+
 			if(objName == NULL)
 			{
 				it = ObjectVec.erase(it);

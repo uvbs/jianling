@@ -2,7 +2,6 @@
 
 
 #include "gamedata.h"
-#include "gamestruct.h"
 #include "gamedef.h"
 #include "gamespend.h"
 #include "GameInit.h"
@@ -95,14 +94,14 @@ public:
     //对象
 
     static ObjectNode* GetObjectBinTreeBaseAddr();
-    static void GetAllObjectToVector(ObjectNode* pNode, std::vector<ObjectNode*>& RangeObject);
+    static void GetAllObjectToVector(ObjectNode* pNode, ObjectVector& RangeObject);
     DWORD GetRangeLootCount(DWORD range);
-    void _GetRangeObjectToVector(ObjectNode* pNode, DWORD range, std::vector<ObjectNode*>& RangeObject);
-    static void GetRangeMonsterToVector(DWORD range, std::vector<ObjectNode*>& MonsterVec);
-    static void GetRangeObjectToVector(ObjectNode* pNode, DWORD range, std::vector<ObjectNode*>& RangeObject);
-    void GetRangeLootObjectToVector(DWORD range, std::vector<ObjectNode*>& LootVec);
+    void _GetRangeObjectToVector(ObjectNode* pNode, DWORD range, ObjectVector& RangeObject);
+    static void GetRangeMonsterToVector(DWORD range, ObjectVector& MonsterVec);
+    static void GetRangeObjectToVector(ObjectNode* pNode, DWORD range, ObjectVector& RangeObject);
+    void GetRangeLootObjectToVector(DWORD range, ObjectVector& LootVec);
     static DWORD GetRangeMonsterCount(DWORD range = CAN_OPERATOR); //取范围内怪物数量, 一般用来判断是否用aoe攻击
-    void GetRangeTaskItemToVectr(std::vector<ObjectNode*>& TastItemVector, DWORD range);
+    void GetRangeTaskItemToVectr(ObjectVector& TastItemVector, DWORD range);
     ObjectNode* GetObjectByName(wchar_t szName[], DWORD range = 500);
     static BYTE GetObjectType(DWORD pObjAddress);       //对象类型
     static BOOL _GetObjectPos(DWORD pObjAddress, fPosition* pos);       //取对象坐标
@@ -345,7 +344,7 @@ public:
 
     //排序, 配置文件的优先级过滤
     static BOOL UDgreater(ObjectNode* elem1, ObjectNode* elem2);
-    static BOOL Kill_ApplyConfig(std::vector<ObjectNode*>& ObjectVec);
+    static BOOL Kill_ApplyConfig(ObjectVector& ObjectVec);
 
 
     static UINT CALLBACK KeepAliveThread(LPVOID pParam);

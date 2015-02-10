@@ -9,6 +9,9 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
+#include "gamestruct.h"
+
+
 //方便根据字符集设置输出相应的调试信息
 #define __L(x)  ___L(x)
 #define ___L(x) L##x
@@ -197,7 +200,7 @@ const wchar_t qianhun[] = L"\xcc9c\xb839\xb3c4\xb07c";
 
 
 typedef std::vector<CUSTOMKILL> CustKillVector;
-
+typedef std::vector<ObjectNode*> ObjectVector;
 
 
 #endif // !defined(AFX_GAMEDEF_H__240B533F_368F_42BD_90E6_7F364A93AF17__INCLUDED_)

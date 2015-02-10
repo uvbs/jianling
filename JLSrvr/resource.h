@@ -17,6 +17,7 @@
 #define IDC_PASSW                       1003
 #define IDC_COMBO1                      1004
 #define ID_FILE_RESTART                 32771
+#define ID_KA_ALL                       32772
 #define ID_INDICATOR_UPTIME             59143
 #define COLUMN_ACCOUNT                  61207
 #define COLUMN_PASSWORD                 61208
@@ -42,7 +43,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_3D_CONTROLS                     1
 #define _APS_NEXT_RESOURCE_VALUE        131
-#define _APS_NEXT_COMMAND_VALUE         32772
+#define _APS_NEXT_COMMAND_VALUE         32773
 #define _APS_NEXT_CONTROL_VALUE         1005
 #define _APS_NEXT_SYMED_VALUE           107
 #endif

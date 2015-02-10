@@ -361,7 +361,7 @@ void GamecallEx::Pickup(int pos, DWORD range)
 //startLoot:
 
     //走到了, 遍历周围范围的可拾取对象
-    std::vector<ObjectNode*> RangeObject;
+    ObjectVector RangeObject;
     GetRangeLootObjectToVector(range, RangeObject);
 
     if(RangeObject.size() == 0)
@@ -661,7 +661,7 @@ int GamecallEx::FindThenKill(int pos, DWORD range, DWORD mode, DWORD MyQuestStep
 
 startKiLL:
     //log.logdv(_T("遍历怪物"));
-    std::vector<ObjectNode*> RangeObject;
+    ObjectVector RangeObject;
     GetRangeMonsterToVector(range, RangeObject);
 
 
@@ -852,7 +852,7 @@ void GamecallEx::PickupTask(DWORD range, DWORD taskid, DWORD taskstep)
 
     for(;;)
     {
-        std::vector<ObjectNode*> RangeObject;
+        ObjectVector RangeObject;
         RangeObject.clear();
         GetRangeTaskItemToVectr(RangeObject, range);
 
@@ -898,7 +898,7 @@ BOOL GamecallEx::PickupSpecTypeTask(DWORD range, DWORD type, wchar_t* name)
 
     try
     {
-        std::vector<ObjectNode*> RangeObject;
+        ObjectVector RangeObject;
         GetRangeObjectToVector(GetObjectBinTreeBaseAddr(), range, RangeObject);
 
         std::sort(RangeObject.begin(), RangeObject.end(), UDgreater);
@@ -940,7 +940,7 @@ BOOL GamecallEx::PickupSpecTypeTaskts(DWORD range, DWORD type, wchar_t* name)
 
     try
     {
-        std::vector<ObjectNode*> RangeObject;
+        ObjectVector RangeObject;
         GetRangeObjectToVector(GetObjectBinTreeBaseAddr(), range, RangeObject);
 
         std::sort(RangeObject.begin(), RangeObject.end(), UDgreater);
@@ -988,7 +988,7 @@ BOOL GamecallEx::PickupTask(DWORD range)
 
     try
     {
-        std::vector<ObjectNode*> RangeObject;
+        ObjectVector RangeObject;
         GetRangeTaskItemToVectr(RangeObject, range);
         std::sort(RangeObject.begin(), RangeObject.end(), UDgreater);
         for(DWORD i = 0; i < RangeObject.size(); i++)
@@ -2045,7 +2045,7 @@ void GamecallEx::DelAllTalent()
 
 void GamecallEx::TurnToNear(DWORD range)
 {
-    std::vector<ObjectNode*> RangeObject;
+    ObjectVector RangeObject;
     GetRangeMonsterToVector(range, RangeObject);
     //排序
     //log.logdv(_T("怪物排序"));
@@ -2464,7 +2464,7 @@ BOOL GamecallEx::PickupTaskts(DWORD range /*= CAN_OPERATOR*/)
 {
     try
     {
-        std::vector<ObjectNode*> RangeObject;
+        ObjectVector RangeObject;
         GetRangeTaskItemToVectr(RangeObject, range);
         std::sort(RangeObject.begin(), RangeObject.end(), UDgreater);
         for(DWORD i = 0; i < RangeObject.size(); i++)
