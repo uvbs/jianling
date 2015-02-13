@@ -1,0 +1,84 @@
+// Created by Microsoft (R) C/C++ Compiler Version 12.00.9782.0 (90188777).
+//
+// ncllm3.tlh
+//
+// C++ source equivalent of Win32 type library ncllm3.dll
+// compiler-generated file created 02/12/15 at 10:31:20 - DO NOT EDIT!
+
+#pragma once
+#pragma pack(push, 8)
+
+#include <comdef.h>
+
+//
+// Forward references and typedefs
+//
+
+struct __declspec(uuid("67cb7e4b-9c78-4522-8cbd-1add3c33ab88"))
+/* dispinterface */ _IncllmCtrlEvents;
+struct /* coclass */ ncllmCtrl;
+struct __declspec(uuid("ef5f77df-afba-4cd0-89fc-f599acf119fa"))
+/* dual interface */ IncllmCtrl;
+
+//
+// Smart pointer typedef declarations
+//
+
+_COM_SMARTPTR_TYPEDEF(_IncllmCtrlEvents, __uuidof(IDispatch));
+_COM_SMARTPTR_TYPEDEF(IncllmCtrl, __uuidof(IncllmCtrl));
+
+//
+// Type library items
+//
+
+struct __declspec(uuid("67cb7e4b-9c78-4522-8cbd-1add3c33ab88"))
+_IncllmCtrlEvents : IDispatch
+{};
+
+struct __declspec(uuid("47d4c076-4bea-493c-a252-7e1e8e9db15b"))
+ncllmCtrl;
+    // [ default ] interface IncllmCtrl
+    // [ default, source ] dispinterface _IncllmCtrlEvents
+
+struct __declspec(uuid("ef5f77df-afba-4cd0-89fc-f599acf119fa"))
+IncllmCtrl : IDispatch
+{
+    //
+    // Wrapper methods for error-handling
+    //
+
+    _bstr_t GetUniqueKey ( );
+    _bstr_t GetMacAddr ( );
+    _bstr_t IsGameInstalled (
+        _bstr_t bsGameId );
+    HRESULT StartLauncher (
+        _bstr_t bsParam );
+    _bstr_t IsLauncherInstalled ( );
+    unsigned long GetError ( );
+
+    //
+    // Raw methods provided by interface
+    //
+
+    virtual HRESULT __stdcall raw_GetUniqueKey (
+        BSTR * pbsUniqueKey ) = 0;
+    virtual HRESULT __stdcall raw_GetMacAddr (
+        BSTR * pbsMacAddr ) = 0;
+    virtual HRESULT __stdcall raw_IsGameInstalled (
+        BSTR bsGameId,
+        BSTR * pbsPath ) = 0;
+    virtual HRESULT __stdcall raw_StartLauncher (
+        BSTR bsParam ) = 0;
+    virtual HRESULT __stdcall raw_IsLauncherInstalled (
+        BSTR * pbsVersion ) = 0;
+    virtual HRESULT __stdcall raw_GetError (
+        unsigned long * ulErrorCode ) = 0;
+};
+
+//
+// Wrapper method implementations
+//
+
+#include "ncllm3.tli"
+
+#pragma pack(pop)
