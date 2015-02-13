@@ -30,7 +30,7 @@ CLaunchThread::CLaunchThread()
 
 CLaunchThread::~CLaunchThread()
 {
-    m_bStop = TRUE;
+    StopThread();
     CloseHandle(hEventObj);
 }
 
@@ -51,9 +51,7 @@ BOOL CLaunchThread::AddWork(FUNCID id)
 
     //先判断当前是否工作
     if(isWorking())
-    {
         return FALSE;
-    }
 
     //激活等待的事件
     m_nFuncid = id;
@@ -72,35 +70,23 @@ int CLaunchThread::Run()
 {
     // TODO: Add your specialized code here and/or call the base class
     if(m_pView == NULL)
-    {
         return -1;
-    }
-    
-    Webpost::InitCom();
 
+    Webpost::InitCom();
     while(m_bStop == FALSE)
     {
         TRACE(_T("waiting..."));
         if(WaitForSingleObject(hEventObj, INFINITE) == WAIT_OBJECT_0)
         {
             m_bIsWorking = TRUE;
-
             if(m_nFuncid == LAUNCHGAME)
-            {
                 m_pView->LaunchGame();
-            }
             else if(m_nFuncid == GET)
-            {
                 m_pView->OnGet();
-            }
             else if(m_nFuncid == ACTIVE)
-            {
                 m_pView->OnActive();
-            }
             else if(m_nFuncid == GETANDACTIVE)
-            {
                 m_pView->GetAndActive();
-            }
 
 
             m_bIsWorking = FALSE;
@@ -121,4 +107,10 @@ BOOL CLaunchThread::InitInstance()
 
     CWinThread::InitInstance();
     return TRUE;
+}
+
+void CLaunchThread::StopThread()
+{
+    m_bStop = TRUE;
+    WaitForSingleObject(m_hThread, INFINITE);
 }

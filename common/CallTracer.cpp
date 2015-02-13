@@ -110,7 +110,7 @@ HRESULT CCallTracer::WalkStack(PFN_SHOWFRAME pfnShowFrame,
     if(m_dwOptions & CALLTRACE_OPT_INFO_SUMMARY)
     {
         _stprintf(szPath, _T("Total Frames: %d; Spend %d MS"),
-                  nCount,	GetTickCount() - dwTimeMS);
+                  nCount,   GetTickCount() - dwTimeMS);
         pfnShowFrame(szPath, pParam);
     }
 

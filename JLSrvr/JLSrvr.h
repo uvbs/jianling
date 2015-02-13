@@ -9,7 +9,7 @@
 #endif // _MSC_VER > 1000
 
 #ifndef __AFXWIN_H__
-	#error include 'stdafx.h' before including this file for PCH
+#error include 'stdafx.h' before including this file for PCH
 #endif
 
 #include "resource.h"       // main symbols
@@ -22,29 +22,34 @@
 
 class CJLSrvrApp : public CWinApp
 {
+    //构造函数
 public:
-	CJLSrvrApp();
+    CJLSrvrApp();
+
+
 
 // Overrides
-	// ClassWizard generated virtual function overrides
-	//{{AFX_VIRTUAL(CJLSrvrApp)
-	public:
-	virtual BOOL InitInstance();
-	virtual BOOL OnIdle(LONG lCount);
-	//}}AFX_VIRTUAL
-
-	//数据
+    // ClassWizard generated virtual function overrides
+    //{{AFX_VIRTUAL(CJLSrvrApp)
 public:
-	CString m_strDefSvr;
+    virtual BOOL InitInstance();
+    virtual BOOL OnIdle(LONG lCount);
+    //}}AFX_VIRTUAL
+
+//属性
+public:
+    static LONG CALLBACK myUnhandledExceptionFilter(EXCEPTION_POINTERS* lpExceptionInfo);
+    CString m_strDefSvr;
     static void ShowFrame(LPCTSTR szText, PVOID pParam);
 
+
 // Implementation
-	//{{AFX_MSG(CJLSrvrApp)
-	afx_msg void OnAppAbout();
-		// NOTE - the ClassWizard will add and remove member functions here.
-		//    DO NOT EDIT what you see in these blocks of generated code !
-	//}}AFX_MSG
-	DECLARE_MESSAGE_MAP()
+    //{{AFX_MSG(CJLSrvrApp)
+    afx_msg void OnAppAbout();
+    // NOTE - the ClassWizard will add and remove member functions here.
+    //    DO NOT EDIT what you see in these blocks of generated code !
+    //}}AFX_MSG
+    DECLARE_MESSAGE_MAP()
 };
 
 

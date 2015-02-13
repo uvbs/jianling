@@ -53,12 +53,11 @@ BEGIN_MESSAGE_MAP(CJLDlg, CDialog)
     //}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
-HANDLE hen;
+
 static UINT TaskThread(LPVOID pParam)
 {
 
     TaskScript task;
-	hen = (HANDLE)_beginthreadex(0,0,gcall.KeepAliveThread,0,0,0);
     task.BeginTask();
 
     return 0;
@@ -69,7 +68,6 @@ static UINT TaskThread(LPVOID pParam)
 
 void CJLDlg::OnGotask()
 {
-    //读取配置文件
     //创建任务线程
     if(m_pTaskThread == NULL)
     {
@@ -78,7 +76,6 @@ void CJLDlg::OnGotask()
     }
     else
     {
-		TerminateThread(hen,0);
         OnStopTask();
         m_pTaskThread = NULL;
         SetDlgItemText(IDC_GOTASK, _T("开始任务"));
@@ -88,9 +85,6 @@ void CJLDlg::OnGotask()
 BOOL CJLDlg::OnInitDialog()
 {
     CDialog::OnInitDialog();
-
-
-
     return TRUE;
 }
 

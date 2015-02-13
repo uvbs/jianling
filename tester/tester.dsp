@@ -38,7 +38,7 @@ RSC=rc.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /MD /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS" /D "_AFXDLL" /Yu"stdafx.h" /FD /c
-# ADD CPP /nologo /MD /W3 /GX /Zi /Od /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS" /D "_AFXDLL" /FR /Yu"stdafx.h" /FD /c
+# ADD CPP /nologo /MDd /W3 /GX /Z7 /Od /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS" /D "_AFXDLL" /FR /Yu"stdafx.h" /FD /c
 # ADD BASE RSC /l 0x804 /d "NDEBUG" /d "_AFXDLL"
 # ADD RSC /l 0x804 /d "NDEBUG" /d "_AFXDLL"
 BSC32=bscmake.exe
@@ -46,7 +46,8 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:console /machine:I386
-# ADD LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:console /profile /map /debug /machine:I386 /out:"..\Release/tester.exe"
+# ADD LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:console /pdb:"..\Release/tester.pdb" /debug /machine:I386 /out:"..\Release\tester.exe"
+# SUBTRACT LINK32 /profile /pdb:none /map
 # Begin Target
 
 # Name "tester - Win32 Release"
@@ -55,12 +56,24 @@ LINK32=link.exe
 # PROP Default_Filter "cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 # Begin Source File
 
-SOURCE=..\common\CIniFile.cpp
+SOURCE=.\AttackLogic.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\Logic.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ontrolLogic.cpp
 # End Source File
 # Begin Source File
 
 SOURCE=.\StdAfx.cpp
 # ADD CPP /Yc"stdafx.h"
+# End Source File
+# Begin Source File
+
+SOURCE=.\TaskDispter.cpp
 # End Source File
 # Begin Source File
 
@@ -72,11 +85,7 @@ SOURCE=.\tester.rc
 # End Source File
 # Begin Source File
 
-SOURCE=..\common\ThreadPool.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=..\common\Work.cpp
+SOURCE=.\UILogic.cpp
 # End Source File
 # End Group
 # Begin Group "Header Files"
@@ -84,7 +93,15 @@ SOURCE=..\common\Work.cpp
 # PROP Default_Filter "h;hpp;hxx;hm;inl"
 # Begin Source File
 
-SOURCE=..\common\CIniFile.h
+SOURCE=.\AttackLogic.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\Logic.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ontrolLogic.h
 # End Source File
 # Begin Source File
 
@@ -96,15 +113,15 @@ SOURCE=.\StdAfx.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\TaskDispter.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\tester.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\common\ThreadPool.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\common\Work.h
+SOURCE=.\UILogic.h
 # End Source File
 # End Group
 # Begin Group "Resource Files"

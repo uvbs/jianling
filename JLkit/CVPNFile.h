@@ -14,20 +14,20 @@
 class CCVPNFile: public CStdioFile
 {
 public:
-	CCVPNFile();
-	virtual ~CCVPNFile();
+    CCVPNFile();
+    virtual ~CCVPNFile();
 
 
-	void DisConnectVPN();
-	int ConnectVPN();
-	void AlwaysConnect();		//一直连
+    void DisConnectVPN();
+    int ConnectVPN();
+    void AlwaysConnect();       //一直连
 
-	BOOL Open(TCHAR szFilePath[]);
+    BOOL Open(TCHAR szFilePath[]);
 
 private:
-	POSITION curLine;
-	DWORD dwMaxLine;
-	CStringList cStrList;
+    POSITION curLine;
+    DWORD dwMaxLine;
+    CStringList cStrList;
 };
 
 #endif // !defined(AFX_CVPNFILE_H__48C63982_DEC4_4960_B822_BB8302AB9242__INCLUDED_)

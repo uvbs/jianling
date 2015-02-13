@@ -32,7 +32,7 @@ static fPosition g_fmypos;
 
 static DWORD* jmpTo;
 GameHook::GameHook():
-	stepHook((void*)shunyi_call, mySendStep),
+    stepHook((void*)shunyi_call, mySendStep),
     deQuestHook((void*)deliver_quest_call, myDeliveQuest),
     aeQuestHook((void*)npc_quest_call, myAcceptQuest),
     WearHook((void*)chuanzhuangbei_call, myWearEquipment),
@@ -87,9 +87,7 @@ void __stdcall GameHook::mySendStep(SENDSTEP* ftarpos)
     //追加
     FILE* file = _tfopen(Gamecall::GetLujingTest(), _T("a+b"));
     if(file == NULL)
-    {
         OutputDebugString(_T("打开文件失败"));
-    }
     else
     {
 
@@ -148,13 +146,9 @@ void __stdcall GameHook::myWearEquipment(DWORD argv1, DWORD value, DWORD argv3, 
     }
 
     if(bFind)
-    {
         showHookRet(_T("gcall.WearEquipment(L%s, %d);"), name, itemtype);
-    }
     else
-    {
         showHookRet(_T("穿装备失败"));
-    }
 
     jmpTo = backupWearEquipment;
     __asm
@@ -185,9 +179,7 @@ void __stdcall GameHook::myCombatFilter()
     for(int i = 0; i < m_ObjAddrVec.size(); i++)
     {
         if(objAddr == m_ObjAddrVec[i])
-        {
             showHookRet(_T("%08x, 技能: %d"), objAddr, id);
-        }
     }
 
     jmpTo = backupCombat;
@@ -211,9 +203,7 @@ void __stdcall GameHook::myYiCiJianWu(DWORD argv1,
     showHookRet(_T("dump stack"));
 
     for(int i = 0; i < 5; i++)
-    {
         showHookRet(_T("esp+%d %08x"), i, *(pEsp + i));
-    }
 
     jmpTo = backupYiciJianWu;
     __asm
@@ -270,9 +260,7 @@ void __stdcall GameHook::myDeliveQuest(DWORD unknow, DWORD questID, UCHAR questS
 
     showHookRet(_T("dump stack"));
     for(i = 0; i < 8; i++)
-    {
         showHookRet(_T("esp+%d %08x"), i, *(pEsp + i));
-    }
 
     showHookRet(_T("mianban: %08x"), edi_value);
     BOOL bFined;
@@ -297,15 +285,11 @@ void __stdcall GameHook::myDeliveQuest(DWORD unknow, DWORD questID, UCHAR questS
     }
 
     if(bFined != TRUE)
-    {
         showHookRet(_T("没有遍历到这个\nNPCID: %d, NPCID2: %d"), npcid1, npcid2);
-    }
 
     //NPC有没有名字
     if(name == NULL)
-    {
         name = L"NULL";
-    }
 
     showHookRet(_T("gcall.DeliverQuests(%d, %x, %s);"), questID, questStep, name);
 
@@ -343,9 +327,7 @@ void __stdcall GameHook::myAcceptQuest(DWORD questID, UCHAR questStep, DWORD arg
 
     showHookRet(_T("dump stack"));
     for(int i = 0; i < 7; i++)
-    {
         showHookRet(_T("esp+%d %08x"), i, *(pEsp + i));
-    }
 
     __asm
     {

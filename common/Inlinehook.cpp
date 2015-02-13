@@ -124,7 +124,7 @@ BOOL GetPatchSize(void* Proc, DWORD dwNeedSize, LPDWORD lpPatchSize)
 
     do
     {
-        Length = SizeOfCode(Proc, &pOpcode);
+        Length = LDasm::SizeOfCode(Proc, &pOpcode);
         if((Length == 1) && (*pOpcode == 0xC3))
         {
             break;

@@ -22,7 +22,8 @@ public:
     CJob(HANDLE hJob = NULL);
     ~CJob();
 
-    operator HANDLE() const {
+    operator HANDLE() const
+    {
         return(m_hJob);
     }
 
@@ -83,9 +84,7 @@ inline CJob::~CJob()
 {
 
     if(m_hJob != NULL)
-    {
         CloseHandle(m_hJob);
-    }
 }
 
 
@@ -265,9 +264,7 @@ inline BOOL CJob::QueryBasicProcessIdList(DWORD dwMaxProcesses,
         {
             // We got the information, return it to the caller
             if(pdwProcessesReturned != NULL)
-            {
                 *pdwProcessesReturned = pjobpil->NumberOfProcessIdsInList;
-            }
 
             CopyMemory(pdwProcessIdList, pjobpil->ProcessIdList,
                        sizeof(DWORD) * pjobpil->NumberOfProcessIdsInList);
@@ -287,9 +284,7 @@ inline BOOL CJob::QueryBasicUIRestrictions(PDWORD pfdwRestrictions)
     BOOL fOk = QueryInformationJobObject(m_hJob, JobObjectBasicUIRestrictions,
                                          &jobuir, sizeof(jobuir), NULL);
     if(fOk)
-    {
         *pfdwRestrictions = jobuir.UIRestrictionsClass;
-    }
     return(fOk);
 }
 
@@ -304,9 +299,7 @@ inline BOOL CJob::QueryEndOfJobTimeInfo(PDWORD pfdwEndOfJobTimeInfo)
     BOOL fOk = QueryInformationJobObject(m_hJob, JobObjectBasicUIRestrictions,
                                          &joeojti, sizeof(joeojti), NULL);
     if(fOk)
-    {
         *pfdwEndOfJobTimeInfo = joeojti.EndOfJobTimeAction;
-    }
     return(fOk);
 }
 

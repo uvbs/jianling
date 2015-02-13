@@ -10,7 +10,6 @@
 #include "Modifybind.h"
 
 
-#include "..\common\Userinfo.h"
 #include "..\common\protocol.h"
 #include "..\common\Webpost.h"
 
@@ -70,8 +69,6 @@ void CDlgLogin::OnBtnRegister()
     }
 }
 
-
-
 void CDlgLogin::LoginResult(int nResult)
 {
     if(nResult == result_ok)
@@ -80,19 +77,13 @@ void CDlgLogin::LoginResult(int nResult)
         CDialog::OnOK();
     }
     else if(nResult == result_login_notuser)
-    {
         AfxMessageBox(_T("不存在的用户名"));
-    }
     else if(nResult == result_login_pwerror)
-    {
         AfxMessageBox(_T("密码错误"));
-    }
     else if(nResult == result_login_logined)
-    {
         AfxMessageBox(_T("帐号已经登录"));
-    }
 
-     GetDlgItem(IDOK)->EnableWindow();
+    GetDlgItem(IDOK)->EnableWindow();
 }
 
 
@@ -100,7 +91,8 @@ void CDlgLogin::LoginResult(int nResult)
 BOOL CDlgLogin::OnInitDialog()
 {
     CDialog::OnInitDialog();
-    UpdateData(FALSE);
+    GetDlgItem(IDOK)->EnableWindow(FALSE);
+
     return TRUE;  // return TRUE unless you set the focus to a control
     // EXCEPTION: OCX Property Pages should return FALSE
 }
@@ -119,7 +111,17 @@ void CDlgLogin::OnBtnModifybind()
 void CDlgLogin::OnOK()
 {
     // TODO: Add extra validation here
-    UpdateData(TRUE);
-    GetDlgItem(IDOK)->EnableWindow(FALSE);
-    CJLkitSocket::GetInstance()->LoginSrv(m_strName, m_strPw);
+    UpdateData();
+
+    int nRet = CJLkitSocket::GetInstance()->LoginSrv(m_strName, m_strPw);
+    if(nRet == SOCKET_ERROR)
+        GetDlgItem(IDOK)->EnableWindow();
+}
+
+void CDlgLogin::ConnectResult(int nErrorCode)
+{
+    if(nErrorCode == 0)
+        GetDlgItem(IDOK)->EnableWindow();
+    else
+        AfxMessageBox(_T("无法连接到服务器"));
 }

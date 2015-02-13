@@ -12,33 +12,23 @@
 
 #include "..\common\protocol.h"
 
-//这应该是需要个单例模式
-//为了是能在程序全局内可以访问到这个类
-//并且使用单例来提供避免多次声明此类
 
 class CJLkitDoc;
 class CJLkitSocket : public CAsyncSocket
 {
-
+    //构造函数
 protected:
     CJLkitSocket(CJLkitDoc* pDoc);
 
 public:
-    static CJLkitSocket* GetInstance(CJLkitDoc* pDoc = NULL)
-    {
-        if(_Instance == NULL)
-        {
-            _Instance = new CJLkitSocket(pDoc);
-            assert(pDoc != NULL);
-        }
-
-        return _Instance;
-    }
-
+    static CJLkitSocket* GetInstance(CJLkitDoc* pDoc = NULL);
     virtual ~CJLkitSocket();
+private:
+    static CJLkitSocket* _Instance;
 
-
-    BOOL LoginSrv(CString& strName, CString& strPassWord);
+    //属性
+public:
+    int LoginSrv(CString& strName, CString& strPassWord);
     BOOL ConnectSrv(const CString& strHostName, int nPort);
     void Querykey();
     void BindKey(CString& strKey);
@@ -51,14 +41,22 @@ public:
     CJLkitDoc* m_pDoc;
     LOGIN_BUF m_UserInfo;
 
-public:
+    //覆盖
+    // ClassWizard generated virtual function overrides
+    //{{AFX_VIRTUAL(CJLkitSocket)
+	public:
     virtual void OnReceive(int nErrorCode);
     virtual void OnConnect(int nErrorCode);
     virtual int Send(const void* lpBuf, int nBufLen, int nFlags = 0);
     virtual int Receive(void* lpBuf, int nBufLen, int nFlags = 0);
+	virtual void OnSend(int nErrorCode);
+	//}}AFX_VIRTUAL
 
-private:
-    static CJLkitSocket* _Instance;
+    // Generated message map functions
+    //{{AFX_MSG(CJLkitSocket)
+    // NOTE - the ClassWizard will add and remove member functions here.
+    //}}AFX_MSG
+
 };
 
 #endif // !defined(AFX_CLIENTSOCKET_H__BF7469B0_F694_47D1_ABD7_C858631751B9__INCLUDED_)

@@ -24,14 +24,14 @@ public:
 
     // 安装钩子
     BOOL InstallHook(PCHAR FunName,//NTAPI
-                     DWORD pHookFunc,	//HOOK的函数
-                     DWORD* pOrigFunc);	//返回的函数
+                     DWORD pHookFunc,   //HOOK的函数
+                     DWORD* pOrigFunc); //返回的函数
 
     // Ex安装钩子
-    BOOL InstallHookEx(DWORD dwIndex,		//NTAPI
-                       WORD dwRetIndex,	//返回堆栈平衡
-                       DWORD pHookFunc,		//HOOK的函数
-                       DWORD* pOrigFunc);	//返回的函数
+    BOOL InstallHookEx(DWORD dwIndex,       //NTAPI
+                       WORD dwRetIndex, //返回堆栈平衡
+                       DWORD pHookFunc,     //HOOK的函数
+                       DWORD* pOrigFunc);   //返回的函数
 
     // 改造起始地址
     int GetEditLength(PVOID CodeAdderss);

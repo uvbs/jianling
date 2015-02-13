@@ -46,20 +46,15 @@ CJLkitDoc::CJLkitDoc()
     m_pSocket = NULL;
     m_pKeyDlg = NULL;
     m_pLoginDlg = NULL;
-    m_pJob = NULL;
     m_lpVpnFile = NULL;
     m_lpLock = NULL;
 }
 
 void CJLkitDoc::ConnectResult(int nErrorCode)
 {
-    if(nErrorCode == 0)
+    if(m_pLoginDlg)
     {
-
-    }
-    else
-    {
-        AfxMessageBox(_T("连接失败"));
+        m_pLoginDlg->ConnectResult(nErrorCode);
     }
 }
 
@@ -72,7 +67,7 @@ BOOL CJLkitDoc::OnNewDocument()
     }
 
 
-    m_KeepPw =	AfxGetApp()->GetProfileInt(_T("设置"), _T("记住密码"), 0);
+    m_KeepPw =  AfxGetApp()->GetProfileInt(_T("设置"), _T("记住密码"), 0);
     _tcsncpy(m_szFileName, (LPCTSTR)AfxGetApp()->GetProfileString(_T("设置"), _T("帐号文件")), MAX_PATH);
     _tcsncpy(m_szAccountName, (LPCTSTR)AfxGetApp()->GetProfileString(_T("设置"), _T("用户名")), MAX_PATH);
     _tcsncpy(m_szAccountPw, (LPCTSTR)AfxGetApp()->GetProfileString(_T("设置"), _T("密码")), MAX_PATH);
@@ -86,29 +81,26 @@ BOOL CJLkitDoc::OnNewDocument()
     {
         m_lpVpnFile = new CCVPNFile;
     }
+
     if(!m_lpLock)
     {
         m_lpLock = new CLock;
     }
+
     if(!m_pSocket)
     {
         m_pSocket = CJLkitSocket::GetInstance(this);
         m_pSocket->Create();
     }
+
     if(!m_pLoginDlg)
     {
         m_pLoginDlg = new CDlgLogin;
     }
-    if(!m_pJob)
-    {
-        m_pJob = new CJob;
-    }
-
 
 
     CString strServer;
     strServer.LoadString(IDS_CONNECT_SERVER);
-
     if(m_pSocket->ConnectSrv(strServer, PORT_SRV) == FALSE)
     {
         if(AfxMessageBox(IDS_RETRY_CONNECT, MB_YESNO) == IDNO)
@@ -118,15 +110,13 @@ BOOL CJLkitDoc::OnNewDocument()
     }
 
 
-    m_pJob->Create(NULL, _T("JLkit_Job"));
-
-
     m_pLoginDlg->m_bRemPw = m_KeepPw;
     if(m_KeepPw)
     {
         m_pLoginDlg->m_strPw = m_szAccountPw;
         m_pLoginDlg->m_strName = m_szAccountName;
     }
+
 
     if(m_pLoginDlg->DoModal() == IDOK)
     {
@@ -137,8 +127,8 @@ BOOL CJLkitDoc::OnNewDocument()
             _tcscpy(m_szAccountPw, (LPCTSTR)m_pLoginDlg->m_strPw);
 
         }
-        m_KeepPw = m_pLoginDlg->m_bRemPw;
 
+        m_KeepPw = m_pLoginDlg->m_bRemPw;
         return TRUE;
     }
 
@@ -303,7 +293,7 @@ void CJLkitDoc::ProcessRecevice()
     int nBytes = m_pSocket->Receive(m_buf.GetData(), m_buf.GetSize());
     if(nBytes == SOCKET_ERROR)
     {
-        TRACE(_T("recevice: SOCKET_ERROR"));
+        TRACE0(_T("recevice: SOCKET_ERROR"));
     }
     else
     {
@@ -380,13 +370,6 @@ void CJLkitDoc::OnCloseDocument()
         m_lpLock = NULL;
     }
 
-
-    if(m_pJob)
-    {
-        delete m_pJob;
-        m_pJob = NULL;
-    }
-
     if(m_pSocket)
     {
         delete m_pSocket;
@@ -411,18 +394,6 @@ void CJLkitDoc::OnCloseDocument()
     CDocument::OnCloseDocument();
 }
 
-BOOL CJLkitDoc::OnOpenDocument(LPCTSTR lpszPathName)
-{
-    if(!CDocument::OnOpenDocument(lpszPathName))
-    {
-        return FALSE;
-    }
-
-    // TODO: Add your specialized creation code here
-    AfxGetApp()->WriteProfileString(_T("设置"), _T("帐号文件"), lpszPathName);
-    return TRUE;
-}
-
 
 void CJLkitDoc::GetandActive()
 {
@@ -438,12 +409,13 @@ void CJLkitDoc::GetandActive()
     //取得当前模块路径
     TCHAR szPath[MAX_PATH] = {0};
     GetModuleFileName(NULL, szPath, MAX_PATH);
+
     //将工作路径设置为模块路径
     PathRemoveFileSpec(szPath);
     SetCurrentDirectory(szPath);
 
     CTime time = CTime::GetCurrentTime();
-    CString strTime = time.Format("%d日-%H时-%M分");
+    CString strTime = time.Format("%d日%H时%M分");
     CreateDirectory(strTime, NULL);
     PathAppend(szPath, strTime);
     SetCurrentDirectory(szPath);
@@ -457,7 +429,7 @@ int CJLkitDoc::CreateGameProcess(CString& strName, CString& strPw, BOOL bProfile
 {
 
     STARTUPINFO si;
-	ZeroMemory(&si,sizeof(STARTUPINFO));
+    ZeroMemory(&si, sizeof(STARTUPINFO));
     si.cb = sizeof(si);
 
     Webpost poster(strName, strPw);
@@ -502,7 +474,7 @@ int CJLkitDoc::CreateGameProcess(CString& strName, CString& strPw, BOOL bProfile
     {
         if(CreateProcess(NULL, szGameCmdLine, NULL,  NULL, FALSE, CREATE_SUSPENDED, NULL, NULL, &si, lppi) == FALSE)
         {
-			TRACE1("%d",GetLastError());
+            TRACE1("%d", GetLastError());
             return RESULT_FAIL_CREATEGAMEPROCESS;
         }
     }
@@ -586,12 +558,4 @@ int CJLkitDoc::Active(CString& strName, CString& strPw)
     }
 
     return nRet;
-}
-
-void CJLkitDoc::DeleteContents()
-{
-    // TODO: Add your specialized code here and/or call the base class
-
-
-    CDocument::DeleteContents();
 }

@@ -20,23 +20,21 @@ public:
 
 // Operations
 public:
-	CListenSocket(CJLSrvrDoc *pDoc);
-	virtual ~CListenSocket();
-    BOOL EnableKeepAlive();
+    CListenSocket(CJLSrvrDoc* pDoc);
+    virtual ~CListenSocket();
 
 // Overrides
 public:
-	// ClassWizard generated virtual function overrides
-	//{{AFX_VIRTUAL(CListenSocket)
-	public:
-    virtual void OnAccept( int nErrorCode );
-	virtual void OnConnect(int nErrorCode);
-	//}}AFX_VIRTUAL
+    // ClassWizard generated virtual function overrides
+    //{{AFX_VIRTUAL(CListenSocket)
+public:
+    virtual void OnAccept(int nErrorCode);
+    //}}AFX_VIRTUAL
 
-	// Generated message map functions
-	//{{AFX_MSG(CListenSocket)
-		// NOTE - the ClassWizard will add and remove member functions here.
-	//}}AFX_MSG
+    // Generated message map functions
+    //{{AFX_MSG(CListenSocket)
+    // NOTE - the ClassWizard will add and remove member functions here.
+    //}}AFX_MSG
 
 // Implementation
 protected:

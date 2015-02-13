@@ -2,12 +2,16 @@
 #include "Gamecall.h"
 #include "GamecallEx.h"
 
+
+
 #include "..\common\CIniFile.h"
+
+const double M_PI = 3.14159265358979323846;
 
 
 CustKillVector Gamecall::CustomName;
-BOOL Gamecall::m_bCanAoe = FALSE;
 Logger Gamecall::log(_T("gcall"));
+BOOL Gamecall::m_bCanAoe = FALSE;
 BOOL Gamecall::m_bStopThread = FALSE;
 
 Gamecall::Gamecall()
@@ -30,8 +34,8 @@ void Gamecall::UnInit()
     for(int i = 0; i < sizeof(hThreads); i++)
     {
         CloseHandle(hThreads[i]);
-
     }
+
 }
 
 
@@ -151,383 +155,383 @@ DWORD Gamecall::call(DWORD id, LPVOID pParam)
     switch(id)
     {
         case id_msg_NPCJieRenWu:
-            {
-                PARAM_JIEFENGZHUANGBEI* temp = (PARAM_JIEFENGZHUANGBEI*)pParam;
-                _NPCJieRenWu(temp->argv1, temp->argv2, temp->argv3, temp->argv4, temp->argv5);
-            }
-            break;
+        {
+            PARAM_JIEFENGZHUANGBEI* temp = (PARAM_JIEFENGZHUANGBEI*)pParam;
+            _NPCJieRenWu(temp->argv1, temp->argv2, temp->argv3, temp->argv4, temp->argv5);
+        }
+        break;
         case id_msg_OpenTalentUI:
-            {
-                _OpenTalentUI();
-            }
-            break;
+        {
+            _OpenTalentUI();
+        }
+        break;
         case id_msg_ConfirmDeletePalentPanelShowOk:
-            {
-                _ConfirmDeletePalentPanelShowOk();
-            }
-            break;
+        {
+            _ConfirmDeletePalentPanelShowOk();
+        }
+        break;
         case id_msg_OpenDeleteTalentPanel:
-            {
-                _OpenDeleteTalentPanel();
-            }
-            break;
+        {
+            _OpenDeleteTalentPanel();
+        }
+        break;
         case id_msg_QueRenJiNengDian:
-            {
-                _QueRenJiNengDian();
-            }
-            break;
+        {
+            _QueRenJiNengDian();
+        }
+        break;
         case id_msg_QuChuJiNengDian:
-            {
-                _QuChuJiNengDian((DWORD)pParam);
-            }
-            break;
+        {
+            _QuChuJiNengDian((DWORD)pParam);
+        }
+        break;
         case id_msg_JiaJiNengDian:
-            {
-                _JiaJiNengDian((DWORD)pParam);
-            }
-            break;
+        {
+            _JiaJiNengDian((DWORD)pParam);
+        }
+        break;
         case id_msg_LinQuJiangLi:
-            {
-                _LinQuJiangLi();
-            }
-            break;
+        {
+            _LinQuJiangLi();
+        }
+        break;
         case id_msg_GetStrikeToVector:
-            {
-                GetStrikeToVector(*(std::vector<STRIKEINFO>*)pParam);
-            }
-            break;
+        {
+            GetStrikeToVector(*(std::vector<STRIKEINFO>*)pParam);
+        }
+        break;
         case id_msg__GetUiAddrByName:
-            {
-                KONGJIAN_JIEGOU* jiegou = (KONGJIAN_JIEGOU*)pParam;
-                _GetUiAddrByName((Tree*)jiegou->adress, jiegou->name, jiegou->ID);
-            }
-            break;
+        {
+            KONGJIAN_JIEGOU* jiegou = (KONGJIAN_JIEGOU*)pParam;
+            _GetUiAddrByName((Tree*)jiegou->adress, jiegou->name, jiegou->ID);
+        }
+        break;
         case id_msg_NewSpend:
-            {
-                _NewSpend(*(float*)pParam);
-            }
-            break;
+        {
+            _NewSpend(*(float*)pParam);
+        }
+        break;
         case id_msg_GetAllBodyEquipToVector:
-            {
-                _GetAllBodyEquipToVector(*(std::vector<_BAGSTU>*)pParam);
-            }
-            break;
+        {
+            _GetAllBodyEquipToVector(*(std::vector<_BAGSTU>*)pParam);
+        }
+        break;
         case id_msg_GetAllGoodsToVector:
-            {
-                _GetAllGoodsToVector(*(std::vector<_BAGSTU>*)pParam);
+        {
+            _GetAllGoodsToVector(*(std::vector<_BAGSTU>*)pParam);
 
-            }
-            break;
+        }
+        break;
         case id_msg_GetAcceptedQuestToVector:
-            {
-                _GetAcceptedQuestToVector(*(std::vector<Quest>*)pParam);
-            }
-            break;
+        {
+            _GetAcceptedQuestToVector(*(std::vector<Quest>*)pParam);
+        }
+        break;
         case id_msg_GetRangeObjectToVector:
-            {
-                PARAM_GETUIADDRBYNAME* temp = (PARAM_GETUIADDRBYNAME*)pParam;
-                _GetRangeObjectToVector((ObjectNode*)temp->argv1, temp->argv2, *(std::vector<ObjectNode*>*)temp->argv3);
-            }
-            break;
+        {
+            PARAM_GETUIADDRBYNAME* temp = (PARAM_GETUIADDRBYNAME*)pParam;
+            _GetRangeObjectToVector((ObjectNode*)temp->argv1, temp->argv2, *(std::vector<ObjectNode*>*)temp->argv3);
+        }
+        break;
 
         case id_msg_GetUItoVector:
-            {
-                PARAM_GUANSHANGDIAN* temp = (PARAM_GUANSHANGDIAN*)pParam;
-                _GetUItoVector((Tree*)temp->argv1, *(std::vector<Tree*>*)temp->argv2);
-            }
-            break;
+        {
+            PARAM_GUANSHANGDIAN* temp = (PARAM_GUANSHANGDIAN*)pParam;
+            _GetUItoVector((Tree*)temp->argv1, *(std::vector<Tree*>*)temp->argv2);
+        }
+        break;
         case id_msg_OverShunyi:
-            {
-                OverShunyi((BOOL)pParam);
-            }
-            break;
+        {
+            OverShunyi((BOOL)pParam);
+        }
+        break;
         case id_msg_GetObjectNameByIndex:
-            {
-                return (DWORD)_GetObjectNameByIndex((DWORD)pParam);
-            }
-            break;
+        {
+            return (DWORD)_GetObjectNameByIndex((DWORD)pParam);
+        }
+        break;
         case id_msg_isYaoPingCD:
-            {
-                _BAGSTU* temp = (_BAGSTU*)pParam;
-                return isYaoPingCD(*temp);
-            }
+        {
+            _BAGSTU* temp = (_BAGSTU*)pParam;
+            return isYaoPingCD(*temp);
+        }
         case id_msg_GouMaiWuPing:
-            {
-                PARAM_GETUIADDRBYNAME* temp = (PARAM_GETUIADDRBYNAME*)pParam;
-                GouMaiWuPing(temp->argv1, temp->argv2, temp->argv3);
-            }
-            break;
+        {
+            PARAM_GETUIADDRBYNAME* temp = (PARAM_GETUIADDRBYNAME*)pParam;
+            GouMaiWuPing(temp->argv1, temp->argv2, temp->argv3);
+        }
+        break;
 
         case id_msg_XieBaoShi:
-            {
-                PARAM_GETUIADDRBYNAME* temp = (PARAM_GETUIADDRBYNAME*)pParam;
-                XieBaoShi(temp->argv1, temp->argv2, temp->argv3);
-            }
-            break;
+        {
+            PARAM_GETUIADDRBYNAME* temp = (PARAM_GETUIADDRBYNAME*)pParam;
+            XieBaoShi(temp->argv1, temp->argv2, temp->argv3);
+        }
+        break;
 
         case id_msg_JiaBaoShi:
-            {
-                PARAM_JIEFENGZHUANGBEI* temp = (PARAM_JIEFENGZHUANGBEI*)pParam;
-                JiaBaoShi(temp->argv1, temp->argv2, temp->argv3, temp->argv4, temp->argv5);
-            }
-            break;
+        {
+            PARAM_JIEFENGZHUANGBEI* temp = (PARAM_JIEFENGZHUANGBEI*)pParam;
+            JiaBaoShi(temp->argv1, temp->argv2, temp->argv3, temp->argv4, temp->argv5);
+        }
+        break;
 
         case id_msg_JieFengZhuangBei:
-            {
-                PARAM_JIEFENGZHUANGBEI* temp = (PARAM_JIEFENGZHUANGBEI*)pParam;
-                JieFengZhuangBei(
-                    temp->argv1,
-                    temp->argv2,
-                    temp->argv3,
-                    temp->argv4,
-                    temp->argv5,
-                    temp->argv6,
-                    temp->argv7);
-            }
-            break;
+        {
+            PARAM_JIEFENGZHUANGBEI* temp = (PARAM_JIEFENGZHUANGBEI*)pParam;
+            JieFengZhuangBei(
+                temp->argv1,
+                temp->argv2,
+                temp->argv3,
+                temp->argv4,
+                temp->argv5,
+                temp->argv6,
+                temp->argv7);
+        }
+        break;
 
         case id_msg_TiaoYue:
-            {
-                TiaoYue();
-            }
-            break;
+        {
+            TiaoYue();
+        }
+        break;
 
 
         case id_msg_HuanXian:
-            {
-                HuanXian((DWORD)pParam);
-            }
-            break;
+        {
+            HuanXian((DWORD)pParam);
+        }
+        break;
 
         case id_msg__KaiHeZi:
-            {
-                _BAGSTU* temp = (_BAGSTU*)pParam;
-                KaiHeZi(*temp);
-            }
-            break;
+        {
+            _BAGSTU* temp = (_BAGSTU*)pParam;
+            KaiHeZi(*temp);
+        }
+        break;
 
         case id_msg_SellItem:
-            {
-                _PARAM_GUANSHANGDIAN* temp = (_PARAM_GUANSHANGDIAN*)pParam;
-                SellItem(*(_BAGSTU*)temp->argv1, temp->argv2);
-            }
-            break;
+        {
+            _PARAM_GUANSHANGDIAN* temp = (_PARAM_GUANSHANGDIAN*)pParam;
+            SellItem(*(_BAGSTU*)temp->argv1, temp->argv2);
+        }
+        break;
 
         case id_msg_NewBag:
-            {
-                NewBag();
-            }
-            break;
+        {
+            NewBag();
+        }
+        break;
 
         case id_msg_Fuhuo:
-            {
-                Fuhuo(*(DWORD*)pParam);
-            }
-            break;
+        {
+            Fuhuo(*(DWORD*)pParam);
+        }
+        break;
 
         case id_msg_PickupTask:
-            {
-                ObjectNode* temp = (ObjectNode*)pParam;
-                _PickupTask(temp);
-            }
-            break;
+        {
+            ObjectNode* temp = (ObjectNode*)pParam;
+            _PickupTask(temp);
+        }
+        break;
         case id_msg_Pickup1:
-            {
-                ObjectNode* temp = (ObjectNode*)pParam;
-                Pickup1(temp);
-            }
-            break;
+        {
+            ObjectNode* temp = (ObjectNode*)pParam;
+            Pickup1(temp);
+        }
+        break;
         case id_msg_Pickup2:
-            {
-                ObjectNode* temp = (ObjectNode*)pParam;
-                Pickup2(temp);
-            }
-            break;
+        {
+            ObjectNode* temp = (ObjectNode*)pParam;
+            Pickup2(temp);
+        }
+        break;
         case id_msg_Pickup2ts:
-            {
-                Pickup2ts();
-            }
-            break;
+        {
+            Pickup2ts();
+        }
+        break;
         case id_msg_OpenQuestItem:
-            {
-                PARAM_GUANSHANGDIAN* temp = (PARAM_GUANSHANGDIAN*)pParam;
-                OpenQuestItem(temp->argv1, temp->argv2);
-            }
-            break;
+        {
+            PARAM_GUANSHANGDIAN* temp = (PARAM_GUANSHANGDIAN*)pParam;
+            OpenQuestItem(temp->argv1, temp->argv2);
+        }
+        break;
 
 
         case id_msg_ZOULUSHUNYI:
-            {
-                PARAM_GUANSHANGDIAN* temp = (PARAM_GUANSHANGDIAN*)pParam;
-                ZOULUSHUNYI((DWORD*)temp->argv1, temp->argv2);
-            }
-            break;
+        {
+            PARAM_GUANSHANGDIAN* temp = (PARAM_GUANSHANGDIAN*)pParam;
+            ZOULUSHUNYI((DWORD*)temp->argv1, temp->argv2);
+        }
+        break;
 
 
         case id_msg_GatTaskName:
-            {
-                return (DWORD)GatTaskName((DWORD)pParam);
-            }
+        {
+            return (DWORD)GatTaskName((DWORD)pParam);
+        }
 
         case id_msg_GatBagGoodrName:
-            {
-                return (DWORD)GatBagGoodrName((DWORD)pParam);
-            }
+        {
+            return (DWORD)GatBagGoodrName((DWORD)pParam);
+        }
 
         case id_msg_DunDi:
-            {
-                DunDi((DWORD)pParam);
-            }
-            break;
+        {
+            DunDi((DWORD)pParam);
+        }
+        break;
         case id_msg_PickdownBody:
-            {
-                PickdownBody();
-            }
-            break;
+        {
+            PickdownBody();
+        }
+        break;
 
 
         case id_msg_JingDianMoShi:
-            {
-                UIOperator* temp = (UIOperator*)pParam;
-                JingDianMoShi((DWORD)temp->pAddr, temp->c5);
-            }
-            break;
+        {
+            UIOperator* temp = (UIOperator*)pParam;
+            JingDianMoShi((DWORD)temp->pAddr, temp->c5);
+        }
+        break;
         case id_msg_PickupDeadbody:
-            {
-                PARAM_GUANSHANGDIAN* temp = (PARAM_GUANSHANGDIAN*)pParam;
-                PickupDeadbody(temp->argv1, temp->argv2);
-            }
-            break;
+        {
+            PARAM_GUANSHANGDIAN* temp = (PARAM_GUANSHANGDIAN*)pParam;
+            PickupDeadbody(temp->argv1, temp->argv2);
+        }
+        break;
         case id_msg_HeChengWuQi_Po10:
-            {
-                PARAM_GUANSHANGDIAN* temp = (PARAM_GUANSHANGDIAN*)pParam;
-                HeChengWuQi_Po10(*(_BAGSTU*)temp->argv1, *(_BAGSTU*)temp->argv2);
-            }
-            break;
+        {
+            PARAM_GUANSHANGDIAN* temp = (PARAM_GUANSHANGDIAN*)pParam;
+            HeChengWuQi_Po10(*(_BAGSTU*)temp->argv1, *(_BAGSTU*)temp->argv2);
+        }
+        break;
 
 
         case id_msg_FaSonXianLuBao:
-            {
-                FaSonXianLuBao((DWORD)pParam);
-            }
-            break;
+        {
+            FaSonXianLuBao((DWORD)pParam);
+        }
+        break;
 
 
         case id_msg_DeliverQuests:
-            {
-                PARAM_DELIVERQUEST* temp = (PARAM_DELIVERQUEST*)pParam;
-                DeliverQuests(
-                    temp->id,
-                    temp->step,
-                    temp->questtype,
-                    temp->ff,
-                    temp->npcid1,
-                    temp->npcid2,
-                    temp->unknow,
-                    temp->mianban);
-            }
-            break;
+        {
+            PARAM_DELIVERQUEST* temp = (PARAM_DELIVERQUEST*)pParam;
+            DeliverQuests(
+                temp->id,
+                temp->step,
+                temp->questtype,
+                temp->ff,
+                temp->npcid1,
+                temp->npcid2,
+                temp->unknow,
+                temp->mianban);
+        }
+        break;
 
 
         case id_msg_DeleteItem:
-            {
-                _BAGSTU* temp = (_BAGSTU*)pParam;
-                DeleteItem(*temp);
-            }
-            break;
+        {
+            _BAGSTU* temp = (_BAGSTU*)pParam;
+            DeleteItem(*temp);
+        }
+        break;
 
 
         case id_msg_ChiYao:
-            {
+        {
 
-                ChiYao(*(_BAGSTU*)pParam);
-            }
-            break;
+            ChiYao(*(_BAGSTU*)pParam);
+        }
+        break;
         case id_msg_step:
-            {
+        {
 
-                fPosition* pStepParam = (fPosition*)pParam;
-                Step(pStepParam->x, pStepParam->y, pStepParam->z);
-            }
-            break;
+            fPosition* pStepParam = (fPosition*)pParam;
+            Step(pStepParam->x, pStepParam->y, pStepParam->z);
+        }
+        break;
 
         case id_msg_step3x:
-            {
+        {
 
-                fPosition* pStepParam = (fPosition*)pParam;
-                Step3x(pStepParam->x, pStepParam->y, pStepParam->z);
-            }
-            break;
+            fPosition* pStepParam = (fPosition*)pParam;
+            Step3x(pStepParam->x, pStepParam->y, pStepParam->z);
+        }
+        break;
         case id_msg_vector_ui:
-            {
-                std::vector<Tree*>* pAllui = (std::vector<Tree*>*)pParam;
-                GetUItoVector(GetUIBinTreeBaseAddr(), *pAllui);
-            }
-            break;
+        {
+            std::vector<Tree*>* pAllui = (std::vector<Tree*>*)pParam;
+            GetUItoVector(GetUIBinTreeBaseAddr(), *pAllui);
+        }
+        break;
 
         case id_msg_guanshangdian:
-            {
-                UIOperator* temp = (UIOperator*)pParam;
-                GuanBiDuiHuaKuangChuanKou((DWORD)temp->pAddr, temp->c5);
-            }
-            break;
+        {
+            UIOperator* temp = (UIOperator*)pParam;
+            GuanBiDuiHuaKuangChuanKou((DWORD)temp->pAddr, temp->c5);
+        }
+        break;
         case id_msg_DaKaiDuiHuaKuang:
-            {
-                PARAM_GUANSHANGDIAN* temp = (PARAM_GUANSHANGDIAN*)pParam;
-                DaKaiDuiHuaKuang(temp->argv1, temp->argv2);
-            }
-            break;
+        {
+            PARAM_GUANSHANGDIAN* temp = (PARAM_GUANSHANGDIAN*)pParam;
+            DaKaiDuiHuaKuang(temp->argv1, temp->argv2);
+        }
+        break;
 
         case id_msg_attack:
-            {
-                Attack((DWORD)pParam);
-            }
-            break;
+        {
+            Attack((DWORD)pParam);
+        }
+        break;
 
 
         case id_msg_clickui:
-            {
-                UIOperator* pOpui = (UIOperator*)pParam;
-                ClickUI(*pOpui);
-            }
-            break;
+        {
+            UIOperator* pOpui = (UIOperator*)pParam;
+            ClickUI(*pOpui);
+        }
+        break;
 
         case id_msg_HeChengWuQi_Po5:
-            {
-                PARAM_GUANSHANGDIAN* temp = (PARAM_GUANSHANGDIAN*)pParam;
-                HeChengWuQi_Po5(*(_BAGSTU*)temp->argv1, *(_BAGSTU*)temp->argv2);
-            }
-            break;
+        {
+            PARAM_GUANSHANGDIAN* temp = (PARAM_GUANSHANGDIAN*)pParam;
+            HeChengWuQi_Po5(*(_BAGSTU*)temp->argv1, *(_BAGSTU*)temp->argv2);
+        }
+        break;
 
         case id_msg_HeChengWuQi:
-            {
-                PARAM_GUANSHANGDIAN* temp = (PARAM_GUANSHANGDIAN*)pParam;
-                HeChengWuQi(*(_BAGSTU*)temp->argv1, *(_BAGSTU*)temp->argv2);
-            }
-            break;
+        {
+            PARAM_GUANSHANGDIAN* temp = (PARAM_GUANSHANGDIAN*)pParam;
+            HeChengWuQi(*(_BAGSTU*)temp->argv1, *(_BAGSTU*)temp->argv2);
+        }
+        break;
 
 
         case id_msg_WearEquipment:
-            {
-                _BAGSTU* bag = (_BAGSTU*)pParam;
-                WearEquipment(*bag);
-            }
-            break;
+        {
+            _BAGSTU* bag = (_BAGSTU*)pParam;
+            WearEquipment(*bag);
+        }
+        break;
 
         case id_msg_Fenjie:
-            {
-                _BAGSTU* temp = (_BAGSTU*)pParam;
-                FenJie(*temp);
-            }
-            break;
+        {
+            _BAGSTU* temp = (_BAGSTU*)pParam;
+            FenJie(*temp);
+        }
+        break;
 
 
         case id_msg_CunCangku:
-            {
-                PARAM_GUANSHANGDIAN* temp = (PARAM_GUANSHANGDIAN*)pParam;
-                CunCangku(*(_BAGSTU*)temp->argv1);
-            }
-            break;
+        {
+            PARAM_GUANSHANGDIAN* temp = (PARAM_GUANSHANGDIAN*)pParam;
+            CunCangku(*(_BAGSTU*)temp->argv1);
+        }
+        break;
     }
 
     return 0;
@@ -5163,165 +5167,165 @@ BOOL Gamecall::isCustomKill_HaveName(wchar_t* name)
 //中存在但是原本范围过滤中不存在的情况.
 BOOL Gamecall::Kill_ApplyConfig(std::vector<ObjectNode*>& ObjectVec)
 {
-	try
-	{
-		CCIniFile fileConfig;
-		fileConfig.Open(m_szConfigPath);
+    try
+    {
+        CCIniFile fileConfig;
+        fileConfig.Open(m_szConfigPath);
         ObjectVector::iterator it;
         ObjectNode* pNode;
 
 
-		TRACE(_T("config循环1"));
-		for(it = ObjectVec.begin(); it != ObjectVec.end();)
-		{
-			//如果名字相同, 放到容器起始
-			pNode = *it;
-			//TRACE1("%d",__LINE__);
-			wchar_t* objName = GetObjectName(pNode->ObjAddress);
-			// TRACE1("%d",__LINE__);
+        TRACE(_T("config循环1"));
+        for(it = ObjectVec.begin(); it != ObjectVec.end();)
+        {
+            //如果名字相同, 放到容器起始
+            pNode = *it;
+            //TRACE1("%d",__LINE__);
+            wchar_t* objName = GetObjectName(pNode->ObjAddress);
+            // TRACE1("%d",__LINE__);
 
-			if(objName == NULL)
-			{
-				it = ObjectVec.erase(it);
-				continue;
-			}
-			else
-			{
-				//应用全局之前先判断自定义                
-				if(isCustomKill_HaveName(objName) == FALSE)
-				{
-					//要是即不可杀配置文件又没有指定要杀就删掉这个元素
-					if(isCanKill(pNode) == FALSE &&
-						fileConfig.isHave(strCombat, strAlwaysKill, objName) == FALSE)
-					{
-						//TRACE1("%d",__LINE__);
-						it = ObjectVec.erase(it);
-						continue;
-					}
-				}
-			}
-			it++;
-		}
+            if(objName == NULL)
+            {
+                it = ObjectVec.erase(it);
+                continue;
+            }
+            else
+            {
+                //应用全局之前先判断自定义
+                if(isCustomKill_HaveName(objName) == FALSE)
+                {
+                    //要是即不可杀配置文件又没有指定要杀就删掉这个元素
+                    if(isCanKill(pNode) == FALSE &&
+                            fileConfig.isHave(strCombat, strAlwaysKill, objName) == FALSE)
+                    {
+                        //TRACE1("%d",__LINE__);
+                        it = ObjectVec.erase(it);
+                        continue;
+                    }
+                }
+            }
+            it++;
+        }
 
-		TRACE(_T("config循环2"));
-		for(it = ObjectVec.begin(); it != ObjectVec.end();)
-		{
+        TRACE(_T("config循环2"));
+        for(it = ObjectVec.begin(); it != ObjectVec.end();)
+        {
 
-			ObjectNode* pNode = *it;
-			//TRACE1("%d",__LINE__);
-			wchar_t* objName = GetObjectName(pNode->ObjAddress);
-			//assert(objName!=NULL);
-			//TRACE1("%d",__LINE__);
+            ObjectNode* pNode = *it;
+            //TRACE1("%d",__LINE__);
+            wchar_t* objName = GetObjectName(pNode->ObjAddress);
+            //assert(objName!=NULL);
+            //TRACE1("%d",__LINE__);
 
-			if(objName == NULL)
-			{
-				it = ObjectVec.erase(it);
-				continue;
-			}
-			else
-			{
-				if(fileConfig.isHave(strCombat, strFirst, objName))
-				{
-					ObjectNode* pBack = pNode;
-					//TRACE1("%d",__LINE__);
-					it = ObjectVec.erase(it);
-					//TRACE1("%d",__LINE__);
-					it = ObjectVec.insert(ObjectVec.begin(), pBack);
-					continue;
-				}
+            if(objName == NULL)
+            {
+                it = ObjectVec.erase(it);
+                continue;
+            }
+            else
+            {
+                if(fileConfig.isHave(strCombat, strFirst, objName))
+                {
+                    ObjectNode* pBack = pNode;
+                    //TRACE1("%d",__LINE__);
+                    it = ObjectVec.erase(it);
+                    //TRACE1("%d",__LINE__);
+                    it = ObjectVec.insert(ObjectVec.begin(), pBack);
+                    continue;
+                }
 
-			}
+            }
 
-			it++;
-		}
+            it++;
+        }
 
-		TRACE(_T("config循环3"));
-		for(it = ObjectVec.begin(); it != ObjectVec.end();)
-		{
-			ObjectNode* pNode = *it;
-			//TRACE1("%d",__LINE__);
-			wchar_t* objName = GetObjectName(pNode->ObjAddress);
-			//assert(objName!=NULL);
-			//TRACE1("%d",__LINE__);
-			if(objName == NULL)
-			{
-				it = ObjectVec.erase(it);
-				continue;
-			}
-			else
-			{
+        TRACE(_T("config循环3"));
+        for(it = ObjectVec.begin(); it != ObjectVec.end();)
+        {
+            ObjectNode* pNode = *it;
+            //TRACE1("%d",__LINE__);
+            wchar_t* objName = GetObjectName(pNode->ObjAddress);
+            //assert(objName!=NULL);
+            //TRACE1("%d",__LINE__);
+            if(objName == NULL)
+            {
+                it = ObjectVec.erase(it);
+                continue;
+            }
+            else
+            {
 
-				//应用全局之前先判断自定义                
-				if(isCustomKill_HaveName(objName) == FALSE)
-				{
-					if(fileConfig.isHave(strCombat, strDontKill, objName))
-					{
-						//删掉这个元素
-						//TRACE1("%d",__LINE__);
-						it = ObjectVec.erase(it);
-						continue;
-					}
+                //应用全局之前先判断自定义
+                if(isCustomKill_HaveName(objName) == FALSE)
+                {
+                    if(fileConfig.isHave(strCombat, strDontKill, objName))
+                    {
+                        //删掉这个元素
+                        //TRACE1("%d",__LINE__);
+                        it = ObjectVec.erase(it);
+                        continue;
+                    }
 
-				}
+                }
 
-			}
-
-
-			it++;
-		}
+            }
 
 
-		TRACE(_T("config循环4"));
-		for(int i = 0; i < CustomName.size(); i++)
-		{
-			for(it = ObjectVec.begin(); it != ObjectVec.end();)
-			{
+            it++;
+        }
 
 
-				ObjectNode* pNode = *it;
-				//TRACE1("%d",__LINE__);
-				wchar_t* objName = GetObjectName(pNode->ObjAddress);
-				//assert(objName!=NULL);
-				//TRACE1("%d",__LINE__);
-
-				//从自定义的列表中匹配
+        TRACE(_T("config循环4"));
+        for(int i = 0; i < CustomName.size(); i++)
+        {
+            for(it = ObjectVec.begin(); it != ObjectVec.end();)
+            {
 
 
-				//根据名字来匹配, 匹配到一个
-				if(wcscmp(CustomName[i].name, objName) == 0)
-				{
-					//开始根据设置的类型分别处理
-					if(CustomName[i].type == DONTKILL)
-					{
-						it = ObjectVec.erase(it);
-						continue;
-					}
-					/*else if(CustomName[i].type == ALWAYSKILL)
-					{
+                ObjectNode* pNode = *it;
+                //TRACE1("%d",__LINE__);
+                wchar_t* objName = GetObjectName(pNode->ObjAddress);
+                //assert(objName!=NULL);
+                //TRACE1("%d",__LINE__);
 
-					}*/
-					else if(CustomName[i].type == KILLFIRST)
-					{
-						ObjectNode* pBack = pNode;
-						//TRACE1("%d",__LINE__);
-						it = ObjectVec.erase(it);
-						//TRACE1("%d",__LINE__);
-						it = ObjectVec.insert(ObjectVec.begin(), pBack);
-						continue;
-					}
-				}
-				it++;
-			}
-		}
+                //从自定义的列表中匹配
 
 
+                //根据名字来匹配, 匹配到一个
+                if(wcscmp(CustomName[i].name, objName) == 0)
+                {
+                    //开始根据设置的类型分别处理
+                    if(CustomName[i].type == DONTKILL)
+                    {
+                        it = ObjectVec.erase(it);
+                        continue;
+                    }
+                    /*else if(CustomName[i].type == ALWAYSKILL)
+                    {
 
-	}
-	catch(...)
-	{
-		TRACE(_T("应用配置文件错误"));
-	}
-	return TRUE;
+                    }*/
+                    else if(CustomName[i].type == KILLFIRST)
+                    {
+                        ObjectNode* pBack = pNode;
+                        //TRACE1("%d",__LINE__);
+                        it = ObjectVec.erase(it);
+                        //TRACE1("%d",__LINE__);
+                        it = ObjectVec.insert(ObjectVec.begin(), pBack);
+                        continue;
+                    }
+                }
+                it++;
+            }
+        }
+
+
+
+    }
+    catch(...)
+    {
+        TRACE(_T("应用配置文件错误"));
+    }
+    return TRUE;
 }
 
 
@@ -5341,10 +5345,12 @@ BOOL Gamecall::UDgreater(ObjectNode* elem1, ObjectNode* elem2)
 
     double dis1 = 0;
     double dis2 = 0;
-    if(Gamecall::GetObjectPos(elem1, &fpos1) && Gamecall::GetObjectPos(elem2, &fpos2))
+    if(Gamecall::GetObjectPos(elem1, &fpos1) &&
+            Gamecall::GetObjectPos(elem2, &fpos2))
     {
         fPosition mypos;
         Gamecall::GetPlayerPos(&mypos);
+
         dis1 = Gamecall::CalcC(mypos, fpos1);
         dis2 = Gamecall::CalcC(mypos, fpos2);
     }
@@ -5550,8 +5556,8 @@ BOOL Gamecall::isCanKill(ObjectNode* pNode)
     if(m_Get11C(pNode->ObjAddress) == 1)
     {
         bCanKill = TRUE;
-
     }
+
     else
     {
         if(m_Get110(pNode->ObjAddress) == 1)
@@ -6140,8 +6146,8 @@ BOOL Gamecall::FillGoods(_BAGSTU& BagBuff)
     BagBuff.m_NameID  =   GetGoodsNameID(BagBuff.m_Base);            //获取物品的名字ID
 
 
-    //BagBuff.name   =	  (wchar_t *)sendcall(id_msg_GatBagGoodrName, (LPVOID)BagBuff.m_NameID);
-    BagBuff.name   =	  GatBagGoodrName(BagBuff.m_NameID);
+    //BagBuff.name   =    (wchar_t *)sendcall(id_msg_GatBagGoodrName, (LPVOID)BagBuff.m_NameID);
+    BagBuff.name   =      GatBagGoodrName(BagBuff.m_NameID);
     if(BagBuff.name == NULL)
     {
         return FALSE;
@@ -6149,10 +6155,10 @@ BOOL Gamecall::FillGoods(_BAGSTU& BagBuff)
 
     BagBuff.m_Type    =   GetGoodsType(BagBuff.m_Base);              //获取物品的类型
     BagBuff.m_Info    =   GetGoodsInfo(BagBuff.m_Base);              //获取物品的所在格子数
-    BagBuff.m_Num	  =   GetGoodsNum(BagBuff.m_Base);               //获取物品的数量
-    BagBuff.m_Lasting =	  GetGoodsLasting(BagBuff.m_Base);           //获取物品的持久
+    BagBuff.m_Num     =   GetGoodsNum(BagBuff.m_Base);               //获取物品的数量
+    BagBuff.m_Lasting =   GetGoodsLasting(BagBuff.m_Base);           //获取物品的持久
     BagBuff.m_LV      =   GetGoodsLLV(BagBuff.m_Base);               //获取物品的等级
-    //BagBuff.m_Site	  =   GetCanshu_a(BagBuff.m_Base);               //吃药和穿装备需要的一个参数
+    //BagBuff.m_Site      =   GetCanshu_a(BagBuff.m_Base);               //吃药和穿装备需要的一个参数
 
 
 
@@ -6834,9 +6840,16 @@ void Gamecall::TurnTo(fPosition& pos)
 
     double angle;
 
-    double M_PI = 3.14159265359;
     double value1;
     double value2;
+
+    //重叠的情况
+    if(mypos.x == pos.x &&
+        mypos.y == pos.y)
+    {
+        TRACE0("重叠了, 无法转视角");
+        return;
+    }
 
     value1 = mypos.y - pos.y;
     value2 = mypos.x - pos.x;
@@ -6880,10 +6893,29 @@ void Gamecall::TurnTo(fPosition& pos)
         gameangle = SOUTH - gameangle;
         //gameangle += EAST;
     }
-    else
+    else if((pos.x == mypos.x) &&
+            (pos.y > mypos.y))
     {
-        log.logdv(_T("转视角时, 未知的方位"));
-        RandomStep(60);
+        //正东
+        gameangle = EAST;
+    }
+    else if((pos.x == mypos.x) &&
+            (pos.y < mypos.y))
+    {
+        //正西
+        gameangle = WEST;
+    }
+    else if((pos.x > mypos.x) &&
+            (pos.y = mypos.y))
+    {
+        //正北
+        gameangle = NORTH;
+    }
+    else if((pos.x < mypos.x) &&
+            (pos.y = mypos.y))
+    {
+        //正南
+        gameangle = SOUTH;
     }
 
     Turn((int)gameangle);
@@ -7480,15 +7512,15 @@ BOOL Gamecall::isStrikeCd(DWORD id)
         {
             if(StrikeVec[i].isBlock == 1 && StrikeVec[i].canUse == 0)
             {
-				//CD= 2是冷却 =1 是释放中
-				if (StrikeVec[i].cd == 0)
-				{
-					return TRUE;
-
-				}else
-				{
-					return FALSE;
-				}
+                //CD= 2是冷却 =1 是释放中
+                if(StrikeVec[i].cd == 0)
+                {
+                    return TRUE;
+                }
+                else
+                {
+                    return FALSE;
+                }
             }
             else
             {

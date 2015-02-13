@@ -7,7 +7,6 @@
 #include "RegistDlg.h"
 
 #include "..\common\protocol.h"
-#include "..\common\Userinfo.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

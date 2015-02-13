@@ -14,7 +14,7 @@ public:
 // Dialog Data
     //{{AFX_DATA(CDlgSetting)
     enum { IDD = IDD_SETTING };
-    CString	m_strGamePath;
+    CString m_strGamePath;
     //}}AFX_DATA
 
 

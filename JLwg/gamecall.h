@@ -351,9 +351,9 @@ public:
     static UINT CALLBACK AttackHelperThread(LPVOID pParam);
 
 
-    BOOL isCustomKill_DontKill(wchar_t *name);
-    BOOL isCustomKill_AlwaysKill(wchar_t *name);
-    static BOOL isCustomKill_HaveName(wchar_t *name);
+    BOOL isCustomKill_DontKill(wchar_t* name);
+    BOOL isCustomKill_AlwaysKill(wchar_t* name);
+    static BOOL isCustomKill_HaveName(wchar_t* name);
 
 
 protected:

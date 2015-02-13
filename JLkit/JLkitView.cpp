@@ -277,6 +277,7 @@ void CJLkitView::OnActive()
         {
             CString strName = GetListCtrl().GetItemText(i, COLUMN_TEXT_ACCOUNT);
             CString strPw = GetListCtrl().GetItemText(i, COLUMN_TEXT_PASSWORD);
+
             GetListCtrl().SetItemText(i, COLUMN_TEXT_STATUS, _T("ÕýÔÚµÇÂ¼"));
             int nRet = pDoc->Active(strName, strPw);
             SetResult(nRet, i);
@@ -355,6 +356,7 @@ _Again:
                 strLine.Remove(_T('\n'));
                 strLine += _T(" : ÃÜÂë´íÎó");
                 strLine += _T("\n");
+                bError = TRUE;
                 goto _WriteError;
             }
             else
@@ -382,7 +384,7 @@ _Again:
 
         nResult = poster.Active();
         SetResult(nResult, i);
-        if(nResult == RESULT_SUCCESS)
+        if(nResult != RESULT_SUCCESS)
         {
             bError = TRUE;
         }
@@ -393,7 +395,6 @@ _WriteError:
         {
             GetDocument()->errfile.WriteString(strLine);
         }
-
     }
 }
 
@@ -538,10 +539,9 @@ void CJLkitView::OnUpdateGetandactive(CCmdUI* pCmdUI)
     }
 }
 
-BOOL CJLkitView::DestroyWindow()
+void CJLkitView::PostNcDestroy() 
 {
-    // TODO: Add your specialized code here and/or call the base class
-
-
-    return CListView::DestroyWindow();
+	// TODO: Add your specialized code here and/or call the base class
+	m_lpLaunchThread->Delete();
+	CListView::PostNcDestroy();
 }

@@ -22,7 +22,7 @@ public:
     CString strOther;
     CString strIp;
     CString strResult;
-    DWORD m_reqNums;	//请求次数
+    DWORD m_reqNums;    //请求次数
     CTime m_time;
 
     int AddRef();

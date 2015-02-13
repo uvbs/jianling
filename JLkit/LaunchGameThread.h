@@ -31,15 +31,7 @@ public:
         LAUNCHGAME
     };
     
-    void StopThread()
-    {
-        m_bStop = TRUE;
-    }
-
-
 private:
-
-
     int m_nFuncid;
     BOOL m_bStop;
     BOOL m_bIsWorking;
@@ -53,8 +45,13 @@ public:
         m_pView = pOwner;
     };
 
+    void StopThread();
+
+
     BOOL isWorking();
     BOOL AddWork(FUNCID id);
+
+
 // Overrides
     // ClassWizard generated virtual function overrides
     //{{AFX_VIRTUAL(CLaunchThread)
