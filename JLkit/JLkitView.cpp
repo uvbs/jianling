@@ -29,23 +29,24 @@ IMPLEMENT_DYNCREATE(CJLkitView, CListView)
 
 BEGIN_MESSAGE_MAP(CJLkitView, CListView)
     //{{AFX_MSG_MAP(CJLkitView)
+    ON_COMMAND(ID_LOOKSHAREMEM, OnLookShareMem)
     ON_WM_CREATE()
     ON_COMMAND(ID_START, OnStart)
     ON_NOTIFY_REFLECT(NM_RCLICK, OnRclick)
     ON_COMMAND(ID_PROFILE, OnProfile)
     ON_COMMAND(ID_GETANDACTIVE, OnGetAndActive)
+    ON_UPDATE_COMMAND_UI(ID_PROFILE, OnUpdateProfile)
+    ON_UPDATE_COMMAND_UI(ID_SELECTALL, OnUpdateSelectall)
     ON_COMMAND(ID_REPORTBUG, OnReportbug)
     ON_WM_TIMER()
+    ON_UPDATE_COMMAND_UI(ID_GET, OnUpdateStart)
     ON_WM_RBUTTONUP()
     ON_COMMAND(ID_GET, OnGet)
     ON_COMMAND(ID_ACTIVE, OnActive)
-    ON_COMMAND(ID_LOOKSHAREMEM, OnLookShareMem)
-    ON_UPDATE_COMMAND_UI(ID_PROFILE, OnUpdateProfile)
-    ON_UPDATE_COMMAND_UI(ID_SELECTALL, OnUpdateSelectall)
-    ON_UPDATE_COMMAND_UI(ID_GET, OnUpdateStart)
     ON_UPDATE_COMMAND_UI(ID_ACTIVE, OnUpdateStart)
     ON_UPDATE_COMMAND_UI(ID_START, OnUpdateStart)
     ON_UPDATE_COMMAND_UI(ID_GETANDACTIVE, OnUpdateStart)
+    ON_COMMAND(ID_SOCKINFO, OnSockinfo)
     //}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
@@ -539,9 +540,44 @@ void CJLkitView::OnUpdateGetandactive(CCmdUI* pCmdUI)
     }
 }
 
-void CJLkitView::PostNcDestroy() 
+void CJLkitView::PostNcDestroy()
 {
-	// TODO: Add your specialized code here and/or call the base class
-	m_lpLaunchThread->Delete();
-	CListView::PostNcDestroy();
+    // TODO: Add your specialized code here and/or call the base class
+    CListView::PostNcDestroy();
+}
+
+void CJLkitView::OnSockinfo()
+{
+    // TODO: Add your command handler code here
+    static CWnd sockwnd;
+    CString strMyClass;
+    try
+    {
+        strMyClass = AfxRegisterWndClass(
+                         CS_VREDRAW | CS_HREDRAW,
+                         ::LoadCursor(NULL, IDC_ARROW),
+                         (HBRUSH) ::GetStockObject(WHITE_BRUSH),
+                         ::LoadIcon(NULL, IDI_APPLICATION));
+
+
+        sockwnd.Create(strMyClass, _T("sock info"),
+                       WS_OVERLAPPEDWINDOW,
+                       CRect(10, 10, 10, 10),
+                       AfxGetApp()->m_pMainWnd,
+                       IDR_MAINFRAME
+                      );
+
+
+		sockwnd.ShowWindow(SW_SHOW);
+        AfxMessageBox(_T("test"));
+
+
+    }
+    catch(CResourceException* pEx)
+    {
+        AfxMessageBox(
+            _T("Couldn't register class! (Already registered?)"));
+        pEx->Delete();
+    }
+
 }

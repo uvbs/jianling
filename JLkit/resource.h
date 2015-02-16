@@ -53,6 +53,7 @@
 #define ID_STARTGAME                    32819
 #define ID_REPORTBUG                    32821
 #define ID_PROFILE                      32822
+#define ID_SOCKINFO                     32823
 #define IDS_LOGINED                     57346
 #define IDS_ALLNUMS                     57347
 #define IDS_VALIDKEY                    57348
@@ -73,7 +74,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_3D_CONTROLS                     1
 #define _APS_NEXT_RESOURCE_VALUE        168
-#define _APS_NEXT_COMMAND_VALUE         32823
+#define _APS_NEXT_COMMAND_VALUE         32824
 #define _APS_NEXT_CONTROL_VALUE         1039
 #define _APS_NEXT_SYMED_VALUE           112
 #endif

@@ -16,7 +16,9 @@ CJLkitSocket* CJLkitSocket::_Instance = NULL;
 CJLkitSocket* CJLkitSocket::GetInstance(CJLkitDoc* pDoc)
 {
     if(_Instance == NULL)
+    {
         _Instance = new CJLkitSocket(pDoc);
+    }
 
     return _Instance;
 }
@@ -46,7 +48,7 @@ END_MESSAGE_MAP()
 
 void CJLkitSocket::OnConnect(int nErrorCode)
 {
-    
+
     m_pDoc->ConnectResult(nErrorCode);
 }
 
@@ -66,11 +68,15 @@ BOOL CJLkitSocket::ConnectSrv(const CString& strHostName, int nPort)
 {
 
     if(Connect(strHostName, nPort))
+    {
         return TRUE;
+    }
     else
     {
         if(GetLastError() == WSAEWOULDBLOCK)
+        {
             return TRUE;
+        }
     }
 
     return FALSE;
@@ -94,7 +100,9 @@ int CJLkitSocket::Send(const void* lpBuf, int nBufLen, int nFlags /* = 0 */)
 
     int nBytes = CAsyncSocket::Send(pBack, nBufLen, nFlags);
     if(nBytes == SOCKET_ERROR)
+    {
         ShutDown(both);
+    }
 
     delete []pBack;
     return nBytes;
@@ -108,7 +116,9 @@ int CJLkitSocket::Receive(void* lpBuf, int nBufLen, int nFlags /* = 0 */)
 
     int nBytes = CAsyncSocket::Receive(lpBuf, nBufLen, nFlags);
     if(nBytes == SOCKET_ERROR)
+    {
         ShutDown(both);
+    }
     else
     {
         //对数据解密
@@ -212,9 +222,9 @@ void CJLkitSocket::Reportbug(CString& strBug)
     Send(&loginbuf, sizeof(BUG_BUF));
 }
 
-void CJLkitSocket::OnSend(int nErrorCode) 
+void CJLkitSocket::OnSend(int nErrorCode)
 {
-	// TODO: Add your specialized code here and/or call the base class
-	TRACE0(_T("OnSend"));
-	CAsyncSocket::OnSend(nErrorCode);
+    // TODO: Add your specialized code here and/or call the base class
+    TRACE0(_T("OnSend"));
+    CAsyncSocket::OnSend(nErrorCode);
 }
