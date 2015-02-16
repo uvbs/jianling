@@ -228,3 +228,10 @@ void CJLkitSocket::OnSend(int nErrorCode)
     TRACE0(_T("OnSend"));
     CAsyncSocket::OnSend(nErrorCode);
 }
+
+void CJLkitSocket::OnClose(int nErrorCode) 
+{
+	// TODO: Add your specialized code here and/or call the base class
+	AfxMessageBox(_T("您的帐号已经在其他地方登录"));
+	CAsyncSocket::OnClose(nErrorCode);
+}
