@@ -56,7 +56,7 @@ END_MESSAGE_MAP()
 
 static UINT TaskThread(LPVOID pParam)
 {
-
+    
     TaskScript task;
     task.BeginTask();
 

@@ -29,14 +29,14 @@ GameSpend::~GameSpend()
 
 
 
-void GameSpend::Init()
+BOOL GameSpend::Init()
 {
     //先加载这个DLL
     m_hack = GetModuleHandle(_T("speedhack-i386"));
     if(m_hack == NULL)
     {
         TRACE1("load speedhack-i386 err: %d", GetLastError());
-        return;
+        return FALSE;
     }
 
 
@@ -67,8 +67,6 @@ void GameSpend::Init()
         ce_hooktimeGetTime.hook();
         void* result1 = ce_hookGetTickCount.hook();
         *realGetTickCount = (DWORD)result1;
-
-
     }
 
     if(*realQueryPerformance == 0)
@@ -77,4 +75,5 @@ void GameSpend::Init()
         *realQueryPerformance = (DWORD)result2;
     }
 
+    return TRUE;
 }

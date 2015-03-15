@@ -1,4 +1,4 @@
-// CIniFile.cpp: implementation of the CCIniFile class.
+// CIniFile.cpp: implementation of the CIniFile class.
 //
 //////////////////////////////////////////////////////////////////////
 #include "stdafx.h"
@@ -16,19 +16,20 @@ static char THIS_FILE[] = __FILE__;
 
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
-CCIniFile::CCIniFile() :
+CIniFile::CIniFile() :
     CStdioFile()
 {
     m_bIsUnicode = FALSE;
 }
 
-/* */
-CCIniFile::~CCIniFile()
+
+CIniFile::~CIniFile()
 {
+    Close();
 }
 
-/* */
-BOOL CCIniFile::Open(LPCTSTR lpszFileName)
+
+BOOL CIniFile::Open(LPCTSTR lpszFileName)
 {
     if(CStdioFile::Open(lpszFileName, CFile::modeReadWrite | CFile::shareDenyNone) == FALSE)
     {
@@ -47,8 +48,8 @@ BOOL CCIniFile::Open(LPCTSTR lpszFileName)
     return TRUE;
 }
 
-/* */
-TCHAR* CCIniFile::GetProfileString(TCHAR* strSec, TCHAR* strKey, TCHAR* strDefault)
+
+TCHAR* CIniFile::GetProfileString(TCHAR* strSec, TCHAR* strKey, TCHAR* strDefault)
 {
     DWORD dwLen = BUFSIZ;
     TCHAR*	lpszBuf = new TCHAR[dwLen];
@@ -67,8 +68,8 @@ TCHAR* CCIniFile::GetProfileString(TCHAR* strSec, TCHAR* strKey, TCHAR* strDefau
     return lpszBuf;
 }
 
-/* */
-BOOL CCIniFile::isHave(TCHAR szSec[], TCHAR szKey[], TCHAR* name)
+
+BOOL CIniFile::isHave(TCHAR szSec[], TCHAR szKey[], TCHAR* name)
 {
     TCHAR*	lpszTemp = GetProfileString(szSec, szKey);
     BOOL bFind = FALSE;
@@ -91,4 +92,21 @@ BOOL CCIniFile::isHave(TCHAR szSec[], TCHAR szKey[], TCHAR* name)
 
     delete[] lpszTemp;
     return bFind;
+}
+
+void CIniFile::SaveToFile()
+{
+    //遍历所有行到文件中
+    for(std::list<TCHAR*>::iterator it = m_data.begin(); it != m_data.end(); it++)
+    {
+        _fputts(*it, m_lpfile);
+    }
+}
+
+void CIniFile::Close()
+{
+    if(m_lpfile)
+    {
+        fclose(m_lpfile);
+    }
 }

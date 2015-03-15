@@ -51,7 +51,7 @@ Package=<4>
 
 ###############################################################################
 
-Project: "tester"=.\tester\tester.dsp - Package Owner=<4>
+Project: "Tester"=.\Tester\Tester.dsp - Package Owner=<4>
 
 Package=<5>
 {{{

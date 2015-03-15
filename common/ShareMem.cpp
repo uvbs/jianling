@@ -1,65 +1,29 @@
-// ShareMem.cpp: implementation of the ShareMem class.
-//
-//////////////////////////////////////////////////////////////////////
-
-#include "StdAfx.h"
+#include "stdafx.h"
 #include "ShareMem.h"
 
-#include <assert.h>
 
-#ifdef _DEBUG
-#undef THIS_FILE
-static char THIS_FILE[] = __FILE__;
-#define new DEBUG_NEW
-#endif
-
-//////////////////////////////////////////////////////////////////////
-// Construction/Destruction
-//////////////////////////////////////////////////////////////////////
-
-ShareMem::ShareMem(HANDLE hFileMap)
+ShareMem* ShareMem::Instance()
 {
-    m_hFileMap = hFileMap;
+    if(_inst == NULL)
+    {
+        _inst = new ShareMem;
+    }
+
+    return _inst;
+}
+ShareMem* ShareMem::_inst = NULL;
+
+
+
+ShareMem::ShareMem()
+{
+    m_hFileMap = INVALID_HANDLE_VALUE;
     m_lpMem = NULL;
-    m_dwMaxCount = 0;
-}
-
-
-SHAREINFO* ShareMem::IsLogined(DWORD pid)
-{
-    SHAREINFO* share = GetMemAddr();
-    for(unsigned i = 0; i < m_dwMaxCount; i++)
-    {
-        if(share->pid == pid)
-        {
-            return share;
-        }
-    }
-
-    return NULL;
+    m_dwCount = 0;
 }
 
 
 
-//判断一个名称是否已经存在
-SHAREINFO* ShareMem::IsLogined(const char* name)
-{
-
-    SHAREINFO* share = GetMemAddr();
-    for(unsigned i = 0; i < m_dwMaxCount; i++)
-    {
-        if(strcmp(share->szName, name) == 0)
-        {
-            return share;
-        }
-    }
-
-    return NULL;
-}
-
-
-//创建和打开通用, 0是打开, > 0是创建
-//当打开时, 对象大小不是指定的大小
 BOOL ShareMem::Create(DWORD dwCount, TCHAR szObjName[])
 {
 
@@ -88,7 +52,7 @@ BOOL ShareMem::Create(DWORD dwCount, TCHAR szObjName[])
         ZeroMemory(m_lpMem, MemSize);
         *(DWORD*)m_lpMem = MemSize;
         m_lpMem = (SHAREINFO*)((DWORD)m_lpMem + sizeof(DWORD));
-        m_dwMaxCount = dwCount;
+        m_dwCount = dwCount;
 
         bRet = TRUE;
 
@@ -116,6 +80,8 @@ BOOL ShareMem::Create(DWORD dwCount, TCHAR szObjName[])
     return bRet;
 }
 
+
+
 void ShareMem::Close()
 {
     if(m_lpMem != NULL)
@@ -132,7 +98,7 @@ void ShareMem::Close()
         m_hFileMap = NULL;
     }
 
-    m_dwMaxCount = 0;
+    m_dwCount = 0;
 }
 
 
@@ -142,60 +108,27 @@ ShareMem::~ShareMem()
 }
 
 
-SHAREINFO* ShareMem::Add(SHAREINFO* pShareInfo)
+BOOL ShareMem::Add(SHAREINFO* pShareInfo)
 {
 
     SHAREINFO* pItor = m_lpMem;
-
-    for(DWORD i = 0; i < m_dwMaxCount; i++)
+    for(DWORD i = 0; i < m_dwCount; i++)
     {
         if(pItor->pid == 0)
         {
-            memcpy((void*)pItor, (void*)pShareInfo, sizeof(SHAREINFO));
+            memcpy(pItor, pShareInfo, sizeof(SHAREINFO));
             break;
         }
 
         pItor++;
     }
 
-    return pItor;
+    return TRUE;
 }
-
-
-void ShareMem::Del(const char* name)
-{
-
-    SHAREINFO* pItor = IsLogined(name);
-    if(pItor != NULL)
-    {
-        ZeroMemory(pItor, sizeof(SHAREINFO));
-    }
-
-}
-
-
-void ShareMem::Del(DWORD dwPid)
-{
-
-    SHAREINFO* pItor = m_lpMem;
-
-    for(DWORD i = 0; i < m_dwMaxCount; i++)
-    {
-        if(pItor->pid == dwPid)
-        {
-            ZeroMemory(pItor, sizeof(SHAREINFO));
-            break;
-        }
-
-        pItor++;
-
-    }
-}
-
 
 
 //获取已经登录的个数
-DWORD ShareMem::GetLoginedCount()
+DWORD ShareMem::GetUsedCount()
 {
 
     if(m_lpMem == NULL)
@@ -205,7 +138,7 @@ DWORD ShareMem::GetLoginedCount()
 
     DWORD count = 0;
     SHAREINFO* pItor = m_lpMem;
-    for(DWORD i = 0; i < m_dwMaxCount; i++)
+    for(DWORD i = 0; i < m_dwCount; i++)
     {
         if(pItor->pid != 0)
         {
@@ -218,34 +151,6 @@ DWORD ShareMem::GetLoginedCount()
     return count;
 }
 
-
-
-
-
-//获取指定的共享数据
-SHAREINFO* ShareMem::Get(DWORD dwPid)
-{
-    TRACE1("dwpid:%d", dwPid);
-    if(m_lpMem == NULL ||
-            m_hFileMap == NULL)
-    {
-        return NULL;
-    }
-    SHAREINFO* pItor = m_lpMem;
-    for(DWORD i = 0; i < m_dwMaxCount; i++)
-    {
-        TRACE1("pItor->pid:%d", pItor->pid);
-        if(pItor->pid == dwPid)
-        {
-            return pItor;
-        }
-
-        pItor++;
-    }
-
-    TRACE(_T("没能初始化外挂数据"));
-    return NULL;
-}
 
 BOOL ShareMem::Open(TCHAR szObjName[])
 {
@@ -266,7 +171,7 @@ BOOL ShareMem::Open(TCHAR szObjName[])
 
         int MemSize = *(DWORD*)m_lpMem;
         m_lpMem = (SHAREINFO*)((DWORD)m_lpMem + sizeof(DWORD));
-        m_dwMaxCount = (MemSize - sizeof(DWORD)) / sizeof(SHAREINFO);
+        m_dwCount = (MemSize - sizeof(DWORD)) / sizeof(SHAREINFO);
         bRet = TRUE;
     }
     __finally
@@ -296,10 +201,97 @@ BOOL ShareMem::Open(TCHAR szObjName[])
     return bRet;
 }
 
-//判断给定名字的pid是否有效, 用来判断是否进程退出了
-DWORD ShareMem::IsPidValid(const char* name)
+
+void ShareMem::Del(LPCTSTR lpszName)
 {
-    SHAREINFO* lpsa = IsLogined(name);
+
+    SHAREINFO* pItor = m_lpMem;
+    for(DWORD i = 0; i < m_dwCount; i++)
+    {
+        if(_tcscmp(pItor->szName, lpszName) == 0)
+        {
+            ZeroMemory(pItor, sizeof(SHAREINFO));
+            break;
+        }
+
+        pItor++;
+    }
+
+}
+
+
+void ShareMem::Del(DWORD dwPid)
+{
+
+    SHAREINFO* pItor = m_lpMem;
+    for(DWORD i = 0; i < m_dwCount; i++)
+    {
+        if(pItor->pid == dwPid)
+        {
+            ZeroMemory(pItor, sizeof(SHAREINFO));
+            break;
+        }
+
+        pItor++;
+    }
+}
+
+
+
+//获取指定的共享数据
+SHAREINFO* ShareMem::Get(LPCTSTR lpszName)
+{
+    if(m_lpMem == NULL || m_hFileMap == NULL)
+    {
+        return NULL;
+    }
+
+    SHAREINFO* pItor = m_lpMem;
+    for(DWORD i = 0; i < m_dwCount; i++)
+    {
+        if(_tcscmp(pItor->szName, lpszName) == 0)
+        {
+            return pItor;
+        }
+
+        pItor++;
+    }
+
+    TRACE(_T("没能获取相关数据"));
+    return NULL;
+}
+
+
+//获取指定的共享数据
+SHAREINFO* ShareMem::Get(DWORD dwPid)
+{
+    if(m_lpMem == NULL ||
+            m_hFileMap == NULL)
+    {
+        return FALSE;
+    }
+
+
+    SHAREINFO* pItor = m_lpMem;
+    for(DWORD i = 0; i < m_dwCount; i++)
+    {
+        if(pItor->pid == dwPid)
+        {
+            return pItor;
+        }
+
+        pItor++;
+    }
+
+    TRACE(_T("没能获取相关数据"));
+    return NULL;
+}
+
+//判断给定名字的pid是否有效, 用来判断是否进程退出了
+DWORD ShareMem::IsPidValid(LPCTSTR lpszName)
+{
+
+    SHAREINFO* lpsa = Get(lpszName);
     if(lpsa == NULL)
     {
         return FALSE;
@@ -336,7 +328,6 @@ DWORD ShareMem::IsPidValid(const char* name)
 
     }
     while(Process32Next(hProcessSnap, &pe32));
-
     CloseHandle(hProcessSnap);
     return FALSE;
 }

@@ -49,8 +49,8 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 /nologo /subsystem:windows /machine:I386
-# ADD LINK32 /nologo /subsystem:windows /pdb:"..\Release\JLkit.pdb" /debug /machine:I386 /out:"..\Release\JLkit.exe"
-# SUBTRACT LINK32 /profile /map
+# ADD LINK32 /nologo /subsystem:windows /pdb:"..\bin\JLkit.pdb" /debug /machine:I386 /out:"..\bin\JLkit.exe"
+# SUBTRACT LINK32 /profile /pdb:none /map
 # Begin Target
 
 # Name "JLkit - Win32 Release"
@@ -92,6 +92,10 @@ SOURCE=.\JLkitSocket.cpp
 # Begin Source File
 
 SOURCE=.\JLkitView.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\common\Job.cpp
 # End Source File
 # Begin Source File
 

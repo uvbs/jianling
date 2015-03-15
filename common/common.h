@@ -1,6 +1,9 @@
 #pragma once
 
 
+#include "ShareMem.h"
+
+
 //·şÎñÆ÷¶Ë¿Ú
 #define     PORT_SRV    5678
 

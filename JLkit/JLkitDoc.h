@@ -32,7 +32,7 @@ protected:
 // Attributes
 public:
     //设置
-    BOOL m_KeepPw;  //保存密码
+    BOOL m_KeepPw;
     TCHAR m_szFileName[MAX_PATH];
     TCHAR m_szGamePath[MAX_PATH];
     TCHAR m_szAccountName[MAX_PATH];
@@ -40,7 +40,6 @@ public:
 
     //对话框
     CStdioFile errfile;
-    ShareMem m_share;
     std::vector<QUERYKEY_RET_BUF> m_KeyVec;
 
     int LaunchGame(CString& strName, CString& strPw, CString& strConfig,

@@ -9,9 +9,6 @@
 #endif // _MSC_VER > 1000
 
 
-
-
-
 enum
 {
     COLUMN_TEXT_CHECKBOX = 0,
@@ -46,14 +43,17 @@ protected:
     CJLkitDoc*  GetDocument();
 
 public:
-    void            OnGet();
-    void            OnActive();
-    void            SetResult(int nResult, int i);
-    void            SerializeText(CArchive& ar);
+    void OnGet();
+    void OnActive();
+    void SetResult(int nResult, int i);
+    void SerializeText(CArchive& ar);
     CLaunchThread*  m_lpLaunchThread;
-    void            LaunchGame();
+    void LaunchGame();
     void GetAndActive();
-    // Overrides
+
+
+
+// Overrides
     // ClassWizard generated virtual function overrides
     //{{AFX_VIRTUAL(CJLkitView)
 	protected:
@@ -64,7 +64,7 @@ public:
 	//}}AFX_VIRTUAL
 // Generated message map functions
 
-
+    
 public:
     //{{AFX_MSG(CJLkitView)
     afx_msg void OnLookShareMem();

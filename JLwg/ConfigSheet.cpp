@@ -87,12 +87,12 @@ void CConfigSheet::OnApplyNow()
 	}
 				
 
-	WritePrivateProfileString(strSell, strItemName, (LPCTSTR)szSell, gcall.GetConfigPath());
-	WritePrivateProfileString(strJiaoyi, strItemName, (LPCTSTR)szJioayi, gcall.GetConfigPath());
-	WritePrivateProfileString(strCunCang, strItemName, (LPCTSTR)szCunCang, gcall.GetConfigPath());
-	WritePrivateProfileString(strQhShipin, strItemName, (LPCTSTR)szQhShipin, gcall.GetConfigPath());
-	WritePrivateProfileString(strQhWuqi, strItemName, (LPCTSTR)szQhWuqi, gcall.GetConfigPath());
-	WritePrivateProfileString(strFenjie, strItemName, (LPCTSTR)szFenjie, gcall.GetConfigPath());
+    WritePrivateProfileString(strSell, strItemName, (LPCTSTR)szSell, GameInit::Instance()->GetConfigPath());
+	WritePrivateProfileString(strJiaoyi, strItemName, (LPCTSTR)szJioayi, GameInit::Instance()->GetConfigPath());
+	WritePrivateProfileString(strCunCang, strItemName, (LPCTSTR)szCunCang, GameInit::Instance()->GetConfigPath());
+	WritePrivateProfileString(strQhShipin, strItemName, (LPCTSTR)szQhShipin, GameInit::Instance()->GetConfigPath());
+	WritePrivateProfileString(strQhWuqi, strItemName, (LPCTSTR)szQhWuqi, GameInit::Instance()->GetConfigPath());
+	WritePrivateProfileString(strFenjie, strItemName, (LPCTSTR)szFenjie, GameInit::Instance()->GetConfigPath());
 				
 				
 
@@ -122,18 +122,18 @@ void CConfigSheet::OnApplyNow()
 	}
 
 
-	WritePrivateProfileString(strCombat, strFirst, (LPCTSTR)strObj_first, gcall.GetConfigPath());
-	WritePrivateProfileString(strCombat, strDontKill, (LPCTSTR)strObj_dongtKill, gcall.GetConfigPath());
-	WritePrivateProfileString(strCombat, strAlwaysKill, (LPCTSTR)strObj_mustKill, gcall.GetConfigPath());
+	WritePrivateProfileString(strCombat, strFirst, (LPCTSTR)strObj_first, GameInit::Instance()->GetConfigPath());
+	WritePrivateProfileString(strCombat, strDontKill, (LPCTSTR)strObj_dongtKill, GameInit::Instance()->GetConfigPath());
+	WritePrivateProfileString(strCombat, strAlwaysKill, (LPCTSTR)strObj_mustKill, GameInit::Instance()->GetConfigPath());
 
 
     CString strQhColor_temp;
     qhpage.GetDlgItemText(IDC_COMBO_ITEMCOLOR, strQhColor_temp);
-	WritePrivateProfileString(strNormal, strQhColor, (LPCTSTR)strQhColor_temp, gcall.GetConfigPath());
+	WritePrivateProfileString(strNormal, strQhColor, (LPCTSTR)strQhColor_temp, GameInit::Instance()->GetConfigPath());
 
 	CString strHeYaoPercent_temp;
 	qhpage.GetDlgItemText(IDC_CHIYAOPERCENT, strHeYaoPercent_temp);
-	WritePrivateProfileString(strCombat, strYaoPecent, (LPCTSTR)strHeYaoPercent_temp, gcall.GetConfigPath());
+	WritePrivateProfileString(strCombat, strYaoPecent, (LPCTSTR)strHeYaoPercent_temp, GameInit::Instance()->GetConfigPath());
 
 
 	qhpage.SetModified(FALSE);

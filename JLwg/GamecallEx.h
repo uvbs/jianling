@@ -2,7 +2,7 @@
 #include "gamecall.h"
 
 
-class GamecallEx: public Gamecall
+ class GamecallEx: public Gamecall
 {
 public:
     GamecallEx();

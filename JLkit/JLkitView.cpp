@@ -10,8 +10,10 @@
 #include "JLkitSocket.h"
 #include "LaunchGameThread.h"
 #include "BugRepDlg.h"
-
 #include "CVPNFile.h"
+
+
+#include "..\common\ShareMem.h"
 #include "..\common\common.h"
 #include "..\common\Inject.h"
 #include "..\common\Webpost.h"
@@ -249,7 +251,7 @@ void CJLkitView::OnUpdateStart(CCmdUI* pCmdUI)
 
 void CJLkitView::OnGet()
 {
-    // TODO: Add your command handler code here
+
     int count = GetListCtrl().GetItemCount();
     CJLkitDoc* pDoc = GetDocument();
 
@@ -267,7 +269,6 @@ void CJLkitView::OnGet()
 
 void CJLkitView::OnActive()
 {
-    // TODO: Add your command handler code here
     int count = GetListCtrl().GetItemCount();
     CJLkitDoc* pDoc = GetDocument();
 
@@ -303,9 +304,6 @@ void CJLkitView::OnRclick(NMHDR* pNMHDR, LRESULT* pResult)
 void CJLkitView::OnInitialUpdate()
 {
     CListView::OnInitialUpdate();
-
-
-
     m_lpLaunchThread = (CLaunchThread*)AfxBeginThread(RUNTIME_CLASS(CLaunchThread), THREAD_PRIORITY_NORMAL,
                        0, CREATE_SUSPENDED);
 
@@ -442,8 +440,8 @@ void CJLkitView::SerializeText(CArchive& ar)
             GetListCtrl().SetColumnWidth(i, LVSCW_AUTOSIZE_USEHEADER);
         }
 
-        pDoc->m_share.Close();
-        pDoc->m_share.Create(count, SHAREOBJNAME);
+        JLShareMem::Instance()->Close();
+        JLShareMem::Instance()->Create(count, SHAREOBJNAME);
     }
 }
 
@@ -484,10 +482,10 @@ void CJLkitView::OnReportbug()
 void CJLkitView::OnLookShareMem()
 {
 
-    SHAREINFO* pShareInfo = GetDocument()->m_share.GetMemAddr();
+    SHAREINFO* pShareInfo = JLShareMem::Instance()->GetMem();
     if(pShareInfo != NULL)
     {
-        for(unsigned i = 0; i < GetDocument()->m_share.GetMaxCount(); i++, pShareInfo++)
+        for(unsigned i = 0; i < JLShareMem::Instance()->GetAllCount(); i++, pShareInfo++)
         {
             TCHAR szTemp[BUFSIZ] = {0};
             wsprintf(szTemp, _T("帐号:%s PID:%d 配置:%s 脚本:%s\n"),
@@ -504,7 +502,6 @@ void CJLkitView::OnLookShareMem()
 
 void CJLkitView::OnTimer(UINT nIDEvent)
 {
-    // TODO: Add your message handler code here and/or call default
     if(nIDEvent == IDT_TIMERGAMEEXIT)
     {
         //每次遍历所有item, 判断item的pid存不存在, 不存在就是游戏退出了
@@ -512,11 +509,11 @@ void CJLkitView::OnTimer(UINT nIDEvent)
         {
             CString strName = GetListCtrl().GetItemText(i, COLUMN_TEXT_ACCOUNT);
 
-            if(GetDocument()->m_share.IsLogined((LPCTSTR)strName))
+            if(JLShareMem::Instance()->Get((LPCTSTR)strName))
             {
-                if(GetDocument()->m_share.IsPidValid((LPCTSTR)strName) == FALSE)
+                if(JLShareMem::Instance()->IsPidValid((LPCTSTR)strName) == FALSE)
                 {
-                    GetDocument()->m_share.Del((LPCTSTR)strName);
+                    JLShareMem::Instance()->Del((LPCTSTR)strName);
                     GetListCtrl().SetItemText(i, COLUMN_TEXT_STATUS, _T("进程退出了"));
                 }
             }

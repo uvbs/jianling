@@ -1,13 +1,13 @@
 //JLwg.cpp
-
 #include "stdafx.h"
 #include "JLwg.h"
 #include "JLDlg.h"
 #include "TaskScript.h"
 #include "GamecallEx.h"
 
-#include "..\common\CCHook.h"
+#include "..\common\CHook.h"
 #include "..\common\common.h"
+#include "..\common\ShareMem.h"
 #include "..\common\logger.h"
 #include "..\common\inject.h"
 #include "..\common\inlinehook.h"
@@ -30,7 +30,9 @@ CJLDlg* CJLwgApp::m_pWgDlg = NULL;
 LRESULT CALLBACK CJLwgApp::GameMsgProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
     if(CJLwgApp::m_pWgDlg == NULL)
+    {
         return CallWindowProc(wpOrigGameProc, hwnd, uMsg, wParam, lParam);
+    }
 
 
     //调出外挂
@@ -38,46 +40,59 @@ LRESULT CALLBACK CJLwgApp::GameMsgProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPAR
     {
 
         case WM_KEYDOWN:
+        {
+            if(wParam == VK_INSERT)
             {
-                if(wParam == VK_INSERT)
+                int result = MessageBox(hwnd,
+                                        _T("你按下了 VK_INSERT 按键.\n确认执行任务?"),
+                                        NULL,
+                                        MB_OKCANCEL);
+                if(result == IDOK)
                 {
-                    int result = MessageBox(hwnd, _T("你按下了 VK_INSERT 按键.\n确认执行任务?"), NULL, MB_OKCANCEL);
-                    if(result == IDOK)
-                        m_pWgDlg->OnGotask();
-
-                }
-                else if(wParam == VK_DELETE)
-                    m_pWgDlg->OnStopTask();
-
-                else if(wParam == VK_END)
-                {
-                    if(m_pWgDlg->IsWindowVisible())
-                        m_pWgDlg->ShowWindow(SW_HIDE);
-                    else
-                        m_pWgDlg->ShowWindow(SW_SHOWNA);
-
+                    m_pWgDlg->OnGotask();
                 }
 
             }
-            break;
+            else if(wParam == VK_DELETE)
+            {
+                m_pWgDlg->OnStopTask();
+            }
+
+            else if(wParam == VK_END)
+            {
+                if(m_pWgDlg->IsWindowVisible())
+                {
+                    m_pWgDlg->ShowWindow(SW_HIDE);
+                }
+                else
+                {
+                    m_pWgDlg->ShowWindow(SW_SHOWNA);
+                }
+
+            }
+
+        }
+        break;
 
 
         case WM_CUSTOM_GCALL:
-            {
-                //此处实现游戏call的调用
-                return gcall.call((DWORD)wParam, (LPVOID*)lParam);
-            }
-        case WM_MOVE:
-            {
-                int xPos = (int)(short)LOWORD(lParam);   // horizontal position
-                int yPos = (int)(short)HIWORD(lParam);   // vertical position
+        {
+            //此处实现游戏call的调用
+            return gcall.call((DWORD)wParam, (LPVOID*)lParam);
+        }
 
-                RECT rect;
-                GetWindowRect(hwnd, &rect);
-                int width = rect.right - rect.left;
-                m_pWgDlg->SetWindowPos(NULL, xPos + width, yPos, 0, 0, SWP_NOSIZE | SWP_NOACTIVATE);
-            }
-            break;
+
+        case WM_MOVE:
+        {
+            int xPos = (int)(short)LOWORD(lParam);   // horizontal position
+            int yPos = (int)(short)HIWORD(lParam);   // vertical position
+
+            RECT rect;
+            GetWindowRect(hwnd, &rect);
+            int width = rect.right - rect.left;
+            m_pWgDlg->SetWindowPos(NULL, xPos + width, yPos, 0, 0, SWP_NOSIZE | SWP_NOACTIVATE);
+        }
+        break;
     }
 
     return CallWindowProc(wpOrigGameProc, hwnd, uMsg, wParam, lParam);
@@ -99,7 +114,6 @@ LONG CALLBACK TopLevelExceptionHander(EXCEPTION_POINTERS* ExceptionInfo)
 
     CONTEXT* pContext = ExceptionInfo->ContextRecord;
     dwTimeMS = GetTickCount();
-
 
 
     memset(&frame, 0, sizeof(frame));
@@ -133,7 +147,9 @@ LONG CALLBACK TopLevelExceptionHander(EXCEPTION_POINTERS* ExceptionInfo)
 
         if(!SymGetModuleInfo(GetCurrentProcess(),
                              frame.AddrPC.Offset, &module))
+        {
             strcpy(module.ModuleName, "Unknown");
+        }
 
 
         DWORD dwOffsetFromSmybol = 0;
@@ -183,9 +199,9 @@ DWORD CALLBACK CJLwgApp::WgThread(LPVOID pParam)
     }
 
 
-    wpOrigGameProc = (WNDPROC)::SetWindowLong(gcall.GetGamehWnd(), GWL_WNDPROC, (LONG)GameMsgProc);
-    CString strTitle = gcall.GetAccountInfo()->szName;
-    ::SetWindowText(gcall.GetGamehWnd(), (LPCTSTR)strTitle);
+    wpOrigGameProc = (WNDPROC)::SetWindowLong(GameInit::Instance()->GetGamehWnd(), GWL_WNDPROC, (LONG)GameMsgProc);
+    CString strTitle = JLShareMem::Instance()->Get(GetCurrentProcessId())->szName;
+    ::SetWindowText(GameInit::Instance()->GetGamehWnd(), (LPCTSTR)strTitle);
 
     m_pWgDlg = new CJLDlg;
     m_pWgDlg->Create(CJLDlg::IDD);
@@ -211,7 +227,9 @@ DWORD CALLBACK CJLwgApp::WgThread(LPVOID pParam)
 
     TRACE(_T("消息循环正常退出了"));
     if(wpOrigGameProc)
-        ::SetWindowLong(gcall.GetGamehWnd(), GWL_WNDPROC, (LONG)wpOrigGameProc);
+    {
+        ::SetWindowLong(GameInit::Instance()->GetGamehWnd(), GWL_WNDPROC, (LONG)wpOrigGameProc);
+    }
 
     FreeLibraryAndExitThread(AfxGetInstanceHandle(), 0);
     return 0;
@@ -231,7 +249,7 @@ CJLwgApp::~CJLwgApp()
 BOOL CJLwgApp::InitInstance()
 {
     //创建一个线程
-    HANDLE hWgThread = ::CreateThread(NULL, 0, CJLwgApp::WgThread, 0, 0, 0);
+    HANDLE hWgThread = ::CreateThread(NULL, 0, WgThread, 0, 0, 0);
     CloseHandle(hWgThread);
     return TRUE;
 }

@@ -20,6 +20,106 @@ static char THIS_FILE[] = __FILE__;
 
 
 
+static TCHAR* cli_AllObject[] =
+{
+    {_T("地址")},
+    {_T("名字")},
+    {_T("ID")},
+    {_T("ID2")},
+    {_T("类型")},
+    {_T("血量")},
+    {_T("索引")},
+    {_T("坐标")}
+};
+
+static TCHAR* cli_RangeObject[] =
+{
+    {_T("地址")},
+    {_T("名字")},
+    {_T("ID")},
+    {_T("ID2")},
+    {_T("类型")},
+    {_T("血量")},
+    {_T("距离")},
+    {_T("坐标")},
+    {_T("是否怪物")},
+    {_T("索引")}
+};
+
+//技能 需要的控件列
+TCHAR* cli_Bar[] =
+{
+    {_T("名称")},
+    {_T("地址")},
+    {_T("id")}
+};
+
+TCHAR* cli_Strike[] =
+{
+    {_T("技能名")},
+    {_T("冷却")},
+    {_T("可用")},
+    {_T("解锁")},
+    {_T("ID_1")},
+    {_T("ID_2")}
+};
+
+TCHAR* cli_Quest[] =
+{
+    {_T("任务名称")},
+    {_T("步骤")},
+    {_T("结束标志")},
+    {_T("任务数量")},
+    {_T("任务ID")},
+};
+
+
+
+TCHAR* cli_TaskItem[] =
+{
+    {_T("名称")},
+    {_T("距离")},
+    {_T("坐标")},
+    {_T("类型")}
+};
+
+
+TCHAR* cli_Bag[] =
+{
+    {_T("名称")},
+    {_T("耐久")},
+    {_T("等级")},
+    {_T("数量")},
+    {_T("类型")},
+    {_T("位置")},
+    {_T("地址")},
+    {_T("封印")},
+    {_T("经验")},
+    {_T("颜色")},
+    {_T("总经验")},
+    {_T("评级")},
+    {_T("八卦")},
+    {_T("类型")}
+
+};
+
+TCHAR* cli_Loots[] =
+{
+    {_T("地址")},
+    {_T("名称")},
+    {_T("坐标")},
+    {_T("距离")}
+};
+
+
+
+void ShowHookRet(LPVOID lpParam, TCHAR szText[])
+{
+    CDataDlg* pDlg = (CDataDlg*)lpParam;
+    pDlg->AddInfo2(szText);
+}
+
+
 /////////////////////////////////////////////////////////////////////////////
 // CDataDlg dialog
 
@@ -81,109 +181,6 @@ BEGIN_MESSAGE_MAP(CDataDlg, CDialog)
     ON_BN_CLICKED(IDC_HOOK_COMBAT, OnHookCombat)
     //}}AFX_MSG_MAP
 END_MESSAGE_MAP()
-
-
-
-static TCHAR* cli_AllObject[] =
-{
-    {_T("地址")},
-    {_T("名字")},
-    {_T("ID")},
-    {_T("ID2")},
-    {_T("类型")},
-    {_T("血量")},
-    {_T("索引")},
-    {_T("坐标")}
-};
-
-static TCHAR* cli_RangeObject[] =
-{
-    {_T("地址")},
-    {_T("名字")},
-    {_T("ID")},
-    {_T("ID2")},
-    {_T("类型")},
-    {_T("血量")},
-    {_T("距离")},
-    {_T("坐标")},
-    {_T("是否怪物")},
-    {_T("索引")}
-};
-
-//技能 需要的控件列
-static TCHAR* cli_Bar[] =
-{
-    {_T("名称")},
-    {_T("地址")},
-    {_T("id")}
-};
-
-static TCHAR* cli_Strike[] =
-{
-    {_T("技能名")},
-    {_T("冷却")},
-    {_T("可用")},
-    {_T("解锁")},
-    {_T("ID_1")},
-    {_T("ID_2")}
-};
-
-static TCHAR* cli_Quest[] =
-{
-    {_T("任务名称")},
-    {_T("步骤")},
-    {_T("结束标志")},
-    {_T("任务数量")},
-    {_T("任务ID")},
-};
-
-
-
-static TCHAR* cli_TaskItem[] =
-{
-    {_T("名称")},
-    {_T("距离")},
-    {_T("坐标")},
-    {_T("类型")}
-};
-
-
-static TCHAR* cli_Bag[] =
-{
-    {_T("名称")},
-    {_T("耐久")},
-    {_T("等级")},
-    {_T("数量")},
-    {_T("类型")},
-    {_T("位置")},
-    {_T("地址")},
-    {_T("封印")},
-    {_T("经验")},
-    {_T("颜色")},
-    {_T("总经验")},
-    {_T("评级")},
-    {_T("八卦")},
-    {_T("类型")}
-
-};
-
-static TCHAR* cli_Loots[] =
-{
-    {_T("地址")},
-    {_T("名称")},
-    {_T("坐标")},
-    {_T("距离")}
-};
-
-
-
-static void ShowHookRet(LPVOID lpParam, TCHAR szText[])
-{
-    CDataDlg* pDlg = (CDataDlg*)lpParam;
-    pDlg->AddInfo2(szText);
-}
-
-
 
 
 /////////////////////////////////////////////////////////////////////////////

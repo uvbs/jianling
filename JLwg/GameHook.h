@@ -9,7 +9,7 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
-#include "..\common\CCHook.h"
+#include "..\common\CHook.h"
 
 
 
@@ -67,14 +67,14 @@ public:
 
     static std::vector<DWORD> m_ObjAddrVec;
 
-    CCHook deQuestHook;
-    CCHook aeQuestHook;
-    CCHook WearHook;
-    CCHook DundiHook;
-    CCHook Yicjw;
-    CCHook CombatHook;
+    CHook deQuestHook;
+    CHook aeQuestHook;
+    CHook WearHook;
+    CHook DundiHook;
+    CHook Yicjw;
+    CHook CombatHook;
 
-    CCHook stepHook;
+    CHook stepHook;
 
     //╫схннЯ
     static void __stdcall myAcceptQuest(DWORD questID, UCHAR questStep, DWORD argv3, DWORD argv4,

@@ -3,7 +3,7 @@
 //////////////////////////////////////////////////////////////////////
 
 #include "stdafx.h"
-#include "jlwg.h"
+#include "Jlwg.h"
 #include "GameInit.h"
 
 #ifdef _DEBUG
@@ -13,31 +13,26 @@ static char THIS_FILE[] = __FILE__;
 #endif
 
 
+#include "..\common\common.h"
+#include "..\common\ShareMem.h"
 
-
-HWND GameInit::m_hGameWnd = NULL;
-TCHAR GameInit::m_szConfigPath[MAX_PATH];
-TCHAR GameInit::m_szLujingPath[MAX_PATH];
-TCHAR GameInit::m_szLujingTest[MAX_PATH];
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
+
+GameInit* GameInit::m_inst = NULL;
 GameInit::GameInit()
 {
-
     ZeroMemory(m_szLujingPath, MAX_PATH);
     ZeroMemory(m_szConfigPath, MAX_PATH);
     ZeroMemory(m_szLujingTest, MAX_PATH);
-
 }
 
 GameInit::~GameInit()
 {
-
 }
-
 
 
 //等待游戏窗口创建
@@ -99,15 +94,14 @@ BOOL GameInit::Init()
 {
 
     BOOL bGetShareMem = FALSE;
-    if(m_share.Open(SHAREOBJNAME))
+    if(JLShareMem::Instance()->Open(SHAREOBJNAME))
     {
-        m_pShareMem = m_share.Get(GetCurrentProcessId());
-        if(!m_pShareMem)
+
+        if(!JLShareMem::Instance()->Get(GetCurrentProcessId()))
         {
             TRACE(_T("没能初始化外挂数据"));
             return FALSE;
         }
-
     }
     else
     {
@@ -116,10 +110,10 @@ BOOL GameInit::Init()
     }
 
 
-
     //配置文件路径
     GetModuleFileName(GetModuleHandle(_T("JLwg")), m_szConfigPath, MAX_PATH);
     PathRemoveFileSpec(m_szConfigPath);
+
 
     //模块的路径
     TCHAR szExePath[MAX_PATH] = {0};
@@ -133,13 +127,15 @@ BOOL GameInit::Init()
         _wmkdir(m_szConfigPath);
     }
 
-    //顺义的路径
+
+    //瞬移的路径
     _tcscpy(m_szLujingPath, szExePath);
     PathAppend(m_szLujingPath, _T("路径"));
     if(PathFileExists(m_szLujingPath) == FALSE)
     {
         _wmkdir(m_szLujingPath);
     }
+
 
     //录制瞬移的默认路径
     _tcscpy(m_szLujingTest, m_szLujingPath);
@@ -148,10 +144,12 @@ BOOL GameInit::Init()
 
     //默认配置文件的路径
     TCHAR szConfigTemp[MAX_PATH] = {0};
-    CString strConfig = m_pShareMem->szConfig;
+    CString strConfig = JLShareMem::Instance()->Get(GetCurrentProcessId())->szConfig;
     _tcscpy(szConfigTemp, (LPCTSTR)strConfig);
     _tcscat(szConfigTemp, _T(".ini"));
     PathAppend(m_szConfigPath, szConfigTemp);
+
+
 
     //如果配置文件不存在
     if(PathFileExists(m_szConfigPath) == FALSE)
@@ -184,3 +182,18 @@ BOOL GameInit::Init()
     return TRUE;
 }
 
+void GameInit::SetIniPath(TCHAR* szPath)
+{
+    _tcscpy(m_szConfigPath, szPath);
+}
+
+
+GameInit* GameInit::Instance()
+{
+    if(m_inst == 0)
+    {
+        m_inst = new GameInit;
+    }
+
+    return m_inst;
+}

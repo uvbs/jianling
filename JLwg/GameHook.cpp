@@ -6,7 +6,7 @@
 #include "GameHook.h"
 #include "GamecallEx.h"
 #include "gamestruct.h"
-
+#include "GameInit.h"
 
 
 //////////////////////////////////////////////////////////////////////
@@ -85,7 +85,7 @@ void __stdcall GameHook::mySendStep(SENDSTEP* ftarpos)
 
 
     //追加
-    FILE* file = _tfopen(Gamecall::GetLujingTest(), _T("a+b"));
+    FILE* file = _tfopen(GameInit::Instance()->GetLujingTest(), _T("a+b"));
     if(file == NULL)
         OutputDebugString(_T("打开文件失败"));
     else

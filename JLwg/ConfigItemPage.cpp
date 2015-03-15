@@ -5,8 +5,12 @@
 #include "JLwg.h"
 #include "ConfigItemPage.h"
 #include "GamecallEx.h"
+
+
 #include "..\common\common.h"
-#include "..\common\CIniFile.h"
+#include "..\common\cinifile.h"
+
+
 
 
 #ifdef _DEBUG
@@ -89,8 +93,8 @@ BOOL CConfigItemPage::OnInitDialog()
 		
 	}
 
-	CCIniFile ConfigFile;
-	ConfigFile.Open(gcall.GetConfigPath());
+	CIniFile ConfigFile;
+    ConfigFile.Open(GameInit::Instance()->GetConfigPath());
 
 	//填充已经存在的过滤到控件中
 	wchar_t *szSell = NULL;

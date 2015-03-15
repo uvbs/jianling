@@ -57,8 +57,8 @@ BOOL CConfigQhPage::OnInitDialog()
     m_ComBox.AddString(strOrange);
     m_ComBox.SetCurSel(-1);
 
-    CCIniFile configFile;
-    configFile.Open(gcall.GetConfigPath());
+    CIniFile configFile;
+    configFile.Open(GameInit::Instance()->GetConfigPath());
 
     TCHAR* lpszColor = configFile.GetProfileString(strNormal, strQhColor, strGreen);
     if(lpszColor[0] == _T(''))

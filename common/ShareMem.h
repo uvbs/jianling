@@ -10,54 +10,63 @@
 #endif // _MSC_VER > 1000
 
 
+#include <tchar.h>
+#include <windows.h>
+
+
+
+class ShareMem;
+typedef ShareMem JLShareMem;
 
 #define SHAREMAXLEN 32
-
-
 typedef struct _SHAREINFO
 {
-    char szName[SHAREMAXLEN];
+    TCHAR szName[SHAREMAXLEN];
     DWORD pid;
-    char szConfig[SHAREMAXLEN];
-    char szSript[SHAREMAXLEN];
+    TCHAR szConfig[SHAREMAXLEN];
+    TCHAR szSript[SHAREMAXLEN];
 } SHAREINFO, *PSHAREINFO;
+
 
 
 class ShareMem
 {
+protected:
+    ShareMem();
+
 public:
-    ShareMem(HANDLE hFileMap = NULL);
     virtual ~ShareMem();
+    static ShareMem* Instance();
+
 
     BOOL Open(TCHAR szObjName[]);
     BOOL Create(DWORD dwCount, TCHAR szObjName[] = _T(""));
-    SHAREINFO* Add(SHAREINFO* pInfo);
-    SHAREINFO* Get(DWORD dwPid);
-    void Del(DWORD dwPid);
-    void Del(const char* name);
-    SHAREINFO* IsLogined(const char* name); //判断一个帐号是否已经存在
-    SHAREINFO* IsLogined(DWORD pid);
-    DWORD IsPidValid(const char* name);
-
-    inline DWORD GetMaxCount()
-    {
-        return m_dwMaxCount;
-    }
-
-    inline SHAREINFO* GetMemAddr()
-    {
-        return m_lpMem;
-    }
-
-
     void Close();
-    DWORD GetLoginedCount();
+
+    //操作
+    BOOL Add(SHAREINFO* pInfo);
+
+    SHAREINFO* Get(DWORD dwPid);
+    SHAREINFO* Get(LPCTSTR lpszName);
+
+    void Del(LPCTSTR lpszName);
+    void Del(DWORD dwPid);
 
 
-private:
+
+    DWORD IsPidValid(LPCTSTR lpszName);
+
+    DWORD GetUsedCount();
+    DWORD GetAllCount() {return m_dwCount;}
+    SHAREINFO* GetMem() {return m_lpMem;}
+
+protected:
     HANDLE m_hFileMap;
+    DWORD m_dwCount;
     SHAREINFO* m_lpMem;
-    DWORD m_dwMaxCount;
+    static ShareMem* _inst;
 };
+
+
 
 #endif // !defined(AFX_SHAREMEM_H__EA35F58D_574C_4783_BF68_B196F54257E6__INCLUDED_)

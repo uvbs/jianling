@@ -1,5 +1,5 @@
-#pragma once
-
+#ifndef _GAMECALL_H_
+#define _GAMECALL_H_
 
 #include "gamedata.h"
 #include "gamedef.h"
@@ -9,11 +9,13 @@
 
 #include "..\common\logger.h"
 #include "..\common\common.h"
-#include "..\common\CCHook.h"
+#include "..\common\CHook.h"
 #include "..\common\sharemem.h"
 
 
-class Gamecall: public GameSpend, public GameInit, public GameHepler
+class Gamecall: 
+	public GameSpend, 
+	public GameHepler
 {
 public:
     Gamecall();
@@ -31,8 +33,6 @@ public:
     static DWORD m_Get11C(DWORD m_Adress);   //是 ==1 红名
     static DWORD m_Get110(DWORD m_Adress); //==1 进行下面判断, ==2是npc
     static DWORD m_Get2E4(DWORD m_Adress);   //==0 npc, else 黄名
-
-
 
 
 
@@ -91,8 +91,10 @@ public:
     DWORD GetCityID();
     BOOL GetPlayExperienceStatus();//获得经验药状态
     void _LinQuJiangLi();
-    //对象
 
+
+
+    //对象
     static ObjectNode* GetObjectBinTreeBaseAddr();
     static void GetAllObjectToVector(ObjectNode* pNode, ObjectVector& RangeObject);
     DWORD GetRangeLootCount(DWORD range);
@@ -361,11 +363,10 @@ protected:
     static BOOL m_bStopThread;
     static BOOL m_bCanAoe;
     static void __stdcall ShunyiQietu();
-    CCHook hookQietu;
+    CHook hookQietu;
     static Logger log;
     HANDLE m_hModuleBsEngine;
     static CustKillVector CustomName;
 };
 
-
-
+#endif

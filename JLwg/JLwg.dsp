@@ -49,8 +49,8 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /dll /machine:I386
-# ADD LINK32 comctl32.lib /nologo /dll /pdb:"..\Release/JLwg.pdb" /debug /machine:I386 /out:"..\Release\JLwg.dll"
-# SUBTRACT LINK32 /profile /map
+# ADD LINK32 comctl32.lib /nologo /dll /pdb:"..\bin\JLwg.pdb" /debug /machine:I386 /out:"..\bin\JLwg.dll"
+# SUBTRACT LINK32 /profile /pdb:none /map
 # Begin Target
 
 # Name "JLwg - Win32 Release"
@@ -59,15 +59,11 @@ LINK32=link.exe
 # PROP Default_Filter "cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 # Begin Source File
 
-SOURCE=..\common\CCHook.cpp
+SOURCE=..\common\CHook.cpp
 # End Source File
 # Begin Source File
 
 SOURCE=..\common\CIniFile.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=..\common\CIniFile.h
 # End Source File
 # Begin Source File
 
@@ -152,7 +148,11 @@ SOURCE=.\TaskScript.cpp
 # PROP Default_Filter "h;hpp;hxx;hm;inl"
 # Begin Source File
 
-SOURCE=..\common\CCHook.h
+SOURCE=..\common\CHook.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\common\CIniFile.h
 # End Source File
 # Begin Source File
 

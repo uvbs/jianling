@@ -101,8 +101,8 @@ BOOL CConfigObjPage::OnInitDialog()
     m_FilterList.SetExtendedStyle(LVS_EX_FULLROWSELECT);
 
 
-    CCIniFile fileConfig;
-    fileConfig.Open(gcall.GetConfigPath());
+    CIniFile fileConfig;
+    fileConfig.Open(GameInit::Instance()->GetConfigPath());
     TCHAR* lpszFirst = fileConfig.GetProfileString(strCombat, strFirst);
     TCHAR* lpszDontKill = fileConfig.GetProfileString(strCombat, strDontKill);
     TCHAR* lpszMustKill = fileConfig.GetProfileString(strCombat, strAlwaysKill);

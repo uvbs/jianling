@@ -6,7 +6,6 @@
 #include "..\common\CIniFile.h"
 
 
-
 GamecallEx::GamecallEx()
 {
 
@@ -193,8 +192,8 @@ BOOL GamecallEx::HeChengWuQi(EQUITMENT_POS pos)
 {
 
     DWORD qhColor = UINT_MAX;
-    CCIniFile fileConfig;
-    fileConfig.Open(m_szConfigPath);
+    CIniFile fileConfig;
+    fileConfig.Open(GameInit::Instance()->GetConfigPath());
     TCHAR* szColor = fileConfig.GetProfileString(strNormal, strQhColor, strGreen);
     BOOL bFindColor = TRUE;
     //根据颜色取得游戏内对应的数据
@@ -483,7 +482,7 @@ void GamecallEx::XieZhuangBei(EQUITMENT_POS pos)
 void GamecallEx::Shunyi(TCHAR* szLujing)
 {
     TCHAR szFull[MAX_PATH] = {0};
-    _tcscat(szFull, m_szLujingPath);
+    _tcscat(szFull, GameInit::Instance()->GetLujingPath());
     PathAppend(szFull, szLujing);
     _tcscat(szFull, _T(".bin"));
 
@@ -1856,8 +1855,8 @@ void GamecallEx::FixWuqi()
 
 void GamecallEx::FenJieByConfig()
 {
-    CCIniFile configFile;
-    configFile.Open(m_szConfigPath);
+    CIniFile configFile;
+    configFile.Open(GameInit::Instance()->GetConfigPath());
     TCHAR* szFilter = configFile.GetProfileString(strFenjie, strItemName);
     //AfxMessageBox(szFilter);
     std::vector<_BAGSTU> AllBag;
@@ -1884,8 +1883,8 @@ void GamecallEx::FenJieByConfig()
 void GamecallEx::SellItemByConfig(wchar_t* name)
 {
 
-    CCIniFile configFile;
-    configFile.Open(m_szConfigPath);
+    CIniFile configFile;
+    configFile.Open(GameInit::Instance()->GetConfigPath());
     TCHAR* szFilter = configFile.GetProfileString(strSell, strItemName);
 
 
@@ -1933,8 +1932,8 @@ void GamecallEx::SellItemByConfig(wchar_t* name)
 // 007F602B  |.  E8 905ECCFF   call Client.004BBEC0                 ;  丢弃物品1
 void GamecallEx::DeleteItemByConfig()
 {
-    CCIniFile configFile;
-    configFile.Open(m_szConfigPath);
+    CIniFile configFile;
+    configFile.Open(GameInit::Instance()->GetConfigPath());
     TCHAR* szFilter = configFile.GetProfileString(strCuihui, strItemName);
 
 
@@ -2314,8 +2313,8 @@ void GamecallEx::CityConvey(DWORD cityid)
 
 void GamecallEx::CuncangkuByConfig(wchar_t* name)
 {
-    CCIniFile configFile;
-    configFile.Open(m_szConfigPath);
+    CIniFile configFile;
+    configFile.Open(GameInit::Instance()->GetConfigPath());
     TCHAR* szFilter = configFile.GetProfileString(strCunCang, strItemName);
 
 

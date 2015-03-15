@@ -35,7 +35,7 @@ CJLkitApp::CJLkitApp()
     // Place all significant initialization in InitInstance
 }
 
-/* */
+
 CJLkitApp::~CJLkitApp()
 {
 }
@@ -49,11 +49,12 @@ CJLkitApp	theApp;
 // CJLkitApp initialization
 BOOL CJLkitApp::InitInstance()
 {
-    // 	::CreateMutex(NULL, FALSE, _T("JLkit_Mutex"));
-    // 	if(GetLastError() == ERROR_ALREADY_EXISTS){
-    // 		AfxMessageBox(_T("这个程序已经在执行"));
-    // 		return FALSE;
-    // 	}
+    ::CreateMutex(NULL, FALSE, _T("JLkit_Mutex"));
+    if(GetLastError() == ERROR_ALREADY_EXISTS)
+    {
+        AfxMessageBox(_T("这个程序已经在执行"));
+        return FALSE;
+    }
 
     if(LoadLibrary(_T("JLnp")) == NULL)
     {
@@ -75,19 +76,20 @@ BOOL CJLkitApp::InitInstance()
     LoadStdProfileSettings();
 
     CSingleDocTemplate*	pDocTemplate;
-    pDocTemplate = new CSingleDocTemplate(IDR_MAINFRAME, RUNTIME_CLASS(CJLkitDoc), RUNTIME_CLASS(CMainFrame), // main SDI frame window
+    pDocTemplate = new CSingleDocTemplate(IDR_MAINFRAME,
+                                          RUNTIME_CLASS(CJLkitDoc),
+                                          RUNTIME_CLASS(CMainFrame), // main SDI frame window
                                           RUNTIME_CLASS(CJLkitView));
+
     AddDocTemplate(pDocTemplate);
     OnFileNew();
     return TRUE;
 }
 
-/////////////////////////////////////////////////////////////////////////////
 
-// CJLkitApp message handlers
 BOOL CJLkitApp::OnIdle(LONG lCount)
 {
-    BOOL	bMore = CWinApp::OnIdle(lCount);
+    BOOL bMore = CWinApp::OnIdle(lCount);
     // if we still need more processing time, ask for it...
     return bMore;
 }

@@ -3,8 +3,10 @@
 #include "GamecallEx.h"
 
 
-
 #include "..\common\CIniFile.h"
+
+
+
 
 const double M_PI = 3.14159265358979323846;
 
@@ -16,7 +18,6 @@ BOOL Gamecall::m_bStopThread = FALSE;
 
 Gamecall::Gamecall()
 {
-    m_pShareMem = NULL;
 }
 
 Gamecall::~Gamecall()
@@ -30,12 +31,10 @@ void Gamecall::UnInit()
 
     //等待所有线程退出
     WaitForMultipleObjects(sizeof(hThreads), (HANDLE*)&hThreads, TRUE, INFINITE);
-
     for(int i = 0; i < sizeof(hThreads); i++)
     {
         CloseHandle(hThreads[i]);
     }
-
 }
 
 
@@ -857,8 +856,14 @@ BOOL Gamecall::Init()
     try
     {
 
-        GameInit::Init();
-        GameSpend::Init();      //初始化加速
+        if(!GameInit::Instance()->Init())
+            return FALSE;
+
+        if(!GameSpend::Init())
+        {
+            return FALSE;
+        }//初始化加速
+
 
 
         //等待进入游戏
@@ -3888,9 +3893,9 @@ void Gamecall::DeliverQuests(DWORD id, DWORD step, DWORD questtype, DWORD ff, DW
 
 void Gamecall::KeyPress(WPARAM vk)
 {
-    if(m_hGameWnd != NULL)
+    if(GameInit::Instance()->GetGamehWnd() != NULL)
     {
-        PostMessage(m_hGameWnd, WM_KEYDOWN, vk, 0);
+        PostMessage(GameInit::Instance()->GetGamehWnd(), WM_KEYDOWN, vk, 0);
     }
     else
     {
@@ -5169,13 +5174,12 @@ BOOL Gamecall::Kill_ApplyConfig(std::vector<ObjectNode*>& ObjectVec)
 {
     try
     {
-        CCIniFile fileConfig;
-        fileConfig.Open(m_szConfigPath);
+        CIniFile fileConfig;
+        fileConfig.Open(GameInit::Instance()->GetConfigPath());
         ObjectVector::iterator it;
         ObjectNode* pNode;
 
 
-        TRACE(_T("config循环1"));
         for(it = ObjectVec.begin(); it != ObjectVec.end();)
         {
             //如果名字相同, 放到容器起始
@@ -6668,7 +6672,7 @@ DWORD Gamecall::sendcall(DWORD id, LPVOID pParam)
 {
 
 
-    return SendMessage(GetGamehWnd(), WM_CUSTOM_GCALL, id, (LPARAM)pParam);
+    return SendMessage(GameInit::Instance()->GetGamehWnd(), WM_CUSTOM_GCALL, id, (LPARAM)pParam);
 }
 
 

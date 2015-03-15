@@ -14,11 +14,15 @@
 #include "LaunchGameThread.h"
 #include "CVPNFile.h"
 
+
+
 #include "..\common\Job.h"
 #include "..\common\Inject.h"
 #include "..\common\Lock.h"
 #include "..\common\ThreadPool.h"
 #include "..\common\webpost.h"
+#include "..\Common\common.h"
+
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -194,7 +198,6 @@ void CJLkitDoc::OnUpdateValidKey(CCmdUI* pCmdUI)
     CString strInfo;
     if(strInfo.LoadString(IDS_VALIDKEY))
     {
-
         CString strTemp;
         strTemp.Format(IDS_VALIDKEY, m_KeyVec.size());
         pCmdUI->SetText(strTemp);
@@ -205,7 +208,7 @@ void CJLkitDoc::OnUpdateLoginedNums(CCmdUI* pCmdUI)
 {
     pCmdUI->Enable(TRUE);
     CString strTemp;
-    strTemp.Format(IDS_LOGINED, m_share.GetLoginedCount());
+    strTemp.Format(IDS_LOGINED, JLShareMem::Instance()->GetUsedCount());
     pCmdUI->SetText(strTemp);
 }
 
@@ -213,7 +216,7 @@ void CJLkitDoc::OnUpdateAllNums(CCmdUI* pCmdUI)
 {
     pCmdUI->Enable(TRUE);
     CString strTemp;
-    strTemp.Format(IDS_ALLNUMS, m_share.GetMaxCount());
+    strTemp.Format(IDS_ALLNUMS, JLShareMem::Instance()->GetAllCount());
     pCmdUI->SetText(strTemp);
 }
 
@@ -276,7 +279,7 @@ void CJLkitDoc::GetGamePath()
 BOOL CJLkitDoc::IsHaveValidKey()
 {
 
-    DWORD games = m_share.GetLoginedCount();
+    DWORD games = JLShareMem::Instance()->GetUsedCount();
     if(games >= m_KeyVec.size())
     {
         return FALSE;
@@ -355,8 +358,6 @@ void CJLkitDoc::ProcessRecevice()
 
 void CJLkitDoc::OnCloseDocument()
 {
-
-    m_share.Close();
     m_KeyVec.clear();
 
     if(m_lpVpnFile)
@@ -487,7 +488,7 @@ int CJLkitDoc::LaunchGame(CString& strName, CString& strPw, CString& strConfig, 
 {
 
     //ÊÇ·ñÒÑ¾­µÇÂ¼
-    if(m_share.IsLogined((LPCTSTR)strName))
+    if(JLShareMem::Instance()->Get((LPCTSTR)strName))
     {
         return RESULT_ALREADY_RUNNING;
     }
@@ -509,7 +510,7 @@ int CJLkitDoc::LaunchGame(CString& strName, CString& strPw, CString& strConfig, 
         strcpy(sai.szConfig, (LPCTSTR)strConfig);
         strcpy(sai.szSript, (LPCTSTR)strScript);
         strcpy(sai.szName, (LPCTSTR)strName);
-        m_share.Add(&sai);
+        JLShareMem::Instance()->Add(&sai);
 
         CCInject dllwg("JLwg.dll");
         CCInject dllspeed("speedhack-i386.dll");
