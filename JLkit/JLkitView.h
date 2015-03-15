@@ -79,7 +79,8 @@ public:
     afx_msg void    OnTimer(UINT nIDEvent);
     afx_msg void    OnUpdateStart(CCmdUI* pCmdUI);
     afx_msg void    OnUpdateGetandactive(CCmdUI* pCmdUI);
-    //}}AFX_MSG
+	afx_msg void OnSockinfo();
+	//}}AFX_MSG
     DECLARE_MESSAGE_MAP()
 
 };

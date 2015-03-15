@@ -303,9 +303,7 @@ BOOL CRequestSocket::ProcessRequest(BYTE* pRequestBuf)
 void CRequestSocket::OnReceive(int nErrorCode)
 {
 
-    m_buf.SetSize(1024);
     int nBytes = Receive(m_buf.GetData(), m_buf.GetSize());
-
     switch(nBytes)
     {
         case SOCKET_ERROR:

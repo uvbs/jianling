@@ -25,13 +25,16 @@ IMPLEMENT_DYNCREATE(CLaunchThread, CWinThread)
 CLaunchThread::CLaunchThread()
 {
     m_bIsWorking = FALSE;
-    m_bStop = FALSE;
 }
 
 CLaunchThread::~CLaunchThread()
 {
     StopThread();
-    CloseHandle(hEventObj);
+
+    for(int i = 0; i < sizeof(m_phEvents) / sizeof(HANDLE); i++)
+    {
+        CloseHandle(m_phEvents[i]);
+    }
 }
 
 
@@ -51,12 +54,13 @@ BOOL CLaunchThread::AddWork(FUNCID id)
 
     //先判断当前是否工作
     if(isWorking())
+    {
         return FALSE;
+    }
 
     //激活等待的事件
     m_nFuncid = id;
-    SetEvent(hEventObj);
-    TRACE(_T("AddWork Done."));
+    SetEvent(m_phEvents[work]);
     return TRUE;
 }
 
@@ -70,26 +74,45 @@ int CLaunchThread::Run()
 {
     // TODO: Add your specialized code here and/or call the base class
     if(m_pView == NULL)
+    {
         return -1;
+    }
 
     Webpost::InitCom();
-    while(m_bStop == FALSE)
+    while(1)
     {
-        TRACE(_T("waiting..."));
-        if(WaitForSingleObject(hEventObj, INFINITE) == WAIT_OBJECT_0)
+        //这里同时等待多个对象
+        //其中一个停止事件, 用来通知现成退出.
+        //解决程序无法正常关闭的问题
+
+        DWORD dwRet = WaitForMultipleObjects(sizeof(m_phEvents) / sizeof(HANDLE),
+                                             m_phEvents, FALSE, INFINITE);
+        if(dwRet == WAIT_OBJECT_0)
         {
             m_bIsWorking = TRUE;
             if(m_nFuncid == LAUNCHGAME)
+            {
                 m_pView->LaunchGame();
+            }
             else if(m_nFuncid == GET)
+            {
                 m_pView->OnGet();
+            }
             else if(m_nFuncid == ACTIVE)
+            {
                 m_pView->OnActive();
+            }
             else if(m_nFuncid == GETANDACTIVE)
+            {
                 m_pView->GetAndActive();
+            }
 
 
             m_bIsWorking = FALSE;
+        }
+        else if(dwRet == WAIT_OBJECT_0 + 1)
+        {
+            break;
         }
     }
 
@@ -102,8 +125,8 @@ BOOL CLaunchThread::InitInstance()
     // TODO: Add your specialized code here and/or call the base class
 
     //初始化事件对象
-    hEventObj = CreateEvent(NULL, FALSE, FALSE, NULL);
-
+    m_phEvents[work] = CreateEvent(NULL, FALSE, FALSE, NULL);
+    m_phEvents[stop] = CreateEvent(NULL, FALSE, FALSE, NULL);
 
     CWinThread::InitInstance();
     return TRUE;
@@ -111,6 +134,10 @@ BOOL CLaunchThread::InitInstance()
 
 void CLaunchThread::StopThread()
 {
-    m_bStop = TRUE;
-    WaitForSingleObject(m_hThread, INFINITE);
+    SetEvent(m_phEvents[stop]);
+}
+
+void CLaunchThread::SetOwner(CJLkitView* pOwner)
+{
+    m_pView = pOwner;
 }

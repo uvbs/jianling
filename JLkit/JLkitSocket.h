@@ -50,6 +50,7 @@ public:
     virtual int Send(const void* lpBuf, int nBufLen, int nFlags = 0);
     virtual int Receive(void* lpBuf, int nBufLen, int nFlags = 0);
 	virtual void OnSend(int nErrorCode);
+	virtual void OnClose(int nErrorCode);
 	//}}AFX_VIRTUAL
 
     // Generated message map functions
