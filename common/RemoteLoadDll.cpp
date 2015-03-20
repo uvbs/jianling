@@ -82,9 +82,7 @@ BOOL CreateRemoteThreadLoadDll::LoadDll(LPCWSTR lpwLibFile, HANDLE hProcess)
         pszLibRemoteFile   =  VirtualAllocEx(hProcess, NULL, cb, MEM_COMMIT, PAGE_READWRITE);
 
         if(pszLibRemoteFile   ==   NULL)
-        {
             __leave;
-        }
         //3.正式把我们的dll写入上面申请的空间
         BOOL   bw   =   WriteProcessMemory(hProcess,   pszLibRemoteFile, (PVOID)lpwLibFile,   cb,   &dwWritten);
         if(dwWritten != cb)
@@ -92,21 +90,15 @@ BOOL CreateRemoteThreadLoadDll::LoadDll(LPCWSTR lpwLibFile, HANDLE hProcess)
             //DbgPrint("write error!\n");
         }
         if(!bw)
-        {
             __leave;
-        }
         //4.获得关键函数LoadLibraryW地址
         PTHREAD_START_ROUTINE   pfnThreadRnt   = (LPTHREAD_START_ROUTINE)GetProcAddress(GetModuleHandleW(L"Kernel32"), "LoadLibraryW");
         if(pfnThreadRnt   ==   NULL)
-        {
             __leave;
-        }
 
         //5.创建线程并把LoadLibraryW作为线程起始函数，传给LoadLibraryW的参数是我们的dll
         if(MyCreateRemoteThread(hProcess, pfnThreadRnt, pszLibRemoteFile))
-        {
             __leave;
-        }
 
         bRet   =   TRUE;
     }
@@ -114,19 +106,13 @@ BOOL CreateRemoteThreadLoadDll::LoadDll(LPCWSTR lpwLibFile, HANDLE hProcess)
     {
         OutputDebugStringA("CreateRemoteThread errer\r\n");
         if(pszLibRemoteFile   !=   NULL)
-        {
             VirtualFreeEx(hProcess,   pszLibRemoteFile,   0,   MEM_RELEASE);
-        }
 
         if(hThread   !=   NULL)
-        {
             CloseHandle(hThread);
-        }
 
         if(hProcess   !=   NULL)
-        {
             CloseHandle(hProcess);
-        }
     }
 
 
@@ -145,9 +131,7 @@ BOOL CreateRemoteThreadLoadDll::UnloadDll(LPCWSTR lpwLibFile, DWORD dwProcessId)
     {
         hSnapshot   =   CreateToolhelp32Snapshot(TH32CS_SNAPMODULE,   dwProcessId);
         if(hSnapshot   ==   NULL)
-        {
             __leave;
-        }
         MODULEENTRY32W   me   =   {sizeof(MODULEENTRY32W)};
         BOOL   bFound   =   FALSE;
         BOOL   bMoreMods   =   Module32FirstW(hSnapshot,   &me);
@@ -156,36 +140,26 @@ BOOL CreateRemoteThreadLoadDll::UnloadDll(LPCWSTR lpwLibFile, DWORD dwProcessId)
             bFound   = (lstrcmpiW(me.szModule,   lpwLibFile)   ==   0)   ||
                        (lstrcmpiW(me.szExePath,   lpwLibFile)   ==   0);
             if(bFound)
-            {
                 break;
-            }
         }
 
         if(!bFound)
-        {
             __leave;
-        }
         hProcess   =   OpenProcess(
                            PROCESS_CREATE_THREAD   |
                            PROCESS_VM_OPERATION,
                            FALSE,   dwProcessId);
 
         if(hProcess   ==   NULL)
-        {
             __leave;
-        }
 
         PTHREAD_START_ROUTINE   pfnThreadRnt   = (PTHREAD_START_ROUTINE)
                 GetProcAddress(GetModuleHandle(TEXT("Kernel32 ")),   "FreeLibrary ");
         if(pfnThreadRnt   ==   NULL)
-        {
             __leave;
-        }
 
         if(MyCreateRemoteThread(hProcess, pfnThreadRnt, me.modBaseAddr))
-        {
             __leave;
-        }
 
         bRet   =   TRUE;
     }
@@ -193,19 +167,13 @@ BOOL CreateRemoteThreadLoadDll::UnloadDll(LPCWSTR lpwLibFile, DWORD dwProcessId)
     {
         OutputDebugStringA("CreateRemoteThread errer\r\n");
         if(hSnapshot   !=   NULL)
-        {
             CloseHandle(hSnapshot);
-        }
 
         if(hThread   !=   NULL)
-        {
             CloseHandle(hThread);
-        }
 
         if(hProcess   !=   NULL)
-        {
             CloseHandle(hProcess);
-        }
     }
 
     return   bRet;
@@ -221,14 +189,10 @@ BOOL CreateRemoteThreadLoadDll::EnableDebugPrivilege(void)
         TOKEN_PRIVILEGES   tp;
         tp.PrivilegeCount = 1;
         if(!LookupPrivilegeValue(NULL, SE_DEBUG_NAME, &tp.Privileges[0].Luid))
-        {
             tp.Privileges[0].Attributes = SE_PRIVILEGE_ENABLED;
-        }
         if(!AdjustTokenPrivileges(hToken, FALSE, &tp, sizeof(tp), NULL, NULL));
         else
-        {
             fOk = TRUE;
-        }
         CloseHandle(hToken);
     }
     return   fOk;
@@ -289,9 +253,7 @@ BOOL CreateRemoteThreadLoadDll::IsVistaOrLater(void)
     osvi.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
     GetVersionEx(&osvi);
     if(osvi.dwMajorVersion >= 6)
-    {
         return TRUE;
-    }
     return FALSE;
 }
 

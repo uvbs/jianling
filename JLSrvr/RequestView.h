@@ -13,40 +13,44 @@
 class CRequestView : public CListView
 {
 protected:
-	CRequestView();           // protected constructor used by dynamic creation
-	DECLARE_DYNCREATE(CRequestView)
+    CRequestView();           // protected constructor used by dynamic creation
+    DECLARE_DYNCREATE(CRequestView)
+
 
 // Attributes
 public:
-      void AutoColumnWidth();
+    void AutoColumnWidth();
+
+    void DoPopupMenu(int type);
+
 // Operations
 public:
 
 // Overrides
-	// ClassWizard generated virtual function overrides
-	//{{AFX_VIRTUAL(CRequestView)
-	public:
-	virtual void OnInitialUpdate();
-	protected:
-	virtual void OnDraw(CDC* pDC);      // overridden to draw this view
-	virtual void OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint);
-	//}}AFX_VIRTUAL
+    // ClassWizard generated virtual function overrides
+    //{{AFX_VIRTUAL(CRequestView)
+public:
+    virtual void OnInitialUpdate();
+protected:
+    virtual void OnDraw(CDC* pDC);      // overridden to draw this view
+    virtual void OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint);
+    //}}AFX_VIRTUAL
 
 // Implementation
 protected:
-	virtual ~CRequestView();
+    virtual ~CRequestView();
 #ifdef _DEBUG
-	virtual void AssertValid() const;
-	virtual void Dump(CDumpContext& dc) const;
+    virtual void AssertValid() const;
+    virtual void Dump(CDumpContext& dc) const;
 #endif
 
-	// Generated message map functions
+    // Generated message map functions
 protected:
-	//{{AFX_MSG(CRequestView)
-		// NOTE - the ClassWizard will add and remove member functions here.
+    //{{AFX_MSG(CRequestView)
+    afx_msg void OnRclick(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnMenuitem32776();
 	//}}AFX_MSG
-	DECLARE_MESSAGE_MAP()
-  
+    DECLARE_MESSAGE_MAP()
 };
 
 /////////////////////////////////////////////////////////////////////////////

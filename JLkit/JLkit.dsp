@@ -49,7 +49,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 /nologo /subsystem:windows /machine:I386
-# ADD LINK32 /nologo /subsystem:windows /debug /machine:I386 /out:"../release/JLkit.exe"
+# ADD LINK32 /nologo /subsystem:windows /pdb:"..\Release\JLkit.pdb" /debug /machine:I386 /out:"..\Release\JLkit.exe"
 # SUBTRACT LINK32 /profile /map
 # Begin Target
 
@@ -133,10 +133,6 @@ SOURCE=..\common\ShareMem.cpp
 
 SOURCE=.\StdAfx.cpp
 # ADD CPP /Yc"stdafx.h"
-# End Source File
-# Begin Source File
-
-SOURCE=..\common\Userinfo.cpp
 # End Source File
 # Begin Source File
 
@@ -233,10 +229,6 @@ SOURCE=..\common\ShareMem.h
 # Begin Source File
 
 SOURCE=.\StdAfx.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\common\Userinfo.h
 # End Source File
 # Begin Source File
 

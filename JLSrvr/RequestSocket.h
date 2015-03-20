@@ -16,33 +16,38 @@ class CJLSrvrDoc;
 class CRequest;
 class CRequestSocket : public CAsyncSocket
 {
-// Attributes
-public:
-    CJLSrvrDoc* m_pDoc;
-    CRequest* m_pRequest;
-    SOCKADDR_IN m_soaddr;
-    CByteArray  m_buf;
-    TCHAR m_szName[MAXLEN];
-    TCHAR m_szPw[MAXLEN];
-
-    int NoRecvTimes;
-// Operations
+//构造函数
 public:
     CRequestSocket(CJLSrvrDoc* pDoc);
     virtual ~CRequestSocket();
+
+
+// Attributes
+public:
+    CJLSrvrDoc* m_pDoc;
+
+    SOCKADDR_IN m_soaddr;
+
+    CByteArray  m_buf;
+    int         m_cbOut;
+
+
+    TCHAR m_szName[MAXLEN];
+    TCHAR m_szPw[MAXLEN];
+
+
+    int NoRecvTimes;
+
+    CPtrList m_reqList;
+    CRequest* m_pRequest;
+
+
+// Operations
+public:
+
     BOOL ProcessRequest(BYTE* pRequestBuf);
-    void InitAccept(SOCKADDR_IN& cltsock);
-
-
-
-    //数据库处理
-    int GetPwRight(TCHAR szUsername[], TCHAR szPassw[]);
-    BOOL ModifyBind(TCHAR szUserName[], TCHAR szPassword[], TCHAR szOldBind[], TCHAR szNewBind[]);
-    int Unbindkey(KEY_BUF* pKeyBuf,  sockaddr_in* pSocketAddr);
-    BOOL NewRegist(TCHAR szUserName[], TCHAR szPassword[], TCHAR szBindIP[], TCHAR szMac[], TCHAR szClientIp[]);
-    BOOL Querykey(std::vector<QUERYKEY_RET_BUF>& vecKeyInfo, TCHAR szUserName[], TCHAR szPassWord[]);
-    BOOL Bindkey(KEY_BUF* pKeyBuf);
-
+    void InitAccept();
+    CString GetNowTime();
 
 // Overrides
 public:
@@ -53,6 +58,7 @@ public:
     virtual int Send(const void* lpBuf, int nBufLen, int nFlags = 0);
     virtual int Receive(void* lpBuf, int nBufLen, int nFlags = 0);
     virtual void OnClose(int nErrorCode);
+    virtual void OnSend(int nErrorCode);
     //}}AFX_VIRTUAL
 
     // Generated message map functions
@@ -62,6 +68,7 @@ public:
 
 // Implementation
 protected:
+
 };
 
 /////////////////////////////////////////////////////////////////////////////

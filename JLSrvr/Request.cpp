@@ -18,7 +18,6 @@ static char THIS_FILE[] = __FILE__;
 
 CRequest::CRequest()
 {
-
     m_reqNums = 0;
 }
 
@@ -35,8 +34,7 @@ int CRequest::Release()
 {
     int nRefs = --m_reqNums;
     if(nRefs == 0)
-    {
         delete this;
-    }
+
     return nRefs;
 }

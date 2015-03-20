@@ -8,6 +8,8 @@
 #include "JLSrvrDoc.h"
 #include "RequestSocket.h"
 #include "Request.h"
+#include "DbMngr.h"
+
 
 #include "..\common\common.h"
 
@@ -38,7 +40,6 @@ CJLSrvrDoc::CJLSrvrDoc()
 {
     // TODO: add one-time construction code here
     m_pListen = NULL;
-    m_pDB = NULL;
 }
 
 CJLSrvrDoc::~CJLSrvrDoc()
@@ -85,33 +86,13 @@ BOOL CJLSrvrDoc::OnNewDocument()
 
     BOOL bRet = FALSE;
 
-    if(!m_pDB)
+
+    bRet = CDbMngr::GetInstance()->Init();
+    if(bRet)
     {
-        m_pDB = new CDatabase;
+        bRet = StartListening();
+        SetTitle(NULL);
     }
-
-
-    TRY
-    {
-        bRet = m_pDB->OpenEx(NULL, CDatabase::openReadOnly);
-        if(bRet)
-        {
-            bRet = StartListening();
-            SetTitle(NULL);
-        }
-
-    }
-    CATCH(CDBException, e)
-    {
-        if(AfxMessageBox(IDS_DB_OPENERROR, MB_YESNO) == IDNO)
-        {
-            delete m_pDB;
-        }
-
-    }
-    END_CATCH
-
-
     return bRet;
 }
 
@@ -126,20 +107,20 @@ void CJLSrvrDoc::StopListening()
     }
 }
 
-BOOL CJLSrvrDoc::isLogined(TCHAR* szUserName)
+CRequestSocket* CJLSrvrDoc::isLogined(TCHAR* szUserName)
 {
     POSITION pos = m_ClientList.GetHeadPosition();
     while(pos != NULL)
     {
-        CRequestSocket* pSocket = (CRequestSocket*)m_ClientList.GetAt(pos);
-        if(strcmp(szUserName, pSocket->m_szName) == 0)
+        CRequestSocket* lpsock = (CRequestSocket*)m_ClientList.GetAt(pos);
+        if(strcmp(szUserName, lpsock->m_szName) == 0)
         {
-            return TRUE;
+            return lpsock;
         }
         m_ClientList.GetNext(pos);
     }
 
-    return FALSE;
+    return NULL;
 }
 
 void CJLSrvrDoc::SetTitle(LPCTSTR lpszTitle)
@@ -176,12 +157,9 @@ BOOL CJLSrvrDoc::StartListening()
     {
         if(m_pListen->Create(PORT_SRV, SOCK_STREAM, FD_ACCEPT))
         {
-            if(m_pListen->EnableKeepAlive())
-            {
-                bOk = m_pListen->Listen();
-            }
-
+            bOk = m_pListen->Listen();
         }
+
 
         if(!bOk)
         {
@@ -248,21 +226,22 @@ void CJLSrvrDoc::Dump(CDumpContext& dc) const
 //接受连接, 放到客户列表, 通知视图更新
 void CJLSrvrDoc::ClientAccept()
 {
-    CRequestSocket* pClientSock = new CRequestSocket(this);
+    CRequestSocket* lpsock = new CRequestSocket(this);
 
     SOCKADDR_IN soaddr;
     int len = sizeof(soaddr);
-    if(m_pListen->Accept(*pClientSock, (SOCKADDR*)&soaddr, &len))
+    if(m_pListen->Accept(*lpsock, (SOCKADDR*)&soaddr, &len))
     {
-        pClientSock->AsyncSelect(FD_READ | FD_CLOSE);
-        pClientSock->InitAccept(soaddr);
-        m_ClientList.AddTail(pClientSock);
+        lpsock->AsyncSelect(FD_READ | FD_CLOSE);
+        lpsock->m_soaddr = soaddr;
+        lpsock->InitAccept();
 
+        //添加到客户列表
+        m_ClientList.AddTail(lpsock);
     }
     else
     {
-        delete pClientSock;
-
+        delete lpsock;
     }
 
 }
@@ -279,13 +258,14 @@ void CJLSrvrDoc::ClientClose(CRequestSocket* pSock)
         if(pSocket == pSock)
         {
             m_ClientList.RemoveAt(pos);
-            DocHit(HINT_OFFLINE, pSocket->m_pRequest);
+            UpdateAllViews(NULL, HINT_OFFLINE, pSocket->m_pRequest);
+
             delete pSocket;
             return;
         }
+
         m_ClientList.GetNext(pos);
     }
-
 }
 
 void CJLSrvrDoc::DocHit(LPARAM lHint, CRequest* m_pRequest)
@@ -297,12 +277,8 @@ void CJLSrvrDoc::DocHit(LPARAM lHint, CRequest* m_pRequest)
 void CJLSrvrDoc::OnCloseDocument()
 {
     // TODO: Add your specialized code here and/or call the base class
+    delete CDbMngr::GetInstance();
     StopListening();
-    if(m_pDB)
-    {
-        delete m_pDB;
-    }
-
     CDocument::OnCloseDocument();
 }
 

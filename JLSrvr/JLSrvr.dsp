@@ -49,7 +49,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 /nologo /subsystem:windows /machine:I386
-# ADD LINK32 /nologo /subsystem:windows /pdb:"../Release/JLSrvr.pdb" /debug /machine:I386 /out:"..\Release/JLSrvr.exe"
+# ADD LINK32 /nologo /subsystem:windows /pdb:"../Release/JLSrvr.pdb" /debug /machine:I386 /out:"..\Release\JLSrvr.exe"
 # SUBTRACT LINK32 /pdb:none
 # Begin Target
 
@@ -60,6 +60,26 @@ LINK32=link.exe
 # Begin Source File
 
 SOURCE=..\common\CallTracer.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\DbMngr.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\DlgAcInfo.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\DlgAcKey.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\DlgAcKeylog.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\DlgKeyAdd.cpp
 # End Source File
 # Begin Source File
 
@@ -91,6 +111,18 @@ SOURCE=.\MainFrm.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\RecordAc.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\RecordKey.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\RecordKeyLog.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\Request.cpp
 # End Source File
 # Begin Source File
@@ -116,6 +148,26 @@ SOURCE=..\common\CallTracer.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\DbMngr.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\DlgAcInfo.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\DlgAcKey.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\DlgAcKeylog.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\DlgKeyAdd.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\JLSrvr.h
 # End Source File
 # Begin Source File
@@ -133,6 +185,18 @@ SOURCE=.\ListenSocket.h
 # Begin Source File
 
 SOURCE=.\MainFrm.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\RecordAc.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\RecordKey.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\RecordKeyLog.h
 # End Source File
 # Begin Source File
 

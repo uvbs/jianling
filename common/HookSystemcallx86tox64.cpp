@@ -58,30 +58,28 @@ int HookSystemcallx86tox64::GetEditLength(PVOID CodeAdderss)
     for(int i = 0; i < 0x20; i++)
     {
         if(memcmp((PVOID)((DWORD)CodeAdderss + i), szCode, 7) == 0)
-        {
             return i;
-        }
     }
     return 0;
 }
 /*
-	.text:7DC66B9D B8 6E 10 00 00                                      mov     eax, 106Eh
-	.text:7DC66BA2 B9 00 00 00 00                                      mov     ecx, 0
-	.text:7DC66BA7 8D 54 24 04                                         lea     edx, [esp+arg_0]
-	.text:7DC66BAB 64 FF 15 C0 00 00 00                                call    large dword ptr fs:0C0h
-	.text:7DC66BB2 83 C4 04                                            add     esp, 4
-	.text:7DC66BB5 C2 14 00                                            retn    14h
+    .text:7DC66B9D B8 6E 10 00 00                                      mov     eax, 106Eh
+    .text:7DC66BA2 B9 00 00 00 00                                      mov     ecx, 0
+    .text:7DC66BA7 8D 54 24 04                                         lea     edx, [esp+arg_0]
+    .text:7DC66BAB 64 FF 15 C0 00 00 00                                call    large dword ptr fs:0C0h
+    .text:7DC66BB2 83 C4 04                                            add     esp, 4
+    .text:7DC66BB5 C2 14 00                                            retn    14h
 */
 
 // 安装钩子
-BOOL HookSystemcallx86tox64::InstallHook(PCHAR FunName,		//NTAPI
-        DWORD pHookFunc,	//HOOK的函数
-        DWORD* pOrigFunc)	//返回的函数
+BOOL HookSystemcallx86tox64::InstallHook(PCHAR FunName,     //NTAPI
+        DWORD pHookFunc,    //HOOK的函数
+        DWORD* pOrigFunc)   //返回的函数
 {
     DWORD dwOldProtect;
     DWORD dwIndex = GetSysCallIndex(FunName);
 
-    DWORD	dwFunadd = PtrToUlong(GetProcAddress(GetModuleHandleA("NTDLL.dll"), FunName));
+    DWORD   dwFunadd = PtrToUlong(GetProcAddress(GetModuleHandleA("NTDLL.dll"), FunName));
 
     //保存各种信息
     dwOrigX86SwitchTo64[dwIndex] = (PDWORD)malloc(0x20);
@@ -96,9 +94,9 @@ BOOL HookSystemcallx86tox64::InstallHook(PCHAR FunName,		//NTAPI
     //野猪改造开始
     VirtualProtect(ULongToPtr(dwOrigX86SwitchTo64[dwIndex]), 0x20, PAGE_EXECUTE_READWRITE, &dwOldProtect);
 
-    *(PBYTE)((DWORD)dwOrigX86SwitchTo64[dwIndex]	+ nlen)		=	 0xE8;
-    *(PDWORD)((DWORD)dwOrigX86SwitchTo64[dwIndex]	+ nlen + 1)	= (DWORD)dwX86SwitchTo64BitModeEx - (DWORD)dwOrigX86SwitchTo64[dwIndex] - nlen - 5;
-    *(PWORD)((DWORD)dwOrigX86SwitchTo64[dwIndex]	+ nlen + 5)	=	 0x9090;
+    *(PBYTE)((DWORD)dwOrigX86SwitchTo64[dwIndex]    + nlen)     =    0xE8;
+    *(PDWORD)((DWORD)dwOrigX86SwitchTo64[dwIndex]   + nlen + 1) = (DWORD)dwX86SwitchTo64BitModeEx - (DWORD)dwOrigX86SwitchTo64[dwIndex] - nlen - 5;
+    *(PWORD)((DWORD)dwOrigX86SwitchTo64[dwIndex]    + nlen + 5) =    0x9090;
 
 
     * pOrigFunc = (DWORD)dwOrigX86SwitchTo64[dwIndex];
@@ -131,10 +129,10 @@ __declspec(naked) void SystemCallX64()
     }
 }
 // Ex安装钩子
-BOOL HookSystemcallx86tox64::InstallHookEx(DWORD dwIndex,		//NTAPI
-        WORD dwRetIndex,	//返回堆栈平衡
-        DWORD pHookFunc,		//HOOK的函数
-        DWORD* pOrigFunc)	//返回的函数
+BOOL HookSystemcallx86tox64::InstallHookEx(DWORD dwIndex,       //NTAPI
+        WORD dwRetIndex,    //返回堆栈平衡
+        DWORD pHookFunc,        //HOOK的函数
+        DWORD* pOrigFunc)   //返回的函数
 {
     DWORD dwOldProtect;
 
@@ -152,11 +150,11 @@ BOOL HookSystemcallx86tox64::InstallHookEx(DWORD dwIndex,		//NTAPI
     //野猪改造开始
     VirtualProtect(ULongToPtr(dwOrigX86SwitchTo64[dwIndex]), 0x20, PAGE_EXECUTE_READWRITE, &dwOldProtect);
 
-    *(PDWORD)((DWORD)dwOrigX86SwitchTo64[dwIndex]	+ 2)		=	 dwIndex;
-    *(PBYTE)((DWORD)dwOrigX86SwitchTo64[dwIndex]	+ nlen)		=	 0xE8;
-    *(PDWORD)((DWORD)dwOrigX86SwitchTo64[dwIndex]	+ nlen + 1)	= (DWORD)dwX86SwitchTo64BitModeEx - (DWORD)dwOrigX86SwitchTo64[dwIndex] - nlen - 5;
-    *(PWORD)((DWORD)dwOrigX86SwitchTo64[dwIndex]	+ nlen + 5)	=	 0x9090;
-    *(PWORD)((DWORD)dwOrigX86SwitchTo64[dwIndex]	+ nlen + 7 + 3 + 1) = dwRetIndex;
+    *(PDWORD)((DWORD)dwOrigX86SwitchTo64[dwIndex]   + 2)        =    dwIndex;
+    *(PBYTE)((DWORD)dwOrigX86SwitchTo64[dwIndex]    + nlen)     =    0xE8;
+    *(PDWORD)((DWORD)dwOrigX86SwitchTo64[dwIndex]   + nlen + 1) = (DWORD)dwX86SwitchTo64BitModeEx - (DWORD)dwOrigX86SwitchTo64[dwIndex] - nlen - 5;
+    *(PWORD)((DWORD)dwOrigX86SwitchTo64[dwIndex]    + nlen + 5) =    0x9090;
+    *(PWORD)((DWORD)dwOrigX86SwitchTo64[dwIndex]    + nlen + 7 + 3 + 1) = dwRetIndex;
 
     * pOrigFunc = (DWORD)dwOrigX86SwitchTo64[dwIndex];
 

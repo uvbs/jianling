@@ -15,8 +15,8 @@ class CRequest;
 class CJLSrvrDoc : public CDocument
 {
 protected: // create from serialization only
-	CJLSrvrDoc();
-	DECLARE_DYNCREATE(CJLSrvrDoc)
+    CJLSrvrDoc();
+    DECLARE_DYNCREATE(CJLSrvrDoc)
 
 // Attributes
 public:
@@ -24,16 +24,15 @@ public:
     CString m_strDbUser;
     CString m_strDbPw;
     CString m_strIp;
-	CString m_strServer;
+    CString m_strServer;
     CString m_strTitleBase;
 
-	CObList m_reqList;
-	CObList m_ClientList;
+    CObList m_reqList;
+    CObList m_ClientList;
 
 
     CListenSocket* m_pListen;
     CTime m_timeStarted;
-    CDatabase* m_pDB;
 
 
 // Operations
@@ -41,40 +40,43 @@ public:
     BOOL StartListening();
     void StopListening();
     void ClientAccept();
-    void ClientClose(CRequestSocket *pSock);
-    BOOL isLogined(TCHAR *szUserName);
+    void ClientClose(CRequestSocket* pSock);
+    CRequestSocket* isLogined(TCHAR* szUserName);
+
+    BOOL IdleProc(LONG lCount);
+    void DocHit(LPARAM lHint, CRequest* pObject);
+
+
 // Overrides
-	// ClassWizard generated virtual function overrides
-	//{{AFX_VIRTUAL(CJLSrvrDoc)
-	public:
-	virtual BOOL OnNewDocument();
-	virtual void Serialize(CArchive& ar);
-	virtual void SetTitle(LPCTSTR lpszTitle);
-	virtual void OnCloseDocument();
-	//}}AFX_VIRTUAL
+    // ClassWizard generated virtual function overrides
+    //{{AFX_VIRTUAL(CJLSrvrDoc)
+public:
+    virtual BOOL OnNewDocument();
+    virtual void Serialize(CArchive& ar);
+    virtual void SetTitle(LPCTSTR lpszTitle);
+    virtual void OnCloseDocument();
+    //}}AFX_VIRTUAL
 
 // Implementation
 public:
-	BOOL IdleProc(LONG lCount);
-	void DocHit(LPARAM lHint, CRequest* pObject);
-	virtual ~CJLSrvrDoc();
+    virtual ~CJLSrvrDoc();
 #ifdef _DEBUG
-	virtual void AssertValid() const;
-	virtual void Dump(CDumpContext& dc) const;
+    virtual void AssertValid() const;
+    virtual void Dump(CDumpContext& dc) const;
 #endif
 
 protected:
 
 // Generated message map functions
 protected:
-	//{{AFX_MSG(CJLSrvrDoc)
+    //{{AFX_MSG(CJLSrvrDoc)
     afx_msg void OnUpdateCalcUpTime(CCmdUI* pCmdUI);
-	afx_msg void OnUpdateConnects(CCmdUI* pCmdUI);
-	afx_msg void OnFileRestart();
-	//}}AFX_MSG
-	DECLARE_MESSAGE_MAP()
- 
-    
+    afx_msg void OnUpdateConnects(CCmdUI* pCmdUI);
+    afx_msg void OnFileRestart();
+    //}}AFX_MSG
+    DECLARE_MESSAGE_MAP()
+
+
 };
 
 /////////////////////////////////////////////////////////////////////////////

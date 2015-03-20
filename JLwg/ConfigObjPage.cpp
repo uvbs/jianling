@@ -57,7 +57,7 @@ void CConfigObjPage::RefreshObj()
 {
 
     m_ObjList.DeleteAllItems();
-    std::vector<ObjectNode*> RangeObject;
+    ObjectVector RangeObject;
     TRACE(_T("GetRangeMonsterToVector"));
     gcall.GetRangeMonsterToVector(10000, RangeObject);
 

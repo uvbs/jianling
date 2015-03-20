@@ -1,9 +1,12 @@
 #if !defined _KEYVIEWDLG_H_
 #define _KEYVIEWDLG_H_
 
+
+
 #if _MSC_VER > 1000
 #pragma once
 #endif // _MSC_VER > 1000
+
 
 // CDlgKeyView dialog
 class CJLkitSocket;

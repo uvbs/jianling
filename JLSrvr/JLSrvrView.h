@@ -23,6 +23,8 @@ public:
 // Operations
 public:
     void AutoColumnWidth();
+       void DoPopupMenu(int type);
+
 // Overrides
     // ClassWizard generated virtual function overrides
     //{{AFX_VIRTUAL(CJLSrvrView)
@@ -49,9 +51,14 @@ protected:
 protected:
     //{{AFX_MSG(CJLSrvrView)
     afx_msg void OnTimer(UINT nIDEvent);
-    //}}AFX_MSG
+	afx_msg void OnKeyAdd();
+	afx_msg void OnRclick(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnMenuitem32774();
+	afx_msg void OnMenuitem32775();
+	afx_msg void OnSocketinfo();
+	//}}AFX_MSG
     DECLARE_MESSAGE_MAP()
-
+ 
 };
 
 #ifndef _DEBUG  // debug version in JLSrvrView.cpp

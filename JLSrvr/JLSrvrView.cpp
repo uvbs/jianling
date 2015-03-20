@@ -8,6 +8,12 @@
 #include "JLSrvrView.h"
 #include "Request.h"
 #include "RequestSocket.h"
+#include "DlgKeyAdd.h"
+
+//三个属性页
+#include "DlgAcInfo.h"
+#include "DlgAcKey.h"
+#include "DlgAcKeylog.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -23,7 +29,12 @@ IMPLEMENT_DYNCREATE(CJLSrvrView, CListView)
 BEGIN_MESSAGE_MAP(CJLSrvrView, CListView)
     //{{AFX_MSG_MAP(CJLSrvrView)
     ON_WM_TIMER()
-    //}}AFX_MSG_MAP
+    ON_COMMAND(ID_KEY_ADD, OnKeyAdd)
+    ON_NOTIFY_REFLECT(NM_RCLICK, OnRclick)
+    ON_COMMAND(ID_MENUITEM32774, OnMenuitem32774)
+    ON_COMMAND(ID_MENUITEM32775, OnMenuitem32775)
+	ON_COMMAND(ID_SOCKETINFO, OnSocketinfo)
+	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -74,6 +85,8 @@ void CJLSrvrView::OnInitialUpdate()
     GetListCtrl().SetExtendedStyle(LVS_EX_FULLROWSELECT);
 
 
+    GetListCtrl().InsertItem(0, _T("Test"));
+
 
     SetTimer(IDT_TIMERCALCTIME, 2000, NULL);
     // TODO: You may populate your ListView with items by directly accessing
@@ -113,9 +126,7 @@ BOOL CJLSrvrView::Create(LPCTSTR lpszClassName, LPCTSTR lpszWindowName, DWORD dw
 void CJLSrvrView::AutoColumnWidth()
 {
     for(int i = 0; i < 4; i++)
-    {
         GetListCtrl().SetColumnWidth(i, LVSCW_AUTOSIZE_USEHEADER);
-    }
 }
 
 
@@ -173,4 +184,109 @@ void CJLSrvrView::OnTimer(UINT nIDEvent)
 
     }
     CListView::OnTimer(nIDEvent);
+}
+
+void CJLSrvrView::OnKeyAdd()
+{
+    // TODO: Add your command handler code here
+    CDlgKeyAdd dlg;
+    dlg.DoModal();
+}
+
+void CJLSrvrView::DoPopupMenu(int type)
+{
+    POINT point;
+    if(GetCursorPos(&point))
+    {
+        CMenu menu;
+        menu.LoadMenu(IDR_MENU1);
+        CMenu* subMenu = menu.GetSubMenu(type);
+        subMenu->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point.x, point.y, this);
+    }
+
+}
+
+
+void CJLSrvrView::OnRclick(NMHDR* pNMHDR, LRESULT* pResult)
+{
+    // TODO: Add your control notification handler code here
+    switch(pNMHDR->code)
+    {
+        case NM_RCLICK:
+            {
+                if(GetListCtrl().GetSelectedCount() == 0)
+                    DoPopupMenu(1);
+                else
+                    DoPopupMenu(0);
+
+            }
+            break;
+
+    }
+    *pResult = 0;
+}
+
+
+//帐号详细信息
+void CJLSrvrView::OnMenuitem32774()
+{
+    // TODO: Add your command handler code here
+    CPropertySheet sheet(_T("详细信息"));
+    CDlgAcInfo page1;
+    CDlgAcKey page2;
+    CDlgAcKeylog page3;
+
+
+    //获取选定的账号名
+    POSITION pos = GetListCtrl().GetFirstSelectedItemPosition();
+    if(pos == NULL)
+        TRACE0("No items were selected!\n");
+    else
+    {
+        int nItem = GetListCtrl().GetNextSelectedItem(pos);
+        CRequest* pRequest = (CRequest*)GetListCtrl().GetItemData(nItem);
+        if(pRequest == NULL)
+        {
+            TRACE0(_T("item数据是空值, 检查这个问题"));
+            return;
+        }
+        page1.m_strAcName = pRequest->strUserName;
+        page2.m_strAcName = pRequest->strUserName;
+        page3.m_strAcName = pRequest->strUserName;
+
+        sheet.AddPage(&page1);
+        sheet.AddPage(&page2);
+        sheet.AddPage(&page3);
+        sheet.DoModal();
+
+    }
+
+
+
+
+
+
+
+}
+
+
+//刷新
+void CJLSrvrView::OnMenuitem32775()
+{
+    // TODO: Add your command handler code here
+    GetListCtrl().DeleteAllItems();
+
+    POSITION ppos = GetDocument()->m_ClientList.GetHeadPosition();
+    while(ppos)
+    {
+        CRequest* pRequest = ((CRequestSocket*)GetDocument()->m_ClientList.GetNext(ppos))->m_pRequest;
+        OnUpdate(this, HINT_ACEEPT, pRequest);
+    }
+
+}
+
+void CJLSrvrView::OnSocketinfo() 
+{
+	// TODO: Add your command handler code here
+
 }

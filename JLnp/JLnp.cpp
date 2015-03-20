@@ -73,9 +73,8 @@ VOID WINAPI c2w(wchar_t* pwstr, size_t len, const char* str)
         size_t nu = strlen(str);
         size_t n = (size_t)MultiByteToWideChar(CP_ACP, 0, (const char*)str, (int)nu, NULL, 0);
         if(n >= len)
-        {
             n = len - 1;
-        }
+
         MultiByteToWideChar(CP_ACP, 0, (const char*)str, (int)nu, pwstr, (int)n);
         pwstr[n] = 0;
     }
@@ -102,9 +101,7 @@ HANDLE WINAPI CreateMutexExW_hook(
 
     HANDLE handle = Orig_CreateMutexExW(lpMutexAttributes, lpName, dwFlags, dwDesiredAccess);
     if(lpName && wcsstr(lpName, L"BnSGameClient"))
-    {
         CloseHandle(handle);
-    }
     return handle;
 }
 
@@ -179,38 +176,30 @@ NTSTATUS WINAPI NtQueryInformationProcess_Hook(HANDLE ProcessHandle,
     if(NT_SUCCESS(ntStatus))
     {
         if(ProcessInformationClass == ProcessDebugPort && NT_SUCCESS(ntStatus))
-        {
             memset(ProcessInformation, 0, ProcessInformationLength);
-        }
         if(ProcessInformationClass == ProcessDebugObjectHandle && NT_SUCCESS(ntStatus))
-        {
             memset(ProcessInformation, 0, ProcessInformationLength);
-        }
         if(ProcessInformationClass == ProcessDebugFlags && NT_SUCCESS(ntStatus))
-        {
             memset(ProcessInformation, -1, ProcessInformationLength);
-        }
     }
 
     return ntStatus;
 }
 
-typedef NTSTATUS(WINAPI* _NtSetInformationThread)(IN HANDLE		ThreadHandle,
+typedef NTSTATUS(WINAPI* _NtSetInformationThread)(IN HANDLE     ThreadHandle,
         IN THREADINFOCLASS ThreadInformationClass,
-        IN PVOID	ThreadInformation,
-        IN ULONG	ThreadInformationLength);
+        IN PVOID    ThreadInformation,
+        IN ULONG    ThreadInformationLength);
 _NtSetInformationThread OrigNtSetInformationThread;
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-NTSTATUS	WINAPI	NtSetInformationThread_Hook(IN HANDLE               ThreadHandle,
-        IN THREADINFOCLASS		ThreadInformationClass,
+NTSTATUS    WINAPI  NtSetInformationThread_Hook(IN HANDLE               ThreadHandle,
+        IN THREADINFOCLASS      ThreadInformationClass,
         IN PVOID                ThreadInformation,
         IN ULONG                ThreadInformationLength)
 {
 
     if(ThreadInformationClass == ThreadHideFromDebugger)
-    {
         return STATUS_SUCCESS;
-    }
 
     return OrigNtSetInformationThread(ThreadHandle, ThreadInformationClass, ThreadInformation, ThreadInformationLength);
 }
@@ -225,9 +214,7 @@ NTSTATUS WINAPI ZwGetContextThread_Hook(
 {
     NTSTATUS ntStatus = ZwGetContextThread(ThreadHandle, pContext);
     if(NT_SUCCESS(ntStatus))
-    {
         pContext->Dr0 = pContext->Dr1 = pContext->Dr2 = pContext->Dr3 = pContext->Dr6 = pContext->Dr7 = 0;
-    }
     return ntStatus;
 }
 HANDLE WINAPI CreateFileW_Hook(
@@ -244,14 +231,12 @@ HANDLE WINAPI CreateFileW_Hook(
     //这里方便调试
     //if(wcsstr(lpFileName, L"rsaenh"))
     //{
-    //	MessageBoxW(NULL, lpFileName, NULL, NULL);
+    //  MessageBoxW(NULL, lpFileName, NULL, NULL);
     //}
 
     //处理文件独占
     if(dwShareMode == NULL)
-    {
         dwShareMode = FILE_SHARE_READ | FILE_SHARE_WRITE;
-    }
     return Orig_CreateFileW(lpFileName, dwDesiredAccess, dwShareMode, lpSecurityAttributes, dwCreationDisposition, dwFlagsAndAttributes, hTemplateFile);
 }
 

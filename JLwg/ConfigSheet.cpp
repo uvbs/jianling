@@ -46,6 +46,9 @@ END_MESSAGE_MAP()
 void CConfigSheet::OnApplyNow()
 {
 
+	Default();
+
+
 	CString szSell;
 	CString szCunCang;
 	CString szJioayi;
@@ -54,6 +57,7 @@ void CConfigSheet::OnApplyNow()
 	CString szQhShipin;
 	int i;
 	
+
 	for(i = 0; i < itempage.m_FilterList.GetItemCount(); i++)
 	{
 		CString strText = itempage.m_FilterList.GetItemText(i, 0);
@@ -130,6 +134,7 @@ void CConfigSheet::OnApplyNow()
 	CString strHeYaoPercent_temp;
 	qhpage.GetDlgItemText(IDC_CHIYAOPERCENT, strHeYaoPercent_temp);
 	WritePrivateProfileString(strCombat, strYaoPecent, (LPCTSTR)strHeYaoPercent_temp, gcall.GetConfigPath());
+
 
 	qhpage.SetModified(FALSE);
 	objpage.SetModified(FALSE);

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 ﻿#include "stdafx.h"
 #include "TaskScript.h"
 #include "JLwg.h"
@@ -4125,3 +4126,6 @@ void TaskScript::IsGoonHecheng(DWORD pos)
 
 
 
+=======
+#include "stdafx.h"
+>>>>>>> ec82f68341aec048924c2ea5f64172867a97816d

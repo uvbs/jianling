@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 ﻿#pragma once
 
 class TaskScript
@@ -130,3 +131,15 @@ typedef struct _FunTask
 	FunPointer fp;//函数指针
 
 } FunTask;
+=======
+#pragma once
+
+class TaskScript
+{
+public:
+    TaskScript(void){};
+    ~TaskScript(void){};
+    void BeginTask(){};
+
+};
+>>>>>>> ec82f68341aec048924c2ea5f64172867a97816d

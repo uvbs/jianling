@@ -63,13 +63,9 @@ void CDlgModifyBind::OnOK()
 
     if(m_strOldbind == _T("0.0.0.0") || m_strNewbind == _T("0.0.0.0") || m_strName.IsEmpty() ||
             m_strPw.IsEmpty())
-    {
         AfxMessageBox(_T("²»ÄÜÎª¿Õ"));
-    }
     else
-    {
         CJLkitSocket::GetInstance()->ModifyBind(m_strName, m_strPw, m_strOldbind, m_strNewbind);
-    }
 
     CDialog::OnOK();
 }

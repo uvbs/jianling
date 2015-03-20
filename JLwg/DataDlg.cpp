@@ -4,12 +4,13 @@
 #include "stdafx.h"
 #include "Jlwg.h"
 #include "DataDlg.h"
-
+#include "GameHook.h"
 
 #include "ConfigItemPage.h"
 #include "ConfigObjPage.h"
 #include "ConfigQhPage.h"
 #include "ConfigSheet.h"
+
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -178,7 +179,7 @@ static TCHAR* cli_Loots[] =
 
 static void ShowHookRet(LPVOID lpParam, TCHAR szText[])
 {
-    CDataDlg *pDlg = (CDataDlg*)lpParam;
+    CDataDlg* pDlg = (CDataDlg*)lpParam;
     pDlg->AddInfo2(szText);
 }
 
@@ -191,38 +192,24 @@ static void ShowHookRet(LPVOID lpParam, TCHAR szText[])
 void CDataDlg::CheckHook()
 {
     if(m_bHook_Combat)
-    {
-        GameHook::GetInstance()->CombatHook.unhook();
-    }
+        m_pGameHook->CombatHook.unhook();
     if(m_bHook_Accquest)
-    {
-        GameHook::GetInstance()->aeQuestHook.unhook();
-    }
+        m_pGameHook->aeQuestHook.unhook();
 
     if(m_bHook_Dundi)
-    {
-        GameHook::GetInstance()->DundiHook.unhook();
-    }
+        m_pGameHook->DundiHook.unhook();
 
     if(m_bHook_Pickup1)
-    {
-        GameHook::GetInstance()->Yicjw.unhook();
-    }
+        m_pGameHook->Yicjw.unhook();
 
     if(m_bHook_quest)
-    {
-        GameHook::GetInstance()->deQuestHook.unhook();
-    }
+        m_pGameHook->deQuestHook.unhook();
 
     if(m_bHook_Weaquit)
-    {
-        GameHook::GetInstance()->WearHook.unhook();
-    }
+        m_pGameHook->WearHook.unhook();
 
     if(m_bHook_step)
-    {
-        GameHook::GetInstance()->stepHook.unhook();
-    }
+        m_pGameHook->stepHook.unhook();
 
 }
 
@@ -279,9 +266,9 @@ BOOL CDataDlg::OnInitDialog()
 
 
     CheckHook();
-
-    GameHook::GetInstance()->m_lpParam = this;
-    GameHook::GetInstance()->m_showHookRet = ShowHookRet;
+    m_pGameHook = m_pGameHook;
+    m_pGameHook->m_lpParam = this;
+    m_pGameHook->m_showHookRet = ShowHookRet;
 
 
     return TRUE;  // return TRUE unless you set the focus to a control
@@ -302,7 +289,7 @@ BOOL CDataDlg::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult)
                 CString strClick = m_ListCtrl.GetItemText(pItem->iItem, pItem->iSubItem);
                 if(strClick.IsEmpty() == FALSE)
                 {
-					strClick += _T("\r\n");
+                    strClick += _T("\r\n");
                     m_hEdit.ReplaceSel(strClick);
 
                 }
@@ -347,7 +334,7 @@ void CDataDlg::OnGetpalyerinfo()
 //遍历全部对象
 void CDataDlg::PrintfAllObject()
 {
-    std::vector<ObjectNode*> RangeObject;
+    ObjectVector RangeObject;
     gcall.GetAllObjectToVector(gcall.GetObjectBinTreeBaseAddr(), RangeObject);
 
     m_ListCtrl.SetRedraw(FALSE);
@@ -464,10 +451,8 @@ void CDataDlg::PrintfPlayerEquip()
     gcall.GetAllBodyEquipToVector(GoodsItem);
 
     for(DWORD i = 0; i < GoodsItem.size() ; i++)
-    {
         InertBagItem(i, GoodsItem[i]);
 
-    }
 }
 
 
@@ -489,9 +474,7 @@ void CDataDlg::PrintfRangeTaskItem()
         //名字
         wchar_t* name = gcall.GetObjectName(pNode->ObjAddress);
         if(name != NULL)
-        {
             m_ListCtrl.InsertItem(i, name);
-        }
 
 
         //距离
@@ -560,9 +543,7 @@ void CDataDlg::PrintfQuest()
 
         wchar_t* name = (wchar_t*)gcall.sendcall(id_msg_GatTaskName, (LPVOID)name_id);
         if(name)
-        {
             m_ListCtrl.InsertItem(i, name);
-        }
         else
         {
             //遍历完成
@@ -592,9 +573,7 @@ void CDataDlg::PrintfBag()
 
     CString strTemp;
     for(DWORD i = 0; i < RangeObject.size(); i++)
-    {
         InertBagItem(i, RangeObject[i]);
-    }
 }
 
 //遍历背包
@@ -677,13 +656,9 @@ void CDataDlg::PrintfStrike()
         else
         {
             if(RangeObject[i].canUse == 0)
-            {
                 strTemp.Format(_T("可使用"));
-            }
             else
-            {
                 strTemp.Format(_T("不可用"));
-            }
             //strTemp.Format(_T("%d"), RangeObject[i].canUse);
             m_ListCtrl.SetItemText(i, 2, strTemp);
             strTemp.Format(_T("已解锁"));
@@ -709,9 +684,7 @@ void CDataDlg::PrintfRangeMonster(BOOL bApplyConfig)
     gcall.GetRangeMonsterToVector(m_nRange, RangeObject);
 
     if(bApplyConfig)
-    {
         gcall.Kill_ApplyConfig(RangeObject);
-    }
     //判续对象, 根据距离
     std::sort(RangeObject.begin(), RangeObject.end(), GamecallEx::UDgreater);
 
@@ -848,13 +821,9 @@ void CDataDlg::PrintfRangeObject()
 
         //是否是怪物
         if(gcall.isCanKill(pNode))
-        {
             m_ListCtrl.SetItemText(index, 8, L"是");
-        }
         else
-        {
             m_ListCtrl.SetItemText(index, 8, L"否");
-        }
 
 
 
@@ -879,17 +848,11 @@ void CDataDlg::OnSpeedx()
     // TODO: Add your control notification handler code here
     UpdateData(TRUE);
     if(m_nRange == 0)
-    {
         AfxMessageBox(_T("不能输入0值"));
-    }
     else if(m_nRange > 50)
-    {
         AfxMessageBox(_T("太大了, 可能会崩溃游戏"));
-    }
     else
-    {
         gcall.NewSpend((float)m_nRange);
-    }
 }
 
 
@@ -917,9 +880,7 @@ void CDataDlg::OnSelchangeComboDatatype()
     for(;;)
     {
         if(m_ListCtrl.DeleteColumn(0) == FALSE)
-        {
             break;
-        }
     }
 
     if(strSel == _T("背包"))
@@ -985,9 +946,7 @@ void CDataDlg::OnSelchangeComboDatatype()
     for(;;)
     {
         if(m_ListCtrl.SetColumnWidth(i++, LVSCW_AUTOSIZE_USEHEADER) == FALSE)
-        {
             break;
-        }
     }
 
 }
@@ -996,6 +955,7 @@ void CDataDlg::OnBtnConfig()
 {
     // TODO: Add your control notification handler code here
     ShowWindow(SW_HIDE);
+
     CConfigSheet ConfigSheet;
     ConfigSheet.DoModal();
     ShowWindow(SW_SHOW);
@@ -1014,13 +974,9 @@ void CDataDlg::OnHookSendstep()
 
     UpdateData(TRUE);
     if(m_bHook_step)
-    {
-        GameHook::GetInstance()->backupSendStep = GameHook::GetInstance()->stepHook.hook();
-    }
+        m_pGameHook->backupSendStep = m_pGameHook->stepHook.hook();
     else
-    {
-        GameHook::GetInstance()->stepHook.unhook();
-    }
+        m_pGameHook->stepHook.unhook();
 
 }
 
@@ -1030,14 +986,10 @@ void CDataDlg::OnHookYicijianwu()
     // TODO: Add your control notification handler code here
     UpdateData(TRUE);
     if(m_bHook_Pickup1)
-    {
-        GameHook::GetInstance()->backupYiciJianWu = GameHook::GetInstance()->Yicjw.hook();
+        m_pGameHook->backupYiciJianWu = m_pGameHook->Yicjw.hook();
 
-    }
     else
-    {
-        GameHook::GetInstance()->Yicjw.unhook();
-    }
+        m_pGameHook->Yicjw.unhook();
 }
 
 //npc接任务
@@ -1046,14 +998,10 @@ void CDataDlg::OnHookDequest()
     // TODO: Add your control notification handler code here
     UpdateData(TRUE);
     if(m_bHook_quest)
-    {
-        GameHook::GetInstance()->backupQuest = GameHook::GetInstance()->deQuestHook.hook();
+        m_pGameHook->backupQuest = m_pGameHook->deQuestHook.hook();
 
-    }
     else
-    {
-        GameHook::GetInstance()->deQuestHook.unhook();
-    }
+        m_pGameHook->deQuestHook.unhook();
 }
 
 void CDataDlg::OnHookChuanzhuangbei()
@@ -1061,14 +1009,10 @@ void CDataDlg::OnHookChuanzhuangbei()
     // TODO: Add your control notification handler code here
     UpdateData(TRUE);
     if(m_bHook_Weaquit)
-    {
-        GameHook::GetInstance()->backupWearEquipment = GameHook::GetInstance()->WearHook.hook();
+        m_pGameHook->backupWearEquipment = m_pGameHook->WearHook.hook();
 
-    }
     else
-    {
-        GameHook::GetInstance()->WearHook.unhook();
-    }
+        m_pGameHook->WearHook.unhook();
 
 }
 
@@ -1077,14 +1021,10 @@ void CDataDlg::OnHookDundi()
     // TODO: Add your control notification handler code here
     UpdateData(TRUE);
     if(m_bHook_Dundi)
-    {
-        GameHook::GetInstance()->backupDunDi = GameHook::GetInstance()->DundiHook.hook();
+        m_pGameHook->backupDunDi = m_pGameHook->DundiHook.hook();
 
-    }
     else
-    {
-        GameHook::GetInstance()->DundiHook.unhook();
-    }
+        m_pGameHook->DundiHook.unhook();
 
 }
 
@@ -1109,9 +1049,7 @@ void CDataDlg::OnTurnto()
 
     POSITION pos = m_ListCtrl.GetFirstSelectedItemPosition();
     if(pos == NULL)
-    {
         TRACE0("No items were selected!\n");
-    }
     else
     {
         while(pos)
@@ -1132,9 +1070,7 @@ void CDataDlg::OnSteptoobjet()
 
     POSITION pos = m_ListCtrl.GetFirstSelectedItemPosition();
     if(pos == NULL)
-    {
         TRACE0("No items were selected!\n");
-    }
     else
     {
         while(pos)
@@ -1153,13 +1089,17 @@ void CDataDlg::OnRclickList(NMHDR* pNMHDR, LRESULT* pResult)
 {
     // TODO: Add your control notification handler code here
 
-    POINT point;
-    GetCursorPos(&point);
+    if(m_ListCtrl.GetSelectedCount() != 0)
+    {
+        POINT point;
+        GetCursorPos(&point);
 
-    CMenu menu;
-    menu.LoadMenu(IDR_OBJECT);
-    menu.GetSubMenu(0)->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point.x, point.y, this);
+        CMenu menu;
+        menu.LoadMenu(IDR_OBJECT);
+        menu.GetSubMenu(0)->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point.x, point.y, this);
 
+
+    }
 
 
     *pResult = 0;
@@ -1182,13 +1122,9 @@ void CDataDlg::OnHookAcceptquest()
     // TODO: Add your control notification handler code here
     UpdateData(TRUE);
     if(m_bHook_Accquest)
-    {
-        GameHook::GetInstance()->aeQuestHook.hook();
-    }
+        m_pGameHook->aeQuestHook.hook();
     else
-    {
-        GameHook::GetInstance()->aeQuestHook.unhook();
-    }
+        m_pGameHook->aeQuestHook.unhook();
 }
 
 void CDataDlg::OnHookstrike()
@@ -1201,7 +1137,7 @@ void CDataDlg::OnHookstrike()
         int nItem = m_ListCtrl.GetNextSelectedItem(pos);
         ObjectNode* pNode = (ObjectNode*)m_ListCtrl.GetItemData(nItem);
 
-        GameHook::GetInstance()->m_ObjAddrVec.push_back(pNode->ObjAddress);
+        m_pGameHook->m_ObjAddrVec.push_back(pNode->ObjAddress);
     }
 }
 
@@ -1209,13 +1145,12 @@ void CDataDlg::OnHookCombat()
 {
     // TODO: Add your control notification handler code here
     UpdateData(TRUE);
+
     if(m_bHook_Combat)
     {
-        GameHook::GetInstance()->m_ObjAddrVec.clear();
-        GameHook::GetInstance()->backupCombat = GameHook::GetInstance()->CombatHook.hook();
+        m_pGameHook->m_ObjAddrVec.clear();
+        m_pGameHook->backupCombat = m_pGameHook->CombatHook.hook();
     }
     else
-    {
-        GameHook::GetInstance()->CombatHook.unhook();
-    }
+        m_pGameHook->CombatHook.unhook();
 }

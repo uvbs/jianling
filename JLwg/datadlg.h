@@ -7,11 +7,10 @@
 // DataDlg1.h : header file
 //
 
-#include "GameHook.h"
 
 /////////////////////////////////////////////////////////////////////////////
 // CDataDlg dialog
-
+class GameHook;
 class CDataDlg : public CDialog 
 {
 // Construction
@@ -36,6 +35,7 @@ public:
     //}}AFX_DATA
 
 
+    GameHook* m_pGameHook;
     void CheckHook();
 
 

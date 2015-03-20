@@ -21,15 +21,13 @@ protected: // create from serialization only
 // Attributes
 public:
 	CSplitterWnd m_wndSplitter;
-
+    CToolBar m_wndToolBar;
 // Operations
 public:
 
 // Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CMainFrame)
-	public:
-	virtual BOOL PreCreateWindow(CREATESTRUCT& cs);
 	protected:
 	virtual BOOL OnCreateClient(LPCREATESTRUCT lpcs, CCreateContext* pContext);
 	//}}AFX_VIRTUAL

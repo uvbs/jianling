@@ -30,31 +30,29 @@ public:
         GETANDACTIVE,
         LAUNCHGAME
     };
-    
-    void StopThread()
-    {
-        m_bStop = TRUE;
-    }
-
 
 private:
-
-
     int m_nFuncid;
-    BOOL m_bStop;
     BOOL m_bIsWorking;
-    HANDLE hEventObj;
+
+    enum EVENTYPE
+    {
+        work = 0,
+        stop
+    };
+    HANDLE m_phEvents[2];
 
 
 // Operations
 public:
-    void SetOwner(CJLkitView* pOwner)
-    {
-        m_pView = pOwner;
-    };
+    void SetOwner(CJLkitView* pOwner);
+    void StopThread();
+
 
     BOOL isWorking();
     BOOL AddWork(FUNCID id);
+
+
 // Overrides
     // ClassWizard generated virtual function overrides
     //{{AFX_VIRTUAL(CLaunchThread)

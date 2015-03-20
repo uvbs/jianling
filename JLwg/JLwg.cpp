@@ -21,8 +21,6 @@ GamecallEx gcall;            //游戏call
 
 
 
-
-
 WNDPROC CJLwgApp::wpOrigGameProc = NULL;
 CJLDlg* CJLwgApp::m_pWgDlg = NULL;
 
@@ -32,9 +30,7 @@ CJLDlg* CJLwgApp::m_pWgDlg = NULL;
 LRESULT CALLBACK CJLwgApp::GameMsgProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
     if(CJLwgApp::m_pWgDlg == NULL)
-    {
-        return CallWindowProc(CJLwgApp::wpOrigGameProc, hwnd, uMsg, wParam, lParam);
-    }
+        return CallWindowProc(wpOrigGameProc, hwnd, uMsg, wParam, lParam);
 
 
     //调出外挂
@@ -47,26 +43,18 @@ LRESULT CALLBACK CJLwgApp::GameMsgProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPAR
                 {
                     int result = MessageBox(hwnd, _T("你按下了 VK_INSERT 按键.\n确认执行任务?"), NULL, MB_OKCANCEL);
                     if(result == IDOK)
-                    {
-                        CJLwgApp::m_pWgDlg->OnGotask();
-                    }
+                        m_pWgDlg->OnGotask();
 
                 }
                 else if(wParam == VK_DELETE)
-                {
-                    CJLwgApp::m_pWgDlg->OnStopTask();
+                    m_pWgDlg->OnStopTask();
 
-                }
                 else if(wParam == VK_END)
                 {
-                    if(CJLwgApp::m_pWgDlg->IsWindowVisible())
-                    {
-                        CJLwgApp::m_pWgDlg->ShowWindow(SW_HIDE);
-                    }
+                    if(m_pWgDlg->IsWindowVisible())
+                        m_pWgDlg->ShowWindow(SW_HIDE);
                     else
-                    {
-                        CJLwgApp::m_pWgDlg->ShowWindow(SW_SHOWNA);
-                    }
+                        m_pWgDlg->ShowWindow(SW_SHOWNA);
 
                 }
 
@@ -87,12 +75,12 @@ LRESULT CALLBACK CJLwgApp::GameMsgProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPAR
                 RECT rect;
                 GetWindowRect(hwnd, &rect);
                 int width = rect.right - rect.left;
-                CJLwgApp::m_pWgDlg->SetWindowPos(NULL, xPos + width, yPos, 0, 0, SWP_NOSIZE | SWP_NOACTIVATE);
+                m_pWgDlg->SetWindowPos(NULL, xPos + width, yPos, 0, 0, SWP_NOSIZE | SWP_NOACTIVATE);
             }
             break;
     }
 
-    return CallWindowProc(CJLwgApp::wpOrigGameProc, hwnd, uMsg, wParam, lParam);
+    return CallWindowProc(wpOrigGameProc, hwnd, uMsg, wParam, lParam);
 }
 
 
@@ -145,9 +133,7 @@ LONG CALLBACK TopLevelExceptionHander(EXCEPTION_POINTERS* ExceptionInfo)
 
         if(!SymGetModuleInfo(GetCurrentProcess(),
                              frame.AddrPC.Offset, &module))
-        {
             strcpy(module.ModuleName, "Unknown");
-        }
 
 
         DWORD dwOffsetFromSmybol = 0;
@@ -197,14 +183,14 @@ DWORD CALLBACK CJLwgApp::WgThread(LPVOID pParam)
     }
 
 
-    CJLwgApp::wpOrigGameProc = (WNDPROC)::SetWindowLong(gcall.GetGamehWnd(), GWL_WNDPROC, (LONG)GameMsgProc);
+    wpOrigGameProc = (WNDPROC)::SetWindowLong(gcall.GetGamehWnd(), GWL_WNDPROC, (LONG)GameMsgProc);
     CString strTitle = gcall.GetAccountInfo()->szName;
     ::SetWindowText(gcall.GetGamehWnd(), (LPCTSTR)strTitle);
 
-    CJLwgApp::m_pWgDlg = new CJLDlg;
-    CJLwgApp::m_pWgDlg->Create(CJLDlg::IDD);
-    CJLwgApp::m_pWgDlg->ShowWindow(SW_SHOW);
-
+    m_pWgDlg = new CJLDlg;
+    m_pWgDlg->Create(CJLDlg::IDD);
+    m_pWgDlg->ShowWindow(SW_SHOW);
+    m_pWgDlg->SetWindowText(strTitle);
 
     //创建消息循环
     BOOL bRet;
@@ -215,7 +201,7 @@ DWORD CALLBACK CJLwgApp::WgThread(LPVOID pParam)
         {
             // handle the error and possibly exit
         }
-        else if(!IsWindow(CJLwgApp::m_pWgDlg->m_hWnd) || !IsDialogMessage(CJLwgApp::m_pWgDlg->m_hWnd, &msg))
+        else if(!IsWindow(m_pWgDlg->m_hWnd) || !IsDialogMessage(m_pWgDlg->m_hWnd, &msg))
         {
             TranslateMessage(&msg);
             DispatchMessage(&msg);
@@ -223,11 +209,9 @@ DWORD CALLBACK CJLwgApp::WgThread(LPVOID pParam)
     }
 
 
-    TRACE(_T("消息循环退出了"));
-    if(CJLwgApp::wpOrigGameProc)
-    {
-        ::SetWindowLong(gcall.GetGamehWnd(), GWL_WNDPROC, (LONG)CJLwgApp::wpOrigGameProc);
-    }
+    TRACE(_T("消息循环正常退出了"));
+    if(wpOrigGameProc)
+        ::SetWindowLong(gcall.GetGamehWnd(), GWL_WNDPROC, (LONG)wpOrigGameProc);
 
     FreeLibraryAndExitThread(AfxGetInstanceHandle(), 0);
     return 0;

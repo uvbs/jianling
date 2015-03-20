@@ -12,6 +12,8 @@
 #include "..\common\protocol.h"
 #include "..\common\ShareMem.h"
 
+
+
 /////////////////////////////////////////////////////////////////////////////
 // CJLkitDoc document
 
@@ -51,7 +53,6 @@ public:
     CJLkitSocket* m_pSocket;
     CLock* m_lpLock;
     CCVPNFile* m_lpVpnFile;
-    CJob* m_pJob;
 
 
     int Active(CString& strName, CString& strPw);
@@ -73,8 +74,6 @@ public:
 public:
     virtual void Serialize(CArchive& ar);   // overridden for document i/o
     virtual void OnCloseDocument();
-    virtual BOOL OnOpenDocument(LPCTSTR lpszPathName);
-    virtual void DeleteContents();
 protected:
     virtual BOOL OnNewDocument();
     //}}AFX_VIRTUAL

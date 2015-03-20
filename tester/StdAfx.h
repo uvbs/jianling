@@ -23,9 +23,7 @@
 #endif // _AFX_NO_AFXCMN_SUPPORT
 
 #include <iostream>
-#include <ras.h>
-#include <queue>
-#pragma comment(lib, "Rasapi32")
+#include <list>
 // TODO: reference additional headers your program requires here
 
 //{{AFX_INSERT_LOCATION}}

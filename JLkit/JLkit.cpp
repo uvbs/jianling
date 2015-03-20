@@ -77,6 +77,7 @@ BOOL CJLkitApp::InitInstance()
     CSingleDocTemplate*	pDocTemplate;
     pDocTemplate = new CSingleDocTemplate(IDR_MAINFRAME, RUNTIME_CLASS(CJLkitDoc), RUNTIME_CLASS(CMainFrame), // main SDI frame window
                                           RUNTIME_CLASS(CJLkitView));
+
     AddDocTemplate(pDocTemplate);
     OnFileNew();
     return TRUE;

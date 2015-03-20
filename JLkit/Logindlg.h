@@ -24,12 +24,13 @@ public:
     //{{AFX_DATA(CDlgLogin)
     enum {IDD = IDD_LOGIN};
     CComboBox m_ComBox;
-    CString	m_strName;
-    CString	m_strPw;
+    CString m_strName;
+    CString m_strPw;
     BOOL m_bRemPw;
     //}}AFX_DATA
 
     void LoginResult(int nResult);
+    void ConnectResult(int nErrorCode);
 
 // Overrides
     // ClassWizard generated virtual function overrides

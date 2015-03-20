@@ -56,6 +56,7 @@ END_MESSAGE_MAP()
 
 static UINT TaskThread(LPVOID pParam)
 {
+<<<<<<< HEAD
 	try
 	{
 		TaskScript task;
@@ -66,6 +67,11 @@ static UINT TaskThread(LPVOID pParam)
 		TRACE(_T("任务报错"));
 	}
     
+=======
+
+    TaskScript task;
+    task.BeginTask();
+>>>>>>> ec82f68341aec048924c2ea5f64172867a97816d
 
     return 0;
 }
@@ -75,7 +81,6 @@ static UINT TaskThread(LPVOID pParam)
 
 void CJLDlg::OnGotask()
 {
-    //读取配置文件
     //创建任务线程
     if(m_pTaskThread == NULL)
     {
@@ -93,9 +98,6 @@ void CJLDlg::OnGotask()
 BOOL CJLDlg::OnInitDialog()
 {
     CDialog::OnInitDialog();
-
-
-
     return TRUE;
 }
 
