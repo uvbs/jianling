@@ -81,9 +81,14 @@ public:
 	void Task_534(int zid,int taskid);//37장. 뼈가면의 전사들
 	void Task_535(int zid,int taskid);//38장. 앙숙
 	void Task_536(int zid,int taskid);//39장. 무신의 날개
-	void Task_537(int zid,int taskid);//
-	void Task_538(int zid,int taskid);//
-	
+	void Task_537(int zid,int taskid);//40장. 복수의 길, 홍문의 길
+	void Task_538(int zid,int taskid);//41장. 다시 만난 팔부기재
+	void Task_901(int zid,int taskid);//1장. 뒤틀린 용맥
+	void Task_902(int zid,int taskid);//2장. 과거와 현재의 인연
+	void Task_903(int zid,int taskid);//3장. 동맹을 위한 탈출
+	void Task_904(int zid,int taskid);//
+	void Task_905(int zid,int taskid);//
+
 	void Task_294(int zid,int taskid);//魔道4-19
 	void Lianji6();//6级副本
 	void Lianji6_go();//6级副本 进
@@ -103,6 +108,14 @@ public:
 	void lianji30_go();//30级副本 进
 	void lianji36();//36级副本
 	void lianji36_go();//36级副本 进
+	void lianji40();//40级副本
+	void lianji40_go();//40级副本 进
+	void lianji42();//42级副本
+	void lianji42_go();//42级副本 进
+	void lianji45();//45级副本
+	void lianji45_go();//45级副本 进
+	void yaojiang39();
+	void yaojiang42();
 	BOOL ShunYiResult(DWORD CityId,wchar_t* FileName,BOOL Hook_flag);//瞬移等待逻辑的封装函数
 	void UseExperience();//使用经验药
 	void IsGoonHecheng(DWORD pos);//逻辑循环强化物品

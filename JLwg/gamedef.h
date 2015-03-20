@@ -57,7 +57,7 @@
 //自定的消息, 用来执行游戏 call
 #define WM_CUSTOM_GCALL         (WM_USER + 0x300)
 
-#define SHENXINGBAIBIANCHAZHI   0x1EE4F18   //神行百变差值
+#define SHENXINGBAIBIANCHAZHI   0x1EF26C8   //神行百变差值     面向的基址 - bsengine_Shipping.dll的base 
 
 
 
@@ -133,7 +133,11 @@ enum CUSTOMMSGID
     id_msg_OpenDeleteTalentPanel,
     id_msg_NPCJieRenWu,
     id_msg_GetObjectNameByIndex,
-    id_msg_Pickup2ts
+    id_msg_Pickup2ts,
+	id_msg_DaKaiHeChengJieMian,
+	id_msg_IsCanShu,
+	id_msg_XieZhuangBei,
+	id_msg_GetPlayExperienceStatusName
 };
 
 enum CUSTOMTYPE

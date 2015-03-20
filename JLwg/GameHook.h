@@ -24,7 +24,9 @@ public:
     static GameHook* GetInstance()
     {
         if(_Instance == NULL)
-            new GameHook();
+        {
+            _Instance =    new GameHook();
+        }
 
 
         return _Instance;
@@ -74,7 +76,7 @@ public:
     CCHook Yicjw;
     CCHook CombatHook;
 
-	CCHook stepHook;
+    CCHook stepHook;
 
     //接任务
     static void __stdcall myAcceptQuest(DWORD questID, UCHAR questStep, DWORD argv3, DWORD argv4,
@@ -89,7 +91,7 @@ public:
     static void __stdcall myYiCiJianWu(DWORD argv1, DWORD argv2, DWORD argv3, DWORD argv4, DWORD argv5);
     static void __stdcall myCombatFilter();//战斗日志
     static void __stdcall myWearEquipment(DWORD argv1, DWORD value, DWORD argv3, DWORD itemtype);//穿装备
-    
+
     static void __stdcall mySendStep(SENDSTEP* ftarpos);//走路
 };
 

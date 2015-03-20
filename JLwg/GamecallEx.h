@@ -28,6 +28,7 @@ public:
 
 
 
+
     //打怪
     int	FindThenKill(int pos, DWORD range, DWORD mode, DWORD MyQuestStep = 0, DWORD MyQuestID = 0, DWORD canKillRange = CAN_OPERATOR);    //找到杀掉
     void kill_PickupOnce();
@@ -56,7 +57,7 @@ public:
     void NewSpend(float x);
     void TurnTo(ObjectNode* pNode);
     void TurnToNear(DWORD range);
-
+	
 
     //线路
     void randXianlu(DWORD MaxXianlu);
@@ -78,22 +79,24 @@ public:
     void JieFengZhuangBei(wchar_t* name, wchar_t* cailiao_name, UINT count); //分解装备
     void FixWuqi();						//修理武器
 
-    void XieZhuangBei(EQUITMENT_POS pos);			//卸装备
+    BOOL XieZhuangBei(EQUITMENT_POS pos);			//卸装备
     void WearEquipment(wchar_t* name, int pos);  //穿装备
 
 
     //合成武器
     BOOL HeChengWuQi(EQUITMENT_POS type);
     BOOL HeChengWuQi_Po5(EQUITMENT_POS pos, wchar_t* name);
-	BOOL HeChengWuQi_Po10(EQUITMENT_POS pos, wchar_t *name);
+	BOOL HeChengWuQi_Po10(wchar_t* zname, wchar_t *name);
     BOOL HeChengWuQiByHun(EQUITMENT_POS pos);
     BOOL HeChengWuQi(EQUITMENT_POS pos, wchar_t* name);
+	DWORD HuoQuWuQiPo10CanShu(DWORD m_adressA);  //参数是主武器的首地址;
+
     void XieBaoShi(DWORD pos);
     void JiaBaoShi(DWORD pos, wchar_t* name);
     BOOL BuqiBaGua(wchar_t* name);
     BOOL BuqiBaGua();
     BOOL TihuanBaGua(wchar_t* name);
-
+	
 
     //天赋
     void AddTalent(DWORD id);	//添加一个技能点

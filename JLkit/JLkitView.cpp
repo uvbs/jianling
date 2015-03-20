@@ -355,6 +355,7 @@ _Again:
                 strLine.Remove(_T('\n'));
                 strLine += _T(" : 密码错误");
                 strLine += _T("\n");
+				bError = TRUE;
                 goto _WriteError;
             }
             else
@@ -372,17 +373,18 @@ _Again:
         }
 
         //登录完成, 开始领取操作
-        GetListCtrl().SetItemText(i, COLUMN_TEXT_STATUS, _T("正在领取激活"));
+        GetListCtrl().SetItemText(i, COLUMN_TEXT_STATUS, _T("正在领取"));
         nResult = poster.Get();
         SetResult(nResult, i);
-        if(nResult != RESULT_SUCCESS)
-        {
-            bError = TRUE;
-        }
-
+        //if(nResult != RESULT_SUCCESS)
+        //{
+        //    bError = TRUE;
+        //}
+		
+		GetListCtrl().SetItemText(i, COLUMN_TEXT_STATUS, _T("正在激活"));
         nResult = poster.Active();
         SetResult(nResult, i);
-        if(nResult == RESULT_SUCCESS)
+        if(nResult != RESULT_SUCCESS)
         {
             bError = TRUE;
         }
@@ -395,6 +397,8 @@ _WriteError:
         }
 
     }
+	GetDocument()->errfile.Close();
+	GetDocument()->m_lpVpnFile->Close();
 }
 
 

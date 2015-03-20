@@ -443,7 +443,7 @@ void CJLkitDoc::GetandActive()
     SetCurrentDirectory(szPath);
 
     CTime time = CTime::GetCurrentTime();
-    CString strTime = time.Format("%d日-%H时-%M分");
+    CString strTime = time.Format("%d日%H时%M分");
     CreateDirectory(strTime, NULL);
     PathAppend(szPath, strTime);
     SetCurrentDirectory(szPath);
