@@ -7,9 +7,9 @@
 #include "DbMngr.h"
 
 #ifdef _DEBUG
-#undef THIS_FILE
-static char THIS_FILE[] = __FILE__;
-#define new DEBUG_NEW
+    #undef THIS_FILE
+    static char THIS_FILE[] = __FILE__;
+    #define new DEBUG_NEW
 #endif
 
 //////////////////////////////////////////////////////////////////////
@@ -19,8 +19,9 @@ static char THIS_FILE[] = __FILE__;
 CDbMngr* CDbMngr::_Instance = NULL;
 CDbMngr* CDbMngr::GetInstance()
 {
-    if(_Instance == NULL)
+    if(_Instance == NULL) {
         _Instance = new CDbMngr;
+    }
 
     return _Instance;
 }
@@ -32,7 +33,7 @@ CDbMngr::CDbMngr()
 
 CDbMngr::~CDbMngr()
 {
-    
+
 }
 
 
@@ -43,16 +44,14 @@ BOOL CDbMngr::ModifyBind(TCHAR szUserName[], TCHAR szPassword[], TCHAR szOldBind
     strSql.Format(_T("select top 1 br_bind_result as 旧绑定 from Rr_Bind_Rs where br_user = '%s' order by br_bind_result desc"),
                   szUserName);
 
-    try
-    {
+    try {
         CRecordset record(this);
         record.Open(AFX_DB_USE_DEFAULT_TYPE, strSql);
         CString strOldbind;
 
 
         record.GetFieldValue(_T("旧绑定"), strOldbind);
-        if(strOldbind == szOldBind)
-        {
+        if(strOldbind == szOldBind) {
             //旧绑定和用户提交的一致"
             //开始判断上次更改日期
 
@@ -69,13 +68,11 @@ BOOL CDbMngr::ModifyBind(TCHAR szUserName[], TCHAR szPassword[], TCHAR szOldBind
             //CString strValue;
             //record.GetFieldValue("br_id", strValue);
             //if(strValue == "")
-            if(record.IsBOF())
-            {
+            if(record.IsBOF()) {
                 //空的
                 return FALSE;
             }
-            else
-            {
+            else {
                 //可以更改
                 CString strModify;
                 strModify.Format(
@@ -90,12 +87,13 @@ BOOL CDbMngr::ModifyBind(TCHAR szUserName[], TCHAR szPassword[], TCHAR szOldBind
             record.Close();
             return TRUE;
         }
-        else
+        else {
             return FALSE;
+        }
 
     }
-    catch(CDBException* pEx)
-    {
+    catch
+        (CDBException* pEx) {
         pEx->Delete();
     }
 
@@ -119,19 +117,19 @@ int CDbMngr::Unbindkey(KEY_BUF* pKeyBuf,  sockaddr_in* pSocketAddr)
         _T("0"), _T("0"), _T("0"), _T("0"), _T("0"));
 
 
-    try
-    {
+    try {
         CRecordset record(this);
-        if(record.Open(AFX_DB_USE_DEFAULT_TYPE, strSql) == FALSE)
+        if(record.Open(AFX_DB_USE_DEFAULT_TYPE, strSql) == FALSE) {
             return 0;
+        }
 
         CString strRet;
         record.GetFieldValue(_T("返回值"), strRet);
 
         return _ttoi((LPCTSTR)strRet);
     }
-    catch(CDBException* pEx)
-    {
+    catch
+        (CDBException* pEx) {
         pEx->Delete();
     }
 
@@ -154,16 +152,15 @@ BOOL CDbMngr::NewRegist(TCHAR szUserName[], TCHAR szPassword[], TCHAR szBindIP[]
         _T("'%s',CONVERT(CHAR(19), Sysdatetime(), 20))"),
         szUserName, szBindIP);
 
-    try
-    {
+    try {
 
         ExecuteSQL(strSql);
         ExecuteSQL(strBind);
         return TRUE;
 
     }
-    catch(CDBException* pEx)
-    {
+    catch
+        (CDBException* pEx) {
         pEx->Delete();
     }
 
@@ -184,13 +181,12 @@ int CDbMngr::Bindkey(KEY_BUF* pKeyBuf, TCHAR szIp[])
                   pKeyBuf->name, pKeyBuf->key, szIp, _T("ac"),
                   _T("0"), _T("0"), _T("0"), _T("0"), _T("0"));
 
-    TRY
-    {
-
-
+    TRY {
         CRecordset record(this);
         if(record.Open(AFX_DB_USE_DEFAULT_TYPE, (LPCTSTR)strSql) == FALSE)
+        {
             return result_bind_fail;
+        }
 
         CString strRet;
         record.GetFieldValue(_T("返回值"), strRet);
@@ -198,8 +194,7 @@ int CDbMngr::Bindkey(KEY_BUF* pKeyBuf, TCHAR szIp[])
         return _ttoi((LPCTSTR)strRet);
 
     }
-    CATCH(CDBException, e)
-    {
+    CATCH(CDBException, e) {
 
     }
     END_CATCH
@@ -221,12 +216,12 @@ BOOL CDbMngr::Querykey(std::vector<QUERYKEY_RET_BUF>& vecKeyInfo, TCHAR szUserNa
 
 
     BOOL bRet = FALSE;
-    try
-    {
+    try {
 
         CRecordset record(this);
-        if(record.Open(AFX_DB_USE_DEFAULT_TYPE, (LPCTSTR)strSql) == FALSE)
+        if(record.Open(AFX_DB_USE_DEFAULT_TYPE, (LPCTSTR)strSql) == FALSE) {
             THROW(_T("没能打开记录集"));
+        }
 
         CString strKey;
         CString strBuildTime;
@@ -234,8 +229,7 @@ BOOL CDbMngr::Querykey(std::vector<QUERYKEY_RET_BUF>& vecKeyInfo, TCHAR szUserNa
         CString strRemainTime;
 
         int count = record.GetRecordCount();
-        while(record.IsEOF() == FALSE)
-        {
+        while(record.IsEOF() == FALSE) {
             QUERYKEY_RET_BUF QueryRetInfo;
             ZeroMemory(&QueryRetInfo, sizeof(QUERYKEY_RET_BUF));
 
@@ -258,8 +252,7 @@ BOOL CDbMngr::Querykey(std::vector<QUERYKEY_RET_BUF>& vecKeyInfo, TCHAR szUserNa
 
         bRet = TRUE;
     }
-    catch(CDBException* pEx)
-    {
+    catch(CDBException* pEx) {
         pEx->Delete();
     }
 
@@ -273,31 +266,29 @@ int CDbMngr::GetPwRight(TCHAR szUsername[], TCHAR szPassw[])
                   szUsername);
 
 
-    try
-    {
+    try {
         CRecordset record(this);
         record.Open(AFX_DB_USE_DEFAULT_TYPE, (LPCTSTR)strSql);
         CString strPassword;
 
 
         //没有数据
-        if(record.IsBOF())
-        {
+        if(record.IsBOF()) {
             strPassword.Empty();
             return result_login_notuser;
         }
-        else
-        {
+        else {
             record.GetFieldValue(_T("用户密码"), strPassword);
-            if(strPassword == szPassw)
+            if(strPassword == szPassw) {
                 return result_login_ok;
-            else
+            }
+            else {
                 return result_login_pwerror;
+            }
         }
 
     }
-    catch(CDBException* pEx)
-    {
+    catch(CDBException* pEx) {
         pEx->Delete();
     }
 
@@ -306,7 +297,7 @@ int CDbMngr::GetPwRight(TCHAR szUsername[], TCHAR szPassw[])
 }
 
 
-static TCHAR g_szAlpha[] = _T("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890");
+TCHAR g_szAlpha[] = _T("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890");
 
 //插入的key, key的时间(小时), key的类型, 1 = 剑灵
 BOOL CDbMngr::AddKey(CString& strKey, UINT nTimes, int type)
@@ -322,14 +313,15 @@ BOOL CDbMngr::AddKey(CString& strKey, UINT nTimes, int type)
     //65 90
     //97~122
     /* Display 8 numbers. */
-    while(1)
-    {
+    while(1) {
         ZeroMemory(szKey, sizeof(szKey));
-        for(int i = 0; i < 8; i++)
+        for(int i = 0; i < 8; i++) {
             szKey[i] = g_szAlpha[rand() % 63];
+        }
 
-        if(_tcslen(szKey) == 8)
+        if(_tcslen(szKey) == 8) {
             break;
+        }
     }
 
 
@@ -341,13 +333,11 @@ BOOL CDbMngr::AddKey(CString& strKey, UINT nTimes, int type)
     strSql.Format(szSql, szKey, nTimes, type);
 
 
-    TRY
-    {
+    TRY {
         ExecuteSQL(strSql);
         strKey = szKey;
     }
-    CATCH(CDBException, e)
-    {
+    CATCH(CDBException, e) {
         // The error code is in e->m_nRetCode
         return FALSE;
     }
@@ -362,20 +352,21 @@ BOOL CDbMngr::Init()
 {
     BOOL bRet;
 
-    TRY
-    {
+    TRY {
         if(!IsOpen())
+        {
             bRet = OpenEx(NULL, CDatabase::openReadOnly);
-        else
+        }
+        else{
             bRet = TRUE;
+        }
     }
-    CATCH(CDBException, e)
-    {
-        if(AfxMessageBox(IDS_DB_OPENERROR, MB_YESNO) == IDNO)
+    CATCH(CDBException, e) {
+        if(AfxMessageBox(IDS_DB_OPENERROR, MB_YESNO) == IDNO) {
             delete this;
-
+        }
     }
-    END_CATCH
-
+    END_CATCH;
     return bRet;
 }
+

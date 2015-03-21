@@ -6,7 +6,7 @@
 #define AFX_GAMEHOOK_H__E712D73C_7E44_4074_8CE5_C484C0DE297F__INCLUDED_
 
 #if _MSC_VER > 1000
-#pragma once
+    #pragma once
 #endif // _MSC_VER > 1000
 
 #include "..\common\CHook.h"
@@ -21,27 +21,21 @@ class GameHook
 {
 
 public:
-    static GameHook* GetInstance()
-    {
+    static GameHook* GetInstance() {
         if(_Instance == NULL)
             new GameHook();
-
-
         return _Instance;
     }
 
 private:
     static GameHook* _Instance;
 
-
 protected:
     GameHook();
     virtual ~GameHook();
 
-
     //走路发包的结构
-    typedef struct _SENDSTEP
-    {
+    typedef struct _SENDSTEP {
         DWORD unknow;
         float x;
         float y;
@@ -52,11 +46,7 @@ public:
     static LPVOID m_lpParam;
     static SHOWHOOKRESULT m_showHookRet;
 
-
-
-
     static void showHookRet(LPTSTR lpText, ...);
-
 
     static DWORD* backupSendStep;
     static DWORD* backupWearEquipment;

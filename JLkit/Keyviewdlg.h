@@ -3,29 +3,18 @@
 
 
 
-#if _MSC_VER > 1000
-#pragma once
-#endif // _MSC_VER > 1000
-
-
 // CDlgKeyView dialog
-class CJLkitSocket;
 class CDlgKeyView : public CDialog
 {
     DECLARE_DYNAMIC(CDlgKeyView)
     DECLARE_MESSAGE_MAP()
 
 public:
-    CDlgKeyView(CJLkitDoc* pDoc);   // standard constructor
+    CDlgKeyView();   // standard constructor
     virtual ~CDlgKeyView();
     void BindResult(int nResult);
     void UnBindResult(int nResult);
     void QueryKeyResult();
-
-public:
-    CJLkitDoc* m_pDoc;
-    CJLkitSocket* m_pSocket;
-
 
 // Dialog Data
     //{{AFX_DATA(CDlgKeyView)

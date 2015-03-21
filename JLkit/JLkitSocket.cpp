@@ -6,33 +6,31 @@
 #include "JLkitDoc.h"
 #include "JLkitSocket.h"
 
-//////////////////////////////////////////////////////////////////////
-// Construction/Destruction
-//////////////////////////////////////////////////////////////////////
-
-
-
 CJLkitSocket* CJLkitSocket::_Instance = NULL;
-CJLkitSocket* CJLkitSocket::GetInstance(CJLkitDoc* pDoc)
+CJLkitSocket* CJLkitSocket::GetInstance()
 {
     if(_Instance == NULL)
     {
-        _Instance = new CJLkitSocket(pDoc);
+        _Instance = new CJLkitSocket;
     }
 
     return _Instance;
 }
 
-
-CJLkitSocket::CJLkitSocket(CJLkitDoc* pDoc)
+CJLkitSocket::CJLkitSocket()
 {
-    m_pDoc = pDoc;
 }
 
 CJLkitSocket::~CJLkitSocket()
 {
 
 }
+
+void CJLkitSocket::SetDoc(CJLkitDoc* pDoc)
+{
+    m_pDoc = pDoc;
+}
+
 
 
 // Do not edit the following lines, which are needed by ClassWizard.
@@ -48,7 +46,6 @@ END_MESSAGE_MAP()
 
 void CJLkitSocket::OnConnect(int nErrorCode)
 {
-
     m_pDoc->ConnectResult(nErrorCode);
 }
 
@@ -229,9 +226,14 @@ void CJLkitSocket::OnSend(int nErrorCode)
     CAsyncSocket::OnSend(nErrorCode);
 }
 
-void CJLkitSocket::OnClose(int nErrorCode) 
+void CJLkitSocket::OnClose(int nErrorCode)
 {
-	// TODO: Add your specialized code here and/or call the base class
-	AfxMessageBox(_T("您的帐号已经在其他地方登录"));
-	CAsyncSocket::OnClose(nErrorCode);
+    // TODO: Add your specialized code here and/or call the base class
+    AfxMessageBox(_T("您的帐号已经在其他地方登录"));
+    CAsyncSocket::OnClose(nErrorCode);
+}
+
+void CJLkitSocket::Delete()
+{
+    delete _Instance;
 }

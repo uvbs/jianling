@@ -22,10 +22,7 @@ public:
     CJob(HANDLE hJob = NULL);
     ~CJob();
 
-    operator HANDLE() const
-    {
-        return(m_hJob);
-    }
+    operator HANDLE() const {return(m_hJob);}
 
     // Functions to create/open a job object
     BOOL Create(PSECURITY_ATTRIBUTES psa = NULL, PCTSTR pszName = NULL);
@@ -58,6 +55,7 @@ public:
     BOOL AssociateCompletionPort(HANDLE hIOCP, ULONG_PTR CompKey);
     BOOL QueryAssociatedCompletionPort(
         PJOBOBJECT_ASSOCIATE_COMPLETION_PORT pjoacp);
+
     BOOL SetEndOfJobInfo(
         DWORD fdwEndOfJobInfo = JOB_OBJECT_TERMINATE_AT_END_OF_JOB);
     BOOL QueryEndOfJobTimeInfo(PDWORD pfdwEndOfJobTimeInfo);

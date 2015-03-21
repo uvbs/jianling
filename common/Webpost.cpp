@@ -431,7 +431,7 @@ BOOL Webpost::Auth(const CString& gpvlu)
     }
     catch(CInternetException* pEx)
     {
-       
+
         pEx->Delete();
     }
 

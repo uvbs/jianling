@@ -13,7 +13,7 @@
 #include "BugRepDlg.h"
 #include "LaunchGameThread.h"
 #include "CVPNFile.h"
-
+#include "configmgr.h"
 
 
 #include "..\common\Job.h"
@@ -31,23 +31,14 @@ static char THIS_FILE[] = __FILE__;
 #endif
 
 
-
+KeyVec CJLkitDoc::m_KeyVec;
 
 
 /////////////////////////////////////////////////////////////////////////////
 // CJLkitDoc
-
 IMPLEMENT_DYNCREATE(CJLkitDoc, CDocument)
-
 CJLkitDoc::CJLkitDoc()
 {
-
-    m_szAccountName[0] = _T('\0');
-    m_szAccountPw[0] = _T('\0');
-    m_szGamePath[0] = _T('\0');
-    m_szFileName[0] = _T('\0');
-
-    m_pSocket = NULL;
     m_pKeyDlg = NULL;
     m_pLoginDlg = NULL;
     m_lpVpnFile = NULL;
@@ -70,20 +61,13 @@ BOOL CJLkitDoc::OnNewDocument()
         return FALSE;
     }
 
-
-    m_KeepPw =  AfxGetApp()->GetProfileInt(_T("设置"), _T("记住密码"), 0);
-    _tcsncpy(m_szFileName, (LPCTSTR)AfxGetApp()->GetProfileString(_T("设置"), _T("帐号文件")), MAX_PATH);
-    _tcsncpy(m_szAccountName, (LPCTSTR)AfxGetApp()->GetProfileString(_T("设置"), _T("用户名")), MAX_PATH);
-    _tcsncpy(m_szAccountPw, (LPCTSTR)AfxGetApp()->GetProfileString(_T("设置"), _T("密码")), MAX_PATH);
-    _tcsncpy(m_szGamePath, (LPCTSTR)AfxGetApp()->GetProfileString(_T("设置"), _T("游戏路径")), MAX_PATH);
-
-
-    GetGamePath();
+    CConfigMgr* lpConMgr = CConfigMgr::GetInstance();
+    CJLkitSocket* lpKitSocket = CJLkitSocket::GetInstance();
 
 
     if(!m_lpVpnFile)
     {
-        m_lpVpnFile = new CCVPNFile;
+        m_lpVpnFile = new CVpnFile;
     }
 
     if(!m_lpLock)
@@ -91,11 +75,8 @@ BOOL CJLkitDoc::OnNewDocument()
         m_lpLock = new CLock;
     }
 
-    if(!m_pSocket)
-    {
-        m_pSocket = CJLkitSocket::GetInstance(this);
-        m_pSocket->Create();
-    }
+    lpKitSocket->SetDoc(this);
+    lpKitSocket->Create();
 
     if(!m_pLoginDlg)
     {
@@ -105,7 +86,7 @@ BOOL CJLkitDoc::OnNewDocument()
 
     CString strServer;
     strServer.LoadString(IDS_CONNECT_SERVER);
-    if(m_pSocket->ConnectSrv(strServer, PORT_SRV) == FALSE)
+    if(CJLkitSocket::GetInstance()->ConnectSrv(strServer, PORT_SRV) == FALSE)
     {
         if(AfxMessageBox(IDS_RETRY_CONNECT, MB_YESNO) == IDNO)
         {
@@ -114,11 +95,11 @@ BOOL CJLkitDoc::OnNewDocument()
     }
 
 
-    m_pLoginDlg->m_bRemPw = m_KeepPw;
-    if(m_KeepPw)
+    m_pLoginDlg->m_bRemPw = lpConMgr->m_KeepPw;
+    if(lpConMgr->m_KeepPw)
     {
-        m_pLoginDlg->m_strPw = m_szAccountPw;
-        m_pLoginDlg->m_strName = m_szAccountName;
+        m_pLoginDlg->m_strPw = lpConMgr->m_szAccountPw;
+        m_pLoginDlg->m_strName = lpConMgr->m_szAccountName;
     }
 
 
@@ -127,16 +108,15 @@ BOOL CJLkitDoc::OnNewDocument()
         //保存配置
         if(m_pLoginDlg->m_bRemPw)
         {
-            _tcscpy(m_szAccountName, (LPCTSTR)m_pLoginDlg->m_strName);
-            _tcscpy(m_szAccountPw, (LPCTSTR)m_pLoginDlg->m_strPw);
-
+            _tcscpy(lpConMgr->m_szAccountName, (LPCTSTR)m_pLoginDlg->m_strName);
+            _tcscpy(lpConMgr->m_szAccountPw, (LPCTSTR)m_pLoginDlg->m_strPw);
         }
 
-        m_KeepPw = m_pLoginDlg->m_bRemPw;
+        lpConMgr->m_KeepPw = m_pLoginDlg->m_bRemPw;
         return TRUE;
     }
 
-    return TRUE;
+    return FALSE;
 }
 
 CJLkitDoc::~CJLkitDoc()
@@ -223,7 +203,7 @@ void CJLkitDoc::OnUpdateAllNums(CCmdUI* pCmdUI)
 
 void CJLkitDoc::OnLookkey()
 {
-    m_pKeyDlg = new CDlgKeyView(this);
+    m_pKeyDlg = new CDlgKeyView();
     m_pKeyDlg->DoModal();
 
     delete m_pKeyDlg;
@@ -234,43 +214,13 @@ void CJLkitDoc::OnSetting()
 {
     // TODO: Add your command handler code here
     CDlgSetting dlg;
-    dlg.m_strGamePath = m_szGamePath;
+    dlg.m_strGamePath = CConfigMgr::GetInstance()->m_szGamePath;
     if(dlg.DoModal() == IDOK)
     {
         //保存配置信息
-        _tcsncpy(m_szGamePath, dlg.m_strGamePath, MAX_PATH);
+        _tcsncpy(CConfigMgr::GetInstance()->m_szGamePath, dlg.m_strGamePath, MAX_PATH);
     }
 }
-
-
-
-void CJLkitDoc::GetGamePath()
-{
-
-    if(m_szGamePath[0] == '\0')
-    {
-        //取得游戏路径
-        CRegKey reg;
-        if(reg.Open(HKEY_LOCAL_MACHINE,
-                    _T("SOFTWARE\\Wow6432Node\\plaync\\BNS_KOR")) == ERROR_SUCCESS)
-        {
-            TCHAR szValue[MAX_PATH];
-            ULONG sizeValue = MAX_PATH;
-            if(reg.QueryValue(szValue, _T("BaseDir"), &sizeValue) == ERROR_SUCCESS)
-            {
-                _tcscat(szValue, _T("\\bin\\Client.exe"));
-                _tcsncpy(m_szGamePath, szValue, MAX_PATH);
-            }
-
-        }
-        else
-        {
-            AfxMessageBox(IDS_NOTFIND_GAME);
-        }
-    }
-
-}
-
 
 
 
@@ -293,7 +243,7 @@ void CJLkitDoc::ProcessRecevice()
 {
     CByteArray m_buf;
     m_buf.SetSize(2048);
-    int nBytes = m_pSocket->Receive(m_buf.GetData(), m_buf.GetSize());
+    int nBytes = CJLkitSocket::GetInstance()->Receive(m_buf.GetData(), m_buf.GetSize());
     if(nBytes == SOCKET_ERROR)
     {
         TRACE0(_T("recevice: SOCKET_ERROR"));
@@ -371,10 +321,9 @@ void CJLkitDoc::OnCloseDocument()
         m_lpLock = NULL;
     }
 
-    if(m_pSocket)
+    if(CJLkitSocket::GetInstance())
     {
-        delete m_pSocket;
-        m_pSocket = NULL;
+        CJLkitSocket::GetInstance()->Delete();
     }
 
     if(m_pLoginDlg)
@@ -385,12 +334,6 @@ void CJLkitDoc::OnCloseDocument()
 
 
 
-    //保存设置
-    AfxGetApp()->WriteProfileInt(_T("设置"), _T("记住密码"), m_KeepPw);
-    AfxGetApp()->WriteProfileString(_T("设置"), _T("帐号文件"), m_szFileName);
-    AfxGetApp()->WriteProfileString(_T("设置"), _T("用户名"), m_szAccountName);
-    AfxGetApp()->WriteProfileString(_T("设置"), _T("密码"), m_szAccountPw);
-    AfxGetApp()->WriteProfileString(_T("设置"), _T("游戏路径"), m_szGamePath);
 
     CDocument::OnCloseDocument();
 }
@@ -456,7 +399,7 @@ int CJLkitDoc::CreateGameProcess(CString& strName, CString& strPw, BOOL bProfile
                       _T("/CompanyID:\"0\" /ChannelGroupIndex:\"-1\""), (LPCTSTR)strSKey);
     strGameStart.Format(_T("%s /LaunchByLauncher /SessKey:\"%s\" ")
                         _T("/CompanyID:\"0\" /ChannelGroupIndex:\"-1\""),
-                        m_szGamePath, (LPCTSTR)strSKey);
+                        CConfigMgr::GetInstance()->m_szGamePath, (LPCTSTR)strSKey);
 
 
     TCHAR szGameCmdLine[BUFSIZ] = {0};
@@ -466,7 +409,7 @@ int CJLkitDoc::CreateGameProcess(CString& strName, CString& strPw, BOOL bProfile
     {
         //执行批处理
         CString strTemp;
-        strTemp.Format(_T("cmd /k profileJL.bat JLwg %s \"%s\"\""), m_szGamePath,
+        strTemp.Format(_T("cmd /k profileJL.bat JLwg %s \"%s\"\""), CConfigMgr::GetInstance()->m_szGamePath,
                        strCmdLine);
         WinExec((LPCTSTR)strTemp, SW_SHOW);
 
@@ -512,8 +455,8 @@ int CJLkitDoc::LaunchGame(CString& strName, CString& strPw, CString& strConfig, 
         strcpy(sai.szName, (LPCTSTR)strName);
         JLShareMem::Instance()->Add(&sai);
 
-        CCInject dllwg("JLwg.dll");
-        CCInject dllspeed("speedhack-i386.dll");
+        CInject dllwg("JLwg.dll");
+        CInject dllspeed("speedhack-i386.dll");
 
         //重新唤起进程
         ResumeThread(pi.hThread);
@@ -559,4 +502,9 @@ int CJLkitDoc::Active(CString& strName, CString& strPw)
     }
 
     return nRet;
+}
+
+void CJLkitDoc::OnIdle()
+{
+    OutputDebugString(_T("Hello World"));
 }

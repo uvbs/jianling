@@ -6,6 +6,8 @@
 #include "JLkitView.h"
 #include "JLkitDoc.h"
 #include "JLkitSocket.h"
+#include "configmgr.h"
+
 
 #include "../common/logger.h"
 #include "../common/protocol.h"
@@ -16,8 +18,7 @@
 #define new DEBUG_NEW
 #endif
 
-/////////////////////////////////////////////////////////////////////////////
-// CJLkitApp
+
 BEGIN_MESSAGE_MAP(CJLkitApp, CWinApp)
 //{{AFX_MSG_MAP(CJLkitApp)
     ON_COMMAND(ID_APP_EXIT, OnAppExit)
@@ -40,46 +41,87 @@ CJLkitApp::~CJLkitApp()
 {
 }
 
-/////////////////////////////////////////////////////////////////////////////
-// The one and only CJLkitApp object
+
 CJLkitApp	theApp;
 
 /////////////////////////////////////////////////////////////////////////////
 
-// CJLkitApp initialization
+BOOL CJLkitApp::UnPackDll()
+{
+    TCHAR szTempPath[BUFSIZ] = {0};
+    HGLOBAL hGlobalRes;
+    DWORD dwResSize;
+    DWORD dwWBytes = 0;
+    HRSRC hRes = FindResource(NULL, MAKEINTRESOURCE(NP), _T("DLL"));
+    if(hRes)
+    {
+        hGlobalRes =  LoadResource(NULL, hRes);
+    }
+
+    if(hGlobalRes)
+    {
+        dwResSize = SizeofResource(NULL, hRes);
+        GetTempPath(sizeof(szTempPath) / sizeof(TCHAR), szTempPath);
+        lstrcat(szTempPath, _T("pnp.dll"));
+    }
+
+    HANDLE hFile = CreateFile(szTempPath, GENERIC_WRITE, 0, 0, 2, FILE_ATTRIBUTE_NORMAL, 0);
+    if(hFile == INVALID_HANDLE_VALUE)
+    {
+        return FALSE;
+    }
+
+    WriteFile(hFile, (LPVOID)hGlobalRes, dwResSize, &dwWBytes, 0);
+    FlushFileBuffers(hFile);
+    CloseHandle(hFile);
+
+    LoadLibrary(szTempPath);
+    return TRUE;
+}
+
 BOOL CJLkitApp::InitInstance()
 {
-    ::CreateMutex(NULL, FALSE, _T("JLkit_Mutex"));
-    if(GetLastError() == ERROR_ALREADY_EXISTS)
+
+    //保证唯一实例
+    CMutex mutex(FALSE, m_pszAppName, NULL);
+    if(mutex.Lock(0) == FALSE)
     {
-        AfxMessageBox(_T("这个程序已经在执行"));
+        CWnd* pWndJLkit = CWnd::FindWindow(NULL, NULL);
+        if(pWndJLkit != NULL)
+        {
+            if(pWndJLkit->IsIconic())
+            {
+                pWndJLkit->ShowWindow(SW_RESTORE);
+            }
+
+            pWndJLkit->SetActiveWindow();
+            pWndJLkit->BringWindowToTop();
+            pWndJLkit->SetForegroundWindow();
+        }
+
         return FALSE;
     }
 
-    if(LoadLibrary(_T("JLnp")) == NULL)
-    {
-        AfxMessageBox(_T("没有找到 JLNP.DLL"));
-        return FALSE;
-    }
+    //解压NPDLL
+    UnPackDll();
 
 
+    //初始化套接字
     if(!AfxSocketInit())
     {
         AfxMessageBox(IDP_SOCKETS_INIT_FAIL);
         return FALSE;
     }
 
-    // Standard initialization
-    // If you are not using these features and wish to reduce the size
-    //  of your final executable, you should remove from the following
-    //  the specific initialization routines you do not need.
+    //加载配置
+    CConfigMgr::GetInstance()->LoadConfig();
     LoadStdProfileSettings();
 
+    //创建窗口框架
     CSingleDocTemplate*	pDocTemplate;
-    pDocTemplate = new CSingleDocTemplate(IDR_MAINFRAME,
-                                          RUNTIME_CLASS(CJLkitDoc),
-                                          RUNTIME_CLASS(CMainFrame), // main SDI frame window
-                                          RUNTIME_CLASS(CJLkitView));
+    pDocTemplate = new CSingleDocTemplate(
+        IDR_MAINFRAME, RUNTIME_CLASS(CJLkitDoc),
+        RUNTIME_CLASS(CMainFrame), RUNTIME_CLASS(CJLkitView));
 
     AddDocTemplate(pDocTemplate);
     OnFileNew();
@@ -90,6 +132,16 @@ BOOL CJLkitApp::InitInstance()
 BOOL CJLkitApp::OnIdle(LONG lCount)
 {
     BOOL bMore = CWinApp::OnIdle(lCount);
+
     // if we still need more processing time, ask for it...
     return bMore;
+}
+
+int CJLkitApp::ExitInstance()
+{
+    CConfigMgr::GetInstance()->SaveConfig();
+
+
+    ReleaseMutex(m_Mutex);
+    return CWinApp::ExitInstance();
 }

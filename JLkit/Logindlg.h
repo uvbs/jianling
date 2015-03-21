@@ -2,16 +2,8 @@
 #define _LOGINDLG_H_
 
 
-#if _MSC_VER > 1000
-#pragma once
-#endif // _MSC_VER > 1000
 
 
-
-
-
-class CJLkitDoc;
-class CJLkitSocket;
 class CDlgLogin : public CDialog
 {
 // Construction

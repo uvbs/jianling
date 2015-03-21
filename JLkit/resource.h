@@ -15,8 +15,10 @@
 #define IDR_KEY                         153
 #define IDD_INFO                        159
 #define IDD_REPORTBUG                   160
+#define IDD_SETTING_UPDATE              161
 #define IDS_STRING128                   167
 #define IDS_STRING129                   168
+#define NP                              168
 #define IDS_STRING130                   169
 #define IDS_STRING131                   170
 #define IDS_STRING132                   171
@@ -37,6 +39,7 @@
 #define IDC_SETTING_BROWSE              1029
 #define IDC_INFO                        1031
 #define IDC_EDIT1                       1032
+#define IDC_CHECK1                      1039
 #define ID_SETTING                      32771
 #define ID_START                        32772
 #define ID_LOOKKEY                      32780
@@ -73,9 +76,9 @@
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_3D_CONTROLS                     1
-#define _APS_NEXT_RESOURCE_VALUE        168
+#define _APS_NEXT_RESOURCE_VALUE        169
 #define _APS_NEXT_COMMAND_VALUE         32824
-#define _APS_NEXT_CONTROL_VALUE         1039
+#define _APS_NEXT_CONTROL_VALUE         1041
 #define _APS_NEXT_SYMED_VALUE           112
 #endif
 #endif

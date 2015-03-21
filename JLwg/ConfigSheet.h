@@ -1,14 +1,12 @@
 #if !defined(AFX_CONFIGSHEET_H__42253DC2_B620_4862_B5F9_A6B9042794BA__INCLUDED_)
 #define AFX_CONFIGSHEET_H__42253DC2_B620_4862_B5F9_A6B9042794BA__INCLUDED_
 
-#if _MSC_VER > 1000
-#pragma once
-#endif // _MSC_VER > 1000
-// ConfigSheet.h : header file
-//
 
-/////////////////////////////////////////////////////////////////////////////
-// CConfigSheet
+#include "ConfigItemPage.h"
+#include "ConfigObjPage.h"
+#include "ConfigQhPage.h"
+#include "ConfigPartyPage.h"
+
 
 class CConfigSheet : public CPropertySheet
 {
@@ -23,6 +21,7 @@ public:
 	CConfigItemPage itempage;
 	CConfigQhPage qhpage;
 	CConfigObjPage objpage;
+    CConfigPartyPage partypage;
 
 // Operations
 public:

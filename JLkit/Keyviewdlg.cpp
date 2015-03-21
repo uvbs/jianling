@@ -12,21 +12,15 @@
 // CDlgKeyView dialog
 
 IMPLEMENT_DYNAMIC(CDlgKeyView, CDialog)
-CDlgKeyView::CDlgKeyView(CJLkitDoc* pDoc)
+CDlgKeyView::CDlgKeyView()
     : CDialog(CDlgKeyView::IDD, NULL)
 {
-    m_pSocket = pDoc->m_pSocket;
-    m_pDoc = pDoc;
-
 }
 
 CDlgKeyView::~CDlgKeyView()
 {
 
 }
-
-
-
 
 
 
@@ -109,14 +103,14 @@ void CDlgKeyView::OnBinkey()
     CDlgBindKey dlg;
     if(dlg.DoModal() == IDOK)
     {
-        m_pSocket->BindKey(dlg.m_strKey);
+        CJLkitSocket::GetInstance()->BindKey(dlg.m_strKey);
     }
 
 }
 
 void CDlgKeyView::OnQuerykey()
 {
-    m_pSocket->Querykey();
+    CJLkitSocket::GetInstance()->Querykey();
 }
 
 void CDlgKeyView::UnBindResult(int nResult)
@@ -159,10 +153,10 @@ void CDlgKeyView::BindResult(int nResult)
 void CDlgKeyView::QueryKeyResult()
 {
     m_ListCtrl.DeleteAllItems();
-    int i;
-    for(i = 0; i < m_pDoc->m_KeyVec.size(); i++)
+    int i = 0;
+    for(i = 0; i < CJLkitDoc::m_KeyVec.size(); i++)
     {
-        QUERYKEY_RET_BUF& retkey = m_pDoc->m_KeyVec[i];
+        QUERYKEY_RET_BUF& retkey = CJLkitDoc::m_KeyVec[i];
         m_ListCtrl.InsertItem(i, retkey.key);
         m_ListCtrl.SetItemText(i, 1, retkey.buildtime);
         m_ListCtrl.SetItemText(i, 2, retkey.type);
@@ -190,7 +184,7 @@ void CDlgKeyView::OnUnbindkey()
             nItem = m_ListCtrl.GetNextItem(nItem, LVNI_SELECTED);
             ASSERT(nItem != -1);
             CString strKey = m_ListCtrl.GetItemText(nItem, 0);
-            m_pSocket->Unbindkey(strKey);
+            CJLkitSocket::GetInstance()->Unbindkey(strKey);
         }
     }
 }

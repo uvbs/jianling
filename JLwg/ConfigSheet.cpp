@@ -2,10 +2,7 @@
 //
 
 #include "stdafx.h"
-#include "jlwg.h"
-#include "ConfigItemPage.h"
-#include "ConfigObjPage.h"
-#include "ConfigQhPage.h"
+#include "JLwg.h"
 #include "ConfigSheet.h"
 
 #ifdef _DEBUG
@@ -26,6 +23,7 @@ CConfigSheet::CConfigSheet(CWnd* pWndParent)
 	AddPage(&itempage);
 	AddPage(&objpage);
 	AddPage(&qhpage);
+    AddPage(&partypage);
 }
 
 CConfigSheet::~CConfigSheet()

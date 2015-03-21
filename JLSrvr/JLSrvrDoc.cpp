@@ -15,9 +15,9 @@
 
 
 #ifdef _DEBUG
-#define new DEBUG_NEW
-#undef THIS_FILE
-static char THIS_FILE[] = __FILE__;
+    #define new DEBUG_NEW
+    #undef THIS_FILE
+    static char THIS_FILE[] = __FILE__;
 #endif
 
 /////////////////////////////////////////////////////////////////////////////
@@ -79,28 +79,20 @@ void CJLSrvrDoc::OnFileRestart()
 
 BOOL CJLSrvrDoc::OnNewDocument()
 {
-    if(!CDocument::OnNewDocument())
-    {
+    if(!CDocument::OnNewDocument()) {
         return FALSE;
     }
 
-    BOOL bRet = FALSE;
-
-
-    bRet = CDbMngr::GetInstance()->Init();
-    if(bRet)
-    {
-        bRet = StartListening();
-        SetTitle(NULL);
-    }
+    BOOL bRet;
+    bRet = StartListening();
+    SetTitle(NULL);
     return bRet;
 }
 
 
 void CJLSrvrDoc::StopListening()
 {
-    if(m_pListen != NULL)
-    {
+    if(m_pListen != NULL) {
         m_pListen->Close();
         delete m_pListen;
         m_pListen = NULL;
@@ -110,11 +102,9 @@ void CJLSrvrDoc::StopListening()
 CRequestSocket* CJLSrvrDoc::isLogined(TCHAR* szUserName)
 {
     POSITION pos = m_ClientList.GetHeadPosition();
-    while(pos != NULL)
-    {
+    while(pos != NULL) {
         CRequestSocket* lpsock = (CRequestSocket*)m_ClientList.GetAt(pos);
-        if(strcmp(szUserName, lpsock->m_szName) == 0)
-        {
+        if(strcmp(szUserName, lpsock->m_szName) == 0) {
             return lpsock;
         }
         m_ClientList.GetNext(pos);
@@ -126,21 +116,17 @@ CRequestSocket* CJLSrvrDoc::isLogined(TCHAR* szUserName)
 void CJLSrvrDoc::SetTitle(LPCTSTR lpszTitle)
 {
     CString strTitle;
-    if(lpszTitle != NULL)
-    {
+    if(lpszTitle != NULL) {
         m_strTitleBase = lpszTitle;
     }
 
-    if(m_strServer.IsEmpty())
-    {
+    if(m_strServer.IsEmpty()) {
         strTitle = m_strTitleBase;
     }
-    else if(m_pListen == NULL)
-    {
+    else if(m_pListen == NULL) {
         strTitle.Format(IDS_INVALID, m_strTitleBase);
     }
-    else
-    {
+    else {
         strTitle.Format(IDS_DOCTITLE_NOPORT, m_strTitleBase, m_strServer);
     }
 
@@ -153,24 +139,19 @@ BOOL CJLSrvrDoc::StartListening()
     BOOL bOk = FALSE;
     StopListening();
     m_pListen = new CListenSocket(this);
-    if(m_pListen)
-    {
-        if(m_pListen->Create(PORT_SRV, SOCK_STREAM, FD_ACCEPT))
-        {
+    if(m_pListen) {
+        if(m_pListen->Create(PORT_SRV, SOCK_STREAM, FD_ACCEPT)) {
             bOk = m_pListen->Listen();
         }
 
 
-        if(!bOk)
-        {
+        if(!bOk) {
             CString strMsg;
             int nErr = m_pListen->GetLastError();
-            if(nErr == WSAEADDRINUSE)
-            {
+            if(nErr == WSAEADDRINUSE) {
                 strMsg.Format(IDS_LISTEN_INUSE, PORT_SRV);
             }
-            else
-            {
+            else {
                 strMsg.Format(IDS_LISTEN_ERROR, PORT_SRV);
             }
 
@@ -179,8 +160,7 @@ BOOL CJLSrvrDoc::StartListening()
             m_pListen = NULL;
         }
     }
-    else
-    {
+    else {
         AfxMessageBox(IDS_CANT_LISTEN, MB_OK | MB_ICONSTOP);
     }
 
@@ -194,12 +174,10 @@ BOOL CJLSrvrDoc::StartListening()
 
 void CJLSrvrDoc::Serialize(CArchive& ar)
 {
-    if(ar.IsStoring())
-    {
+    if(ar.IsStoring()) {
         // TODO: add storing code here
     }
-    else
-    {
+    else {
         // TODO: add loading code here
     }
 }
@@ -230,8 +208,7 @@ void CJLSrvrDoc::ClientAccept()
 
     SOCKADDR_IN soaddr;
     int len = sizeof(soaddr);
-    if(m_pListen->Accept(*lpsock, (SOCKADDR*)&soaddr, &len))
-    {
+    if(m_pListen->Accept(*lpsock, (SOCKADDR*)&soaddr, &len)) {
         lpsock->AsyncSelect(FD_READ | FD_CLOSE);
         lpsock->m_soaddr = soaddr;
         lpsock->InitAccept();
@@ -239,8 +216,7 @@ void CJLSrvrDoc::ClientAccept()
         //添加到客户列表
         m_ClientList.AddTail(lpsock);
     }
-    else
-    {
+    else {
         delete lpsock;
     }
 
@@ -252,11 +228,9 @@ void CJLSrvrDoc::ClientClose(CRequestSocket* pSock)
 {
 
     POSITION pos = m_ClientList.GetHeadPosition();
-    while(pos != NULL)
-    {
+    while(pos != NULL) {
         CRequestSocket* pSocket = (CRequestSocket*)m_ClientList.GetAt(pos);
-        if(pSocket == pSock)
-        {
+        if(pSocket == pSock) {
             m_ClientList.RemoveAt(pos);
             UpdateAllViews(NULL, HINT_OFFLINE, pSocket->m_pRequest);
 
@@ -282,7 +256,7 @@ void CJLSrvrDoc::OnCloseDocument()
     CDocument::OnCloseDocument();
 }
 
-BOOL CJLSrvrDoc::IdleProc(LONG lCount)
+BOOL CJLSrvrDoc::OnIdle(LONG lCount)
 {
     //TRACE(_T("一个Idle调用"));
     return FALSE;

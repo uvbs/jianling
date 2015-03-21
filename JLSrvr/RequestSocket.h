@@ -10,47 +10,52 @@
 
 #include "..\common\protocol.h"
 
-/////////////////////////////////////////////////////////////////////////////
-// CRequestSocket command target
+
 class CJLSrvrDoc;
 class CRequest;
 class CRequestSocket : public CAsyncSocket
 {
-//构造函数
+    //构造函数
 public:
     CRequestSocket(CJLSrvrDoc* pDoc);
     virtual ~CRequestSocket();
 
 
-// Attributes
 public:
     CJLSrvrDoc* m_pDoc;
 
     SOCKADDR_IN m_soaddr;
 
+    //发送缓冲区
     CByteArray  m_buf;
     int         m_cbOut;
 
-
+    //用户信息
     TCHAR m_szName[MAXLEN];
     TCHAR m_szPw[MAXLEN];
 
-
+    //未收到心跳时长
     int NoRecvTimes;
 
+    //请求列表
     CPtrList m_reqList;
+
+    //请求信息
     CRequest* m_pRequest;
 
 
-// Operations
-public:
 
+    //处理请求
+public:
     BOOL ProcessRequest(BYTE* pRequestBuf);
+
+    //接受链接
     void InitAccept();
+
+    //获取当前时间
     CString GetNowTime();
 
-// Overrides
-public:
+    //重写
     // ClassWizard generated virtual function overrides
     //{{AFX_VIRTUAL(CRequestSocket)
 public:

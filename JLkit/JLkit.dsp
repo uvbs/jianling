@@ -71,6 +71,10 @@ SOURCE=..\common\CallTracer.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\ConfigMgr.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\CVPNFile.cpp
 # End Source File
 # Begin Source File
@@ -157,6 +161,10 @@ SOURCE=.\BugRepDlg.h
 # Begin Source File
 
 SOURCE=..\common\CallTracer.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ConfigMgr.h
 # End Source File
 # Begin Source File
 
@@ -259,6 +267,10 @@ SOURCE=.\JLkit.rc
 SOURCE=.\res\JLkit.rc2
 # End Source File
 # End Group
+# Begin Source File
+
+SOURCE=.\res\JLnp.dll
+# End Source File
 # Begin Source File
 
 SOURCE=.\ReadMe.txt

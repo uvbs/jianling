@@ -24,12 +24,6 @@
 #include <afxsock.h>
 #include <afxdb.h>
 #include <afxmt.h>
-#include <string>
-#include <tchar.h>
-#pragma comment(lib, "dbghelp")
-
-#include <vector>
-#include <IPTypes.h>
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.

@@ -7,8 +7,10 @@
 #define IDR_MENU2                       114
 #define IDR_OBJECT                      114
 #define IDD_SETINI_ITEMFILTER           116
+#define IDD_SETINI_PARTY                116
 #define IDD_SETINI_OBJFILTER            117
 #define IDD_SETINI_QIANGHUA             118
+#define IDD_SETINI_ITEMFILTER1          119
 #define IDR_FILTER                      127
 #define IDC_EDITMEMINPUT                1001
 #define IDC_EDITINFO                    1017
@@ -46,6 +48,13 @@
 #define IDC_CHIYAOPERCENT               1082
 #define IDC_HOOK_COMBAT                 1083
 #define IDC_STATIC_WGINFO               1084
+#define IDC_CHECK1                      1086
+#define IDC_CHECK2                      1087
+#define IDC_EDIT1                       1088
+#define IDC_CHECK3                      1089
+#define IDC_CHECK4                      1090
+#define IDC_CHECK5                      1091
+#define IDC_CHECK6                      1092
 #define ID_GETPALYERINFO                40006
 #define ID_FINDTHENKILL                 40008
 #define ID_CLR                          40011
@@ -70,7 +79,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        130
 #define _APS_NEXT_COMMAND_VALUE         40063
-#define _APS_NEXT_CONTROL_VALUE         1085
+#define _APS_NEXT_CONTROL_VALUE         1089
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

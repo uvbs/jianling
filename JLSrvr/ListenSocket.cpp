@@ -7,8 +7,6 @@
 #include "RequestSocket.h"
 #include "JLSrvrDoc.h"
 
-#include <MSTcpIP.h>
-
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -47,6 +45,8 @@ CListenSocket::~CListenSocket()
 void CListenSocket::OnAccept(int nErrorCode)
 {
     if(nErrorCode == 0)
+    {
         m_pDoc->ClientAccept();
+    }
 
 }

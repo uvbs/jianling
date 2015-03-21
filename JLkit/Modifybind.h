@@ -1,12 +1,8 @@
 #if !defined _MODIFYBIND_H
 #define _MODIFYBIND_H
 
-#if _MSC_VER > 1000
-#pragma once
-#endif // _MSC_VER > 1000
 
-// CDlgModifyBind dialog
-class CJLkitSocket;
+//修改绑定对话框
 class CDlgModifyBind : public CDialog
 {
 public:

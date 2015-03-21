@@ -1,16 +1,8 @@
 #if !defined(AFX_BUGREPDLG_H__81554426_4A08_4767_943B_46AB9919CAC5__INCLUDED_)
 #define AFX_BUGREPDLG_H__81554426_4A08_4767_943B_46AB9919CAC5__INCLUDED_
 
-#if _MSC_VER > 1000
-#pragma once
-#endif // _MSC_VER > 1000
-// BugRepDlg.h : header file
-//
 
-/////////////////////////////////////////////////////////////////////////////
-// CDlgBugRep dialog
-class CJLkitSocket;
-class CJLkitDoc;
+//bug提交对话框
 class CDlgBugRep : public CDialog
 {
 // Construction
@@ -23,8 +15,6 @@ public:
 	CString	m_strBug;
 	//}}AFX_DATA
 
-    CJLkitDoc *m_pDoc;
-    CJLkitSocket* m_pSocket;
 // Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CDlgBugRep)

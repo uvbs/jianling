@@ -4,8 +4,7 @@
 #if _MSC_VER > 1000
 #pragma once
 #endif // _MSC_VER > 1000
-// JLkitDoc.h : header file
-//
+
 
 
 #include "..\common\common.h"
@@ -13,61 +12,64 @@
 #include "..\common\ShareMem.h"
 
 
+typedef std::vector<QUERYKEY_RET_BUF> KeyVec;
 
-/////////////////////////////////////////////////////////////////////////////
-// CJLkitDoc document
+
 
 class CWaitDlg;
 class CDlgKeyView;
 class CDlgLogin;
-class CJLkitSocket;
-class CThreadPool;
 class CLock;
-class CCVPNFile;
+class CVpnFile;
 class CJob;
 class CJLkitDoc : public CDocument
 {
 protected:
     CJLkitDoc();           // protected constructor used by dynamic creation
+    virtual ~CJLkitDoc();
     DECLARE_DYNCREATE(CJLkitDoc)
 
-// Attributes
+    //错误文件
 public:
-    //设置
-    BOOL m_KeepPw;
-    TCHAR m_szFileName[MAX_PATH];
-    TCHAR m_szGamePath[MAX_PATH];
-    TCHAR m_szAccountName[MAX_PATH];
-    TCHAR m_szAccountPw[MAX_PATH];
+    CStdioFile errfile;
+
+    //当前卡号
+    static KeyVec m_KeyVec;
+
+    //游戏控制
+    int LaunchGame(CString& strName, CString& strPw, CString& strConfig,
+                   CString& strScript, BOOL bProfile = FALSE);  //加载游戏
+    //创建游戏进程
+    int CreateGameProcess(CString& strName, CString& strPw, BOOL bProfile,
+                          PROCESS_INFORMATION* lppi);
 
     //对话框
-    CStdioFile errfile;
-    std::vector<QUERYKEY_RET_BUF> m_KeyVec;
-
-    int LaunchGame(CString& strName, CString& strPw, CString& strConfig,
-                   CString& strScript, BOOL bProfile = FALSE);
-
     CDlgKeyView* m_pKeyDlg;
     CDlgLogin* m_pLoginDlg;
-    CJLkitSocket* m_pSocket;
+
+    //关键段锁
     CLock* m_lpLock;
-    CCVPNFile* m_lpVpnFile;
 
+    //拨号vpn
+    CVpnFile* m_lpVpnFile;
 
-    int Active(CString& strName, CString& strPw);
-    int Get(CString& strName, CString& strPw);
-    void GetandActive();
+    //领取激活
+    int Active(CString& strName, CString& strPw);  //激活
+    int Get(CString& strName, CString& strPw);  //领取
+    void GetandActive();                        //领取再激活
 
-// Operations
-public:
-    void GetGamePath();
+    //处理套接字
     void ProcessRecevice();
+
+    //连接结果
     void ConnectResult(int nErrorCode);
+
+    //是否剩余有效KEY
     BOOL IsHaveValidKey();
-    int CreateGameProcess(CString& strName, CString& strPw, BOOL bProfile, PROCESS_INFORMATION* lppi);
 
 
-// Overrides
+
+    //重写
     // ClassWizard generated virtual function overrides
     //{{AFX_VIRTUAL(CJLkitDoc)
 public:
@@ -75,11 +77,10 @@ public:
     virtual void OnCloseDocument();
 protected:
     virtual BOOL OnNewDocument();
+    virtual void OnIdle();
     //}}AFX_VIRTUAL
 
-// Implementation
-public:
-    virtual ~CJLkitDoc();
+
 #ifdef _DEBUG
     virtual void AssertValid() const;
     virtual void Dump(CDumpContext& dc) const;
@@ -96,7 +97,6 @@ protected:
     afx_msg void OnUpdateAllNums(CCmdUI* pCmdUI);
     //}}AFX_MSG
     DECLARE_MESSAGE_MAP()
-
 };
 
 //{{AFX_INSERT_LOCATION}}

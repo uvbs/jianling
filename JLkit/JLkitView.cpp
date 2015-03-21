@@ -372,7 +372,6 @@ _Again:
             goto _Again;
         }
 
-        //登录完成, 开始领取操作
         GetListCtrl().SetItemText(i, COLUMN_TEXT_STATUS, _T("正在领取激活"));
         nResult = poster.Get();
         SetResult(nResult, i);
@@ -545,36 +544,5 @@ void CJLkitView::PostNcDestroy()
 
 void CJLkitView::OnSockinfo()
 {
-    // TODO: Add your command handler code here
-    static CWnd sockwnd;
-    CString strMyClass;
-    try
-    {
-        strMyClass = AfxRegisterWndClass(
-                         CS_VREDRAW | CS_HREDRAW,
-                         ::LoadCursor(NULL, IDC_ARROW),
-                         (HBRUSH) ::GetStockObject(WHITE_BRUSH),
-                         ::LoadIcon(NULL, IDI_APPLICATION));
-
-
-        sockwnd.Create(strMyClass, _T("sock info"),
-                       WS_OVERLAPPEDWINDOW,
-                       CRect(10, 10, 10, 10),
-                       AfxGetApp()->m_pMainWnd,
-                       IDR_MAINFRAME
-                      );
-
-
-		sockwnd.ShowWindow(SW_SHOW);
-        AfxMessageBox(_T("test"));
-
-
-    }
-    catch(CResourceException* pEx)
-    {
-        AfxMessageBox(
-            _T("Couldn't register class! (Already registered?)"));
-        pEx->Delete();
-    }
 
 }

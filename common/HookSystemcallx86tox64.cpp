@@ -29,8 +29,7 @@ HookSystemcallx86tox64::~HookSystemcallx86tox64(void)
 
 __declspec(naked) void  X86SwitchTo64BitMode()
 {
-    __asm
-    {
+    __asm {
         pushad
         pushfd
 
@@ -55,8 +54,7 @@ __declspec(naked) void  X86SwitchTo64BitMode()
 int HookSystemcallx86tox64::GetEditLength(PVOID CodeAdderss)
 {
     unsigned char szCode[7] = {0x64, 0xFF , 0x15 , 0xC0 , 0x00 , 0x00 , 0x00};
-    for(int i = 0; i < 0x20; i++)
-    {
+    for(int i = 0; i < 0x20; i++) {
         if(memcmp((PVOID)((DWORD)CodeAdderss + i), szCode, 7) == 0)
             return i;
     }
@@ -109,8 +107,7 @@ BOOL HookSystemcallx86tox64::InstallHook(PCHAR FunName,     //NTAPI
 //EX SystemCall
 __declspec(naked) void SystemCallX64()
 {
-    __asm
-    {
+    __asm {
         __emit 0x90
         mov eax, 0x11B2
         mov     ecx, 0
@@ -179,8 +176,7 @@ int HookSystemcallx86tox64::GetSysCallIndex(PCHAR FuncName)
 DWORD HookSystemcallx86tox64::GetX86toX64BitModeFun(void)
 {
     DWORD dwFsAdd;
-    __asm
-    {
+    __asm {
         push eax
         mov eax, dword ptr fs:[0x000000C0]
         mov dwFsAdd, eax

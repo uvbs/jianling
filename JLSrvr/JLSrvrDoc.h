@@ -6,7 +6,7 @@
 #define AFX_JLSRVRDOC_H__4ABA5256_27E0_427F_87E1_2E441B5CA64B__INCLUDED_
 
 #if _MSC_VER > 1000
-#pragma once
+    #pragma once
 #endif // _MSC_VER > 1000
 
 class CRequestSocket;
@@ -14,7 +14,7 @@ class CListenSocket;
 class CRequest;
 class CJLSrvrDoc : public CDocument
 {
-protected: // create from serialization only
+protected:
     CJLSrvrDoc();
     DECLARE_DYNCREATE(CJLSrvrDoc)
 
@@ -27,7 +27,10 @@ public:
     CString m_strServer;
     CString m_strTitleBase;
 
+    //请求列表
     CObList m_reqList;
+
+    //客户列表
     CObList m_ClientList;
 
 
@@ -41,13 +44,18 @@ public:
     void StopListening();
     void ClientAccept();
     void ClientClose(CRequestSocket* pSock);
+
+    //是否已经登陆
     CRequestSocket* isLogined(TCHAR* szUserName);
 
-    BOOL IdleProc(LONG lCount);
+    //闲置处理
+    BOOL OnIdle(LONG lCount);
+
+    //
     void DocHit(LPARAM lHint, CRequest* pObject);
 
 
-// Overrides
+    //重写
     // ClassWizard generated virtual function overrides
     //{{AFX_VIRTUAL(CJLSrvrDoc)
 public:
@@ -75,8 +83,6 @@ protected:
     afx_msg void OnFileRestart();
     //}}AFX_MSG
     DECLARE_MESSAGE_MAP()
-
-
 };
 
 /////////////////////////////////////////////////////////////////////////////

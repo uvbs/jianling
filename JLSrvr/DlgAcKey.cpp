@@ -9,9 +9,9 @@
 #include "DbMngr.h"
 
 #ifdef _DEBUG
-#define new DEBUG_NEW
-#undef THIS_FILE
-static char THIS_FILE[] = __FILE__;
+    #define new DEBUG_NEW
+    #undef THIS_FILE
+    static char THIS_FILE[] = __FILE__;
 #endif
 
 /////////////////////////////////////////////////////////////////////////////
@@ -62,11 +62,9 @@ BOOL CDlgAcKey::OnInitDialog()
 
     CRecordKey key(CDbMngr::GetInstance());
     key.SetAcName(m_strAcName);
-    if(key.Open())
-    {
+    if(key.Open()) {
         int i = 0;
-        while(!key.IsEOF())
-        {
+        while(!key.IsEOF()) {
             m_ListHaveKey.InsertItem(i, key.m_strKey);
             m_ListHaveKey.SetItemText(i, 1, key.m_strTime);
             m_ListHaveKey.SetItemText(i, 2, key.m_strUse);

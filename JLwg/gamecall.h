@@ -13,9 +13,9 @@
 #include "..\common\sharemem.h"
 
 
-class Gamecall: 
-	public GameSpend, 
-	public GameHepler
+class Gamecall:
+    public GameSpend,
+    public GameHepler
 {
 public:
     Gamecall();

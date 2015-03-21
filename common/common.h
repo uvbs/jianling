@@ -1,9 +1,6 @@
 #pragma once
 
 
-#include "ShareMem.h"
-
-
 //服务器端口
 #define     PORT_SRV    5678
 
@@ -34,6 +31,6 @@
 #define	strPurple		_T("紫色")
 #define	strOrange		_T("橙色")
 
-
+//共享内存名称
 #define SHAREOBJNAME _T("Bns_Mem_Share")
 

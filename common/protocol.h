@@ -64,6 +64,7 @@ struct REGIST_BUF: LOGIN_BUF
 {
     char ip[MAXLEN];
     char id[MAXLEN];
+
 };
 
 
@@ -93,9 +94,9 @@ struct QUERYKEY_RET_BUF: RET_BUF
 {
     UCHAR count;
     char key[128];
-    char buildtime[30];  /*生成时间*/
+    char buildtime[30];  //生成时间
     char type[30];
-    int remaintime;  /*剩余时间*/
+    int remaintime;  //剩余时间
 };
 
 #endif

@@ -19,14 +19,12 @@ class ShareMem;
 typedef ShareMem JLShareMem;
 
 #define SHAREMAXLEN 32
-typedef struct _SHAREINFO
-{
+typedef struct _SHAREINFO {
     TCHAR szName[SHAREMAXLEN];
-    DWORD pid;
     TCHAR szConfig[SHAREMAXLEN];
     TCHAR szSript[SHAREMAXLEN];
+    DWORD pid;
 } SHAREINFO, *PSHAREINFO;
-
 
 
 class ShareMem
@@ -51,8 +49,6 @@ public:
 
     void Del(LPCTSTR lpszName);
     void Del(DWORD dwPid);
-
-
 
     DWORD IsPidValid(LPCTSTR lpszName);
 

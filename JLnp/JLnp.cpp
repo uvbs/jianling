@@ -68,8 +68,7 @@ _CreateProcessInternalW Orig_CreateProcessInternalW;
 
 VOID WINAPI c2w(wchar_t* pwstr, size_t len, const char* str)
 {
-    if(str)
-    {
+    if(str) {
         size_t nu = strlen(str);
         size_t n = (size_t)MultiByteToWideChar(CP_ACP, 0, (const char*)str, (int)nu, NULL, 0);
         if(n >= len)
@@ -83,8 +82,7 @@ VOID WINAPI c2w(wchar_t* pwstr, size_t len, const char* str)
 
 __declspec(naked) void Fuck()
 {
-    __asm
-    {
+    __asm {
         mov eax, 0x755;
         retn;
     }
@@ -119,14 +117,12 @@ BOOL WINAPI MyCreateProcessInternalW(HANDLE hToken,
                                      PHANDLE hNewToken)
 {
     //剥离NP失败
-    if(lpApplicationName && wcslen(lpApplicationName) && wcsstr(lpApplicationName, L".des"))
-    {
+    if(lpApplicationName && wcslen(lpApplicationName) && wcsstr(lpApplicationName, L".des")) {
         MessageBoxW(NULL, lpApplicationName, lpApplicationName, NULL);
         ExitProcess(0);
     }
 
-    if(lpCommandLine && wcslen(lpCommandLine) && wcsstr(lpCommandLine, L".des"))
-    {
+    if(lpCommandLine && wcslen(lpCommandLine) && wcsstr(lpCommandLine, L".des")) {
         MessageBoxW(NULL, lpCommandLine, lpCommandLine, NULL);
         ExitProcess(0);
     }
@@ -144,8 +140,7 @@ BOOL WINAPI MyCreateProcessInternalW(HANDLE hToken,
                  lpStartupInfo,
                  lpProcessInformation,
                  hNewToken);
-    if(blRet)
-    {
+    if(blRet) {
         WCHAR wcsFile[MAXCHAR];
         c2w(wcsFile, strlen(szModulePatch) + 1, szModulePatch);
         RemoteLoadDll.LoadDll(wcsFile, lpProcessInformation->hProcess);//注入模块
@@ -173,8 +168,7 @@ NTSTATUS WINAPI NtQueryInformationProcess_Hook(HANDLE ProcessHandle,
 
     ////////////////////////////////////////////////////
     ntStatus = OrigNtQueryInformationProcess(ProcessHandle, ProcessInformationClass, ProcessInformation, ProcessInformationLength, ReturnLength);
-    if(NT_SUCCESS(ntStatus))
-    {
+    if(NT_SUCCESS(ntStatus)) {
         if(ProcessInformationClass == ProcessDebugPort && NT_SUCCESS(ntStatus))
             memset(ProcessInformation, 0, ProcessInformationLength);
         if(ProcessInformationClass == ProcessDebugObjectHandle && NT_SUCCESS(ntStatus))
@@ -244,8 +238,7 @@ HANDLE WINAPI CreateFileW_Hook(
 //剥离操作的线程
 UINT CALLBACK nPthread(PVOID lpParam)
 {
-    for(;;)
-    {
+    for(;;) {
         //设置 dwInitNP1 地址处的内存属性为 可读可写可执行
         //返回的 dwProtect 存储原本属性
         DWORD dwProtect;
@@ -253,8 +246,7 @@ UINT CALLBACK nPthread(PVOID lpParam)
 
 
         //取此地址 0x0af7460 处的第一个字节 是否 == 0xa1
-        if(*(BYTE*)dwInitNP1 == 0xA1)
-        {
+        if(*(BYTE*)dwInitNP1 == 0xA1) {
             //钩住这几个地址处的函数
             //钩到这里  Fuck
             InlineHook((VOID*)dwInitNP1, (VOID*)Fuck, (VOID**)&dw1);//适当的时候还原HOOK 避免被扒
@@ -277,12 +269,10 @@ VOID WINAPI ClearNP(HMODULE hModule)
     GetModuleFileNameA(NULL, szProcess, MAXCHAR);
     GetModuleFileNameA(hModule, szModulePatch, MAXCHAR);
     _strupr(szProcess);
-    if(strstr(szProcess, "CLIENT.EXE"))
-    {
+    if(strstr(szProcess, "CLIENT.EXE")) {
 
         //创建线程执行
         CreateThread(0, 0, (LPTHREAD_START_ROUTINE)nPthread, 0, 0, 0);
-
 
         //处理调试器  多开不需要这些玩意
         hookx64.Initialization();
@@ -295,9 +285,7 @@ VOID WINAPI ClearNP(HMODULE hModule)
         InlineHook((VOID*)(DWORD)GetProcAddress(LoadLibraryA("kernelBase.dll"), "CreateFileW"), (VOID*)CreateFileW_Hook, (VOID**)&Orig_CreateFileW);
         InlineHook((VOID*)(DWORD)GetProcAddress(LoadLibraryA("kernel32.dll"), "CreateProcessInternalW"), (VOID*)MyCreateProcessInternalW, (VOID**)&Orig_CreateProcessInternalW);
     }
-    else
-    {
-
+    else {
         DWORD dwCreateProcessInternalW = (DWORD)GetProcAddress(LoadLibraryA("kernel32.dll"), "CreateProcessInternalW");
         InlineHook((VOID*)dwCreateProcessInternalW, (VOID*)MyCreateProcessInternalW, (VOID**)&Orig_CreateProcessInternalW);
 
@@ -308,13 +296,11 @@ VOID WINAPI ClearNP(HMODULE hModule)
 
 BOOL APIENTRY DllMain(HANDLE hModule, DWORD ul_reason_for_call, LPVOID lpReserved)
 {
-    switch(ul_reason_for_call)
-    {
-        case DLL_PROCESS_ATTACH:
-            {
-                ClearNP((HMODULE)hModule);
-            }
+    switch(ul_reason_for_call) {
+        case DLL_PROCESS_ATTACH: {
+            ClearNP((HMODULE)hModule);
             break;
+        }
 
         case DLL_PROCESS_DETACH:
         case DLL_THREAD_ATTACH:

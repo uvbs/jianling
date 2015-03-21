@@ -8,16 +8,16 @@
 #define WINVER          0x501
 #define _CRT_SECURE_NO_WARNINGS
 
+#pragma comment(linker, "/OPT:NOWIN98")
 
 #include <afxwin.h>         // MFC core and standard components
 #include <afxcview.h>       // MFC view
-#include <afxext.h>         // MFC extensions
-#include <afxdb.h>          // MFC db
 #include <afxinet.h>        // MFC internet
-#include <atlbase.h>     
+#include <afxmt.h>
+#include <atlbase.h>
 #include <afxsock.h>        // MFC socket
 #ifndef _AFX_NO_AFXCMN_SUPPORT
-#include <afxcmn.h>			// MFC support for Windows Common Controls
+    #include <afxcmn.h>			// MFC support for Windows Common Controls
 #endif // _AFX_NO_AFXCMN_SUPPORT
 #include <afxdao.h>
 

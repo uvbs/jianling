@@ -23,9 +23,6 @@ CDlgBugRep::CDlgBugRep(CJLkitDoc *pDoc)
 	//{{AFX_DATA_INIT(CDlgBugRep)
 	m_strBug = _T("");
 	//}}AFX_DATA_INIT
-    m_pDoc = pDoc;
-    m_pSocket = pDoc->m_pSocket;
-
 }
 
 
@@ -50,6 +47,6 @@ void CDlgBugRep::OnOK()
 {
 	// TODO: Add extra validation here
     UpdateData();
-	m_pSocket->Reportbug(m_strBug);
+    CJLkitSocket::GetInstance()->Reportbug(m_strBug);
 	CDialog::OnOK();
 }

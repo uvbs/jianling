@@ -2,101 +2,87 @@
 //
 //////////////////////////////////////////////////////////////////////
 #include "StdAfx.h"
+#include "Inject.h"
+
 #include "../common/Toolhelp.h"
 #include "../common/logger.h"
-#include "inject.h"
+
 
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-CCInject::CCInject(const char* name)
+CInject::CInject(TCHAR* lpszName)
 {
+    m_dwPathLen = (_tcslen(lpszName) + 1) * sizeof(TCHAR);
+    m_lpszPath = new TCHAR[m_dwPathLen];
+    ZeroMemory(m_lpszPath, sizeof(TCHAR)*m_dwPathLen);
+    _tcscpy(m_lpszPath, lpszName);
 
-    int len = strlen(name) + 1;
-
-    m_pathlen = len;
-    m_path = new char[len];
-    ZeroMemory(m_path, len);
-    strcpy(m_path, name);
-
-
-    process = INVALID_HANDLE_VALUE;
-    mem = NULL;
+    m_hProcess = INVALID_HANDLE_VALUE;
+    m_lpMem = NULL;
 }
 
-BOOL CCInject::Call(TCHAR szCall[], LPVOID lpParam)
-{
-
-
-    return FALSE;
-}
-
-
-BOOL CCInject::InjectTo(DWORD pid)
+BOOL CInject::InjectTo(DWORD pid)
 {
     //打开目标进程
 
     HANDLE thread = NULL;
-
     BOOL bRet = FALSE;
 
     __try
     {
-        process = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_CREATE_THREAD
-                              | PROCESS_VM_OPERATION | PROCESS_VM_WRITE, false, pid);
+        m_hProcess = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_CREATE_THREAD |
+                                 PROCESS_VM_OPERATION | PROCESS_VM_WRITE, false, pid);
 
-        if(process == NULL)
+        if(m_hProcess == NULL)
         {
             __leave;
         }
 
-        //取得路径大小
-        unsigned long cb = m_pathlen;
-
-        //在远进程中申请内存
-        mem = VirtualAllocEx(process, NULL, m_pathlen,
-                             MEM_COMMIT, PAGE_READWRITE);
-        if(mem == NULL)
+        m_lpMem = VirtualAllocEx(m_hProcess, NULL, m_dwPathLen,
+                                 MEM_COMMIT, PAGE_READWRITE);//在远进程中申请内存
+        if(m_lpMem == NULL)
         {
             __leave;
         }
 
-        //写入到远进程
-        int result = WriteProcessMemory(process, mem, (void*)m_path, m_pathlen, &cb);
+        DWORD dwWriteBytes;
+        int result = WriteProcessMemory(m_hProcess, m_lpMem, (LPVOID)m_lpszPath, m_dwPathLen, &dwWriteBytes);//写入到远进程
         if(result == 0)
         {
             __leave;
         }
 
 
-        //在远进程中创建线程
-        pfnLoadLibraryA = (PTHREAD_START_ROUTINE)GetProcAddress(GetModuleHandle(_T("kernel32")),
-                          "LoadLibraryA");
-        if(pfnLoadLibraryA == NULL)
+#ifdef UNICODE
+        pfnLoadLibrary = (PTHREAD_START_ROUTINE)GetProcAddress(GetModuleHandle(_T("kernel32")),
+                          "LoadLibraryW");//在远进程中创建线程
+#else
+        pfnLoadLibrary = (PTHREAD_START_ROUTINE)GetProcAddress(GetModuleHandle(_T("kernel32")),
+                          "LoadLibraryA");//在远进程中创建线程
+#endif
+
+        if(pfnLoadLibrary == NULL)
         {
             __leave;
         }
 
-
-        thread = CreateRemoteThread(process, NULL, 0, pfnLoadLibraryA, mem, 0, NULL);
+        thread = CreateRemoteThread(m_hProcess, NULL, 0, pfnLoadLibrary, m_lpMem, 0, NULL);
         if(thread == NULL)
         {
             __leave;
         }
 
-
-        //等待远线程执行完
-        WaitForSingleObject(thread, INFINITE);
-
+        WaitForSingleObject(thread, INFINITE);//等待远线程执行完
         bRet = TRUE;
     }
     __finally
     {
-        if(mem != NULL)
+        if(m_lpMem != NULL)
         {
-            VirtualFreeEx(process, mem, 0, MEM_RELEASE);
+            VirtualFreeEx(m_hProcess, m_lpMem, 0, MEM_RELEASE);
         }
 
         if(thread != NULL)
@@ -104,9 +90,9 @@ BOOL CCInject::InjectTo(DWORD pid)
             CloseHandle(thread);
         }
 
-        if(process != NULL)
+        if(m_hProcess != NULL)
         {
-            CloseHandle(process);
+            CloseHandle(m_hProcess);
         }
 
     }
@@ -114,7 +100,7 @@ BOOL CCInject::InjectTo(DWORD pid)
     return bRet;
 }
 
-BOOL CCInject::InjectTo(TCHAR szProcess[])
+BOOL CInject::InjectTo(TCHAR szProcess[])
 {
     //枚举当前进程列表
 
@@ -152,6 +138,9 @@ BOOL CCInject::InjectTo(TCHAR szProcess[])
 
     CloseHandle(hProcessSnap);
     return FALSE;
+}
 
-
+CInject::~CInject()
+{
+    delete m_lpszPath;
 }

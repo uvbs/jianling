@@ -75,6 +75,10 @@ SOURCE=.\ConfigObjPage.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\ConfigPartyPage.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\ConfigQhPage.cpp
 # End Source File
 # Begin Source File
@@ -165,6 +169,10 @@ SOURCE=.\ConfigItemPage.h
 # Begin Source File
 
 SOURCE=.\ConfigObjPage.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ConfigPartyPage.h
 # End Source File
 # Begin Source File
 

@@ -3,12 +3,7 @@
 
 #if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
-// ConfigQhPage.h : header file
-//
-
-/////////////////////////////////////////////////////////////////////////////
-// CConfigQhPage dialog
+#endif
 
 class CConfigQhPage : public CPropertyPage
 {

@@ -33,8 +33,8 @@ BEGIN_MESSAGE_MAP(CJLSrvrView, CListView)
     ON_NOTIFY_REFLECT(NM_RCLICK, OnRclick)
     ON_COMMAND(ID_MENUITEM32774, OnMenuitem32774)
     ON_COMMAND(ID_MENUITEM32775, OnMenuitem32775)
-	ON_COMMAND(ID_SOCKETINFO, OnSocketinfo)
-	//}}AFX_MSG_MAP
+    ON_COMMAND(ID_SOCKETINFO, OnSocketinfo)
+    //}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -71,26 +71,17 @@ void CJLSrvrView::OnInitialUpdate()
 {
     CListView::OnInitialUpdate();
 
-
+    //插入列
     GetListCtrl().InsertColumn(0, _T("帐号"));
     GetListCtrl().InsertColumn(1, _T("在线时长"));
     GetListCtrl().InsertColumn(2, _T("请求数"));
     GetListCtrl().InsertColumn(3, _T("地址"));
 
-
+    //自动列宽度
     AutoColumnWidth();
-
 
     //全行风格
     GetListCtrl().SetExtendedStyle(LVS_EX_FULLROWSELECT);
-
-
-    GetListCtrl().InsertItem(0, _T("Test"));
-
-
-    SetTimer(IDT_TIMERCALCTIME, 2000, NULL);
-    // TODO: You may populate your ListView with items by directly accessing
-    //  its list control through a call to GetListCtrl().
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -117,19 +108,21 @@ CJLSrvrDoc* CJLSrvrView::GetDocument() // non-debug version is inline
 /////////////////////////////////////////////////////////////////////////////
 // CJLSrvrView message handlers
 
-BOOL CJLSrvrView::Create(LPCTSTR lpszClassName, LPCTSTR lpszWindowName, DWORD dwStyle, const RECT& rect, CWnd* pParentWnd, UINT nID, CCreateContext* pContext)
+BOOL CJLSrvrView::Create(LPCTSTR lpszClassName, LPCTSTR lpszWindowName,
+                         DWORD dwStyle, const RECT& rect, CWnd* pParentWnd,
+                         UINT nID, CCreateContext* pContext)
 {
-    // TODO: Add your specialized code here and/or call the base class
+
     return CWnd::Create(lpszClassName, lpszWindowName, dwStyle, rect, pParentWnd, nID, pContext);
 }
 
 void CJLSrvrView::AutoColumnWidth()
 {
     for(int i = 0; i < 4; i++)
+    {
         GetListCtrl().SetColumnWidth(i, LVSCW_AUTOSIZE_USEHEADER);
+    }
 }
-
-
 
 void CJLSrvrView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 {
@@ -178,17 +171,12 @@ void CJLSrvrView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 
 void CJLSrvrView::OnTimer(UINT nIDEvent)
 {
-    // TODO: Add your message handler code here and/or call default
-    if(nIDEvent == IDT_TIMERCALCTIME)
-    {
 
-    }
     CListView::OnTimer(nIDEvent);
 }
 
 void CJLSrvrView::OnKeyAdd()
 {
-    // TODO: Add your command handler code here
     CDlgKeyAdd dlg;
     dlg.DoModal();
 }
@@ -213,14 +201,18 @@ void CJLSrvrView::OnRclick(NMHDR* pNMHDR, LRESULT* pResult)
     switch(pNMHDR->code)
     {
         case NM_RCLICK:
+        {
+            if(GetListCtrl().GetSelectedCount() == 0)
             {
-                if(GetListCtrl().GetSelectedCount() == 0)
-                    DoPopupMenu(1);
-                else
-                    DoPopupMenu(0);
-
+                DoPopupMenu(1);
             }
-            break;
+            else
+            {
+                DoPopupMenu(0);
+            }
+
+        }
+        break;
 
     }
     *pResult = 0;
@@ -240,7 +232,9 @@ void CJLSrvrView::OnMenuitem32774()
     //获取选定的账号名
     POSITION pos = GetListCtrl().GetFirstSelectedItemPosition();
     if(pos == NULL)
+    {
         TRACE0("No items were selected!\n");
+    }
     else
     {
         int nItem = GetListCtrl().GetNextSelectedItem(pos);
@@ -250,6 +244,7 @@ void CJLSrvrView::OnMenuitem32774()
             TRACE0(_T("item数据是空值, 检查这个问题"));
             return;
         }
+
         page1.m_strAcName = pRequest->strUserName;
         page2.m_strAcName = pRequest->strUserName;
         page3.m_strAcName = pRequest->strUserName;
@@ -257,8 +252,8 @@ void CJLSrvrView::OnMenuitem32774()
         sheet.AddPage(&page1);
         sheet.AddPage(&page2);
         sheet.AddPage(&page3);
-        sheet.DoModal();
 
+        sheet.DoModal();
     }
 
 
@@ -285,8 +280,8 @@ void CJLSrvrView::OnMenuitem32775()
 
 }
 
-void CJLSrvrView::OnSocketinfo() 
+void CJLSrvrView::OnSocketinfo()
 {
-	// TODO: Add your command handler code here
+    // TODO: Add your command handler code here
 
 }

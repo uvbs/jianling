@@ -6,7 +6,7 @@
 #define AFX_CALLTRACER_H__011E66DE_47A6_4BFA_A4B2_70048EBEA677__INCLUDED_
 
 #if _MSC_VER > 1000
-#pragma once
+    #pragma once
 #endif // _MSC_VER > 1000
 
 
@@ -33,7 +33,6 @@ public:
     CCallTracer();
     virtual ~CCallTracer();
 
-
     LPCTSTR GetSymType(DWORD dwSymType);
     HRESULT ShowFrame(STACKFRAME64* pFrame,
                       PFN_SHOWFRAME pfnShowFrame, PVOID pParam);
@@ -41,22 +40,12 @@ public:
                       PVOID pParam, int nMaxFrames, PCONTEXT pContext = NULL);
     HRESULT FreeSymbols();
 
-
-    DWORD GetOptions()
-    {
-        return m_dwOptions;
-    }
-
-
-    void SetOptions(DWORD dwOptions)
-    {
-        m_dwOptions = dwOptions;
-    }
-
-
+    DWORD GetOptions() {return m_dwOptions;}
+    void SetOptions(DWORD dwOptions) {m_dwOptions = dwOptions; }
     HRESULT InitSymbols();
-
     static DWORD m_dwSymClients; // counter of symbol clients
+
+
 protected:
     CONTEXT m_Context;
     DWORD   m_dwOptions;

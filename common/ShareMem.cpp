@@ -4,8 +4,7 @@
 
 ShareMem* ShareMem::Instance()
 {
-    if(_inst == NULL)
-    {
+    if(_inst == NULL) {
         _inst = new ShareMem;
     }
 
@@ -29,22 +28,19 @@ BOOL ShareMem::Create(DWORD dwCount, TCHAR szObjName[])
 
     BOOL bRet = FALSE;
 
-    __try
-    {
+    __try {
 
         DWORD MemSize = dwCount * sizeof(SHAREINFO) + sizeof(DWORD);
 
 
         //创建共享对象
         m_hFileMap = CreateFileMapping(INVALID_HANDLE_VALUE, NULL, PAGE_READWRITE, 0, MemSize, szObjName);
-        if(m_hFileMap == NULL)
-        {
+        if(m_hFileMap == NULL) {
             __leave;
         }
 
         m_lpMem = (SHAREINFO*)MapViewOfFile(m_hFileMap, FILE_MAP_ALL_ACCESS, 0, 0, 0);
-        if(m_lpMem == NULL)
-        {
+        if(m_lpMem == NULL) {
             __leave;
         }
 
@@ -57,18 +53,14 @@ BOOL ShareMem::Create(DWORD dwCount, TCHAR szObjName[])
         bRet = TRUE;
 
     }
-    __finally
-    {
-        if(bRet == FALSE)
-        {
-            if(m_hFileMap != NULL)
-            {
+    __finally {
+        if(bRet == FALSE) {
+            if(m_hFileMap != NULL) {
                 CloseHandle(m_hFileMap);
                 m_hFileMap = NULL;
             }
 
-            if(m_lpMem)
-            {
+            if(m_lpMem) {
                 UnmapViewOfFile(m_lpMem);
                 m_lpMem = NULL;
             }
@@ -84,16 +76,14 @@ BOOL ShareMem::Create(DWORD dwCount, TCHAR szObjName[])
 
 void ShareMem::Close()
 {
-    if(m_lpMem != NULL)
-    {
+    if(m_lpMem != NULL) {
         m_lpMem = (SHAREINFO*)((DWORD)m_lpMem - sizeof(DWORD));
         UnmapViewOfFile(m_lpMem);
         m_lpMem = NULL;
     }
 
 
-    if(m_hFileMap != NULL)
-    {
+    if(m_hFileMap != NULL) {
         CloseHandle(m_hFileMap);
         m_hFileMap = NULL;
     }
@@ -112,10 +102,8 @@ BOOL ShareMem::Add(SHAREINFO* pShareInfo)
 {
 
     SHAREINFO* pItor = m_lpMem;
-    for(DWORD i = 0; i < m_dwCount; i++)
-    {
-        if(pItor->pid == 0)
-        {
+    for(DWORD i = 0; i < m_dwCount; i++) {
+        if(pItor->pid == 0) {
             memcpy(pItor, pShareInfo, sizeof(SHAREINFO));
             break;
         }
@@ -131,17 +119,14 @@ BOOL ShareMem::Add(SHAREINFO* pShareInfo)
 DWORD ShareMem::GetUsedCount()
 {
 
-    if(m_lpMem == NULL)
-    {
+    if(m_lpMem == NULL) {
         return 0;
     }
 
     DWORD count = 0;
     SHAREINFO* pItor = m_lpMem;
-    for(DWORD i = 0; i < m_dwCount; i++)
-    {
-        if(pItor->pid != 0)
-        {
+    for(DWORD i = 0; i < m_dwCount; i++) {
+        if(pItor->pid != 0) {
             count++;
         }
 
@@ -155,37 +140,26 @@ DWORD ShareMem::GetUsedCount()
 BOOL ShareMem::Open(TCHAR szObjName[])
 {
     BOOL bRet = FALSE;
-    __try
-    {
+    __try {
         m_hFileMap = OpenFileMapping(FILE_MAP_ALL_ACCESS, FALSE, szObjName);
-        if(m_hFileMap == NULL)
-        {
-            __leave;
-        }
+        if(m_hFileMap == NULL) __leave;
 
         m_lpMem = (SHAREINFO*)MapViewOfFile(m_hFileMap, FILE_MAP_ALL_ACCESS, 0, 0, 0);
-        if(m_lpMem == NULL)
-        {
-            __leave;
-        }
+        if(m_lpMem == NULL) __leave;
 
         int MemSize = *(DWORD*)m_lpMem;
         m_lpMem = (SHAREINFO*)((DWORD)m_lpMem + sizeof(DWORD));
         m_dwCount = (MemSize - sizeof(DWORD)) / sizeof(SHAREINFO);
         bRet = TRUE;
     }
-    __finally
-    {
-        if(bRet == FALSE)
-        {
-            if(m_hFileMap != NULL)
-            {
+    __finally {
+        if(bRet == FALSE) {
+            if(m_hFileMap != NULL) {
                 CloseHandle(m_hFileMap);
                 m_hFileMap = NULL;
             }
 
-            if(m_lpMem)
-            {
+            if(m_lpMem) {
                 UnmapViewOfFile(m_lpMem);
                 m_lpMem = NULL;
             }
@@ -193,10 +167,10 @@ BOOL ShareMem::Open(TCHAR szObjName[])
 
     }
 
-    if(bRet == FALSE)
-    {
+    if(bRet == FALSE) {
         TRACE(_T("没能打开共享内存"));
     }
+
 
     return bRet;
 }
@@ -206,10 +180,8 @@ void ShareMem::Del(LPCTSTR lpszName)
 {
 
     SHAREINFO* pItor = m_lpMem;
-    for(DWORD i = 0; i < m_dwCount; i++)
-    {
-        if(_tcscmp(pItor->szName, lpszName) == 0)
-        {
+    for(DWORD i = 0; i < m_dwCount; i++) {
+        if(_tcscmp(pItor->szName, lpszName) == 0) {
             ZeroMemory(pItor, sizeof(SHAREINFO));
             break;
         }
@@ -224,10 +196,8 @@ void ShareMem::Del(DWORD dwPid)
 {
 
     SHAREINFO* pItor = m_lpMem;
-    for(DWORD i = 0; i < m_dwCount; i++)
-    {
-        if(pItor->pid == dwPid)
-        {
+    for(DWORD i = 0; i < m_dwCount; i++) {
+        if(pItor->pid == dwPid) {
             ZeroMemory(pItor, sizeof(SHAREINFO));
             break;
         }
@@ -241,16 +211,13 @@ void ShareMem::Del(DWORD dwPid)
 //获取指定的共享数据
 SHAREINFO* ShareMem::Get(LPCTSTR lpszName)
 {
-    if(m_lpMem == NULL || m_hFileMap == NULL)
-    {
+    if(m_lpMem == NULL || m_hFileMap == NULL) {
         return NULL;
     }
 
     SHAREINFO* pItor = m_lpMem;
-    for(DWORD i = 0; i < m_dwCount; i++)
-    {
-        if(_tcscmp(pItor->szName, lpszName) == 0)
-        {
+    for(DWORD i = 0; i < m_dwCount; i++) {
+        if(_tcscmp(pItor->szName, lpszName) == 0) {
             return pItor;
         }
 
@@ -266,17 +233,14 @@ SHAREINFO* ShareMem::Get(LPCTSTR lpszName)
 SHAREINFO* ShareMem::Get(DWORD dwPid)
 {
     if(m_lpMem == NULL ||
-            m_hFileMap == NULL)
-    {
+            m_hFileMap == NULL) {
         return FALSE;
     }
 
 
     SHAREINFO* pItor = m_lpMem;
-    for(DWORD i = 0; i < m_dwCount; i++)
-    {
-        if(pItor->pid == dwPid)
-        {
+    for(DWORD i = 0; i < m_dwCount; i++) {
+        if(pItor->pid == dwPid) {
             return pItor;
         }
 
@@ -292,8 +256,7 @@ DWORD ShareMem::IsPidValid(LPCTSTR lpszName)
 {
 
     SHAREINFO* lpsa = Get(lpszName);
-    if(lpsa == NULL)
-    {
+    if(lpsa == NULL) {
         return FALSE;
     }
 
@@ -302,8 +265,7 @@ DWORD ShareMem::IsPidValid(LPCTSTR lpszName)
 
     // Take a snapshot of all processes in the system.
     hProcessSnap = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
-    if(hProcessSnap == INVALID_HANDLE_VALUE)
-    {
+    if(hProcessSnap == INVALID_HANDLE_VALUE) {
         return TRUE;
     }
 
@@ -312,17 +274,14 @@ DWORD ShareMem::IsPidValid(LPCTSTR lpszName)
 
     // Retrieve information about the first process,
     // and exit if unsuccessful
-    if(!Process32First(hProcessSnap, &pe32))
-    {
+    if(!Process32First(hProcessSnap, &pe32)) {
         CloseHandle(hProcessSnap);          // clean the snapshot object
         return TRUE;
     }
 
 
-    do
-    {
-        if(pe32.th32ProcessID == lpsa->pid)
-        {
+    do {
+        if(pe32.th32ProcessID == lpsa->pid) {
             return TRUE;
         }
 

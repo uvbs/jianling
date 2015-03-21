@@ -19,20 +19,18 @@ public:
     CHook(void* CallAddr, void* NewCall, BOOL bAutoDel = TRUE);
     ~CHook();
 
-
     //初始化
     void Init(void* CallAddr, void* NewCall, BOOL bAutoDel = TRUE);
 
+    //卸载钩子
+    void unhook();
 
-    
-    void unhook();//卸载钩子
-    DWORD* hook();//安装钩子
+    //安装钩子
+    DWORD* hook();
 
-
-protected:
     //获取指令边界大小
+protected:
     BOOL GetPatchSize(void* Proc, DWORD dwNeedSize, LPDWORD lpPatchSize);
-
 
 private:
     BYTE* m_CallAddr;	//call地址

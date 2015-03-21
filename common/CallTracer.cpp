@@ -82,8 +82,7 @@ HRESULT CCallTracer::WalkStack(PFN_SHOWFRAME pfnShowFrame,
     frame.AddrStack.Offset = m_Context.Esp;
     frame.AddrStack.Mode   = AddrModeFlat;
 
-    while(nCount < nMaxFrames)
-    {
+    while(nCount < nMaxFrames) {
         nCount++;
 
         if(!StackWalk64(IMAGE_FILE_MACHINE_I386,
@@ -91,32 +90,28 @@ HRESULT CCallTracer::WalkStack(PFN_SHOWFRAME pfnShowFrame,
                         &frame, &m_Context,
                         NULL,
                         SymFunctionTableAccess64,
-                        SymGetModuleBase64, NULL))
-        {
+                        SymGetModuleBase64, NULL)) {
             // Error occured.
             break;
         }
 
         ShowFrame(&frame, pfnShowFrame, pParam);
 
-        if(frame.AddrFrame.Offset == 0 || frame.AddrReturn.Offset == 0)
-        {
+        if(frame.AddrFrame.Offset == 0 || frame.AddrReturn.Offset == 0) {
             // End of stack.
             break;
         }
     }
 
     // Summary
-    if(m_dwOptions & CALLTRACE_OPT_INFO_SUMMARY)
-    {
+    if(m_dwOptions & CALLTRACE_OPT_INFO_SUMMARY) {
         _stprintf(szPath, _T("Total Frames: %d; Spend %d MS"),
                   nCount,   GetTickCount() - dwTimeMS);
         pfnShowFrame(szPath, pParam);
     }
 
     // Show symbol search path at last
-    if(m_dwOptions & CALLTRACE_OPT_INFO_SEARCHPATH)
-    {
+    if(m_dwOptions & CALLTRACE_OPT_INFO_SEARCHPATH) {
         SymGetSearchPath(GetCurrentProcess(), szPath, MAX_PATH);
         pfnShowFrame(szPath, pParam);
     }
@@ -140,8 +135,7 @@ HRESULT CCallTracer::ShowFrame(STACKFRAME64* pFrame,
         pfnShowFrame(NULL, pParam);
 
     // Child EBP and Return address
-    if(m_dwOptions & CALLTRACE_OPT_INFO_CHILDEBP)
-    {
+    if(m_dwOptions & CALLTRACE_OPT_INFO_CHILDEBP) {
         _stprintf(szFrame, _T("Child EBP: 0x%08x, Return Address: 0x%08x"),
                   DWORD(pFrame->AddrFrame.Offset),
                   DWORD(pFrame->AddrReturn.Offset));
@@ -157,8 +151,7 @@ HRESULT CCallTracer::ShowFrame(STACKFRAME64* pFrame,
         _tcscpy(module.ModuleName, _T("Unknown"));
 
     // find symbols
-    if(m_dwOptions & CALLTRACE_OPT_INFO_MODULE_FUNC)
-    {
+    if(m_dwOptions & CALLTRACE_OPT_INFO_MODULE_FUNC) {
 #ifndef USE_SymFromAddr
         PIMAGEHLP_SYMBOL64  pSymbol = (PIMAGEHLP_SYMBOL64)szSym;
         ZeroMemory(pSymbol , sizeof(IMAGEHLP_SYMBOL64));
@@ -168,8 +161,7 @@ HRESULT CCallTracer::ShowFrame(STACKFRAME64* pFrame,
 
         if(SymGetSymFromAddr64(GetCurrentProcess(), pFrame->AddrPC.Offset,
                                &dwOffsetFromSmybol,
-                               pSymbol))
-        {
+                               pSymbol)) {
             _stprintf(szFrame, _T("%s!%s"),
                       module.ModuleName, pSymbol->Name);
             pfnShowFrame(szFrame, pParam);
@@ -182,8 +174,7 @@ HRESULT CCallTracer::ShowFrame(STACKFRAME64* pFrame,
         pSymbol->Address = pFrame->AddrPC.Offset;
 
         if(SymFromAddr(GetCurrentProcess(), pFrame->AddrPC.Offset, &dwOffsetFromSmybol,
-                       pSymbol))
-        {
+                       pSymbol)) {
             _stprintf(szFrame, _T("%s!%s"), module.ModuleName, pSymbol->Name);
             pfnShowFrame(szFrame, pParam);
         }
@@ -192,8 +183,7 @@ HRESULT CCallTracer::ShowFrame(STACKFRAME64* pFrame,
     }
 
     // Parameters
-    if(m_dwOptions & CALLTRACE_OPT_INFO_PARA)
-    {
+    if(m_dwOptions & CALLTRACE_OPT_INFO_PARA) {
         _stprintf(szFrame, _T("Parameters: (0x%08x,0x%08x,0x%08x,0x%08x)"),
                   pFrame->Params[0], pFrame->Params[1],
                   pFrame->Params[2], pFrame->Params[3]);
@@ -201,15 +191,13 @@ HRESULT CCallTracer::ShowFrame(STACKFRAME64* pFrame,
     }
 
     // source line
-    if(m_dwOptions & CALLTRACE_OPT_INFO_SRCLINE)
-    {
+    if(m_dwOptions & CALLTRACE_OPT_INFO_SRCLINE) {
         ZeroMemory(&line , sizeof(IMAGEHLP_LINE64)) ;
         line.SizeOfStruct = sizeof(IMAGEHLP_LINE64) ;
 
         if(SymGetLineFromAddr64(GetCurrentProcess(), pFrame->AddrPC.Offset,
                                 &dwDisplacement,
-                                &line))
-        {
+                                &line)) {
             pfnShowFrame(line.FileName, pParam);
             _stprintf(szFrame, _T("Line No:%d, Address"),
                       line.LineNumber, line.Address);
@@ -217,10 +205,8 @@ HRESULT CCallTracer::ShowFrame(STACKFRAME64* pFrame,
     }
 
     // FPO
-    if(m_dwOptions & CALLTRACE_OPT_INFO_FPO)
-    {
-        if(pFrame->FuncTableEntry)
-        {
+    if(m_dwOptions & CALLTRACE_OPT_INFO_FPO) {
+        if(pFrame->FuncTableEntry) {
             PFPO_DATA pFpo = (PFPO_DATA)pFrame->FuncTableEntry;
             _stprintf(szFrame, _T("FPO: Para dwords: %d; Regs: %d; Frame Type: %d "),
                       pFpo->cdwParams, pFpo->cbRegs, pFpo->cbFrame);
@@ -229,8 +215,7 @@ HRESULT CCallTracer::ShowFrame(STACKFRAME64* pFrame,
     }
 
     // misc
-    if(m_dwOptions & CALLTRACE_OPT_INFO_MISC)
-    {
+    if(m_dwOptions & CALLTRACE_OPT_INFO_MISC) {
         _stprintf(szFrame, _T("Far (WOW): %d; Virtual Frame: %d "),
                   pFrame->Far, pFrame->Virtual);
         pfnShowFrame(szFrame, pParam);
@@ -245,8 +230,7 @@ LPCTSTR CCallTracer::GetSymType(DWORD dwSymType)
 {
     LPCTSTR lpszReturn = NULL;
 
-    switch(dwSymType)
-    {
+    switch(dwSymType) {
         case SymNone:
             lpszReturn = "-nosymbols-";
             break;

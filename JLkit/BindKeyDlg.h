@@ -1,15 +1,8 @@
 #if !defined(AFX_BINDKEYDLG_H__80DB6E3E_0BC5_4171_A55D_CB86A4F8B20E__INCLUDED_)
 #define AFX_BINDKEYDLG_H__80DB6E3E_0BC5_4171_A55D_CB86A4F8B20E__INCLUDED_
 
-#if _MSC_VER > 1000
-#pragma once
-#endif // _MSC_VER > 1000
-// BindKeyDlg.h : header file
-//
 
-/////////////////////////////////////////////////////////////////////////////
-// CDlgBindKey dialog
-
+//°ó¶¨key¶Ô»°¿ò
 class CDlgBindKey : public CDialog
 {
 // Construction
@@ -21,7 +14,6 @@ public:
     enum { IDD = IDD_BINDKEY };
     CString	m_strKey;
     //}}AFX_DATA
-
 
 // Overrides
     // ClassWizard generated virtual function overrides

@@ -15,9 +15,9 @@
 
 
 #ifdef _DEBUG
-#define new DEBUG_NEW
-#undef THIS_FILE
-static char THIS_FILE[] = __FILE__;
+    #define new DEBUG_NEW
+    #undef THIS_FILE
+    static char THIS_FILE[] = __FILE__;
 #endif
 
 
@@ -63,16 +63,17 @@ void CDlgLogin::OnBtnRegister()
 {
     CDlgRegist dlg;
 
-    if(dlg.DoModal() == IDOK)
-    {
+    ShowWindow(SW_HIDE);
+    if(dlg.DoModal() == IDOK) {
         //×¢²áµÇÂ¼ÕÊºÅ
     }
+
+    ShowWindow(SW_SHOW);
 }
 
 void CDlgLogin::LoginResult(int nResult)
 {
-    if(nResult == result_ok)
-    {
+    if(nResult == result_ok) {
         CJLkitSocket::GetInstance()->Querykey();
         CDialog::OnOK();
     }
@@ -101,11 +102,11 @@ void CDlgLogin::OnBtnModifybind()
 {
     // TODO: Add your control notification handler code here
     CDlgModifyBind dlg;
-
-    if(dlg.DoModal() == IDOK)
-    {
+    ShowWindow(SW_HIDE);
+    if(dlg.DoModal() == IDOK) {
         //ÐÞ¸Ä°ó¶¨ÐÅÏ¢
     }
+    ShowWindow(SW_SHOW);
 }
 
 void CDlgLogin::OnOK()

@@ -17,18 +17,18 @@ static char THIS_FILE[] = __FILE__;
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-CCVPNFile::CCVPNFile(): CStdioFile()
+CVpnFile::CVpnFile(): CStdioFile()
 {
     dwMaxLine = 0;
 }
 
-CCVPNFile::~CCVPNFile()
+CVpnFile::~CVpnFile()
 {
 
 }
 
 
-BOOL CCVPNFile::Open(TCHAR szFilePath[])
+BOOL CVpnFile::Open(TCHAR szFilePath[])
 {
     if(CStdioFile::Open(szFilePath, CFile::modeRead))
     {
@@ -46,7 +46,7 @@ BOOL CCVPNFile::Open(TCHAR szFilePath[])
 }
 
 
-void CCVPNFile::DisConnectVPN()
+void CVpnFile::DisConnectVPN()
 {
     CString strLine;
     strLine.Format(_T("cmd /c rasdial \"VPN 连接\" /disconnect >NUL"));
@@ -54,7 +54,7 @@ void CCVPNFile::DisConnectVPN()
 }
 
 //一直连接, 直到找到一个能用的
-void CCVPNFile::AlwaysConnect()
+void CVpnFile::AlwaysConnect()
 {
     DisConnectVPN();
     Sleep(4000);
@@ -75,7 +75,7 @@ void CCVPNFile::AlwaysConnect()
 }
 
 
-int CCVPNFile::ConnectVPN()
+int CVpnFile::ConnectVPN()
 {
     //要是到末尾的就重新开始
     if(curLine == NULL)
