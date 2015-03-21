@@ -320,6 +320,8 @@ void CDataDlg::OnGetpalyerinfo()
     AddInfo(_T("角色视角: %d"), (int)gcall.GetPlayerViewPoint());
     AddInfo(_T("人物UI状态: %d"), gcall.GetPlayerQuestUIStatus());
     AddInfo(_T("人物UI状态2: %d"), gcall.GetPlayerQuestUIStatusts());
+	AddInfo(_T("LoadingMap: %d"), gcall.isLoadingMap());
+	
     AddInfo(_T("角色坐标: x:%d y:%d z:%d"), (int)PlayerPos.x, (int)PlayerPos.y, (int)PlayerPos.z);
     AddInfo(_T("角色坐标2: x:%d y:%d z:%d"), (int)PlayerPos2.x, (int)PlayerPos2.y, (int)PlayerPos2.z);
 

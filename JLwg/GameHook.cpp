@@ -38,7 +38,7 @@ GameHook::GameHook():
     WearHook((void*)chuanzhuangbei_call, myWearEquipment),
     DundiHook((void*)dundi_call, myDunDi),
     Yicjw((void*)pickup1_call, myYiCiJianWu),
-    CombatHook((void*)0x0047B948, myCombatFilter)
+    CombatHook((void*)0x0047B94B, myCombatFilter)
 {
 
 }

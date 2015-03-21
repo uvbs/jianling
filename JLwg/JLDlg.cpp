@@ -56,9 +56,22 @@ END_MESSAGE_MAP()
 
 static UINT TaskThread(LPVOID pParam)
 {
+<<<<<<< HEAD
+	try
+	{
+		TaskScript task;
+		task.BeginTask();
+	}
+	catch (...)
+	{
+		TRACE(_T("ÈÎÎñ±¨´í"));
+	}
+    
+=======
     
     TaskScript task;
     task.BeginTask();
+>>>>>>> ec82f68341aec048924c2ea5f64172867a97816d
 
     return 0;
 }

@@ -23,7 +23,9 @@ class GameHook
 public:
     static GameHook* GetInstance() {
         if(_Instance == NULL)
-            new GameHook();
+        {
+            _Instance =    new GameHook();
+        }
         return _Instance;
     }
 

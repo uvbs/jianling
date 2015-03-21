@@ -27,6 +27,7 @@ Gamecall::~Gamecall()
 
 void Gamecall::UnInit()
 {
+    TRACE("执行UnInit");
     m_bStopThread = TRUE;
 
     //等待所有线程退出
@@ -140,7 +141,27 @@ void Gamecall::DaKaiJiNengMianBan(DWORD adress, DWORD adress1) //打开技能面板
 DWORD Gamecall::call(DWORD id, LPVOID pParam)
 {
     switch(id) {
-        case id_msg_NPCJieRenWu: {
+		case id_msg_GetPlayExperienceStatusName:
+			{
+				KONGJIAN_JIEGOU* jiegou = (KONGJIAN_JIEGOU*)pParam;
+				//TRACE1("jiegou:%08x",jiegou->adress);
+				return (BOOL)GetPlayExperienceStatusName(jiegou->adress,jiegou->name);
+			}
+			break;
+        case id_msg_XieZhuangBei:
+            {
+                PARAM_JIEFENGZHUANGBEI* temp = (PARAM_JIEFENGZHUANGBEI*)pParam;
+                _XieZhuangBei(temp->argv1);
+            }
+            break;
+        case id_msg_IsCanShu:
+            {
+                PARAM_JIEFENGZHUANGBEI* temp = (PARAM_JIEFENGZHUANGBEI*)pParam;
+                return (DWORD)_IsCanShu(temp->argv1, temp->argv2);
+            }
+            break;
+        case id_msg_NPCJieRenWu:
+            {
             PARAM_JIEFENGZHUANGBEI* temp = (PARAM_JIEFENGZHUANGBEI*)pParam;
             _NPCJieRenWu(temp->argv1, temp->argv2, temp->argv3, temp->argv4, temp->argv5);
         }
@@ -348,8 +369,8 @@ DWORD Gamecall::call(DWORD id, LPVOID pParam)
         }
         break;
         case id_msg_HeChengWuQi_Po10: {
-            PARAM_GUANSHANGDIAN* temp = (PARAM_GUANSHANGDIAN*)pParam;
-            HeChengWuQi_Po10(*(_BAGSTU*)temp->argv1, *(_BAGSTU*)temp->argv2);
+                PARAM_GETUIADDRBYNAME* temp = (PARAM_GETUIADDRBYNAME*)pParam;
+                HeChengWuQi_Po10(*(_BAGSTU*)temp->argv1, *(_BAGSTU*)temp->argv2, temp->argv3);
         }
         break;
 
@@ -696,9 +717,16 @@ UINT Gamecall::KeepAliveThread(LPVOID pParam)
 {
 
     Gamecall* pCall = (Gamecall*)pParam;
-    while(m_bStopThread == FALSE) {
+    while(m_bStopThread == FALSE)
+    {
 
-        pCall->GetHealth(60);
+        if(pCall->isLoadingMap() == 3)
+		{
+			if (pCall->GetPlayerDeadStatus() == 0)
+			{
+        		pCall->GetHealth(60);
+			}
+		}
         pCall->CloseXiaoDongHua();
 
         Sleep(1000);
@@ -710,12 +738,22 @@ UINT Gamecall::KeepAliveThread(LPVOID pParam)
 UINT Gamecall::AttackHelperThread(LPVOID pParam)
 {
 
-    while(m_bStopThread == FALSE) {
-
-        if(GetRangeMonsterCount() >= 2) {
+	while(m_bStopThread == FALSE)
+	{
+		if(isLoadingMap() == 3)
+		{
+			if (GetPlayerDeadStatus() == 0)
+			{
+				if (GetPlayerFightingStatus())
+				{
+					if(GetRangeMonsterCount() >= 2)
             Gamecall::m_bCanAoe = TRUE;
+					else
+						Gamecall::m_bCanAoe = FALSE;
         }
-        Sleep(3000);
+			}
+		}
+        Sleep(1000);
     }
 
 
@@ -771,7 +809,8 @@ BOOL Gamecall::Init()
 
         hThreads[0] = (HANDLE)_beginthreadex(0, 0, KeepAliveThread, this, 0, 0);
         hThreads[1] = (HANDLE)_beginthreadex(0, 0, AttackHelperThread, this, 0, 0);
-
+		SetThreadPriority(hThreads[0],THREAD_PRIORITY_LOWEST);
+		SetThreadPriority(hThreads[1],THREAD_PRIORITY_LOWEST);
 
 
         hookQietu.Init((void*)hook_dont_leave_dungeons, ShunyiQietu);
@@ -847,9 +886,9 @@ void Gamecall::HeChengWuQi_Po10(_BAGSTU& zhu, _BAGSTU& fu)
     int fu_value = fu.m_Info;
     fu_value <<= 16;
     fu_value += package;
-    DWORD adress = 0x78;
 
-    log.logdv(_T("%s: %08x, %08x"), FUNCNAME, zhu_value, fu_value);
+
+    log.logdv(_T("%s: %08x, %08x,%08x"), FUNCNAME, zhu_value, fu_value, adress);
 
 
     YouJianLeiXing LeiXing;
@@ -1587,9 +1626,7 @@ wchar_t* Gamecall::GetObjectNameByIndex(DWORD index)
 wchar_t* Gamecall::_GetObjectNameByIndex(DWORD index)
 {
 
-    if(index == UINT_MAX) {
-        return NULL;
-    }
+    if(index == UINT_MAX) return NULL;
 
     wchar_t* name;
 
@@ -2250,7 +2287,10 @@ DWORD Gamecall::GetStrikeStartAddr()
         DWORD StrikeStartAddr = 0;
         GetStrikeBarBaseAddr(GetUIBinTreeBaseAddr(), &StrikeStartAddr);
 
-        assert(StrikeStartAddr != 0);
+        //assert(StrikeStartAddr != 0);
+		if (StrikeStartAddr == NULL){
+			return 0;
+		}
 
         __asm {
             mov eax, StrikeStartAddr;
@@ -3409,13 +3449,9 @@ BOOL Gamecall::isCanFenjie(DWORD pAddr)
 
     DWORD type = GetGoodsType(pAddr);
 
-    if(type == 1 ||
-            type == 4 ||
-            type == 5) {
-        return TRUE;
-    }
+    if(type == 1 || type == 4 || type == 5) return TRUE;
 
-    return false;
+    return FALSE;
 }
 
 //换线
@@ -4399,14 +4435,16 @@ void Gamecall::SetMouseMode()
 //dd [[[[对象基址]+2C]+0C]+4] = 5 表示读条 1 刚进游戏 2 选择角色界面 3游戏内
 void Gamecall::WaitPlans()
 {
-
-    for(;;) {
-        if(isLoadingMap() == 3) {
-            Sleep(6000);
+	Sleep(2000);
+    for(;;){
+		Sleep(1000);
+        if(isLoadingMap() == 3){
+			Sleep(2000);
             break;
         }
-        log.logdv(_T("等待蓝条"));
-        Sleep(1000);
+		else
+			Sleep(2000);
+        log.logdv(_T("等待读图"));
     }
     Sleep(2000);
 }
@@ -4970,7 +5008,6 @@ BOOL Gamecall::isCanKill(ObjectNode* pNode)
     if(m_Get11C(pNode->ObjAddress) == 1) {
         bCanKill = TRUE;
     }
-
     else {
         if(m_Get110(pNode->ObjAddress) == 1) {
             if(m_Get2E4(pNode->ObjAddress) != 0) {
@@ -6103,22 +6140,26 @@ void Gamecall::TurnTo(fPosition& pos)
     fPosition mypos;
     GetPlayerPos(&mypos);
 
-    double angle;
-
-    double value1;
-    double value2;
-
     //重叠的情况
     if(mypos.x == pos.x &&
-            mypos.y == pos.y) {
-        TRACE0("重叠了, 无法转视角");
+		mypos.y == pos.y)
+	{
+		log.logdv(_T("转视角时, 目标和我是重叠的"));
+		//这里不解决重叠， 重叠让走路解决
+		//RandomStep(60);
+		//直接退
         return;
     }
+
+
+    
+    double value1;
+    double value2;
 
     value1 = mypos.y - pos.y;
     value2 = mypos.x - pos.x;
 
-    angle = atan2(abs(value1), abs(value2)) * 180 / M_PI;
+    double angle = atan2(abs(value1), abs(value2)) * 180 / M_PI;
 
     //算成游戏内角度
     double gameangle = angle * 182;
@@ -6702,6 +6743,8 @@ void Gamecall::_NewSpend(float x)
 
 BOOL Gamecall::isStrikeCd(DWORD id)
 {
+	if (GetPlayerDeadStatus() == 0)
+	{
     std::vector<STRIKEINFO> StrikeVec;
     sendcall(id_msg_GetStrikeToVector, &StrikeVec);
     //GetStrikeToVector();
@@ -6721,7 +6764,126 @@ BOOL Gamecall::isStrikeCd(DWORD id)
                 break;
             }
         }
-    }
+	}else
+	{
+		TRACE(_T("人物死亡，不遍历。"));
+	}
+    
+    return FALSE;
+}
+
+wchar_t* Gamecall::GetExperienceName(DWORD ID)
+{
+	wchar_t *name = {0};
+	_try
+	{
+		__asm
+		{
+			mov eax,obj_name_call_base;
+			mov eax,[eax];
+			mov ecx,[eax+obj_name_call_offset1]
+			mov edx,[ecx]
+			mov edx,[edx+obj_name_call_offset2]
+			push 0;
+			mov ebx,ID;
+			push ebx;
+			call edx;
+			mov eax,[eax+0x18];
+			mov name,eax;
+		}
+	}
+	_except(1)
+	{
+		TRACE(_T("获取经验名字错误"));
+		return NULL;
+	}
+	return name;
+}
+
+
+DWORD Gamecall::GetExperienceNameID(DWORD ID)
+{
+	DWORD ID1 = 0;
+	_try
+	{
+		__asm
+		{
+			mov eax,obj_name_call_base;
+			mov eax,[eax];
+			mov ecx,[eax+Experience_status_offset2] //经验效果的二级偏移
+			mov edx,[ecx]
+			mov edx,[edx+obj_name_call_offset2]
+			push 0;
+			mov ebx,ID;
+			push ebx;
+			call edx;
+			mov eax,[eax+0x14];
+			mov ID1,eax;
+		}
+	}
+	_except(1)
+	{
+		TRACE(_T("获取经验名字ID错误"));
+		return NULL;
+	}
+	return ID1;
+}
+
+DWORD Gamecall::GetExperienceNameID_SY(int i,DWORD m_adress)
+{
+	DWORD Adress = 0;
+	_try
+	{
+		if ( m_adress != 0 )
+		{
+			Adress = ReadDWORD( m_adress + i*Experience_status_offset3 + Experience_status_offset4 ) ;   //C0是三级偏移   1C是四级偏移
+		}
+	}
+	_except(1)
+	{
+		TRACE(_T("获取名字ID结构的索引错误"));
+		return -1;
+	}
+	return Adress;
+}
+
+BOOL Gamecall::GetPlayExperienceStatusName(DWORD m_adressA,wchar_t * ExperienceName)
+{
+	wchar_t *name = {0};
+	DWORD pos = 0;
+	DWORD pos1 = 0;
+	DWORD SY = 0;
+	DWORD ID = 0;
+	pos = ReadDWORD(m_adressA+Experience_status_offset1+0x4);
+
+// TRACE1("pos===%d",pos);
+
+	pos1 = ReadDWORD(m_adressA+Experience_status_offset1);  //经验效果的一级偏移
+
+// TRACE1("pos1===%d",pos1);
+	
+	if ( pos > 0 )
+	{
+		for ( int i = 0; i < 10; i++  )
+		{
+			SY = GetExperienceNameID_SY( i,pos1);  //获取名字ID结构的索引
+			if ( SY == 0 )
+			{
+				return false;
+			}
+			ID = GetExperienceNameID(SY); //获取经验名字ID
+			if ( ID != 0 )
+			{
+				name =  GetExperienceName(ID); //获取经验名字
+				if ( wcscmp(name,ExperienceName) == 0 )
+				{
+// 					TRACE("返回true");
+					return true;
+				}
+			}
+		}
+	}
+// 	TRACE("返回FALSE");
     return FALSE;
 }
 
@@ -6733,23 +6895,47 @@ BOOL Gamecall::GetPlayExperienceStatus()
     //GetUIAddrByName(L"", pUiAddr);
     //if(*pUiAddr == 0)
     //  return FALSE;
-    KONGJIAN_JIEGOU jiegou = {NULL};
+    KONGJIAN_JIEGOU jiegou;
+	ZeroMemory(&jiegou,sizeof(KONGJIAN_JIEGOU));
     jiegou.adress = (DWORD)GetUIBinTreeBaseAddr();
-    jiegou.name = L"Normal";
+    jiegou.name = L"00008130.UI.Normal_10";
     jiegou.ID = 0;
     GetUiAddrByName(jiegou);
-    DWORD pos = -1;
+
+	//TRACE1("ui:%x",jiegou.adress);
+
+	wchar_t * ExperienceName = L"???"; //这个名字就是经验药品在左边的名字
+
+	KONGJIAN_JIEGOU jiegou2;
+	ZeroMemory(&jiegou2,sizeof(KONGJIAN_JIEGOU));
+	jiegou2.adress = jiegou.ID;
+	jiegou2.name = ExperienceName;
+	BOOL pos = FALSE;
+	pos = (BOOL)sendcall(id_msg_GetPlayExperienceStatusName,&jiegou2);
+	//pos =  GetPlayExperienceStatusName(jiegou.adress,str1);  //获取经验名字  参数1是UI地址  参数2 是药品的名字
+	if ( pos == TRUE )
+	{
+		TRACE(_T("经验药已经吃了"));
+		 return TRUE;
+	}
+	else
+	{
+		TRACE(_T("没有吃经验药"));
+		return FALSE;
+	}
+
+   /* DWORD pos = -1;
     pos = ReadDWORD(ReadDWORD(jiegou.ID + 0x83F8) + 0x1C);
     TRACE1("经验效果的ID %X", pos);
-    if(pos != 0) {
+    if(pos != 0)
+    {
         TRACE(_T("经验药物已经吃了,不需要再吃了"));
         return TRUE;
     }
-    if(pos == 0) {
+    if(pos == 0)
         TRACE(_T("没有吃经验药物,请吃经验药物"));
+    return FALSE;*/
     }
-    return FALSE;
-}
 
 void Gamecall::GetUiAddrByName(KONGJIAN_JIEGOU& jiegou)
 {
@@ -6767,6 +6953,7 @@ void Gamecall::_GetUiAddrByName(Tree* Addr, wchar_t* name, DWORD& reAddr)
         //TRACE(_T("返回了"));
         return;
     }
+
     wchar_t* uiname  = {0};
     if(!IsBadReadPtr((void*)GetUiNewName(Addr->Adress), sizeof(DWORD))) {
         uiname = GetUiNewName(Addr->Adress);//获取技能面板名字
@@ -6931,7 +7118,6 @@ void Gamecall::ChangeHeight(float how)
 
 DWORD Gamecall::GetObjectSy_90(DWORD pObjAddress)
 {
-    TRACE(_T("GetObjectSy_90"));
     DWORD result;
     result = 0;
     __try {
@@ -6979,9 +7165,8 @@ BOOL Gamecall::PickupTaskts(ObjectNode* pNode)
     for(int i = 0; i < 10; i++) {
         GetUIAddrByName(L"PickupItemPanel", &uiaddr);
         TRACE1("ui地址:%x", uiaddr);
-        if(uiaddr != NULL) {
+        if(uiaddr != NULL)
             ui_status = ReadDWORD(uiaddr + 0x38);
-        }
 
         TRACE1("ui_status:%d", ui_status);
         if(ui_status == 1) {
@@ -7049,5 +7234,190 @@ void Gamecall::CloseXiaoDongHua()
         Sleep(1000);
     }
 
+}
+
+DWORD Gamecall::GetKaiShiAdress()  //获取开始地址
+{
+    DWORD Adress;
+    Adress = 0;
+    _try
+    {
+        Adress = ReadDWORD(ReadDWORD(ReadDWORD(bag_item_name_call_base) + Wuqi_po10_offset1) + Wuqi_po10_offset2);
+    }
+    _except(1)
+    {
+        TRACE("获取开始地址错误");
+    }
+    return Adress;
+}
+
+DWORD Gamecall::GetBiJiaoShu(int i, DWORD m_adress) //获取比较数值
+{
+
+    DWORD Adress = 0;
+    _try
+    {
+        if(m_adress != 0)
+            Adress = (DWORD)ReadByte(ReadDWORD(m_adress + i * 4) + 0x30);
+    }
+    _except(1)
+    {
+        TRACE("获取比较数值错误");
+    }
+    return Adress;
+}
+
+DWORD Gamecall::_IsCanShu(DWORD adress, DWORD adress1) //是否是这个参数
+{
+    byte is = 0;
+    if(adress == 0 || adress1 == 0)
+        return -1;
+    _try
+    {
+        _asm
+        {
+            mov ecx, adress;
+            push ecx;
+            mov eax, adress1;
+            movzx eax, byte ptr ds:[eax+0x24];
+            push eax;
+            mov eax, adress1;
+            mov eax, dword ptr ds:[eax+0x20];
+            push eax;
+            mov eax, 0x00488380;
+            call eax;
+            add esp, 0xC;
+            mov is, al;
+
+        }
+    }
+    _except(1)
+    {
+        TRACE("是否是这个参数出错");
+        return -1;
+    }
+    return (DWORD)is;
+}
+
+DWORD Gamecall::IsCanShu(DWORD adress, DWORD adress1) //是否是这个参数
+{
+    PARAM_JIEFENGZHUANGBEI temp;
+    temp.argv1 = adress;
+    temp.argv2 = adress1;
+    return (DWORD)sendcall(id_msg_IsCanShu, &temp);
+}
+
+
+DWORD Gamecall::GetBiJiaoShu1(int i, DWORD m_adress) //获取比较数值1
+{
+
+    DWORD Adress = 0;
+    _try
+    {
+        if(m_adress != 0)
+            Adress = (DWORD)ReadByte(ReadDWORD(m_adress + i * 4) + 0x8);
+    }
+    _except(1)
+    {
+        TRACE("获取比较数值1错误");
+        return -1;
+    }
+    return Adress;
+}
+
+DWORD Gamecall::GetBiJiaoShu2(int i, DWORD m_adress) //获取比较数值2
+{
+
+    DWORD Adress = 0;
+    _try
+    {
+        if(m_adress != 0)
+            Adress = (DWORD)ReadByte(ReadDWORD(m_adress + i * 4) + Wuqi_po10_cmp2_offset);
+    }
+    _except(1)
+    {
+        TRACE("获取比较数值2错误");
+        return -1;
+    }
+    return Adress;
+}
+
+
+DWORD Gamecall::GetBiJiaoShu3(DWORD m_adress)  //获取比较数值3 这里用到的2个地址都是随便弄的，还没有固定的特征码。
+{
+
+    DWORD Adress = 0;
+    _try
+    {
+        if(m_adress != 0)
+            Adress = ReadDWORD(ReadDWORD(m_adress + obj_type4_id2_offset) + obj_type4_view_offset1);
+    }
+    _except(1)
+    {
+        TRACE("获取比较数值3错误");
+    }
+    return Adress;
+}
+
+DWORD Gamecall::GetBiJiaoShu4(int i, DWORD m_adress) //获取比较数值4
+{
+
+    DWORD Adress = 0;
+    _try
+    {
+        if(m_adress != 0)
+            Adress = ReadDWORD(ReadDWORD(m_adress + i * 4) + Wuqi_po10_cmp4_offset);
+    }
+    _except(1)
+    {
+        TRACE("获取比较数值4错误");
+        return -1;
+    }
+    return Adress;
+}
+
+//卸装备
+//参数是身上的格子数
+//TODO:
+void Gamecall::_XieZhuangBei(DWORD pos)
+{
+    __try
+    {
+        __asm
+        {
+            mov eax, pos;
+            push eax;
+            mov eax, obj_enum_base;
+            mov eax, [eax];
+            mov eax, [eax+xiezhuangbei_offset1];
+            mov eax, [eax+xiezhuangbei_offset2];
+            mov eax, [eax+xiezhuangbei_offset3];
+            push eax;
+            mov eax, xiezhuangbei_call;
+            call eax;
+        }
+    }
+    __except(1)
+    {
+        TRACE(_T("卸装备出错"));
+    }
+}
+
+BOOL Gamecall::GetPlayerFightingStatus()
+{
+	DWORD pAddr = GetPlayerDataAddr();
+	int value = 0;
+
+
+	__try
+	{
+		value =ReadDWORD(pAddr + Play_fighting_status_offset3);
+		//TRACE1("战斗状态:%d",value);
+	}__except(1)
+	{
+		TRACE(_T("获得战斗状态出错"));
+	}
+
+	return (value==1);
 }
 

@@ -87,9 +87,15 @@ public:
     float GetPlayerViewPoint();     //角色面向
     DWORD GetPlayerQuestUIStatus(); //判断角色任务相关ui状态是否弹出
     DWORD GetPlayerQuestUIStatusts();   //判断角色任务相关ui状态是否弹出
-    BYTE GetPlayerDeadStatus(); //死亡状态
+    static BYTE GetPlayerDeadStatus(); //死亡状态
     DWORD GetCityID();
     BOOL GetPlayExperienceStatus();//获得经验药状态
+	BOOL GetPlayExperienceStatusName(DWORD m_adressA,wchar_t * ExperienceName);  //获取经验名字  参数1是UI地址  参数2 是药品的名字
+	DWORD GetExperienceNameID_SY(int i,DWORD m_adress);//获取经验药名字ID结构的索引
+	DWORD GetExperienceNameID(DWORD ID); //获取经验名字ID
+	wchar_t* GetExperienceName(DWORD ID); //获取经验名字
+	static BOOL GetPlayerFightingStatus();//获得战斗状态
+
     void _LinQuJiangLi();
 
 
@@ -138,7 +144,7 @@ public:
     BOOL isPlayerChanneling();  //正在读条
     BOOL isPlayerSteping();     //玩家正在走路
     BOOL isLoginInSelectPlayer();   //判断是否进入了角色选择画面
-    int isLoadingMap();     //过图状态
+   static int isLoadingMap();     //过图状态
     BOOL isHaveXianlu(int index);
     BOOL isCityConveyLoadingMap();
     BOOL isCityConveying();
@@ -289,16 +295,24 @@ public:
     //武器强化
     void        HeChengWuQi(_BAGSTU& zhu, _BAGSTU& fu);
     void    HeChengWuQi_Po5(_BAGSTU& zhu, _BAGSTU& fu); //合成武器破5
-    void        HeChengWuQi_Po10(_BAGSTU& zhu, _BAGSTU& fu); //合成武器破10
+    void        HeChengWuQi_Po10(_BAGSTU& zhu, _BAGSTU& fu,DWORD adress); //合成武器破10
     void        JieFengZhuangBei(DWORD zhuangbei, DWORD jiefengfu_ID, DWORD num);
     void        JieFengZhuangBei(DWORD adress1, DWORD adress2, DWORD adress3, DWORD adress4, DWORD adress5, DWORD adress6, DWORD adress7); //解封盒子
     void        FenJie(_BAGSTU& bag);
-
+	DWORD GetKaiShiAdress();//获取开始地址
+	DWORD GetBiJiaoShu(int i,DWORD m_adress);//获取比较数值
+	DWORD _IsCanShu(DWORD adress,DWORD adress1);////是否是这个参数 
+	DWORD IsCanShu(DWORD adress,DWORD adress1);////是否是这个参数 
+	DWORD GetBiJiaoShu1(int i,DWORD m_adress);// //获取比较数值1
+	DWORD GetBiJiaoShu2(int i,DWORD m_adress);  //获取比较数值2
+	DWORD GetBiJiaoShu3(DWORD m_adress);  //获取比较数值3
+	DWORD GetBiJiaoShu4(int i,DWORD m_adress);  //获取比较数值4
+	
 
 
     //穿装备
     void        WearEquipment(_BAGSTU& bag);
-
+	void        _XieZhuangBei(DWORD pos);
 
     //捡东西
     void        Pickup1(ObjectNode* pObj);    //第一次捡
