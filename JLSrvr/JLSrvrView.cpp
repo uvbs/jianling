@@ -143,7 +143,7 @@ void CJLSrvrView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
         //删掉自己的列
         for(int i = 0; i < NowCount; i++)
         {
-            TRACE1(_T("NowCount = %d"), NowCount);
+            TRACE(_T("NowCount = %d"), NowCount);
             if(GetListCtrl().GetItemData(i) == (DWORD)pHint)
             {
                 GetListCtrl().DeleteItem(i);
@@ -241,7 +241,7 @@ void CJLSrvrView::OnMenuitem32774()
         CRequest* pRequest = (CRequest*)GetListCtrl().GetItemData(nItem);
         if(pRequest == NULL)
         {
-            TRACE0(_T("item数据是空值, 检查这个问题"));
+            TRACE(_T("item数据是空值, 检查这个问题"));
             return;
         }
 

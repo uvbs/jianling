@@ -6,7 +6,7 @@
 #define AFX_SHAREMEM_H__EA35F58D_574C_4783_BF68_B196F54257E6__INCLUDED_
 
 #if _MSC_VER > 1000
-#pragma once
+    #pragma once
 #endif // _MSC_VER > 1000
 
 
@@ -35,8 +35,10 @@ protected:
 public:
     virtual ~ShareMem();
     static ShareMem* Instance();
+private:
+    static ShareMem* _inst;
 
-
+public:
     BOOL Open(TCHAR szObjName[]);
     BOOL Create(DWORD dwCount, TCHAR szObjName[] = _T(""));
     void Close();
@@ -60,7 +62,6 @@ protected:
     HANDLE m_hFileMap;
     DWORD m_dwCount;
     SHAREINFO* m_lpMem;
-    static ShareMem* _inst;
 };
 
 

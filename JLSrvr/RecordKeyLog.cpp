@@ -43,7 +43,7 @@ CString CRecordKeyLog::GetDefaultSQL()
 
     CString strSql;
     strSql.Format(strFormat, m_strAcName);
-    TRACE0(strSql);
+    TRACE((LPCTSTR)strSql);
     return strSql;
 }
 
@@ -52,9 +52,9 @@ void CRecordKeyLog::DoFieldExchange(CFieldExchange* pFX)
 {
     //{{AFX_FIELD_MAP(CRecordKeyLog)
     pFX->SetFieldType(CFieldExchange::outputColumn);
-    RFX_Text(pFX, "uk_log_key", m_strKey);
-    RFX_Text(pFX, "uk_log_time", m_strTime);
-    RFX_Text(pFX, "uk_log_ip", m_strIp);
+    RFX_Text(pFX, _T("uk_log_key"), m_strKey);
+    RFX_Text(pFX, _T("uk_log_time"), m_strTime);
+    RFX_Text(pFX, _T("uk_log_ip"), m_strIp);
     //}}AFX_FIELD_MAP
 }
 

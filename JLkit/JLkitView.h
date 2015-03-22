@@ -5,12 +5,11 @@
 #define AFX_JLKITVIEW_H__2A3B3EDF_5BC0_49E0_8991_A0C7672EA797__INCLUDED_
 
 #if _MSC_VER > 1000
-#pragma once
+    #pragma once
 #endif // _MSC_VER > 1000
 
 
-enum
-{
+enum {
     COLUMN_TEXT_CHECKBOX = 0,
     COLUMN_TEXT_ACCOUNT,
     COLUMN_TEXT_PASSWORD,
@@ -21,12 +20,12 @@ enum
 };
 
 
-enum
-{
+enum {
     RESULT_FAIL_INJECT = 100,
     RESULT_NOKEY,
     RESULT_ALREADY_RUNNING,
-    RESULT_FAIL_CREATEGAMEPROCESS
+    RESULT_FAIL_CREATEGAMEPROCESS,
+    RESULT_LOGIN_SUCCESS
 };
 
 
@@ -42,29 +41,47 @@ protected:
 
     CJLkitDoc*  GetDocument();
 
+private:
+    CLaunchThread*  m_lpLaunchThread;
+
 public:
+    //串行文本
+    void SerializeText(CArchive& ar);
+
+    //加载游戏
+    void LaunchGame();
+
+    //领取和激活
+    void GetAndActive();
     void OnGet();
     void OnActive();
-    void SetResult(int nResult, int i);
-    void SerializeText(CArchive& ar);
-    CLaunchThread*  m_lpLaunchThread;
-    void LaunchGame();
-    void GetAndActive();
 
+    //账号数量
+    int m_LineNums;
+
+    //插入行
+    void InsertLine(int index, CString& strName, CString& strPw,
+                    CString& strConfig, CString& strScript);
+
+    //读取一行
+    BOOL ReadLine(CFile* pFile, TCHAR szLine[], BOOL bUnicode);
+
+    //显示结果
+    void SetResult(int nResult, int i);
 
 
 // Overrides
     // ClassWizard generated virtual function overrides
     //{{AFX_VIRTUAL(CJLkitView)
-	protected:
+protected:
     virtual void    OnInitialUpdate();
     virtual BOOL    PreCreateWindow(CREATESTRUCT& cs);
     virtual void    OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint);
-	virtual void PostNcDestroy();
-	//}}AFX_VIRTUAL
+    virtual void    PostNcDestroy();
+    //}}AFX_VIRTUAL
 // Generated message map functions
 
-    
+
 public:
     //{{AFX_MSG(CJLkitView)
     afx_msg void OnLookShareMem();
@@ -79,10 +96,9 @@ public:
     afx_msg void    OnTimer(UINT nIDEvent);
     afx_msg void    OnUpdateStart(CCmdUI* pCmdUI);
     afx_msg void    OnUpdateGetandactive(CCmdUI* pCmdUI);
-	afx_msg void OnSockinfo();
-	//}}AFX_MSG
+    afx_msg void OnSockinfo();
+    //}}AFX_MSG
     DECLARE_MESSAGE_MAP()
-
 };
 
 #endif // !defined(AFX_JLKITVIEW_H__2A3B3EDF_5BC0_49E0_8991_A0C7672EA797__INCLUDED_)

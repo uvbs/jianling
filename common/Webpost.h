@@ -33,11 +33,9 @@ public:
     static void UnInitCom();
 
     Webpost(const TCHAR szName[], const TCHAR szPw[]);
-    Webpost(const CString& strName, const CString& strPw);
     ~Webpost();
 
     void Close();
-    void InitSetting();
 
     //几个网页的操作
     int Login();	//登录
@@ -55,6 +53,9 @@ public:
 private:
     //通用的几个头信息
     void AddOtherHeader();
+
+    //读取一行
+    BOOL ReadStringA(LPSTR pLiner,DWORD dwLen);
 
     CString ac_name;
     CString ac_pw;

@@ -13,9 +13,7 @@
 #include "..\common\sharemem.h"
 
 
-class Gamecall:
-    public GameSpend,
-    public GameHepler
+class Gamecall: public GameSpend, public GameHepler
 {
 public:
     Gamecall();
@@ -90,12 +88,11 @@ public:
     static BYTE GetPlayerDeadStatus(); //死亡状态
     DWORD GetCityID();
     BOOL GetPlayExperienceStatus();//获得经验药状态
-	BOOL GetPlayExperienceStatusName(DWORD m_adressA,wchar_t * ExperienceName);  //获取经验名字  参数1是UI地址  参数2 是药品的名字
-	DWORD GetExperienceNameID_SY(int i,DWORD m_adress);//获取经验药名字ID结构的索引
-	DWORD GetExperienceNameID(DWORD ID); //获取经验名字ID
-	wchar_t* GetExperienceName(DWORD ID); //获取经验名字
-	static BOOL GetPlayerFightingStatus();//获得战斗状态
-
+    BOOL GetPlayExperienceStatusName(DWORD m_adressA, wchar_t* ExperienceName);  //获取经验名字  参数1是UI地址  参数2 是药品的名字
+    DWORD GetExperienceNameID_SY(int i, DWORD m_adress); //获取经验药名字ID结构的索引
+    DWORD GetExperienceNameID(DWORD ID); //获取经验名字ID
+    wchar_t* GetExperienceName(DWORD ID); //获取经验名字
+    static BOOL GetPlayerFightingStatus();//获得战斗状态
     void _LinQuJiangLi();
 
 
@@ -131,42 +128,42 @@ public:
 
 
     //判断
-    BOOL isConfirmDeleteTalnetPanelShow();
-    BOOL isTalentPanelShow();
-    BOOL isStrikeCd(DWORD id);  //判断技能cd
-    BOOL isPlayerDaodi();   //倒地状态
-    BOOL isLoots(DWORD pAddr);
-    BOOL isLoading(); //判断角色是否在打开任务物品的读条状态
-    BOOL isSelectedSlotHavePlayer(DWORD index); //角色选择界面当前的选择有一个角色存在
-    BOOL isQuestItem(DWORD pAddr); //判断是否是任务物品
-    BOOL isPlayerHasPickupQuestItemUI(); //有个拾取Ui弹出来
-    BOOL isPlayPickupUiStatus();//特殊的2次捡物判断
-    BOOL isPlayerChanneling();  //正在读条
-    BOOL isPlayerSteping();     //玩家正在走路
-    BOOL isLoginInSelectPlayer();   //判断是否进入了角色选择画面
-   static int isLoadingMap();     //过图状态
-    BOOL isHaveXianlu(int index);
-    BOOL isCityConveyLoadingMap();
-    BOOL isCityConveying();
-    BOOL isPickupDeadBody();
-    BOOL isDeadBody(DWORD pAddr);
-    BOOL isCanFenjie(DWORD pAddr); //可以分解
-    BOOL isFuhuoing();
-    DWORD isYaoPingCD(_BAGSTU& goods); //药瓶cd
-    DWORD isStrikeLocked(int index, DWORD pAddr);
-    DWORD isStrikeCanUse(int index, DWORD pAddr);
-    BOOL isBagFull();
+    BOOL        isConfirmDeleteTalnetPanelShow();
+    BOOL        isTalentPanelShow();
+    BOOL        isStrikeCd(DWORD id);  //判断技能cd
+    BOOL        isPlayerDaodi();   //倒地状态
+    BOOL        isLoots(DWORD pAddr);
+    BOOL        isLoading(); //判断角色是否在打开任务物品的读条状态
+    BOOL        isSelectedSlotHavePlayer(DWORD index); //角色选择界面当前的选择有一个角色存在
+    BOOL        isQuestItem(DWORD pAddr); //判断是否是任务物品
+    BOOL        isPlayerHasPickupQuestItemUI(); //有个拾取Ui弹出来
+    BOOL        isPlayPickupUiStatus();//特殊的2次捡物判断
+    BOOL        isPlayerChanneling();  //正在读条
+    BOOL        isPlayerSteping();     //玩家正在走路
+    BOOL        isLoginInSelectPlayer();   //判断是否进入了角色选择画面
+    static int  isLoadingMap();     //过图状态
+    BOOL        isHaveXianlu(int index);
+    BOOL        isCityConveyLoadingMap();
+    BOOL        isCityConveying();
+    BOOL        isPickupDeadBody();
+    BOOL        isDeadBody(DWORD pAddr);
+    BOOL        isCanFenjie(DWORD pAddr); //可以分解
+    BOOL        isFuhuoing();
+    DWORD       isYaoPingCD(_BAGSTU& goods); //药瓶cd
+    DWORD       isStrikeLocked(int index, DWORD pAddr);
+    DWORD       isStrikeCanUse(int index, DWORD pAddr);
+    BOOL        isBagFull();
     static BOOL isCanKill(ObjectNode* pNode);
     static BOOL isCanLook(DWORD pAddr);    //可以看到的
 
 
     //任务
     void        _GetAcceptedQuestToVector(std::vector<Quest>& QuestVec);
-    void            GetAcceptedQuestToVector(std::vector<Quest>& QuestVec);
+    void        GetAcceptedQuestToVector(std::vector<Quest>& QuestVec);
     void        DeliverQuests(DWORD id, DWORD step, DWORD questtype, DWORD ff, DWORD npcid1, DWORD npcid2, DWORD unknow, DWORD mianban);     //交任务
     DWORD       GetTaskStartAddr();  //获取任务开始地址
     DWORD       GetTaskID(int i, DWORD pAddr);  //获得当前任务ID
-    wchar_t*        GatTaskName(DWORD ID); //获取当前已接任务名字
+    wchar_t*    GatTaskName(DWORD ID); //获取当前已接任务名字
     DWORD       GetTaskNameID(int i, DWORD pAddr);  //获得当前任务名字ID
     DWORD       GetTaskPresentAddr(int i, DWORD pAddr);  //获得当前任务地址
     DWORD       GetPresentTaskIndexes(int i, DWORD pAddr);  //获得当前做到第几个小任务
@@ -174,7 +171,7 @@ public:
     DWORD       GetPresentTaskNum(int i, DWORD pAddr , DWORD info);  //获得当前小任务已经打的怪数量
     void        OpenQuestItem(DWORD ID, DWORD ID2);   //打开任务物品
     DWORD       GetTaskStepById(DWORD id);
-    void            _NPCJieRenWu(DWORD canshu1, DWORD canshu2, DWORD canshu3, DWORD canshu4, DWORD canshu5);//NPC接任务
+    void        _NPCJieRenWu(DWORD canshu1, DWORD canshu2, DWORD canshu3, DWORD canshu4, DWORD canshu5);//NPC接任务
 
 
     //ui 和技能
@@ -189,12 +186,12 @@ public:
     BOOL        ClickUI(UIOperator uiOp);   //点击ui
     Tree*       GetUIBinTreeBaseAddr();
     wchar_t*    GetUIName(DWORD pBarAddr);
-    wchar_t* GetUiNewName(DWORD pBarAddr);
+    wchar_t*    GetUiNewName(DWORD pBarAddr);
     void        _GetUItoVector(Tree* Base, std::vector<Tree*>& Allui);
     void        GetUItoVector(Tree* pBaseAddr, std::vector<Tree*>& Allui);
     void        GetUIAddrByName(wchar_t* name, DWORD* pUIAddr);
-    void    GetUiAddrByName(KONGJIAN_JIEGOU& jiegou);
-    void    _GetUiAddrByName(Tree* Addr, wchar_t* name, DWORD& reAddr);
+    void        GetUiAddrByName(KONGJIAN_JIEGOU& jiegou);
+    void        _GetUiAddrByName(Tree* Addr, wchar_t* name, DWORD& reAddr);
     void        GetStrikeToVector(std::vector<STRIKEINFO>& RangeObject);
     void        GetStrikeBarBaseAddr(Tree* pBaseAddr, DWORD* pStrikeBarBaseAddr);
     void        GetStrikeName(DWORD ID, DWORD IDD, STRIKENAME* pName);
@@ -211,25 +208,25 @@ public:
     DWORD       GetRJSkillIsJieSuo(int i, DWORD m_adress);  //取R键技能是否已经解锁
     DWORD       GetRJSkillISShiYong(int i, DWORD m_adress);  //取R键技能是否可以使用
     DWORD       GetRJSkillCD(int i, DWORD m_adress);  //取R键技能是否冷却
-    void Fuhuo(DWORD uiAddr);
-    void DaKaiJiNengMianBan(DWORD adress, DWORD adress1); //打开技能面板
+    void        Fuhuo(DWORD uiAddr);
+    void        DaKaiJiNengMianBan(DWORD adress, DWORD adress1); //打开技能面板
 
 
     //加点
-    void JiaJiNengDian(DWORD ID); //加技能点
-    void _JiaJiNengDian(DWORD ID); //加技能点
-    void QuChuJiNengDian(DWORD ID); //去除技能点
-    void _QuChuJiNengDian(DWORD ID); //去除技能点
-    void QueRenJiNengDian(); //确认技能点
-    void _QueRenJiNengDian(); //确认技能点
-    void OpenDeleteTalentPanel();
-    void _OpenDeleteTalentPanel();
-    void DaKaiQingChuQuanBuJiNengJieMian(DWORD adress, DWORD adress1);
-    void ConfirmDeletePalentPanelShowOk();
-    void _ConfirmDeletePalentPanelShowOk();
-    void QueRenQingChuQuanBuJiNengJieMian(DWORD adress, DWORD adress1);
-    void OpenTalentUI();
-    void _OpenTalentUI();
+    void    JiaJiNengDian(DWORD ID); //加技能点
+    void    _JiaJiNengDian(DWORD ID); //加技能点
+    void    QuChuJiNengDian(DWORD ID); //去除技能点
+    void    _QuChuJiNengDian(DWORD ID); //去除技能点
+    void    QueRenJiNengDian(); //确认技能点
+    void    _QueRenJiNengDian(); //确认技能点
+    void    OpenDeleteTalentPanel();
+    void    _OpenDeleteTalentPanel();
+    void    DaKaiQingChuQuanBuJiNengJieMian(DWORD adress, DWORD adress1);
+    void    ConfirmDeletePalentPanelShowOk();
+    void    _ConfirmDeletePalentPanelShowOk();
+    void    QueRenQingChuQuanBuJiNengJieMian(DWORD adress, DWORD adress1);
+    void    OpenTalentUI();
+    void    _OpenTalentUI();
 
 
     //商品
@@ -243,10 +240,10 @@ public:
     void        DeleteItem(_BAGSTU& bag);   //摧毁一个物品
 
     //背包
-    void _GetAllGoodsToVector(std::vector<_BAGSTU>& RangeObject);
+    void        _GetAllGoodsToVector(std::vector<_BAGSTU>& RangeObject);
     static void GetAllGoodsToVector(std::vector<_BAGSTU>& RangeObject);                // 遍历背包
     static void GetAllBodyEquipToVector(std::vector<_BAGSTU>& RangeObject);
-    void _GetAllBodyEquipToVector(std::vector<_BAGSTU>& RangeObject);
+    void        _GetAllBodyEquipToVector(std::vector<_BAGSTU>& RangeObject);
 
     BOOL        GetAllBaGuaToVector(std::vector<_BAGSTU>& BaGuaVec);
     BOOL        GetSpecBaGuaToVector(wchar_t* name, std::vector<_BAGSTU>& BaGuaVec);
@@ -293,26 +290,26 @@ public:
 
 
     //武器强化
-    void        HeChengWuQi(_BAGSTU& zhu, _BAGSTU& fu);
-    void    HeChengWuQi_Po5(_BAGSTU& zhu, _BAGSTU& fu); //合成武器破5
-    void        HeChengWuQi_Po10(_BAGSTU& zhu, _BAGSTU& fu,DWORD adress); //合成武器破10
-    void        JieFengZhuangBei(DWORD zhuangbei, DWORD jiefengfu_ID, DWORD num);
-    void        JieFengZhuangBei(DWORD adress1, DWORD adress2, DWORD adress3, DWORD adress4, DWORD adress5, DWORD adress6, DWORD adress7); //解封盒子
-    void        FenJie(_BAGSTU& bag);
-	DWORD GetKaiShiAdress();//获取开始地址
-	DWORD GetBiJiaoShu(int i,DWORD m_adress);//获取比较数值
-	DWORD _IsCanShu(DWORD adress,DWORD adress1);////是否是这个参数 
-	DWORD IsCanShu(DWORD adress,DWORD adress1);////是否是这个参数 
-	DWORD GetBiJiaoShu1(int i,DWORD m_adress);// //获取比较数值1
-	DWORD GetBiJiaoShu2(int i,DWORD m_adress);  //获取比较数值2
-	DWORD GetBiJiaoShu3(DWORD m_adress);  //获取比较数值3
-	DWORD GetBiJiaoShu4(int i,DWORD m_adress);  //获取比较数值4
-	
+    void  HeChengWuQi(_BAGSTU& zhu, _BAGSTU& fu);
+    void  HeChengWuQi_Po5(_BAGSTU& zhu, _BAGSTU& fu); //合成武器破5
+    void  HeChengWuQi_Po10(_BAGSTU& zhu, _BAGSTU& fu, DWORD adress); //合成武器破10
+    void  JieFengZhuangBei(DWORD zhuangbei, DWORD jiefengfu_ID, DWORD num);
+    void  JieFengZhuangBei(DWORD adress1, DWORD adress2, DWORD adress3, DWORD adress4, DWORD adress5, DWORD adress6, DWORD adress7); //解封盒子
+    void  FenJie(_BAGSTU& bag);
+    DWORD GetKaiShiAdress();//获取开始地址
+    DWORD GetBiJiaoShu(int i, DWORD m_adress); //获取比较数值
+    DWORD _IsCanShu(DWORD adress, DWORD adress1); ////是否是这个参数
+    DWORD IsCanShu(DWORD adress, DWORD adress1); ////是否是这个参数
+    DWORD GetBiJiaoShu1(int i, DWORD m_adress); // //获取比较数值1
+    DWORD GetBiJiaoShu2(int i, DWORD m_adress); //获取比较数值2
+    DWORD GetBiJiaoShu3(DWORD m_adress);  //获取比较数值3
+    DWORD GetBiJiaoShu4(int i, DWORD m_adress); //获取比较数值4
+
 
 
     //穿装备
     void        WearEquipment(_BAGSTU& bag);
-	void        _XieZhuangBei(DWORD pos);
+    void        _XieZhuangBei(DWORD pos);
 
     //捡东西
     void        Pickup1(ObjectNode* pObj);    //第一次捡
@@ -343,11 +340,11 @@ public:
 
 
     //攻击
-    int GetHealth(DWORD theValue);
-    void ChiYao(_BAGSTU& goods);
-    void ChiYao(const wchar_t* name);       //吃药, 药名
-    void Attack(int id);
-    void Attack(const wchar_t* name);
+    int     GetHealth(DWORD theValue);
+    void    ChiYao(_BAGSTU& goods);
+    void    ChiYao(const wchar_t* name);       //吃药, 药名
+    void    Attack(int id);
+    void    Attack(const wchar_t* name);
 
 
 
@@ -363,10 +360,12 @@ public:
     static BOOL Kill_ApplyConfig(ObjectVector& ObjectVec);
 
 
+    //辅助线程
     static UINT CALLBACK KeepAliveThread(LPVOID pParam);
     static UINT CALLBACK AttackHelperThread(LPVOID pParam);
 
 
+    //自定义杀怪过滤
     BOOL isCustomKill_DontKill(wchar_t* name);
     BOOL isCustomKill_AlwaysKill(wchar_t* name);
     static BOOL isCustomKill_HaveName(wchar_t* name);

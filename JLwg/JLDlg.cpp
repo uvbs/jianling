@@ -13,9 +13,9 @@
 
 
 #ifdef _DEBUG
-#define new DEBUG_NEW
-#undef THIS_FILE
-static char THIS_FILE[] = __FILE__;
+    #define new DEBUG_NEW
+    #undef THIS_FILE
+    static char THIS_FILE[] = __FILE__;
 #endif
 
 
@@ -56,22 +56,13 @@ END_MESSAGE_MAP()
 
 static UINT TaskThread(LPVOID pParam)
 {
-<<<<<<< HEAD
-	try
-	{
-		TaskScript task;
-		task.BeginTask();
-	}
-	catch (...)
-	{
-		TRACE(_T("任务报错"));
-	}
-    
-=======
-    
-    TaskScript task;
-    task.BeginTask();
->>>>>>> ec82f68341aec048924c2ea5f64172867a97816d
+    try {
+        TaskScript task;
+        task.BeginTask();
+    }
+    catch(...) {
+        TRACE(_T("任务报错"));
+    }
 
     return 0;
 }
@@ -82,13 +73,11 @@ static UINT TaskThread(LPVOID pParam)
 void CJLDlg::OnGotask()
 {
     //创建任务线程
-    if(m_pTaskThread == NULL)
-    {
+    if(m_pTaskThread == NULL) {
         m_pTaskThread = AfxBeginThread(TaskThread, 0);
         SetDlgItemText(IDC_GOTASK, _T("终止任务"));
     }
-    else
-    {
+    else {
         OnStopTask();
         m_pTaskThread = NULL;
         SetDlgItemText(IDC_GOTASK, _T("开始任务"));
@@ -111,8 +100,7 @@ void CJLDlg::OnWgdata()
 
 void CJLDlg::OnStopTask()
 {
-    if(m_pTaskThread != NULL)
-    {
+    if(m_pTaskThread != NULL) {
         ::TerminateThread(m_pTaskThread->m_hThread, 0);
         m_pTaskThread->Delete();
         m_pTaskThread = NULL;

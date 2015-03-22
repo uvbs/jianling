@@ -55,15 +55,15 @@ struct LOGIN_BUF
 {
     //功能号
     char fun;
-    char name[MAXLEN];
-    char pw[MAXLEN];
+    TCHAR name[MAXLEN];
+    TCHAR pw[MAXLEN];
 };
 
 
 struct REGIST_BUF: LOGIN_BUF
 {
-    char ip[MAXLEN];
-    char id[MAXLEN];
+    TCHAR ip[MAXLEN];
+    TCHAR id[MAXLEN];
 
 };
 
@@ -76,27 +76,29 @@ struct RET_BUF
 
 struct MODIFYBIND_BUF: LOGIN_BUF
 {
-    char old_bind[MAXLEN];
-    char new_bind[MAXLEN];
+    TCHAR old_bind[MAXLEN];
+    TCHAR new_bind[MAXLEN];
 };
 
 struct KEY_BUF: LOGIN_BUF
 {
-    char key[128];
+    TCHAR key[128];
 };
 
 struct BUG_BUF: LOGIN_BUF
 {
-    char szBug[BUFSIZ];
+    TCHAR szBug[BUFSIZ];
 };
 
 struct QUERYKEY_RET_BUF: RET_BUF
 {
     UCHAR count;
-    char key[128];
-    char buildtime[30];  //生成时间
-    char type[30];
+    TCHAR key[128];
+    TCHAR buildtime[30];  //生成时间
+    TCHAR type[30];
     int remaintime;  //剩余时间
 };
+
+typedef std::vector<QUERYKEY_RET_BUF> KeyVec;
 
 #endif

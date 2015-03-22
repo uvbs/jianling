@@ -57,6 +57,7 @@ CJLkitView::CJLkitView()
 {
     m_lpLaunchThread = NULL;
     m_dwDefaultStyle |= LVS_REPORT;
+    m_LineNums = 0;
 }
 
 CJLkitView::~CJLkitView()
@@ -79,15 +80,13 @@ BOOL CJLkitView::PreCreateWindow(CREATESTRUCT& cs)
 
 int CJLkitView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
-    if(CListView::OnCreate(lpCreateStruct) == -1)
-    {
+    if(CListView::OnCreate(lpCreateStruct) == -1) {
         return -1;
     }
 
     CString strHeading;
 
-    for(int i = 0; i < COLUMN_TEXT_NUMS; i++)
-    {
+    for(int i = 0; i < COLUMN_TEXT_NUMS; i++) {
         strHeading.LoadString(IDS_STRING128 + i);
         GetListCtrl().InsertColumn(i, (LPCTSTR)strHeading, LVCFMT_LEFT);
         GetListCtrl().SetColumnWidth(i, LVSCW_AUTOSIZE_USEHEADER);
@@ -106,8 +105,7 @@ void CJLkitView::OnProfile()
     CJLkitDoc* pDoc = GetDocument();
     POSITION rpos = GetListCtrl().GetFirstSelectedItemPosition();
 
-    if(rpos != NULL)
-    {
+    if(rpos != NULL) {
         int nItem = GetListCtrl().GetNextSelectedItem(rpos);
         CString strName = GetListCtrl().GetItemText(nItem, COLUMN_TEXT_ACCOUNT);
         CString strPw = GetListCtrl().GetItemText(nItem, COLUMN_TEXT_PASSWORD);
@@ -118,78 +116,70 @@ void CJLkitView::OnProfile()
 }
 
 
-// RESULT_FAIL_EXCEPTION,
-// RESULT_FAIL_CAPTCHA      ,
-// RESULT_FAIL_IPBLOCK  ,
-// RESULT_FAIL_PWERROR  ,
-// RESULT_FAIL_AUTH     ,
-// RESULT_FAIL_NOACTIVEITEMS,
-// RESULT_FAIL_ACTIVEITEMSERR   ,
-// RESULT_FAIL_TIMEOUT  ,
-// RESULT_SUCCESS,
-// RESULT_GET_ALEADY    ,
-// RESULT_GET_ERROR,
-// RESULT_LOGIN_NOUKEY
-// };
-
 void CJLkitView::SetResult(int nReslt, int i)
 {
-    if(nReslt == RESULT_SUCCESS)
-    {
-        GetListCtrl().SetItemText(i, COLUMN_TEXT_STATUS, _T("完成"));
-        GetListCtrl().SetCheck(i);
-    }
-    else if(nReslt == RESULT_FAIL_CAPTCHA)
-    {
-        GetListCtrl().SetItemText(i, COLUMN_TEXT_STATUS, _T("需要验证码"));
-    }
-    else if(nReslt == RESULT_FAIL_IPBLOCK)
-    {
-        GetListCtrl().SetItemText(i, COLUMN_TEXT_STATUS, _T("IP BLOCK"));
-    }
-    else if(nReslt == RESULT_FAIL_EXCEPTION)
-    {
-        GetListCtrl().SetItemText(i, COLUMN_TEXT_STATUS, _T("异常, 请重试一次"));
-    }
-    else if(nReslt == RESULT_FAIL_GETUKEY)
-    {
-        GetListCtrl().SetItemText(i, COLUMN_TEXT_STATUS, _T("无法获取UKEY"));
-    }
-    else if(nReslt == RESULT_NOKEY)
-    {
-        GetListCtrl().SetItemText(i, COLUMN_TEXT_STATUS, _T("没有有效KEY"));
-    }
-    else if(nReslt == RESULT_ALREADY_RUNNING)
-    {
-        GetListCtrl().SetItemText(i, COLUMN_TEXT_STATUS, _T("已经在运行.."));
-    }
-    else if(nReslt == RESULT_GET_ALEADY)
-    {
-        GetListCtrl().SetItemText(i, COLUMN_TEXT_STATUS, _T("已经领取过"));
-    }
-    else if(nReslt == RESULT_GET_ERROR)
-    {
-        GetListCtrl().SetItemText(i, COLUMN_TEXT_STATUS, _T("领取失败"));
-    }
-    else if(nReslt == RESULT_FAIL_TIMEOUT)
-    {
-        GetListCtrl().SetItemText(i, COLUMN_TEXT_STATUS, _T("超时"));
-    }
-    else if(nReslt == RESULT_FAIL_NOACTIVEITEMS)
-    {
-        GetListCtrl().SetItemText(i, COLUMN_TEXT_STATUS, _T("无需激活"));
-    }
-    else if(nReslt == RESULT_FAIL_PWERROR)
-    {
-        GetListCtrl().SetItemText(i, COLUMN_TEXT_STATUS, _T("密码错误"));
-    }
-    else if(nReslt == RESULT_FAIL_CREATEGAMEPROCESS)
-    {
-        GetListCtrl().SetItemText(i, COLUMN_TEXT_STATUS, _T("创建进程错误"));
-    }
-    else if(nReslt == RESULT_FAIL_AUTH)
-    {
-        GetListCtrl().SetItemText(i, COLUMN_TEXT_STATUS, _T("验证失败, 请重试一次"));
+    switch(nReslt) {
+        case  RESULT_SUCCESS: {
+            GetListCtrl().SetItemText(i, COLUMN_TEXT_STATUS, _T("完成"));
+            GetListCtrl().SetCheck(i);
+            break;
+        }
+        case  RESULT_FAIL_CAPTCHA: {
+            GetListCtrl().SetItemText(i, COLUMN_TEXT_STATUS, _T("需要验证码"));
+            break;
+        }
+        case  RESULT_FAIL_IPBLOCK: {
+            GetListCtrl().SetItemText(i, COLUMN_TEXT_STATUS, _T("此IP被封锁, 使用代理重试"));
+            break;
+        }
+        case  RESULT_FAIL_EXCEPTION: {
+            GetListCtrl().SetItemText(i, COLUMN_TEXT_STATUS, _T("异常, 请重试一次"));
+            break;
+        }
+        case  RESULT_FAIL_GETUKEY: {
+            GetListCtrl().SetItemText(i, COLUMN_TEXT_STATUS, _T("无法获取UKEY"));
+            break;
+        }
+        case  RESULT_NOKEY: {
+            GetListCtrl().SetItemText(i, COLUMN_TEXT_STATUS, _T("没有有效KEY"));
+            break;
+        }
+        case  RESULT_ALREADY_RUNNING: {
+            GetListCtrl().SetItemText(i, COLUMN_TEXT_STATUS, _T("已经在运行.."));
+            break;
+        }
+        case  RESULT_GET_ALEADY: {
+            GetListCtrl().SetItemText(i, COLUMN_TEXT_STATUS, _T("已经领取过"));
+            break;
+        }
+        case  RESULT_GET_ERROR: {
+            GetListCtrl().SetItemText(i, COLUMN_TEXT_STATUS, _T("领取失败"));
+            break;
+        }
+        case  RESULT_FAIL_TIMEOUT: {
+            GetListCtrl().SetItemText(i, COLUMN_TEXT_STATUS, _T("超时"));
+            break;
+        }
+        case  RESULT_FAIL_NOACTIVEITEMS: {
+            GetListCtrl().SetItemText(i, COLUMN_TEXT_STATUS, _T("无需激活"));
+            break;
+        }
+        case  RESULT_FAIL_PWERROR: {
+            GetListCtrl().SetItemText(i, COLUMN_TEXT_STATUS, _T("密码错误"));
+            break;
+        }
+        case  RESULT_FAIL_CREATEGAMEPROCESS: {
+            GetListCtrl().SetItemText(i, COLUMN_TEXT_STATUS, _T("创建进程错误"));
+            break;
+        }
+        case  RESULT_FAIL_AUTH: {
+            GetListCtrl().SetItemText(i, COLUMN_TEXT_STATUS, _T("验证失败, 请重试一次"));
+            break;
+        }
+        case RESULT_LOGIN_SUCCESS: {
+            GetListCtrl().SetItemText(i, COLUMN_TEXT_STATUS, _T("完成登陆"));
+            break;
+        }
     }
 }
 
@@ -207,10 +197,8 @@ void CJLkitView::LaunchGame()
     CListCtrl& list = GetListCtrl();
 
     //当前选中的条目
-    for(int i = 0; i < list.GetItemCount(); i++)
-    {
-        if(list.GetCheck(i))
-        {
+    for(int i = 0; i < list.GetItemCount(); i++) {
+        if(list.GetCheck(i)) {
             CString strName = list.GetItemText(i, COLUMN_TEXT_ACCOUNT);
             CString strPw = list.GetItemText(i, COLUMN_TEXT_PASSWORD);
             CString strConfig = list.GetItemText(i, COLUMN_TEXT_CONFIG);
@@ -230,20 +218,16 @@ void CJLkitView::OnUpdateStart(CCmdUI* pCmdUI)
     pCmdUI->Enable(FALSE);
     int count = GetListCtrl().GetItemCount();
 
-    for(int i = 0; i < count; i++)
-    {
-        if(GetListCtrl().GetCheck(i))
-        {
+    for(int i = 0; i < count; i++) {
+        if(GetListCtrl().GetCheck(i)) {
             pCmdUI->Enable();
             break;
         }
     }
 
 
-    if(m_lpLaunchThread)
-    {
-        if(m_lpLaunchThread->isWorking())
-        {
+    if(m_lpLaunchThread) {
+        if(m_lpLaunchThread->isWorking()) {
             pCmdUI->Enable(FALSE);
         }
     }
@@ -256,10 +240,8 @@ void CJLkitView::OnGet()
     int count = GetListCtrl().GetItemCount();
     CJLkitDoc* pDoc = GetDocument();
 
-    for(int i = 0; i < count; i++)
-    {
-        if(GetListCtrl().GetCheck(i))
-        {
+    for(int i = 0; i < count; i++) {
+        if(GetListCtrl().GetCheck(i)) {
             CString strName = GetListCtrl().GetItemText(i, COLUMN_TEXT_ACCOUNT);
             CString strPw = GetListCtrl().GetItemText(i, COLUMN_TEXT_PASSWORD);
             int nRet = pDoc->Get(strName, strPw);
@@ -273,10 +255,8 @@ void CJLkitView::OnActive()
     int count = GetListCtrl().GetItemCount();
     CJLkitDoc* pDoc = GetDocument();
 
-    for(int i = 0; i < count; i++)
-    {
-        if(GetListCtrl().GetCheck(i))
-        {
+    for(int i = 0; i < count; i++) {
+        if(GetListCtrl().GetCheck(i)) {
             CString strName = GetListCtrl().GetItemText(i, COLUMN_TEXT_ACCOUNT);
             CString strPw = GetListCtrl().GetItemText(i, COLUMN_TEXT_PASSWORD);
 
@@ -324,8 +304,7 @@ void CJLkitView::GetAndActive()
     GetDocument()->GetandActive();
 
     //开始
-    for(int i = 0; i < GetListCtrl().GetItemCount(); i++)
-    {
+    for(int i = 0; i < GetListCtrl().GetItemCount(); i++) {
         CString strName = GetListCtrl().GetItemText(i, COLUMN_TEXT_ACCOUNT);
         CString strPw = GetListCtrl().GetItemText(i, COLUMN_TEXT_PASSWORD);
 
@@ -339,35 +318,27 @@ _Again:
         GetListCtrl().SetItemText(i, COLUMN_TEXT_STATUS, _T("正在登录"));
         int nResult = poster.Login();
         SetResult(nResult, i);
-        if(nResult != RESULT_SUCCESS)
-        {
+        if(nResult != RESULT_SUCCESS) {
 
             if(nResult == RESULT_FAIL_CAPTCHA ||
-                    nResult == RESULT_FAIL_IPBLOCK)
-            {
+                    nResult == RESULT_FAIL_IPBLOCK) {
                 //这两种情况直接换ip
                 GetDocument()->m_lpVpnFile->AlwaysConnect();
                 LoginTimes = 0;
             }
-            else if(nResult == RESULT_FAIL_PWERROR)
-            {
+            else if(nResult == RESULT_FAIL_PWERROR) {
                 //这种情况直接退
                 strLine.Remove(_T('\n'));
                 strLine += _T(" : 密码错误");
                 strLine += _T("\n");
-<<<<<<< HEAD
-				bError = TRUE;
-=======
+
                 bError = TRUE;
->>>>>>> ec82f68341aec048924c2ea5f64172867a97816d
                 goto _WriteError;
             }
-            else
-            {
+            else {
                 //剩余情况等两次
                 TRACE1("失败%d次", LoginTimes++);
-                if(LoginTimes == 2)
-                {
+                if(LoginTimes == 2) {
                     GetDocument()->m_lpVpnFile->AlwaysConnect();
                     LoginTimes = 0;
                 }
@@ -383,24 +354,22 @@ _Again:
         //{
         //    bError = TRUE;
         //}
-		
-		GetListCtrl().SetItemText(i, COLUMN_TEXT_STATUS, _T("正在激活"));
+
+        GetListCtrl().SetItemText(i, COLUMN_TEXT_STATUS, _T("正在激活"));
         nResult = poster.Active();
         SetResult(nResult, i);
-        if(nResult != RESULT_SUCCESS)
-        {
+        if(nResult != RESULT_SUCCESS) {
             bError = TRUE;
         }
 
 
 _WriteError:
-        if(bError)
-        {
+        if(bError) {
             GetDocument()->errfile.WriteString(strLine);
         }
     }
-	GetDocument()->errfile.Close();
-	GetDocument()->m_lpVpnFile->Close();
+    GetDocument()->errfile.Close();
+    GetDocument()->m_lpVpnFile->Close();
 }
 
 
@@ -411,44 +380,168 @@ void CJLkitView::OnGetAndActive()
 }
 
 
-void CJLkitView::SerializeText(CArchive& ar)
+void CJLkitView::InsertLine(int index, CString& strName,
+                            CString& strPw, CString& strConfig,
+                            CString& strScript)
 {
-    // TODO: Add your command handler code here
-    if(ar.IsStoring())
-    {
-    }
-    else
-    {
-        CJLkitDoc* pDoc = GetDocument();
-        GetListCtrl().DeleteAllItems();
-        CString strDefault(_T("Default"));
-        CString strLine;
-        int count = 0;
+    GetListCtrl().InsertItem(index, _T(""));
+    GetListCtrl().SetItemText(index, COLUMN_TEXT_ACCOUNT, strName);
+    GetListCtrl().SetItemText(index, COLUMN_TEXT_PASSWORD, strPw);
+    GetListCtrl().SetItemText(index, COLUMN_TEXT_SCRIPT, strScript);
+    GetListCtrl().SetItemText(index, COLUMN_TEXT_CONFIG, strConfig);
+}
 
-        while(ar.ReadString(strLine))
-        {
-            CString strName;
-            CString strPw;
-            Webpost::GetPwName(strLine, strName, strPw);
 
-            if(strName != _T("") && strPw != _T(""))
+BOOL CJLkitView::ReadLine(CFile* pFile, TCHAR szLine[], BOOL bUnicode)
+{
+    BOOL bRet = FALSE;
+    if(bUnicode) {
+
+        //准备内存
+        wchar_t* pLiner = new wchar_t[BUFSIZ];
+        ZeroMemory(pLiner, BUFSIZ * sizeof(wchar_t));
+
+        TRY {
+            //开始读取文本
+            wchar_t bChar = 0;
+            int i = 0;
+            for(;;)
             {
-                GetListCtrl().InsertItem(count, _T(""));
-                GetListCtrl().SetItemText(count, COLUMN_TEXT_ACCOUNT, strName);
-                GetListCtrl().SetItemText(count, COLUMN_TEXT_PASSWORD, strPw);
-                GetListCtrl().SetItemText(count, COLUMN_TEXT_SCRIPT, strDefault);
-                GetListCtrl().SetItemText(count, COLUMN_TEXT_CONFIG, strDefault);
-                count++;
+
+                if(pFile->Read(&bChar, sizeof(bChar)) == 0)
+                    CFileException::ThrowOsError(CFileException::endOfFile);
+
+                if(bChar == 0x0d || bChar == 0x0a) {
+                    if(bChar == '\r')
+                        pFile->Read(&bChar, sizeof(bChar));
+
+                    break;
+                }
+
+                //过滤一些字符
+                //if(bChar == ' ') continue;
+                if(bChar == 0xfeff) continue;
+
+                memcpy(&pLiner[i++], &bChar, sizeof(bChar));
             }
+
+            pLiner[i] = '\0';
+
+            //根据工程转换
+            #ifdef _UNICODE
+            wcscpy(szLine, pLiner);
+            #else
+            //UNICODE -> MBCS
+            wcstombs(szLine, pLiner, sizeof(BUFSIZ)*sizeof(wchar_t));
+            #endif
+
+
+            bRet = TRUE;
+        }
+        CATCH(CFileException, pEx) {
+            pEx->Delete();
+
+        }
+        END_CATCH
+
+
+        delete pLiner;
+
+    }
+    else {
+        //准备内存
+        char* pLiner = new char[BUFSIZ];
+        ZeroMemory(pLiner, BUFSIZ);
+
+        try {
+            //开始读取文本
+            char bChar = 0;
+            int i = 0;
+            for(;;) {
+
+                if(pFile->Read(&bChar, sizeof(bChar)) == 0)
+                    CFileException::ThrowOsError(CFileException::endOfFile);
+
+                if(bChar == 0x0d || bChar == 0x0a) {
+                    if(bChar == '\r')
+                        pFile->Read(&bChar, sizeof(bChar));
+
+                    break;
+                }
+
+                //
+                //if(bChar == ' ') continue;
+
+                memcpy(&pLiner[i++], &bChar, sizeof(bChar));
+            }
+
+            pLiner[i] = '\0';
+
+            //转换字符串
+            #ifdef _UNICODE
+            //MBCS -> UNICODE
+            mbstowcs(szLine, pLiner, strlen(pLiner));
+            #else
+            strcpy(szLine, pLiner);
+            #endif
+
+
+            bRet = TRUE;
+        }
+        catch(CFileException* pEx) {
+            pEx->Delete();
+
         }
 
-        for(int i = 0; i < COLUMN_TEXT_NUMS; i++)
-        {
+        delete pLiner;
+    }
+
+    return bRet;
+}
+
+
+//串行
+void CJLkitView::SerializeText(CArchive& ar)
+{
+    if(ar.IsStoring()) {
+
+    }
+    else {
+
+        //获取对象指针
+        CFile* pFile = ar.GetFile();
+
+        //读取一部分判断编码
+        TCHAR szIsUnicode[BUFSIZ];
+        pFile->Read(szIsUnicode, sizeof(szIsUnicode));
+        pFile->SeekToBegin();
+
+        //判断编码
+        TCHAR szLine[BUFSIZ] = {0};
+
+        INT nTestMode = IS_TEXT_UNICODE_STATISTICS;
+        BOOL bIsUnicode = ::IsTextUnicode(szIsUnicode, sizeof(szIsUnicode), &nTestMode);
+
+
+        //插入行
+        while(ReadLine(pFile, szLine, bIsUnicode)) {
+
+            CString strName;
+            CString strPw;
+            Webpost::GetPwName(CString(szLine), strName, strPw);
+
+            InsertLine(m_LineNums++, strName, strPw, CString(_T("Default")), CString(_T("Default")));
+
+            ZeroMemory(szLine, BUFSIZ * sizeof(TCHAR));
+        }
+
+        //设置列宽
+        for(int i = 0; i < COLUMN_TEXT_NUMS; i++) {
             GetListCtrl().SetColumnWidth(i, LVSCW_AUTOSIZE_USEHEADER);
         }
 
         JLShareMem::Instance()->Close();
-        JLShareMem::Instance()->Create(count, SHAREOBJNAME);
+        JLShareMem::Instance()->Create(m_LineNums, SHAREOBJNAME);
     }
 }
 
@@ -458,17 +551,14 @@ void CJLkitView::OnUpdateProfile(CCmdUI* pCmdUI)
     pCmdUI->Enable(FALSE);
     int count = GetListCtrl().GetItemCount();
 
-    for(int i = 0; i < count; i++)
-    {
-        if(GetListCtrl().GetCheck(i))
-        {
+    for(int i = 0; i < count; i++) {
+        if(GetListCtrl().GetCheck(i)) {
             pCmdUI->Enable();
             break;
         }
     }
 
-    if(GetListCtrl().GetSelectedCount() != 0)
-    {
+    if(GetListCtrl().GetSelectedCount() != 0) {
         pCmdUI->Enable();
     }
 }
@@ -479,7 +569,6 @@ void CJLkitView::OnUpdateSelectall(CCmdUI* pCmdUI)
 
 void CJLkitView::OnReportbug()
 {
-    // TODO: Add your command handler code here
     CJLkitDoc* pDoc = GetDocument();
     CDlgBugRep dlg(pDoc);
     dlg.DoModal();
@@ -490,10 +579,8 @@ void CJLkitView::OnLookShareMem()
 {
 
     SHAREINFO* pShareInfo = JLShareMem::Instance()->GetMem();
-    if(pShareInfo != NULL)
-    {
-        for(unsigned i = 0; i < JLShareMem::Instance()->GetAllCount(); i++, pShareInfo++)
-        {
+    if(pShareInfo != NULL) {
+        for(unsigned i = 0; i < JLShareMem::Instance()->GetAllCount(); i++, pShareInfo++) {
             TCHAR szTemp[BUFSIZ] = {0};
             wsprintf(szTemp, _T("帐号:%s PID:%d 配置:%s 脚本:%s\n"),
                      pShareInfo->szName,
@@ -509,18 +596,17 @@ void CJLkitView::OnLookShareMem()
 
 void CJLkitView::OnTimer(UINT nIDEvent)
 {
-    if(nIDEvent == IDT_TIMERGAMEEXIT)
-    {
+    if(nIDEvent == IDT_TIMERGAMEEXIT) {
+        //共享内存
+        JLShareMem* pShareMem = JLShareMem::Instance();
+
         //每次遍历所有item, 判断item的pid存不存在, 不存在就是游戏退出了
-        for(int i = 0; i < GetListCtrl().GetItemCount(); i++)
-        {
+        for(int i = 0; i < GetListCtrl().GetItemCount(); i++) {
             CString strName = GetListCtrl().GetItemText(i, COLUMN_TEXT_ACCOUNT);
 
-            if(JLShareMem::Instance()->Get((LPCTSTR)strName))
-            {
-                if(JLShareMem::Instance()->IsPidValid((LPCTSTR)strName) == FALSE)
-                {
-                    JLShareMem::Instance()->Del((LPCTSTR)strName);
+            if(pShareMem->Get((LPCTSTR)strName)) {
+                if(pShareMem->IsPidValid((LPCTSTR)strName) == FALSE) {
+                    pShareMem->Del((LPCTSTR)strName);
                     GetListCtrl().SetItemText(i, COLUMN_TEXT_STATUS, _T("进程退出了"));
                 }
             }
@@ -533,11 +619,8 @@ void CJLkitView::OnTimer(UINT nIDEvent)
 
 void CJLkitView::OnUpdateGetandactive(CCmdUI* pCmdUI)
 {
-    // TODO: Add your command update UI handler code here
-    if(m_lpLaunchThread)
-    {
-        if(m_lpLaunchThread->isWorking())
-        {
+    if(m_lpLaunchThread) {
+        if(m_lpLaunchThread->isWorking()) {
             pCmdUI->Enable(FALSE);
         }
     }
@@ -545,7 +628,7 @@ void CJLkitView::OnUpdateGetandactive(CCmdUI* pCmdUI)
 
 void CJLkitView::PostNcDestroy()
 {
-    // TODO: Add your specialized code here and/or call the base class
+    TRACE(_T("PostNcDestroy Called"));
     CListView::PostNcDestroy();
 }
 

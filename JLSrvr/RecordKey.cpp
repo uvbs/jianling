@@ -62,10 +62,10 @@ void CRecordKey::DoFieldExchange(CFieldExchange* pFX)
 {
     //{{AFX_FIELD_MAP(CRecordKey)
     pFX->SetFieldType(CFieldExchange::outputColumn);
-    RFX_Text(pFX, "uk_key", m_strKey);
-    RFX_Text(pFX, "jk_build_time", m_strTime);
-    RFX_Text(pFX, "jk_recharge_time", m_strUse);
-    RFX_Text(pFX, "剩余时间", m_strLeft);
+    RFX_Text(pFX, _T("uk_key"), m_strKey);
+    RFX_Text(pFX, _T("jk_build_time"), m_strTime);
+    RFX_Text(pFX, _T("jk_recharge_time"), m_strUse);
+    RFX_Text(pFX, _T("剩余时间"), m_strLeft);
     //}}AFX_FIELD_MAP
 }
 

@@ -7,9 +7,9 @@
 #include "GameSpend.h"
 
 #ifdef _DEBUG
-#undef THIS_FILE
-static char THIS_FILE[]=__FILE__;
-#define new DEBUG_NEW
+    #undef THIS_FILE
+    static char THIS_FILE[] = __FILE__;
+    #define new DEBUG_NEW
 #endif
 
 //////////////////////////////////////////////////////////////////////
@@ -33,8 +33,7 @@ BOOL GameSpend::Init()
 {
     //先加载这个DLL
     m_hack = GetModuleHandle(_T("speedhack-i386"));
-    if(m_hack == NULL)
-    {
+    if(m_hack == NULL) {
         TRACE1("load speedhack-i386 err: %d", GetLastError());
         return FALSE;
     }
@@ -62,15 +61,13 @@ BOOL GameSpend::Init()
     ce_hookQueryPerformanceCounter.Init((void*)Query_addr, ce_querytime, FALSE);
 
 
-    if(*realGetTickCount == 0)
-    {
+    if(*realGetTickCount == 0) {
         ce_hooktimeGetTime.hook();
         void* result1 = ce_hookGetTickCount.hook();
         *realGetTickCount = (DWORD)result1;
     }
 
-    if(*realQueryPerformance == 0)
-    {
+    if(*realQueryPerformance == 0) {
         void* result2 = ce_hookQueryPerformanceCounter.hook();
         *realQueryPerformance = (DWORD)result2;
     }

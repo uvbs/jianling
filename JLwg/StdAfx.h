@@ -15,7 +15,6 @@
 // Insert your headers here
 #define	_CRT_SECURE_NO_WARNINGS	//关掉安全类的警告
 
-
 #include <afxwin.h>
 #include <afxcmn.h>
 #include <afxdlgs.h>

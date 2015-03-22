@@ -226,22 +226,22 @@ void CAboutDlg::sock_opt_print(int type, union opt_val* value, int len)
         case VBOOL:
             b_val = value->b_value;
 
-            strValue.Format("%s", b_val ? "on" : "off");
+            strValue.Format(_T("%s"), b_val ? _T("on") : _T("off"));
             break;
 
         case VCHAR:
             c_val = value->c_value;
-            strValue.Format("%s", c_val ? "on" : "off");
+            strValue.Format(_T("%s"), c_val ? _T("on") : _T("off"));
             break;
 
         case VINTG:
             i_val = value->i_value;
-            strValue.Format("%d", i_val);
+            strValue.Format(_T("%d"), i_val);
             break;
 
         case VLGER:
             lng = value->linger;
-            strValue.Format("l_onoff = %d, l_linger = %d", lng.l_onoff, lng.l_linger);
+            strValue.Format(_T("l_onoff = %d, l_linger = %d"), lng.l_onoff, lng.l_linger);
             break;
 
         default:
@@ -270,7 +270,7 @@ BOOL CAboutDlg::OnInitDialog()
     {
         popt = &sock_opt_g[i];
         CString strName;
-        strName.Format("%-20s : ", popt->name);
+        strName.Format(_T("%-20s : "), popt->name);
         m_sockinfo += strName;
         val_len = sizeof(value);
 

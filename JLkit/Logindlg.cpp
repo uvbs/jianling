@@ -8,7 +8,7 @@
 #include "Logindlg.h"
 #include "Registdlg.h"
 #include "Modifybind.h"
-
+#include "ConfigMgr.h"
 
 #include "..\common\protocol.h"
 #include "..\common\Webpost.h"
@@ -92,8 +92,18 @@ void CDlgLogin::LoginResult(int nResult)
 BOOL CDlgLogin::OnInitDialog()
 {
     CDialog::OnInitDialog();
-    GetDlgItem(IDOK)->EnableWindow(FALSE);
 
+    //获得配置管理器
+    CConfigMgr* pConfigMgr = CConfigMgr::GetInstance();
+
+    //初始化登陆对话框
+    m_bRemPw = pConfigMgr->m_KeepPw;
+    if(m_bRemPw) {
+        m_strPw = pConfigMgr->m_szAccountPw;
+        m_strName = pConfigMgr->m_szAccountName;
+    }
+
+    UpdateData(FALSE);
     return TRUE;  // return TRUE unless you set the focus to a control
     // EXCEPTION: OCX Property Pages should return FALSE
 }
@@ -111,12 +121,23 @@ void CDlgLogin::OnBtnModifybind()
 
 void CDlgLogin::OnOK()
 {
-    // TODO: Add extra validation here
     UpdateData();
 
     int nRet = CJLkitSocket::GetInstance()->LoginSrv(m_strName, m_strPw);
     if(nRet == SOCKET_ERROR)
         GetDlgItem(IDOK)->EnableWindow();
+
+    //获得配置管理器
+    CConfigMgr* pConfigMgr = CConfigMgr::GetInstance();
+
+    //保存配置
+    if(m_bRemPw) {
+        _tcscpy(pConfigMgr->m_szAccountName, (LPCTSTR)m_strName);
+        _tcscpy(pConfigMgr->m_szAccountPw, (LPCTSTR)m_strPw);
+    }
+    pConfigMgr->m_KeepPw = m_bRemPw;
+
+
 }
 
 void CDlgLogin::ConnectResult(int nErrorCode)

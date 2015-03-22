@@ -2,7 +2,7 @@
 #define _JLKIT_H_
 
 #ifndef __AFXWIN_H__
-#error include 'stdafx.h' before including this file for PCH
+    #error include 'stdafx.h' before including this file for PCH
 #endif
 
 #include "resource.h"
@@ -16,7 +16,13 @@ public:
     ~CJLkitApp();
 
     //Ω‚—πDLL
-    BOOL UnPackDll();
+    BOOL UnPackResDll(LPCTSTR lpName, LPCTSTR lpType);
+
+    //≥Ã–ÚŒ®“ª
+    BOOL MutexWnd();
+
+private:
+    CMutex m_mutex;
 
 
 // Overrides
@@ -31,8 +37,6 @@ public:
 
     //{{AFX_MSG(CJLkitApp)
     //}}AFX_MSG
-
-
 private:
     HANDLE m_Mutex;
 };

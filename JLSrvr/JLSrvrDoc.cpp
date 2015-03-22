@@ -104,7 +104,7 @@ CRequestSocket* CJLSrvrDoc::isLogined(TCHAR* szUserName)
     POSITION pos = m_ClientList.GetHeadPosition();
     while(pos != NULL) {
         CRequestSocket* lpsock = (CRequestSocket*)m_ClientList.GetAt(pos);
-        if(strcmp(szUserName, lpsock->m_szName) == 0) {
+        if(_tcscmp(szUserName, lpsock->m_szName) == 0) {
             return lpsock;
         }
         m_ClientList.GetNext(pos);

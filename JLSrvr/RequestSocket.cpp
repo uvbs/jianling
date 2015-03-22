@@ -9,9 +9,9 @@
 #include "DbMngr.h"
 
 #ifdef _DEBUG
-#define new DEBUG_NEW
-#undef THIS_FILE
-static char THIS_FILE[] = __FILE__;
+    #define new DEBUG_NEW
+    #undef THIS_FILE
+    static char THIS_FILE[] = __FILE__;
 #endif
 
 /////////////////////////////////////////////////////////////////////////////
@@ -27,8 +27,7 @@ CRequestSocket::CRequestSocket(CJLSrvrDoc* pDoc)
 
 CRequestSocket::~CRequestSocket()
 {
-    if(m_pRequest)
-    {
+    if(m_pRequest) {
         delete m_pRequest;
     }
 }
@@ -36,10 +35,10 @@ CRequestSocket::~CRequestSocket()
 
 // Do not edit the following lines, which are needed by ClassWizard.
 #if 0
-BEGIN_MESSAGE_MAP(CRequestSocket, CAsyncSocket)
-    //{{AFX_MSG_MAP(CRequestSocket)
-    //}}AFX_MSG_MAP
-END_MESSAGE_MAP()
+    BEGIN_MESSAGE_MAP(CRequestSocket, CAsyncSocket)
+        //{{AFX_MSG_MAP(CRequestSocket)
+        //}}AFX_MSG_MAP
+    END_MESSAGE_MAP()
 #endif  // 0
 
 /////////////////////////////////////////////////////////////////////////////
@@ -56,19 +55,16 @@ BOOL CRequestSocket::ProcessRequest(BYTE* pRequestBuf)
     m_pRequest->strIp.Format(_T("%s:%d"), inet_ntoa(m_soaddr.sin_addr), m_soaddr.sin_port);
 
     //取请求类型分别处理
-    switch(fun)
-    {
+    switch(fun) {
 
-        case fun_bugrep:
-        {
+        case fun_bugrep: {
             BUG_BUF* LoginBuf = (BUG_BUF*)pRequestBuf;
             m_pRequest->strType = _T("bug报告");
             m_pRequest->strOther = LoginBuf->szBug;
             break;
         }
 
-        case fun_login:
-        {
+        case fun_login: {
             LOGIN_BUF* pLoginBuf = (LOGIN_BUF*)pRequestBuf;
             int nResult = CDbMngr::GetInstance()->GetPwRight(pLoginBuf->name, pLoginBuf->pw);
 
@@ -76,20 +72,17 @@ BOOL CRequestSocket::ProcessRequest(BYTE* pRequestBuf)
             m_pRequest->strType = _T("登录");
             m_pRequest->strOther = pLoginBuf->pw;
 
-            if(nResult == result_login_ok)
-            {
+            if(nResult == result_login_ok) {
 
                 //检测是否已经登录
                 CRequestSocket* lpsock = m_pDoc->isLogined(pLoginBuf->name);
-                if(lpsock)
-                {
+                if(lpsock) {
                     m_pRequest->strResult = _T("已经登陆, 踢掉当前在线");
                     m_pDoc->ClientClose(lpsock);
 
                     nResult = result_login_ok;
                 }
-                else
-                {
+                else {
                     m_pRequest->strResult = _T("验证完成");
                 }
 
@@ -97,12 +90,10 @@ BOOL CRequestSocket::ProcessRequest(BYTE* pRequestBuf)
                 memcpy(m_szPw, pLoginBuf->pw, MAXLEN * sizeof(TCHAR));
 
             }
-            else if(nResult == result_login_pwerror)
-            {
+            else if(nResult == result_login_pwerror) {
                 m_pRequest->strResult = _T("密码错误");
             }
-            else if(nResult == result_login_notuser)
-            {
+            else if(nResult == result_login_notuser) {
                 m_pRequest->strResult = _T("用户不存在");
             }
 
@@ -118,25 +109,22 @@ BOOL CRequestSocket::ProcessRequest(BYTE* pRequestBuf)
             break;
         }
 
-        case fun_querykey:
-        {
+        case fun_querykey: {
             LOGIN_BUF* pLoginBuf = (LOGIN_BUF*)pRequestBuf;
 
             std::vector<QUERYKEY_RET_BUF> querybuf;
             m_pRequest->strType = _T("查询卡号");
             m_pRequest->strOther = _T("");
-            if(CDbMngr::GetInstance()->Querykey(querybuf, pLoginBuf->name, pLoginBuf->pw))
-            {
+            if(CDbMngr::GetInstance()->Querykey(querybuf, pLoginBuf->name, pLoginBuf->pw)) {
                 m_pRequest->strResult = _T("完成");
 
                 //缓冲区够大?
                 m_buf.SetSize(sizeof(QUERYKEY_RET_BUF) * querybuf.size());
-                TRACE1(_T("当前大小: %d"), m_buf.GetSize());
-                TRACE1(_T("单个结构: %d"), sizeof(QUERYKEY_RET_BUF));
-                TRACE1(_T("当前cnSent: %d"), m_cbOut);
+                TRACE1("当前大小: %d", m_buf.GetSize());
+                TRACE1("单个结构: %d", sizeof(QUERYKEY_RET_BUF));
+                TRACE1("当前cnSent: %d", m_cbOut);
 
-                for(int i = 0; i < querybuf.size(); i++)
-                {
+                for(int i = 0; i < querybuf.size(); i++) {
                     querybuf[i].fun = fun_querykey;
                     querybuf[i].result = result_ok;
 
@@ -145,8 +133,7 @@ BOOL CRequestSocket::ProcessRequest(BYTE* pRequestBuf)
                 }
 
             }
-            else
-            {
+            else {
                 m_pRequest->strResult = _T("失败");
 
                 RET_BUF retbuf;
@@ -161,8 +148,7 @@ BOOL CRequestSocket::ProcessRequest(BYTE* pRequestBuf)
             break;
         }
 
-        case fun_unbindkey:
-        {
+        case fun_unbindkey: {
             KEY_BUF* keybuf = (KEY_BUF*)pRequestBuf;
 
             m_pRequest->strType = _T("解绑");
@@ -176,30 +162,24 @@ BOOL CRequestSocket::ProcessRequest(BYTE* pRequestBuf)
 
             m_cbOut = sizeof(RET_BUF);
             memcpy(m_buf.GetData(), &retbuf, m_cbOut);
-            switch(nResult)
-            {
-                case result_unbind_ok:
-                {
+            switch(nResult) {
+                case result_unbind_ok: {
                     m_pRequest->strResult = _T("完成");
                     break;
                 }
-                case result_unbind_fail:
-                {
+                case result_unbind_fail: {
                     m_pRequest->strResult = _T("失败");
                     break;
                 }
-                case result_unbind_errtime:
-                {
+                case result_unbind_errtime: {
                     m_pRequest->strResult = _T("24限制");
                     break;
                 }
-                case result_unbind_notuser:
-                {
+                case result_unbind_notuser: {
                     m_pRequest->strResult = _T("不存在帐号");
                     break;
                 }
-                default:
-                {
+                default: {
                     m_pRequest->strResult = _T("未知错误");
                 }
             }
@@ -209,43 +189,37 @@ BOOL CRequestSocket::ProcessRequest(BYTE* pRequestBuf)
         }
 
 
-        case fun_bindkey:
-        {
+        case fun_bindkey: {
             KEY_BUF* keybuf = (KEY_BUF*)pRequestBuf;
 
             m_pRequest->strType = _T("绑卡");
             m_pRequest->strOther = keybuf->key;
 
-            int nResult = CDbMngr::GetInstance()->Bindkey(keybuf, inet_ntoa(m_soaddr.sin_addr));
+            CString strIp = inet_ntoa(m_soaddr.sin_addr);
+            int nResult = CDbMngr::GetInstance()->Bindkey(keybuf, (LPCTSTR)strIp);
 
             RET_BUF retbuf;
             retbuf.fun = fun_bindkey;
             retbuf.result = nResult;
 
-            switch(nResult)
-            {
-                case result_bind_ok:
-                {
+            switch(nResult) {
+                case result_bind_ok: {
                     m_pRequest->strResult = _T("完成");
                     break;
                 }
-                case result_bind_fail:
-                {
+                case result_bind_fail: {
                     m_pRequest->strResult = _T("失败");
                     break;
                 }
-                case result_bind_errkey:
-                {
+                case result_bind_errkey: {
                     m_pRequest->strResult = _T("卡号错误");
                     break;
                 }
-                case result_bind_used:
-                {
+                case result_bind_used: {
                     m_pRequest->strResult = _T("已使用");
                     break;
                 }
-                default:
-                {
+                default: {
                     m_pRequest->strResult = _T("未知错误");
                 }
             }
@@ -257,8 +231,7 @@ BOOL CRequestSocket::ProcessRequest(BYTE* pRequestBuf)
             break;
         }
 
-        case fun_regist:
-        {
+        case fun_regist: {
             REGIST_BUF* lpBuf = (REGIST_BUF*)pRequestBuf;
 
             m_pRequest->strType = _T("注册");
@@ -267,12 +240,10 @@ BOOL CRequestSocket::ProcessRequest(BYTE* pRequestBuf)
             int nResult = CDbMngr::GetInstance()->NewRegist(lpBuf->name,
                           lpBuf->pw, lpBuf->ip, _T(""), _T(""));
 
-            if(nResult == FALSE)
-            {
+            if(nResult == FALSE) {
                 m_pRequest->strResult = _T("失败");
             }
-            else
-            {
+            else {
                 m_pRequest->strResult = _T("完成");
             }
 
@@ -287,8 +258,7 @@ BOOL CRequestSocket::ProcessRequest(BYTE* pRequestBuf)
             break;
         }
 
-        default:
-        {
+        default: {
             m_pRequest->strType = _T("其他");
             break;
         }
@@ -304,16 +274,12 @@ void CRequestSocket::OnReceive(int nErrorCode)
 {
 
     int nBytes = Receive(m_buf.GetData(), m_buf.GetSize());
-    switch(nBytes)
-    {
-        case SOCKET_ERROR:
-        {
-            if(GetLastError() == WSAEWOULDBLOCK)
-            {
+    switch(nBytes) {
+        case SOCKET_ERROR: {
+            if(GetLastError() == WSAEWOULDBLOCK) {
                 AsyncSelect(FD_WRITE | FD_CLOSE);
             }
-            else
-            {
+            else {
                 ShutDown(both);
                 m_pDoc->ClientClose(this);
 
@@ -321,16 +287,14 @@ void CRequestSocket::OnReceive(int nErrorCode)
             break;
         }
 
-        case 0:
-        {
+        case 0: {
             //连接已经被关闭
             ShutDown(both);
             m_pDoc->ClientClose(this);
             break;
         }
 
-        default:
-        {
+        default: {
             ProcessRequest(m_buf.GetData());
             m_pDoc->DocHit(HINT_REQUEST, m_pRequest);
         }
@@ -344,8 +308,7 @@ int CRequestSocket::Send(const void* lpBuf, int nBufLen, int nFlags)
     memcpy(pBack, lpBuf, nBufLen);
 
     //对数据加密
-    for(int i = 0; i < nBufLen; i++)
-    {
+    for(int i = 0; i < nBufLen; i++) {
         BYTE q = (BYTE)i % 3;
         pBack[i] ^= 0x93;
         pBack[i] += q;
@@ -362,16 +325,14 @@ int CRequestSocket::Receive(void* lpBuf, int nBufLen, int nFlags)
 {
 
     int result = CAsyncSocket::Receive(lpBuf, nBufLen, nFlags);
-    if(result == SOCKET_ERROR)
-    {
+    if(result == SOCKET_ERROR) {
         return result;
     }
 
 
     //对数据解密
     BYTE* temp = (BYTE*)lpBuf;
-    for(int i = 0; i < nBufLen; i++)
-    {
+    for(int i = 0; i < nBufLen; i++) {
         BYTE q = (BYTE)i % 3;
         temp[i] -= q;
         temp[i] ^= 0x93;
@@ -388,8 +349,7 @@ CString CRequestSocket::GetNowTime()
 
 void CRequestSocket::OnClose(int nErrorCode)
 {
-    if(nErrorCode != 0)
-    {
+    if(nErrorCode != 0) {
         return;
     }
 
@@ -403,14 +363,12 @@ void CRequestSocket::OnClose(int nErrorCode)
 void CRequestSocket::InitAccept()
 {
 
-    if(m_pRequest == NULL)
-    {
+    if(m_pRequest == NULL) {
         m_pRequest = new CRequest;
     }
 
 
-    if(m_pRequest)
-    {
+    if(m_pRequest) {
         m_pRequest->m_reqNums = 0;
         m_pRequest->strUserName = _T("");
         m_pRequest->strType = _T("连接");
@@ -420,8 +378,7 @@ void CRequestSocket::InitAccept()
         m_pRequest->strIp.Format(_T("%s:%d"), inet_ntoa(m_soaddr.sin_addr), m_soaddr.sin_port);
         m_pDoc->DocHit(HINT_ACEEPT, m_pRequest);
     }
-    else
-    {
+    else {
         delete this;
     }
 
@@ -430,20 +387,16 @@ void CRequestSocket::InitAccept()
 void CRequestSocket::OnSend(int nErrorCode)
 {
     int nBytes = Send(m_buf.GetData(), m_cbOut);
-    if(nBytes == SOCKET_ERROR)
-    {
-        if(GetLastError() != WSAEWOULDBLOCK)
-        {
+    if(nBytes == SOCKET_ERROR) {
+        if(GetLastError() != WSAEWOULDBLOCK) {
             ShutDown(both);
             m_pDoc->ClientClose(this);
         }
-        else
-        {
+        else {
             AsyncSelect(FD_WRITE | FD_CLOSE);
         }
     }
-    else if(nBytes < m_cbOut)
-    {
+    else if(nBytes < m_cbOut) {
         // 发送剩余的字节
         m_buf.RemoveAt(0, nBytes);
         m_cbOut -= nBytes;
@@ -451,8 +404,7 @@ void CRequestSocket::OnSend(int nErrorCode)
         // 准备下一次写入
         AsyncSelect(FD_WRITE | FD_CLOSE);
     }
-    else
-    {
+    else {
         //发送完成, 继续等待读入
         m_cbOut = 0;
         AsyncSelect(FD_READ | FD_CLOSE);

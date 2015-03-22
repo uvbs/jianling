@@ -12,12 +12,9 @@
 #include "..\common\ShareMem.h"
 
 
-typedef std::vector<QUERYKEY_RET_BUF> KeyVec;
 
-
-
-class CWaitDlg;
 class CDlgKeyView;
+class CWaitDlg;
 class CDlgLogin;
 class CLock;
 class CVpnFile;
@@ -44,8 +41,8 @@ public:
                           PROCESS_INFORMATION* lppi);
 
     //对话框
-    CDlgKeyView* m_pKeyDlg;
     CDlgLogin* m_pLoginDlg;
+    CDlgKeyView* m_pKeyDlg;
 
     //关键段锁
     CLock* m_lpLock;
@@ -72,13 +69,14 @@ public:
     //重写
     // ClassWizard generated virtual function overrides
     //{{AFX_VIRTUAL(CJLkitDoc)
-public:
+	public:
     virtual void Serialize(CArchive& ar);   // overridden for document i/o
     virtual void OnCloseDocument();
-protected:
+	virtual BOOL OnOpenDocument(LPCTSTR lpszPathName);
+	protected:
     virtual BOOL OnNewDocument();
     virtual void OnIdle();
-    //}}AFX_VIRTUAL
+	//}}AFX_VIRTUAL
 
 
 #ifdef _DEBUG

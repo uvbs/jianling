@@ -15,75 +15,65 @@
 
 
 
-
+//全局变量
 CJLwgApp CWinApp;
 GamecallEx gcall;            //游戏call
 
 
 
+//静态变量
 WNDPROC CJLwgApp::wpOrigGameProc = NULL;
 CJLDlg* CJLwgApp::m_pWgDlg = NULL;
 
 
-//此处钩游戏的消息窗口
-//按键  和 一个自定义的消息
+//钩游戏的消息窗口
 LRESULT CALLBACK CJLwgApp::GameMsgProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-    if(CJLwgApp::m_pWgDlg == NULL)
-    {
+    if(CJLwgApp::m_pWgDlg == NULL) {
         return CallWindowProc(wpOrigGameProc, hwnd, uMsg, wParam, lParam);
     }
 
 
     //调出外挂
-    switch(uMsg)
-    {
+    switch(uMsg) {
 
-        case WM_KEYDOWN:
-        {
-            if(wParam == VK_INSERT)
-            {
-                int result = MessageBox(hwnd,
-                                        _T("你按下了 VK_INSERT 按键.\n确认执行任务?"),
-                                        NULL,
-                                        MB_OKCANCEL);
-                if(result == IDOK)
-                {
+        case WM_KEYDOWN: {
+            if(wParam == VK_INSERT) {
+                int result = MessageBox(
+                                 hwnd,
+                                 _T("你按下了 VK_INSERT 按键.\n确认执行任务?"),
+                                 NULL,
+                                 MB_OKCANCEL);
+                if(result == IDOK) {
                     m_pWgDlg->OnGotask();
                 }
 
             }
-            else if(wParam == VK_DELETE)
-            {
+            else if(wParam == VK_DELETE) {
                 m_pWgDlg->OnStopTask();
             }
 
-            else if(wParam == VK_END)
-            {
-                if(m_pWgDlg->IsWindowVisible())
-                {
+            else if(wParam == VK_END) {
+                if(m_pWgDlg->IsWindowVisible()) {
                     m_pWgDlg->ShowWindow(SW_HIDE);
                 }
-                else
-                {
+                else {
                     m_pWgDlg->ShowWindow(SW_SHOWNA);
                 }
 
             }
-
+            break;
         }
-        break;
 
 
-        case WM_CUSTOM_GCALL:
-        {
+
+        case WM_CUSTOM_GCALL: {
             //此处实现游戏call的调用
             return gcall.call((DWORD)wParam, (LPVOID*)lParam);
         }
 
 
-        case WM_MOVE:
-        {
+        case WM_MOVE: {
             int xPos = (int)(short)LOWORD(lParam);   // horizontal position
             int yPos = (int)(short)HIWORD(lParam);   // vertical position
 
@@ -91,8 +81,9 @@ LRESULT CALLBACK CJLwgApp::GameMsgProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPAR
             GetWindowRect(hwnd, &rect);
             int width = rect.right - rect.left;
             m_pWgDlg->SetWindowPos(NULL, xPos + width, yPos, 0, 0, SWP_NOSIZE | SWP_NOACTIVATE);
+            break;
         }
-        break;
+
     }
 
     return CallWindowProc(wpOrigGameProc, hwnd, uMsg, wParam, lParam);
@@ -125,16 +116,14 @@ LONG CALLBACK TopLevelExceptionHander(EXCEPTION_POINTERS* ExceptionInfo)
     frame.AddrStack.Offset = pContext->Esp;
     frame.AddrStack.Mode = AddrModeFlat;
 
-    while(nCount < 1000)
-    {
+    while(nCount < 1000) {
         nCount++;
         if(!StackWalk(IMAGE_FILE_MACHINE_I386,
                       GetCurrentProcess(), GetCurrentThread(),
                       &frame, pContext,
                       NULL,
                       SymFunctionTableAccess,
-                      SymGetModuleBase, NULL))
-        {
+                      SymGetModuleBase, NULL)) {
             // Error occured.
             break;
         }
@@ -146,8 +135,7 @@ LONG CALLBACK TopLevelExceptionHander(EXCEPTION_POINTERS* ExceptionInfo)
         module.SizeOfStruct = sizeof(IMAGEHLP_MODULE);
 
         if(!SymGetModuleInfo(GetCurrentProcess(),
-                             frame.AddrPC.Offset, &module))
-        {
+                             frame.AddrPC.Offset, &module)) {
             strcpy(module.ModuleName, "Unknown");
         }
 
@@ -161,18 +149,15 @@ LONG CALLBACK TopLevelExceptionHander(EXCEPTION_POINTERS* ExceptionInfo)
 
         pSymbol->MaxNameLength = MAX_SYM_SIZE - sizeof(IMAGEHLP_SYMBOL) / sizeof(TCHAR);
         pSymbol->Address = frame.AddrPC.Offset;
-        if(SymGetSymFromAddr(GetCurrentProcess(), frame.AddrPC.Offset, &dwOffsetFromSmybol, pSymbol))
-        {
+        if(SymGetSymFromAddr(GetCurrentProcess(), frame.AddrPC.Offset, &dwOffsetFromSmybol, pSymbol)) {
             _stprintf(szFrame, _T("%s!%s\n"), module.ModuleName, pSymbol->Name);
             _tcscat(szText, szFrame);
         }
-        else
-        {
+        else {
             _stprintf(szFrame, _T("%s!%08x\n"), module.ModuleName, pSymbol->Address);
             _tcscat(szText, szFrame);
         }
-        if(frame.AddrFrame.Offset == 0 || frame.AddrReturn.Offset == 0)
-        {
+        if(frame.AddrFrame.Offset == 0 || frame.AddrReturn.Offset == 0) {
             // End of stack.
             break;
         }
@@ -192,8 +177,7 @@ DWORD CALLBACK CJLwgApp::WgThread(LPVOID pParam)
     //AddVectoredExceptionHandler(1, TopLevelExceptionHander);
 
     //先外挂的初始化
-    if(gcall.Init() == FALSE)
-    {
+    if(gcall.Init() == FALSE) {
         ExitProcess(0);
         return 0;
     }
@@ -211,14 +195,11 @@ DWORD CALLBACK CJLwgApp::WgThread(LPVOID pParam)
     //创建消息循环
     BOOL bRet;
     MSG msg;
-    while((bRet = GetMessage(&msg, NULL, 0, 0)) != 0)
-    {
-        if(bRet == -1)
-        {
+    while((bRet = GetMessage(&msg, NULL, 0, 0)) != 0) {
+        if(bRet == -1) {
             // handle the error and possibly exit
         }
-        else if(!IsWindow(m_pWgDlg->m_hWnd) || !IsDialogMessage(m_pWgDlg->m_hWnd, &msg))
-        {
+        else if(!IsWindow(m_pWgDlg->m_hWnd) || !IsDialogMessage(m_pWgDlg->m_hWnd, &msg)) {
             TranslateMessage(&msg);
             DispatchMessage(&msg);
         }
@@ -226,8 +207,7 @@ DWORD CALLBACK CJLwgApp::WgThread(LPVOID pParam)
 
 
     TRACE(_T("消息循环正常退出了"));
-    if(wpOrigGameProc)
-    {
+    if(wpOrigGameProc) {
         ::SetWindowLong(GameInit::Instance()->GetGamehWnd(), GWL_WNDPROC, (LONG)wpOrigGameProc);
     }
 
@@ -248,6 +228,7 @@ CJLwgApp::~CJLwgApp()
 
 BOOL CJLwgApp::InitInstance()
 {
+    TRACE(_T("InitInstance"));
     //创建一个线程
     HANDLE hWgThread = ::CreateThread(NULL, 0, WgThread, 0, 0, 0);
     CloseHandle(hWgThread);

@@ -50,7 +50,16 @@ void CVpnFile::DisConnectVPN()
 {
     CString strLine;
     strLine.Format(_T("cmd /c rasdial \"VPN 连接\" /disconnect >NUL"));
-    ::WinExec((LPCTSTR)strLine, SW_HIDE);
+
+    LPCSTR lpszLine;
+#ifdef UNICODE
+    USES_CONVERSION;
+    lpszLine = W2CA((LPCTSTR)strLine);
+#else
+    lpszLine = (LPCTSTR)strLine;
+#endif
+
+    ::WinExec(lpszLine, SW_HIDE);
 }
 
 //一直连接, 直到找到一个能用的
@@ -69,7 +78,7 @@ void CVpnFile::AlwaysConnect()
         }
         else
         {
-            TRACE1(_T("连接一个vpn出错, %d"), nRet);
+            TRACE1("连接一个vpn出错, %d", nRet);
         }
     }
 }

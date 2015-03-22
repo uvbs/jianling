@@ -98,7 +98,7 @@ BOOL CDlgKeyAdd::OnInitDialog()
     // TODO: Add extra initialization here
 
 
-    m_font.CreatePointFont(200, "ËÎÌו");
+    m_font.CreatePointFont(200, _T("ËÎÌו"));
     GetDlgItem(IDC_EDIT_KEY)->SetFont(&m_font, FALSE);
 
 

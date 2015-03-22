@@ -172,7 +172,7 @@ BOOL CDbMngr::NewRegist(TCHAR szUserName[], TCHAR szPassword[], TCHAR szBindIP[]
 //查询充值卡是否可用
 //返回值 0 = 可以使用
 //1=已使用 jk_key_type=1代表该充值卡只能充值韩服剑灵
-int CDbMngr::Bindkey(KEY_BUF* pKeyBuf, TCHAR szIp[])
+int CDbMngr::Bindkey(KEY_BUF* pKeyBuf, const TCHAR szIp[])
 {
 
     CString strSql;

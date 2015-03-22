@@ -39,7 +39,7 @@ public:
     int Unbindkey(KEY_BUF* pKeyBuf,  sockaddr_in* pSocketAddr);
     BOOL NewRegist(TCHAR szUserName[], TCHAR szPassword[], TCHAR szBindIP[], TCHAR szMac[], TCHAR szClientIp[]);
     BOOL Querykey(std::vector<QUERYKEY_RET_BUF>& vecKeyInfo, TCHAR szUserName[], TCHAR szPassWord[]);
-    BOOL Bindkey(KEY_BUF* pKeyBuf, TCHAR szIp[]);
+    BOOL Bindkey(KEY_BUF* pKeyBuf, const TCHAR szIp[]);
     BOOL AddKey(CString& strKey, UINT nTimes, int type);
 };
 

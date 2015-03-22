@@ -6,7 +6,7 @@
 #include "CallTracer.h"
 
 #include <assert.h>
-
+#include <afxconv.h>
 
 #pragma comment(lib, "dbghelp")
 
@@ -107,17 +107,33 @@ HRESULT CCallTracer::WalkStack(PFN_SHOWFRAME pfnShowFrame,
     if(m_dwOptions & CALLTRACE_OPT_INFO_SUMMARY) {
         _stprintf(szPath, _T("Total Frames: %d; Spend %d MS"),
                   nCount,   GetTickCount() - dwTimeMS);
+
+
         pfnShowFrame(szPath, pParam);
     }
 
     // Show symbol search path at last
     if(m_dwOptions & CALLTRACE_OPT_INFO_SEARCHPATH) {
-        SymGetSearchPath(GetCurrentProcess(), szPath, MAX_PATH);
-        pfnShowFrame(szPath, pParam);
+
+        CHAR szBuf[BUFSIZ] = {0};
+        SymGetSearchPath(GetCurrentProcess(), szBuf, MAX_PATH);
+
+        //根据当前工程字符集设置转换
+
+        LPCTSTR lpszPath = NULL;
+#ifdef UNICODE
+        USES_CONVERSION;
+        lpszPath = A2T(szBuf);
+#else
+        lpszPath = szBuf;
+#endif
+        pfnShowFrame(lpszPath, pParam);
     }
 
     return hr;
 }
+
+
 const int FRAME_MSG_SIZE = MAX_PATH * 2;
 const int MAX_SYM_SIZE = MAX_PATH * 4;
 HRESULT CCallTracer::ShowFrame(STACKFRAME64* pFrame,
@@ -148,7 +164,7 @@ HRESULT CCallTracer::ShowFrame(STACKFRAME64* pFrame,
     module.SizeOfStruct = sizeof(IMAGEHLP_MODULE64);
 
     if(!SymGetModuleInfo64(GetCurrentProcess(), pFrame->AddrPC.Offset, &module))
-        _tcscpy(module.ModuleName, _T("Unknown"));
+        strcpy(module.ModuleName, "Unknown");
 
     // find symbols
     if(m_dwOptions & CALLTRACE_OPT_INFO_MODULE_FUNC) {
@@ -198,7 +214,16 @@ HRESULT CCallTracer::ShowFrame(STACKFRAME64* pFrame,
         if(SymGetLineFromAddr64(GetCurrentProcess(), pFrame->AddrPC.Offset,
                                 &dwDisplacement,
                                 &line)) {
-            pfnShowFrame(line.FileName, pParam);
+
+            LPCTSTR lpFileName;
+#ifdef UNICODE
+            USES_CONVERSION;
+                lpFileName = A2T(line.FileName);
+#else
+              lpFileName = line.FileName;
+#endif
+
+            pfnShowFrame(lpFileName, pParam);
             _stprintf(szFrame, _T("Line No:%d, Address"),
                       line.LineNumber, line.Address);
         }
@@ -232,38 +257,38 @@ LPCTSTR CCallTracer::GetSymType(DWORD dwSymType)
 
     switch(dwSymType) {
         case SymNone:
-            lpszReturn = "-nosymbols-";
+            lpszReturn = _T("-nosymbols-");
             break;
 
         case SymCoff:
-            lpszReturn = "COFF";
+            lpszReturn = _T("COFF");
             break;
 
         case SymCv:
-            lpszReturn = "CV";
+            lpszReturn = _T("CV");
             break;
 
         case SymPdb:
-            lpszReturn = "PDB";
+            lpszReturn = _T("PDB");
             break;
 
         case SymExport:
-            lpszReturn = "-exported-";
+            lpszReturn = _T("-exported-");
             break;
 
         case SymDeferred:
-            lpszReturn = "-deferred-";
+            lpszReturn = _T("-deferred-");
             break;
         case SymSym:
-            lpszReturn = "SYM";
+            lpszReturn = _T("SYM");
             break;
 
         case SymDia:
-            lpszReturn = "DIA";
+            lpszReturn = _T("DIA");
             break;
 
         default:
-            lpszReturn = "-bad type-";
+            lpszReturn = _T("-bad type-");
     }
 
     return lpszReturn;

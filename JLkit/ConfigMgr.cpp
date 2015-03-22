@@ -7,9 +7,9 @@
 #include "ConfigMgr.h"
 
 #ifdef _DEBUG
-#undef THIS_FILE
-static char THIS_FILE[] = __FILE__;
-#define new DEBUG_NEW
+    #undef THIS_FILE
+    static char THIS_FILE[] = __FILE__;
+    #define new DEBUG_NEW
 #endif
 
 //////////////////////////////////////////////////////////////////////
@@ -70,4 +70,9 @@ void CConfigMgr::SaveConfig()
     AfxGetApp()->WriteProfileString(_T("设置"), _T("用户名"), m_szAccountName);
     AfxGetApp()->WriteProfileString(_T("设置"), _T("密码"), m_szAccountPw);
     AfxGetApp()->WriteProfileString(_T("设置"), _T("游戏路径"), m_szGamePath);
+}
+
+void CConfigMgr::Delete()
+{
+    if(_inst) delete _inst;
 }

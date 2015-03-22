@@ -222,7 +222,7 @@ void CJLkitSocket::Reportbug(CString& strBug)
 void CJLkitSocket::OnSend(int nErrorCode)
 {
     // TODO: Add your specialized code here and/or call the base class
-    TRACE0(_T("OnSend"));
+    TRACE(_T("OnSend"));
     CAsyncSocket::OnSend(nErrorCode);
 }
 
