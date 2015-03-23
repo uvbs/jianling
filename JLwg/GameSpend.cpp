@@ -12,10 +12,12 @@
     #define new DEBUG_NEW
 #endif
 
-//////////////////////////////////////////////////////////////////////
-// Construction/Destruction
-//////////////////////////////////////////////////////////////////////
 
+//静态成员
+GameSpend* GameSpend::_inst = NULL;
+
+
+//构造函数
 GameSpend::GameSpend()
 {
     m_pfnInitSpeed = NULL;
@@ -27,17 +29,11 @@ GameSpend::~GameSpend()
 }
 
 
-
-
 BOOL GameSpend::Init()
 {
     //先加载这个DLL
     m_hack = GetModuleHandle(_T("speedhack-i386"));
-    if(m_hack == NULL) {
-        TRACE1("load speedhack-i386 err: %d", GetLastError());
-        return FALSE;
-    }
-
+    if(m_hack == NULL) return FALSE;
 
     HMODULE hWinmm = GetModuleHandle(_T("Winmm"));
     BYTE* pfntimeGetTime = (BYTE*)GetProcAddress(hWinmm, "timeGetTime");

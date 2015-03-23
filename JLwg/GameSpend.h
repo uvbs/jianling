@@ -17,9 +17,20 @@
 //初始化加速
 class GameSpend
 {
-public:
+protected:
     GameSpend();
     virtual ~GameSpend();
+
+
+private:
+    static GameSpend* _inst;
+public:
+    static GameSpend* Instance(){
+        if(!_inst)
+            _inst = new GameSpend;
+
+        return _inst;
+    }
 
 
     BOOL Init();

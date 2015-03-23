@@ -211,9 +211,7 @@ void ShareMem::Del(DWORD dwPid)
 //获取指定的共享数据
 SHAREINFO* ShareMem::Get(LPCTSTR lpszName)
 {
-    if(m_lpMem == NULL || m_hFileMap == NULL) {
-        return NULL;
-    }
+    if(m_lpMem == NULL || m_hFileMap == NULL) return NULL;
 
     SHAREINFO* pItor = m_lpMem;
     for(DWORD i = 0; i < m_dwCount; i++) {
@@ -289,4 +287,15 @@ DWORD ShareMem::IsPidValid(LPCTSTR lpszName)
     while(Process32Next(hProcessSnap, &pe32));
     CloseHandle(hProcessSnap);
     return FALSE;
+}
+
+void ShareMem::Dump(DWORD dwPid)
+{
+    SHAREINFO* pSMem = Get(dwPid);
+    if(pSMem) {
+        TRACE(_T("进程: %d"), pSMem->pid);
+        TRACE(_T("配置: %s"), pSMem->szConfig);
+        TRACE(_T("账号: %s"), pSMem->szName);
+        TRACE(_T("脚本: %s"), pSMem->szSript);
+    }
 }

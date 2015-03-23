@@ -13,15 +13,14 @@
 
 
 #ifdef _DEBUG
-#define new DEBUG_NEW
-#undef THIS_FILE
-static char THIS_FILE[] = __FILE__;
+    #define new DEBUG_NEW
+    #undef THIS_FILE
+    static char THIS_FILE[] = __FILE__;
 #endif
 
 
 
-static TCHAR* cli_AllObject[] =
-{
+static TCHAR* cli_AllObject[] = {
     {_T("地址")},
     {_T("名字")},
     {_T("ID")},
@@ -32,8 +31,7 @@ static TCHAR* cli_AllObject[] =
     {_T("坐标")}
 };
 
-static TCHAR* cli_RangeObject[] =
-{
+static TCHAR* cli_RangeObject[] = {
     {_T("地址")},
     {_T("名字")},
     {_T("ID")},
@@ -47,15 +45,13 @@ static TCHAR* cli_RangeObject[] =
 };
 
 //技能 需要的控件列
-TCHAR* cli_Bar[] =
-{
+TCHAR* cli_Bar[] = {
     {_T("名称")},
     {_T("地址")},
     {_T("id")}
 };
 
-TCHAR* cli_Strike[] =
-{
+TCHAR* cli_Strike[] = {
     {_T("技能名")},
     {_T("冷却")},
     {_T("可用")},
@@ -64,8 +60,7 @@ TCHAR* cli_Strike[] =
     {_T("ID_2")}
 };
 
-TCHAR* cli_Quest[] =
-{
+TCHAR* cli_Quest[] = {
     {_T("任务名称")},
     {_T("步骤")},
     {_T("结束标志")},
@@ -75,8 +70,7 @@ TCHAR* cli_Quest[] =
 
 
 
-TCHAR* cli_TaskItem[] =
-{
+TCHAR* cli_TaskItem[] = {
     {_T("名称")},
     {_T("距离")},
     {_T("坐标")},
@@ -84,8 +78,7 @@ TCHAR* cli_TaskItem[] =
 };
 
 
-TCHAR* cli_Bag[] =
-{
+TCHAR* cli_Bag[] = {
     {_T("名称")},
     {_T("耐久")},
     {_T("等级")},
@@ -103,8 +96,7 @@ TCHAR* cli_Bag[] =
 
 };
 
-TCHAR* cli_Loots[] =
-{
+TCHAR* cli_Loots[] = {
     {_T("地址")},
     {_T("名称")},
     {_T("坐标")},
@@ -277,21 +269,18 @@ BOOL CDataDlg::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult)
     // TODO: Add your specialized code here and/or call the base class
 
     NMHDR* pNMHdr = (NMHDR*)lParam;
-    switch(pNMHdr->code)
-    {
-        case NM_CLICK:
-            {
-                //显示点击的名字到编辑控件方便复制
-                NMLISTVIEW* pItem = (NMLISTVIEW*)pNMHdr;
-                CString strClick = m_ListCtrl.GetItemText(pItem->iItem, pItem->iSubItem);
-                if(strClick.IsEmpty() == FALSE)
-                {
-                    strClick += _T("\r\n");
-                    m_hEdit.ReplaceSel(strClick);
+    switch(pNMHdr->code) {
+        case NM_CLICK: {
+            //显示点击的名字到编辑控件方便复制
+            NMLISTVIEW* pItem = (NMLISTVIEW*)pNMHdr;
+            CString strClick = m_ListCtrl.GetItemText(pItem->iItem, pItem->iSubItem);
+            if(strClick.IsEmpty() == FALSE) {
+                strClick += _T("\r\n");
+                m_hEdit.ReplaceSel(strClick);
 
-                }
             }
-            break;
+        }
+        break;
 
     }
 
@@ -300,7 +289,9 @@ BOOL CDataDlg::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult)
 
 void CDataDlg::OnGetpalyerinfo()
 {
-    // TODO: Add your control notification handler code here
+    //获取游戏外挂功能
+    GamecallEx& gcall = *GamecallEx::Instance();
+
     fPosition PlayerPos;
     gcall.GetPlayerPos(&PlayerPos);
 
@@ -320,8 +311,8 @@ void CDataDlg::OnGetpalyerinfo()
     AddInfo(_T("角色视角: %d"), (int)gcall.GetPlayerViewPoint());
     AddInfo(_T("人物UI状态: %d"), gcall.GetPlayerQuestUIStatus());
     AddInfo(_T("人物UI状态2: %d"), gcall.GetPlayerQuestUIStatusts());
-	AddInfo(_T("LoadingMap: %d"), gcall.isLoadingMap());
-	
+    AddInfo(_T("LoadingMap: %d"), gcall.isLoadingMap());
+
     AddInfo(_T("角色坐标: x:%d y:%d z:%d"), (int)PlayerPos.x, (int)PlayerPos.y, (int)PlayerPos.z);
     AddInfo(_T("角色坐标2: x:%d y:%d z:%d"), (int)PlayerPos2.x, (int)PlayerPos2.y, (int)PlayerPos2.z);
 
@@ -331,12 +322,15 @@ void CDataDlg::OnGetpalyerinfo()
 //遍历全部对象
 void CDataDlg::PrintfAllObject()
 {
+    //获取游戏外挂功能
+    GamecallEx& gcall = *GamecallEx::Instance();
+
+
     ObjectVector RangeObject;
     gcall.GetAllObjectToVector(gcall.GetObjectBinTreeBaseAddr(), RangeObject);
 
     m_ListCtrl.SetRedraw(FALSE);
-    for(DWORD i = 0; i < RangeObject.size(); i++)
-    {
+    for(DWORD i = 0; i < RangeObject.size(); i++) {
 
         ObjectNode* pNode = RangeObject[i];
 
@@ -367,16 +361,14 @@ void CDataDlg::PrintfAllObject()
         m_ListCtrl.SetItemText(i, 4, strTemp);
 
 
-        if(type == 0x4)
-        {
+        if(type == 0x4) {
             strTemp.Format(_T("%d"), gcall.GetType4HP(pNode->ObjAddress));
             m_ListCtrl.SetItemText(i, 5, strTemp);
         }
 
 
         int suoyin = gcall.GetIndexByType(pNode->ObjAddress);
-        if(suoyin != -1)
-        {
+        if(suoyin != -1) {
             strTemp.Format(_T("%d"), suoyin);
             m_ListCtrl.SetItemText(i, 6, strTemp);
         }
@@ -384,8 +376,7 @@ void CDataDlg::PrintfAllObject()
 
         //显示对象的坐标
         fPosition fpos;
-        if(gcall.GetObjectPos(pNode, &fpos))
-        {
+        if(gcall.GetObjectPos(pNode, &fpos)) {
             strTemp.Format(_T("x:%d y:%d z:%d"), (int)fpos.x, (int)fpos.y, (int)fpos.z);
             m_ListCtrl.SetItemText(i, 7, strTemp);
         }
@@ -443,6 +434,8 @@ void CDataDlg::InertBagItem(DWORD i, _BAGSTU& BagBuff)
 //遍历角色装备
 void CDataDlg::PrintfPlayerEquip()
 {
+    //获取游戏外挂功能
+    GamecallEx& gcall = *GamecallEx::Instance();
 
     std::vector<_BAGSTU> GoodsItem;
     gcall.GetAllBodyEquipToVector(GoodsItem);
@@ -455,6 +448,10 @@ void CDataDlg::PrintfPlayerEquip()
 
 void CDataDlg::PrintfRangeTaskItem()
 {
+    //获取游戏外挂功能
+    GamecallEx& gcall = *GamecallEx::Instance();
+
+
     std::vector<ObjectNode*> RangeObject;
     gcall.GetRangeTaskItemToVectr(RangeObject, m_nRange);
 
@@ -462,8 +459,7 @@ void CDataDlg::PrintfRangeTaskItem()
     fPosition fmypos;
     gcall.GetPlayerPos(&fmypos);
 
-    for(DWORD i = 0; i < RangeObject.size(); i++)
-    {
+    for(DWORD i = 0; i < RangeObject.size(); i++) {
         ObjectNode* pNode = RangeObject[i];
 
 
@@ -476,8 +472,7 @@ void CDataDlg::PrintfRangeTaskItem()
 
         //距离
         fPosition fpos;
-        if(gcall.GetObjectPos(pNode, &fpos))
-        {
+        if(gcall.GetObjectPos(pNode, &fpos)) {
             CString strTemp;
             strTemp.Format(_T("%d"), (DWORD)gcall.CalcC(fmypos, fpos));
             m_ListCtrl.SetItemText(i, 1, strTemp);
@@ -498,17 +493,18 @@ void CDataDlg::PrintfRangeTaskItem()
 //取得所有UI
 void CDataDlg::PrintfAllUI()
 {
+
+    //获取游戏外挂功能
+    GamecallEx& gcall = *GamecallEx::Instance();
+
     std::vector<Tree*> AllUI;
     gcall.sendcall(id_msg_vector_ui, &AllUI);
 
     CString strTemp;
-    for(DWORD i = 0; i < AllUI.size(); i++)
-    {
+    for(DWORD i = 0; i < AllUI.size(); i++) {
         wchar_t* name = gcall.GetUIName(AllUI[i]->Adress);
-        if(name != NULL)
-        {
-            if(AllUI[i]->Adress != 0)
-            {
+        if(name != NULL) {
+            if(AllUI[i]->Adress != 0) {
                 m_ListCtrl.InsertItem(i, name);
 
                 strTemp.Format(_T("%08x"), (DWORD)AllUI[i]->Adress);
@@ -524,13 +520,16 @@ void CDataDlg::PrintfAllUI()
 //遍历任务
 void CDataDlg::PrintfQuest()
 {
+
+    //获取游戏外挂功能
+    GamecallEx& gcall = *GamecallEx::Instance();
+
     int TaskNum = 53;
     DWORD pStartAddr = gcall.GetTaskStartAddr();  //获取任务开始地址
 
 
     CString strTemp;
-    for(int i = 0; i < TaskNum; i++)
-    {
+    for(int i = 0; i < TaskNum; i++) {
         //DWORD *pAddr        =     gcall.GetTaskPresentAddr(i, pStartAddr);  //获得当前任务地址
         DWORD ID = gcall.GetTaskID(i, pStartAddr);  //获得当前任务ID
         DWORD name_id = gcall.GetTaskNameID(i, pStartAddr);  //获得当前任务名字ID
@@ -541,8 +540,7 @@ void CDataDlg::PrintfQuest()
         wchar_t* name = (wchar_t*)gcall.sendcall(id_msg_GatTaskName, (LPVOID)name_id);
         if(name)
             m_ListCtrl.InsertItem(i, name);
-        else
-        {
+        else {
             //遍历完成
             break;
         }
@@ -565,6 +563,10 @@ void CDataDlg::PrintfQuest()
 //遍历背包
 void CDataDlg::PrintfBag()
 {
+
+    //获取游戏外挂功能
+    GamecallEx& gcall = *GamecallEx::Instance();
+
     std::vector<_BAGSTU> RangeObject;
     gcall.GetAllGoodsToVector(RangeObject);
 
@@ -576,12 +578,15 @@ void CDataDlg::PrintfBag()
 //遍历背包
 void CDataDlg::PrintfRangeLoot()
 {
+    //获取游戏外挂功能
+    GamecallEx& gcall = *GamecallEx::Instance();
+
+
     std::vector<ObjectNode*> RangeObject;
     gcall.GetRangeLootObjectToVector(m_nRange, RangeObject);
 
     CString strTemp;
-    for(DWORD index = 0; index < RangeObject.size(); index++)
-    {
+    for(DWORD index = 0; index < RangeObject.size(); index++) {
         ObjectNode* pNode = RangeObject[index];
 
         //对象地址
@@ -624,12 +629,16 @@ void CDataDlg::PrintfRangeLoot()
 //遍历攻击技能
 void CDataDlg::PrintfStrike()
 {
+
+    //获取游戏外挂功能
+    GamecallEx& gcall = *GamecallEx::Instance();
+
+
     std::vector<STRIKEINFO> RangeObject;
     gcall.GetStrikeToVector(RangeObject);
 
     CString strTemp;
-    for(DWORD i = 0; i < RangeObject.size(); i++)
-    {
+    for(DWORD i = 0; i < RangeObject.size(); i++) {
         int id1 = RangeObject[i].id1;
         int id2 = RangeObject[i].id2;
 
@@ -643,15 +652,13 @@ void CDataDlg::PrintfStrike()
 
 
 
-        if(RangeObject[i].isBlock == 0)
-        {
+        if(RangeObject[i].isBlock == 0) {
 
             strTemp.Format(_T("不可用"));
             m_ListCtrl.SetItemText(i, 2, strTemp);
             strTemp.Format(_T("未解锁"));
         }
-        else
-        {
+        else {
             if(RangeObject[i].canUse == 0)
                 strTemp.Format(_T("可使用"));
             else
@@ -677,6 +684,9 @@ void CDataDlg::PrintfRangeMonster(BOOL bApplyConfig)
 {
     UpdateData();
 
+    //获取游戏外挂功能
+    GamecallEx& gcall = *GamecallEx::Instance();
+
     std::vector<ObjectNode*> RangeObject;
     gcall.GetRangeMonsterToVector(m_nRange, RangeObject);
 
@@ -686,8 +696,7 @@ void CDataDlg::PrintfRangeMonster(BOOL bApplyConfig)
     std::sort(RangeObject.begin(), RangeObject.end(), GamecallEx::UDgreater);
 
     CString strTemp;
-    for(DWORD index = 0; index < RangeObject.size(); index++)
-    {
+    for(DWORD index = 0; index < RangeObject.size(); index++) {
         ObjectNode* pNode = RangeObject[index];
 
         //地址
@@ -709,16 +718,14 @@ void CDataDlg::PrintfRangeMonster(BOOL bApplyConfig)
         m_ListCtrl.SetItemText(index, 4, strTemp);
 
         //hp
-        if(type == 0x4)
-        {
+        if(type == 0x4) {
             strTemp.Format(_T("%d"), gcall.GetType4HP(pNode->ObjAddress));
             m_ListCtrl.SetItemText(index, 5, strTemp);
         }
 
         //坐标和距离
         fPosition pos;
-        if(gcall.GetObjectPos(pNode, &pos))
-        {
+        if(gcall.GetObjectPos(pNode, &pos)) {
             fPosition mypos;
             gcall.GetPlayerPos(&mypos);
 
@@ -736,8 +743,7 @@ void CDataDlg::PrintfRangeMonster(BOOL bApplyConfig)
 
         //索引
         int suoyin = gcall.GetIndexByType(pNode->ObjAddress);
-        if(suoyin != -1)
-        {
+        if(suoyin != -1) {
             strTemp.Format(_T("%d"), suoyin);
             m_ListCtrl.SetItemText(index, 9, strTemp);
         }
@@ -757,6 +763,10 @@ void CDataDlg::PrintfRangeObject()
 
     UpdateData();
 
+    //获取游戏外挂功能
+    GamecallEx& gcall = *GamecallEx::Instance();
+
+
     std::vector<ObjectNode*> RangeObject;
     gcall.GetRangeObjectToVector(gcall.GetObjectBinTreeBaseAddr(), m_nRange, RangeObject);
 
@@ -764,8 +774,7 @@ void CDataDlg::PrintfRangeObject()
     gcall.GetPlayerPos(&mypos);
 
     CString strTemp;
-    for(DWORD index = 0; index < RangeObject.size(); index++)
-    {
+    for(DWORD index = 0; index < RangeObject.size(); index++) {
         ObjectNode* pNode = RangeObject[index];
 
         //对象地址
@@ -792,8 +801,7 @@ void CDataDlg::PrintfRangeObject()
         m_ListCtrl.SetItemText(index, 4, strTemp);
 
 
-        if(type == 0x4)
-        {
+        if(type == 0x4) {
             strTemp.Format(_T("%d"), gcall.GetType4HP(pNode->ObjAddress));
             m_ListCtrl.SetItemText(index, 5, strTemp);
         }
@@ -804,8 +812,7 @@ void CDataDlg::PrintfRangeObject()
         //坐标
 
         fPosition pos;
-        if(gcall.GetObjectPos(pNode, &pos))
-        {
+        if(gcall.GetObjectPos(pNode, &pos)) {
             strTemp.Format(_T("x:%d y:%d z:%d"), (int)pos.x, (int)pos.y, (int)pos.z);
             m_ListCtrl.SetItemText(index, 7, strTemp);
 
@@ -826,8 +833,7 @@ void CDataDlg::PrintfRangeObject()
 
         //索引
         int suoyin = gcall.GetIndexByType(pNode->ObjAddress);
-        if(suoyin != -1)
-        {
+        if(suoyin != -1) {
             strTemp.Format(_T("%d"), suoyin);
             m_ListCtrl.SetItemText(index, 9, strTemp);
         }
@@ -842,22 +848,26 @@ void CDataDlg::PrintfRangeObject()
 
 void CDataDlg::OnSpeedx()
 {
-    // TODO: Add your control notification handler code here
+    //获取游戏外挂功能
+    GamecallEx& gcall = *GamecallEx::Instance();
+
     UpdateData(TRUE);
-    if(m_nRange == 0)
+    if(m_nRange == 0) {
         AfxMessageBox(_T("不能输入0值"));
-    else if(m_nRange > 50)
+    }
+    else if(m_nRange > 50) {
         AfxMessageBox(_T("太大了, 可能会崩溃游戏"));
-    else
+    }
+    else {
         gcall.NewSpend((float)m_nRange);
+    }
 }
 
 
 void CDataDlg::InsertColumnHelper(TCHAR* column[], int count)
 {
 
-    for(int i = 0; i < count; i++)
-    {
+    for(int i = 0; i < count; i++) {
         m_ListCtrl.DeleteColumn(i);
         m_ListCtrl.InsertColumn(i, column[i]);
     }
@@ -874,74 +884,61 @@ void CDataDlg::OnSelchangeComboDatatype()
     m_ComBox.GetLBText(m_ComBox.GetCurSel(), strSel);
 
     m_ListCtrl.DeleteAllItems();
-    for(;;)
-    {
+    for(;;) {
         if(m_ListCtrl.DeleteColumn(0) == FALSE)
             break;
     }
 
-    if(strSel == _T("背包"))
-    {
+    if(strSel == _T("背包")) {
         InsertColumnHelper(cli_Bag, sizeof(cli_Bag) / sizeof(TCHAR*));
         PrintfBag();
 
     }
-    else if(strSel == _T("所有对象"))
-    {
+    else if(strSel == _T("所有对象")) {
         InsertColumnHelper(cli_AllObject, sizeof(cli_AllObject) / sizeof(TCHAR*));
         PrintfAllObject();
 
     }
-    else if(strSel == _T("界面"))
-    {
+    else if(strSel == _T("界面")) {
         InsertColumnHelper(cli_Bar, sizeof(cli_Bar) / sizeof(TCHAR*));
         PrintfAllUI();
     }
-    else if(strSel == _T("范围对象"))
-    {
+    else if(strSel == _T("范围对象")) {
         InsertColumnHelper(cli_RangeObject, sizeof(cli_RangeObject) / sizeof(TCHAR*));
         PrintfRangeObject();
     }
-    else if(strSel == _T("任务物品"))
-    {
+    else if(strSel == _T("任务物品")) {
         InsertColumnHelper(cli_TaskItem, sizeof(cli_TaskItem) / sizeof(TCHAR*));
         PrintfRangeTaskItem();
     }
-    else if(strSel == _T("装备"))
-    {
+    else if(strSel == _T("装备")) {
         InsertColumnHelper(cli_Bag, sizeof(cli_Bag) / sizeof(TCHAR*));
         PrintfPlayerEquip();
     }
-    else if(strSel == _T("技能"))
-    {
+    else if(strSel == _T("技能")) {
         InsertColumnHelper(cli_Strike, sizeof(cli_Strike) / sizeof(TCHAR*));
         PrintfStrike();
     }
-    else if(strSel == _T("周围掉落"))
-    {
+    else if(strSel == _T("周围掉落")) {
         InsertColumnHelper(cli_Loots, sizeof(cli_Loots) / sizeof(TCHAR*));
         PrintfRangeLoot();
     }
-    else if(strSel == _T("范围怪物"))
-    {
+    else if(strSel == _T("范围怪物")) {
         InsertColumnHelper(cli_RangeObject, sizeof(cli_RangeObject) / sizeof(TCHAR*));
         PrintfRangeMonster();
     }
-    else if(strSel == _T("范围怪物(配置文件)"))
-    {
+    else if(strSel == _T("范围怪物(配置文件)")) {
         InsertColumnHelper(cli_RangeObject, sizeof(cli_RangeObject) / sizeof(TCHAR*));
         PrintfRangeMonster(TRUE);
     }
-    else if(strSel == _T("任务"))
-    {
+    else if(strSel == _T("任务")) {
         InsertColumnHelper(cli_Quest, sizeof(cli_Quest) / sizeof(TCHAR*));
         PrintfQuest();
     }
 
 
     int i = 0;
-    for(;;)
-    {
+    for(;;) {
         if(m_ListCtrl.SetColumnWidth(i++, LVSCW_AUTOSIZE_USEHEADER) == FALSE)
             break;
     }
@@ -1042,15 +1039,16 @@ void CDataDlg::OnClr()
 
 void CDataDlg::OnTurnto()
 {
-    // TODO: Add your command handler code here
+
+    //获取游戏外挂功能
+    GamecallEx& gcall = *GamecallEx::Instance();
 
     POSITION pos = m_ListCtrl.GetFirstSelectedItemPosition();
-    if(pos == NULL)
+    if(pos == NULL) {
         TRACE0("No items were selected!\n");
-    else
-    {
-        while(pos)
-        {
+    }
+    else {
+        while(pos) {
             int nItem = m_ListCtrl.GetNextSelectedItem(pos);
             TRACE1("Item %d was selected!\n", nItem);
             ObjectNode* pNode = (ObjectNode*)m_ListCtrl.GetItemData(nItem);
@@ -1063,15 +1061,14 @@ void CDataDlg::OnTurnto()
 
 void CDataDlg::OnSteptoobjet()
 {
-    // TODO: Add your command handler code here
+    //获取游戏外挂功能
+    GamecallEx& gcall = *GamecallEx::Instance();
 
     POSITION pos = m_ListCtrl.GetFirstSelectedItemPosition();
     if(pos == NULL)
         TRACE0("No items were selected!\n");
-    else
-    {
-        while(pos)
-        {
+    else {
+        while(pos) {
             int nItem = m_ListCtrl.GetNextSelectedItem(pos);
             TRACE1("Item %d was selected!\n", nItem);
             ObjectNode* pNode = (ObjectNode*)m_ListCtrl.GetItemData(nItem);
@@ -1086,8 +1083,7 @@ void CDataDlg::OnRclickList(NMHDR* pNMHDR, LRESULT* pResult)
 {
     // TODO: Add your control notification handler code here
 
-    if(m_ListCtrl.GetSelectedCount() != 0)
-    {
+    if(m_ListCtrl.GetSelectedCount() != 0) {
         POINT point;
         GetCursorPos(&point);
 
@@ -1110,7 +1106,8 @@ void CDataDlg::OnScriptwriter()
 
 void CDataDlg::OnFindthenkill()
 {
-    // TODO: Add your control notification handler code here
+    //获取游戏外挂功能
+    GamecallEx& gcall = *GamecallEx::Instance();
     gcall.FindThenKill(0, 1000, modeNormal | modePickup | modeAoe);
 }
 
@@ -1129,8 +1126,7 @@ void CDataDlg::OnHookstrike()
     // TODO: Add your command handler code here
     POSITION pos = m_ListCtrl.GetFirstSelectedItemPosition();
 
-    while(pos)
-    {
+    while(pos) {
         int nItem = m_ListCtrl.GetNextSelectedItem(pos);
         ObjectNode* pNode = (ObjectNode*)m_ListCtrl.GetItemData(nItem);
 
@@ -1143,8 +1139,7 @@ void CDataDlg::OnHookCombat()
     // TODO: Add your control notification handler code here
     UpdateData(TRUE);
 
-    if(m_bHook_Combat)
-    {
+    if(m_bHook_Combat) {
         m_pGameHook->m_ObjAddrVec.clear();
         m_pGameHook->backupCombat = m_pGameHook->CombatHook.hook();
     }

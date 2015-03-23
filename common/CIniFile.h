@@ -5,7 +5,7 @@
 #define AFX_CIniFile_H__13B64092_70AB_41ED_9279_55D409F1C176__INCLUDED_
 
 #if _MSC_VER > 1000
-#pragma once
+    #pragma once
 #endif // _MSC_VER > 1000
 
 
@@ -13,27 +13,32 @@
 
 class CIniFile : public CStdioFile
 {
+    //构造
 public:
     CIniFile();
     virtual ~CIniFile();
     BOOL Open(LPCTSTR lpszFileName);
 
+    //保存到文件
     void SaveToFile();
 
 
-    //BOOL ReadStr(TCHAR szSection[], TCHAR szKey[], std::vector<tstring> *strVec);
-    BOOL ReadInt(TCHAR szSection[], TCHAR szKey[], int* lpnValue);
-    BOOL WriteStr(TCHAR szSection[], TCHAR szKey[], CString);
-    BOOL WriteStr(TCHAR szSection[], TCHAR szKey[], int nValue);
-    TCHAR* GetProfileString(TCHAR strSec[], TCHAR strKey[], TCHAR szDefault[] = NULL);
+    BOOL ReadStr(LPCTSTR lpAppName, LPCTSTR lpKeyName, LPCTSTR lpDefault);
+    UINT ReadInt(LPCTSTR lpAppName, LPCTSTR lpKeyName, INT nDefault);
+    
+
+    
     BOOL isHave(TCHAR szSec[], TCHAR szKey[], TCHAR* name);
-    void Close();
+
+    //写入INI
+    BOOL WriteString(LPCTSTR lpAppName, LPCTSTR lpKeyName, LPCTSTR lpString);
+
+    //读取INI
+    TCHAR* ReadString(LPCTSTR lpAppName, LPCTSTR lpKeyName, LPCTSTR szDefault = NULL);
 
 private:
     BOOL m_bIsUnicode;
     std::list<TCHAR*> m_data;
-    FILE* m_lpfile;
-
 };
 
 #endif // !defined(AFX_CIniFile_H__13B64092_70AB_41ED_9279_55D409F1C176__INCLUDED_)

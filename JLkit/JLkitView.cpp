@@ -177,7 +177,7 @@ void CJLkitView::SetResult(int nReslt, int i)
             break;
         }
         case RESULT_LOGIN_SUCCESS: {
-            GetListCtrl().SetItemText(i, COLUMN_TEXT_STATUS, _T("完成登陆"));
+            GetListCtrl().SetItemText(i, COLUMN_TEXT_STATUS, _T("完成运行"));
             break;
         }
     }

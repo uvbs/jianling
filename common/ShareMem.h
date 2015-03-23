@@ -10,13 +10,6 @@
 #endif // _MSC_VER > 1000
 
 
-#include <tchar.h>
-#include <windows.h>
-
-
-
-class ShareMem;
-typedef ShareMem JLShareMem;
 
 #define SHAREMAXLEN 32
 typedef struct _SHAREINFO {
@@ -26,6 +19,8 @@ typedef struct _SHAREINFO {
     DWORD pid;
 } SHAREINFO, *PSHAREINFO;
 
+class ShareMem;
+typedef ShareMem JLShareMem;
 
 class ShareMem
 {
@@ -57,6 +52,8 @@ public:
     DWORD GetUsedCount();
     DWORD GetAllCount() {return m_dwCount;}
     SHAREINFO* GetMem() {return m_lpMem;}
+
+    void Dump(DWORD dwPid);
 
 protected:
     HANDLE m_hFileMap;

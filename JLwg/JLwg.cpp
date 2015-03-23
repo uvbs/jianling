@@ -5,6 +5,8 @@
 #include "TaskScript.h"
 #include "GamecallEx.h"
 
+
+#include "GameConfig.h"
 #include "..\common\CHook.h"
 #include "..\common\common.h"
 #include "..\common\ShareMem.h"
@@ -13,12 +15,12 @@
 #include "..\common\inlinehook.h"
 
 
+#include "..\Optimizer\Optimizer.h"
+#pragma comment(lib, "..\\Optimizer\\Release\\Optimizer")
 
 
-//全局变量
+//程序实例唯一
 CJLwgApp CWinApp;
-GamecallEx gcall;            //游戏call
-
 
 
 //静态变量
@@ -68,6 +70,9 @@ LRESULT CALLBACK CJLwgApp::GameMsgProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPAR
 
 
         case WM_CUSTOM_GCALL: {
+            //获取游戏外挂功能
+            GamecallEx& gcall = *GamecallEx::Instance();
+
             //此处实现游戏call的调用
             return gcall.call((DWORD)wParam, (LPVOID*)lParam);
         }
@@ -96,8 +101,6 @@ LONG CALLBACK TopLevelExceptionHander(EXCEPTION_POINTERS* ExceptionInfo)
     const int MAX_SYM_SIZE = MAX_PATH * 4;
 
     TCHAR szText[BUFSIZ] = {0};
-    FILE* file = _tfopen(_T("call stack.txt"), _T("a+"));
-
 
     STACKFRAME frame;
     int nCount = 0;
@@ -150,11 +153,11 @@ LONG CALLBACK TopLevelExceptionHander(EXCEPTION_POINTERS* ExceptionInfo)
         pSymbol->MaxNameLength = MAX_SYM_SIZE - sizeof(IMAGEHLP_SYMBOL) / sizeof(TCHAR);
         pSymbol->Address = frame.AddrPC.Offset;
         if(SymGetSymFromAddr(GetCurrentProcess(), frame.AddrPC.Offset, &dwOffsetFromSmybol, pSymbol)) {
-            _stprintf(szFrame, _T("%s!%s\n"), module.ModuleName, pSymbol->Name);
+            _stprintf(szFrame, _T("%S!%S\n"), module.ModuleName, pSymbol->Name);
             _tcscat(szText, szFrame);
         }
         else {
-            _stprintf(szFrame, _T("%s!%08x\n"), module.ModuleName, pSymbol->Address);
+            _stprintf(szFrame, _T("%S!%08x\n"), module.ModuleName, pSymbol->Address);
             _tcscat(szText, szFrame);
         }
         if(frame.AddrFrame.Offset == 0 || frame.AddrReturn.Offset == 0) {
@@ -162,8 +165,8 @@ LONG CALLBACK TopLevelExceptionHander(EXCEPTION_POINTERS* ExceptionInfo)
             break;
         }
     }
-    _fputts(szText, file);
-    fflush(file);
+
+    MessageBox(NULL, szText, _T("游戏崩溃"), MB_OK);
     return EXCEPTION_CONTINUE_SEARCH;
 }
 
@@ -171,44 +174,74 @@ LONG CALLBACK TopLevelExceptionHander(EXCEPTION_POINTERS* ExceptionInfo)
 DWORD CALLBACK CJLwgApp::WgThread(LPVOID pParam)
 {
     AFX_MANAGE_STATE(AfxGetStaticModuleState());
-    setlocale(LC_ALL, "chs");
 
     //安装一个全局的未处理异常
     //AddVectoredExceptionHandler(1, TopLevelExceptionHander);
-
-    //先外挂的初始化
-    if(gcall.Init() == FALSE) {
-        ExitProcess(0);
-        return 0;
-    }
+    SetUnhandledExceptionFilter(TopLevelExceptionHander);
 
 
-    wpOrigGameProc = (WNDPROC)::SetWindowLong(GameInit::Instance()->GetGamehWnd(), GWL_WNDPROC, (LONG)GameMsgProc);
-    CString strTitle = JLShareMem::Instance()->Get(GetCurrentProcessId())->szName;
-    ::SetWindowText(GameInit::Instance()->GetGamehWnd(), (LPCTSTR)strTitle);
+    //设置区域
+    setlocale(LC_ALL, "chs");
 
+    //获取配置对象
+    GameConfig* pConfig = GameConfig::Instance();
+    GamecallEx& gcall = *GamecallEx::Instance();
+    JLShareMem* pJLShareMem = JLShareMem::Instance();
+    GameSpend* pGameSpender = GameSpend::Instance();
+
+
+    //打开共享内存
+    if(!pJLShareMem->Open(SHAREOBJNAME)) return 0;
+
+    #ifdef _DEBUG
+    pJLShareMem->Dump(GetCurrentProcessId());
+    #endif
+
+    //获取本DLL的共享数据
+    SHAREINFO* pSMem = pJLShareMem->Get(GetCurrentProcessId());
+    if(pSMem == NULL) return 0;
+
+    //初始化
+    if(!pConfig->Init()) return 0;
+    if(!gcall.Init()) return 0;
+    if(!pGameSpender->Init()) return 0;
+
+    //改游戏窗口处理过程
+    wpOrigGameProc = (WNDPROC)::SetWindowLong(gcall.GetGameWnd(), GWL_WNDPROC, (LONG)GameMsgProc);
+
+    //改游戏窗口标题
+    ::SetWindowText(gcall.GetGameWnd(), pSMem->szName);
+
+
+    //准备游戏线程
+    gcall.InitThread();  
+  
+    //创建外挂对话框
     m_pWgDlg = new CJLDlg;
     m_pWgDlg->Create(CJLDlg::IDD);
     m_pWgDlg->ShowWindow(SW_SHOW);
-    m_pWgDlg->SetWindowText(strTitle);
+
+    //改外挂标题
+    m_pWgDlg->SetWindowText(pSMem->szName);
+
 
     //创建消息循环
-    BOOL bRet;
     MSG msg;
+    BOOL bRet;
     while((bRet = GetMessage(&msg, NULL, 0, 0)) != 0) {
-        if(bRet == -1) {
-            // handle the error and possibly exit
-        }
-        else if(!IsWindow(m_pWgDlg->m_hWnd) || !IsDialogMessage(m_pWgDlg->m_hWnd, &msg)) {
+        if(bRet == -1) break;
+        if(!IsWindow(m_pWgDlg->m_hWnd) || !IsDialogMessage(m_pWgDlg->m_hWnd, &msg)) {
             TranslateMessage(&msg);
             DispatchMessage(&msg);
         }
     }
 
+    //卸载游戏功能
+    gcall.UnInit();
 
     TRACE(_T("消息循环正常退出了"));
     if(wpOrigGameProc) {
-        ::SetWindowLong(GameInit::Instance()->GetGamehWnd(), GWL_WNDPROC, (LONG)wpOrigGameProc);
+        ::SetWindowLong(gcall.GetGameWnd(), GWL_WNDPROC, (LONG)wpOrigGameProc);
     }
 
     FreeLibraryAndExitThread(AfxGetInstanceHandle(), 0);
@@ -228,10 +261,10 @@ CJLwgApp::~CJLwgApp()
 
 BOOL CJLwgApp::InitInstance()
 {
-    TRACE(_T("InitInstance"));
-    //创建一个线程
+    //外挂线程
     HANDLE hWgThread = ::CreateThread(NULL, 0, WgThread, 0, 0, 0);
     CloseHandle(hWgThread);
+
     return TRUE;
 }
 

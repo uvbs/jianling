@@ -4,10 +4,21 @@
 
 class GamecallEx: public Gamecall
 {
-public:
+protected:
     GamecallEx();
     ~GamecallEx();
 
+private:
+    static GamecallEx* _inst;
+
+public:
+    static GamecallEx* Instance() {
+        if(!_inst) {
+            _inst = new GamecallEx;
+        }
+
+        return _inst;
+    }
 
     //Ê°È¡, UI
     void Pickup(int pos, DWORD range);        //¼ñÆð·¶Î§ÄÚµôÂä

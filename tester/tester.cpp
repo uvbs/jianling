@@ -6,8 +6,8 @@
 #include <unknwn.h>
 
 
-int main()
-{
 
-    return 0;
+void entry()
+{
+    __asm nop;
 }

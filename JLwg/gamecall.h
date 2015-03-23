@@ -3,9 +3,8 @@
 
 #include "gamedata.h"
 #include "gamedef.h"
+#include "gamestruct.h"
 #include "gamespend.h"
-#include "GameInit.h"
-#include "GameHepler.h"
 
 #include "..\common\logger.h"
 #include "..\common\common.h"
@@ -13,25 +12,46 @@
 #include "..\common\sharemem.h"
 
 
-class Gamecall: public GameSpend, public GameHepler
+typedef std::vector<CUSTOMKILL> CustKillVector;
+typedef std::vector<ObjectNode*> ObjectVector;
+
+
+class Gamecall
 {
-public:
+protected:
     Gamecall();
     ~Gamecall();
 
+private:
+    static Gamecall* _inst;
+
+public:
+    static Gamecall* Instance() {
+        if(!_inst) {
+            _inst = new Gamecall;
+        }
+
+        return _inst;
+    }
+
+    //初始化
     void UnInit();
     BOOL Init();
+    BOOL InitThread();
+
 
     //等待
     void WaitPlans();   //等待过图 此函数返回表示过图完成
     BOOL LoginInGame(DWORD index);
+    HWND isGameWndCreated(DWORD dwPid);
+    BOOL WaitGameCreate();
+    HWND GetGameWnd() {return m_hGameWnd;}
 
 
     //判断对象可杀的数据
     static DWORD m_Get11C(DWORD m_Adress);   //是 ==1 红名
     static DWORD m_Get110(DWORD m_Adress); //==1 进行下面判断, ==2是npc
     static DWORD m_Get2E4(DWORD m_Adress);   //==0 npc, else 黄名
-
 
 
     //工具
@@ -372,6 +392,7 @@ public:
 
 
 protected:
+    static HWND m_hGameWnd;
     HANDLE hThreads[2];
     static BOOL m_bStopThread;
     static BOOL m_bCanAoe;
@@ -381,5 +402,12 @@ protected:
     HANDLE m_hModuleBsEngine;
     static CustKillVector CustomName;
 };
+
+BYTE ReadByte(DWORD addr);
+WORD ReadWORD(DWORD addr);
+DWORD ReadDWORD(DWORD addr);
+int ReadInt(DWORD addr);
+float ReadFloat(DWORD addr);
+char* ReadStr(DWORD addr);
 
 #endif

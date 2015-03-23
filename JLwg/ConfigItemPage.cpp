@@ -5,11 +5,10 @@
 #include "JLwg.h"
 #include "ConfigItemPage.h"
 #include "GamecallEx.h"
-
+#include "GameConfig.h"
 
 #include "..\common\common.h"
 #include "..\common\cinifile.h"
-
 
 
 
@@ -80,6 +79,10 @@ BOOL CConfigItemPage::OnInitDialog()
 
 	int i = 0;
 	
+    //获取对象
+    GamecallEx &gcall = *GamecallEx::Instance();
+    GameConfig *pConfigMgr = GameConfig::Instance();
+
 	//填充背包
 	std::vector<_BAGSTU> GoodsVec;
 	gcall.GetAllGoodsToVector(GoodsVec);
@@ -93,114 +96,8 @@ BOOL CConfigItemPage::OnInitDialog()
 		
 	}
 
-	CIniFile ConfigFile;
-    ConfigFile.Open(GameInit::Instance()->GetConfigPath());
+    //TODO: 
 
-	//填充已经存在的过滤到控件中
-	wchar_t *szSell = NULL;
-	wchar_t *szCunCang  = NULL;
-	wchar_t *szJioayi = NULL;
-	wchar_t *szFenjie = NULL;
-	wchar_t *szQhWuqi = NULL;
-	wchar_t *szQhShipin  = NULL;
-
-
-	szSell = ConfigFile.GetProfileString(strSell, strItemName);
-	szJioayi = ConfigFile.GetProfileString(strJiaoyi, strItemName);
-	szCunCang = ConfigFile.GetProfileString(strCunCang, strItemName);
-	szQhShipin = ConfigFile.GetProfileString(strQhShipin, strItemName);
-	szQhWuqi = ConfigFile.GetProfileString(strQhWuqi, strItemName);
-	szFenjie = ConfigFile.GetProfileString(strFenjie, strItemName);
-
-	
-	i = m_FilterList.GetItemCount();
-
-	wchar_t *token = wcstok(szCunCang, L";"); // C4996
-	while( token != NULL )
-	{
-		m_FilterList.InsertItem(i, token);
-		m_FilterList.SetItemText(i, 1, strCunCang);
-		i++;
-
-		// Get next token: 
-		token = wcstok(NULL, L";"); // C4996
-	}
-
-
-
-
-	token = wcstok(szSell, L";"); // C4996
-	while( token != NULL )
-	{
-		m_FilterList.InsertItem(i, token);
-		m_FilterList.SetItemText(i, 1, strSell);
-		i++;
-
-		// Get next token: 
-		token = wcstok(NULL, L";"); // C4996
-	}
-
-
-
-	token = wcstok(szFenjie, L";"); // C4996
-	while( token != NULL )
-	{
-		m_FilterList.InsertItem(i, token);
-		m_FilterList.SetItemText(i, 1, strFenjie);
-		i++;
-
-		// Get next token: 
-		token = wcstok(NULL, L";"); // C4996
-	}
-
-
-	
-	token = wcstok(szJioayi, L";"); // C4996
-	while( token != NULL )
-	{
-		m_FilterList.InsertItem(i, token);
-		m_FilterList.SetItemText(i, 1, strJiaoyi);
-		i++;
-
-		// Get next token: 
-		token = wcstok(NULL, L";"); // C4996
-	}
-
-
-
-	token = wcstok(szQhWuqi, L";"); // C4996
-	while( token != NULL )
-	{
-		m_FilterList.InsertItem(i, token);
-		m_FilterList.SetItemText(i, 1, strQhWuqi);
-		i++;
-
-		// Get next token: 
-		token = wcstok(NULL, L";"); // C4996
-	}
-
-
-
-
-	token = wcstok(szQhShipin, L";"); // C4996
-	while( token != NULL )
-	{
-		m_FilterList.InsertItem(i, token);
-		m_FilterList.SetItemText(i, 1, strQhShipin);
-		i++;
-
-		// Get next token: 
-		token = wcstok(NULL, L";"); // C4996
-	}
-
-
-
-	delete []szQhShipin;
-	delete []szQhWuqi;
-	delete []szFenjie;
-	delete []szJioayi;
-	delete []szCunCang;
-	delete []szSell;
 	
 
 	return TRUE;  // return TRUE unless you set the focus to a control

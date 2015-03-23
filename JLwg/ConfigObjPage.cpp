@@ -2,16 +2,18 @@
 //
 
 #include "stdafx.h"
-#include "jlwg.h"
+#include "JLwg.h"
 #include "ConfigObjPage.h"
 
+#include "GamecallEx.h"
+#include "GameConfig.h"
 #include "..\common\cinifile.h"
 
 
 #ifdef _DEBUG
-#define new DEBUG_NEW
-#undef THIS_FILE
-static char THIS_FILE[] = __FILE__;
+    #define new DEBUG_NEW
+    #undef THIS_FILE
+    static char THIS_FILE[] = __FILE__;
 #endif
 
 /////////////////////////////////////////////////////////////////////////////
@@ -56,6 +58,9 @@ END_MESSAGE_MAP()
 void CConfigObjPage::RefreshObj()
 {
 
+    //获取游戏外挂功能
+    GamecallEx& gcall = *GamecallEx::Instance();
+
     m_ObjList.DeleteAllItems();
     ObjectVector RangeObject;
     TRACE(_T("GetRangeMonsterToVector"));
@@ -64,16 +69,14 @@ void CConfigObjPage::RefreshObj()
     fPosition fmypos;
     gcall.GetPlayerPos(&fmypos);
     TRACE1("GetRangeMonsterToVector:%d", RangeObject.size());
-    for(unsigned i = 0; i < RangeObject.size(); i++)
-    {
+    for(unsigned i = 0; i < RangeObject.size(); i++) {
         ObjectNode* pNode = RangeObject[i];
 
         wchar_t* pName = gcall.GetObjectName(pNode->ObjAddress);
         m_ObjList.InsertItem(i, pName);
 
         fPosition tarpos;
-        if(gcall.GetObjectPos(pNode, &tarpos))
-        {
+        if(gcall.GetObjectPos(pNode, &tarpos)) {
             DWORD dis = gcall.CalcC(fmypos, tarpos);
             CString strDis;
             strDis.Format(_T("%d"), dis);
@@ -100,50 +103,9 @@ BOOL CConfigObjPage::OnInitDialog()
     m_ObjList.SetExtendedStyle(LVS_EX_FULLROWSELECT);
     m_FilterList.SetExtendedStyle(LVS_EX_FULLROWSELECT);
 
+    GameConfig* pConfig = GameConfig::Instance();
 
-    CIniFile fileConfig;
-    fileConfig.Open(GameInit::Instance()->GetConfigPath());
-    TCHAR* lpszFirst = fileConfig.GetProfileString(strCombat, strFirst);
-    TCHAR* lpszDontKill = fileConfig.GetProfileString(strCombat, strDontKill);
-    TCHAR* lpszMustKill = fileConfig.GetProfileString(strCombat, strAlwaysKill);
-
-    int i = 0;
-    wchar_t* token = wcstok(lpszFirst, L";"); // C4996
-    while(token != NULL)
-    {
-        m_FilterList.InsertItem(i, token);
-        m_FilterList.SetItemText(i, 1, strFirst);
-        i++;
-
-        // Get next token:
-        token = wcstok(NULL, L";"); // C4996
-    }
-
-    token = wcstok(lpszDontKill, L";"); // C4996
-    while(token != NULL)
-    {
-        m_FilterList.InsertItem(i, token);
-        m_FilterList.SetItemText(i, 1, strDontKill);
-        i++;
-
-        // Get next token:
-        token = wcstok(NULL, L";"); // C4996
-    }
-
-    token = wcstok(lpszMustKill, L";"); // C4996
-    while(token != NULL)
-    {
-        m_FilterList.InsertItem(i, token);
-        m_FilterList.SetItemText(i, 1, strAlwaysKill);
-        i++;
-
-        // Get next token:
-        token = wcstok(NULL, L";"); // C4996
-    }
-
-    delete []lpszFirst;
-    delete []lpszDontKill;
-    delete []lpszMustKill;
+    //TODO: 
 
     RefreshObj();
     return TRUE;  // return TRUE unless you set the focus to a control
@@ -172,14 +134,11 @@ void CConfigObjPage::OnRclickListObjects(NMHDR* pNMHDR, LRESULT* pResult)
 void CConfigObjPage::GetSelToFilterList(TCHAR szName[])
 {
     POSITION pos = m_ObjList.GetFirstSelectedItemPosition();
-    if(pos == NULL)
-    {
+    if(pos == NULL) {
         TRACE0("No items were selected!\n");
     }
-    else
-    {
-        while(pos)
-        {
+    else {
+        while(pos) {
             int nItem = m_ObjList.GetNextSelectedItem(pos);
             TRACE1("Item %d was selected!\n", nItem);
             // you could do your own processing on nItem here
@@ -197,7 +156,7 @@ void CConfigObjPage::GetSelToFilterList(TCHAR szName[])
 void CConfigObjPage::OnConfigFirst()
 {
     // TODO: Add your command handler code here
-    GetSelToFilterList(strFirst);
+    GetSelToFilterList(strFirstKill);
 }
 
 void CConfigObjPage::OnConfigDontkill()

@@ -1,7 +1,3 @@
-
-
-
-
 #ifndef _GAMESTRUCT_H
 #define _GAMESTRUCT_H
 

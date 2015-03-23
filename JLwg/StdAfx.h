@@ -18,6 +18,7 @@
 #include <afxwin.h>
 #include <afxcmn.h>
 #include <afxdlgs.h>
+
 #include <assert.h>
 #include <DbgHelp.h>
 #include <locale.h>
@@ -40,8 +41,7 @@
 #pragma warning(once:4701)
 #pragma warning(once:4703)
 #pragma warning(once:4702)
-
-#pragma warning(disable: 4018)
-#pragma warning(disable: 4996)
+#pragma warning(disable:4018)
+#pragma warning(disable:4996)
 
 

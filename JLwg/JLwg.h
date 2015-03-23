@@ -11,11 +11,6 @@
 #include "resource.h"		// main symbols
 
 
-#include "GamecallEx.h"
-
-
-
-
 class CJLDlg;
 class CJLwgApp: public CWinApp
 {
@@ -39,6 +34,3 @@ private:
     static WNDPROC wpOrigGameProc;
     static CJLDlg* m_pWgDlg;
 };
-
-
-extern GamecallEx gcall;

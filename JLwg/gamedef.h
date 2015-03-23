@@ -6,10 +6,9 @@
 #define AFX_GAMEDEF_H__240B533F_368F_42BD_90E6_7F364A93AF17__INCLUDED_
 
 #if _MSC_VER > 1000
-#pragma once
+    #pragma once
 #endif // _MSC_VER > 1000
 
-#include "gamestruct.h"
 
 
 //方便根据字符集设置输出相应的调试信息
@@ -17,13 +16,13 @@
 #define ___L(x) L##x
 
 #if _MSC_VER > 1200
-#ifdef _UNICODE
-#define FUNCNAME    __FUNCTIONW__
+    #ifdef _UNICODE
+        #define FUNCNAME    __FUNCTIONW__
+    #else
+        #define FUNCNAME    __FUNCTION__
+    #endif
 #else
-#define FUNCNAME    __FUNCTION__
-#endif
-#else
-#define FUNCNAME    __L(__FILE__)
+    #define FUNCNAME    __L(__FILE__)
 #endif
 
 
@@ -62,12 +61,42 @@
 //自定的消息, 用来执行游戏 call
 #define WM_CUSTOM_GCALL         (WM_USER + 0x300)
 
-#define SHENXINGBAIBIANCHAZHI   0x1EF26C8   //神行百变差值     面向的基址 - bsengine_Shipping.dll的base 
+//
+#define JINGDIANMOSHICALL_JIEGOUTOU     0x0A7CD0A4      // 经典模式CALL的结构头  
+#define QUDINGYAOJIANG_JIEGOUTOU        0x0A7CD0A4      // 确定摇奖CALL的结构头  
+#define ShuaXinBeiBao_JIEGOUTOU         0x0A7BD0A4      // 刷新背包CALL的结构头  
+#define GUANBICHUANGKOUCALL_JIEGOUTOU   0x0AD2D0A4      // 关闭窗口CALL的结构头  
+#define SHENXINGBAIBIANCHAZHI           0x1EF26C8       //神行百变差值     面向的基址 - bsengine_Shipping.dll的base 
 
 
+//这每个定义是一种配置文件中的节名
+#define strNormal       _T("普通")
+#define strCombat       _T("战斗")
+#define strSell         _T("出售")
+#define strFenjie       _T("分解")
+#define strCunCang      _T("存仓")
+#define strJiaoyi       _T("交易")
+#define strQhWuqi       _T("强化武器")
+#define strQhShipin     _T("强化饰品")
+#define strCuihui       _T("摧毁")
 
-enum EQUITMENT_POS
-{
+
+//这是键名
+#define strQhColor      _T("合成颜色")
+#define strItemName     _T("物品名")
+#define strFirstKill    _T("优先")
+#define strDontKill     _T("不杀")
+#define strAlwaysKill   _T("必杀")
+#define strYaoPecent    _T("喝药百分比")
+
+//这是值
+#define strGreen        _T("绿色")
+#define strBlue         _T("蓝色")
+#define strPurple       _T("紫色")
+#define strOrange       _T("橙色")
+
+//装备位置枚举
+enum EQUITMENT_POS {
     WUQI = 1,
     YIFU = 2,
     YAODAI,
@@ -77,9 +106,8 @@ enum EQUITMENT_POS
 };
 
 
-//消息
-enum CUSTOMMSGID
-{
+//消息ID
+enum CUSTOMMSGID {
     id_msg_step,
     id_msg_step3x,
     id_msg_guanshangdian,
@@ -139,26 +167,27 @@ enum CUSTOMMSGID
     id_msg_NPCJieRenWu,
     id_msg_GetObjectNameByIndex,
     id_msg_Pickup2ts,
-	id_msg_DaKaiHeChengJieMian,
-	id_msg_IsCanShu,
-	id_msg_XieZhuangBei,
-	id_msg_GetPlayExperienceStatusName
+    id_msg_DaKaiHeChengJieMian,
+    id_msg_IsCanShu,
+    id_msg_XieZhuangBei,
+    id_msg_GetPlayExperienceStatusName
 };
 
-enum CUSTOMTYPE
-{
+
+enum CUSTOMTYPE {
     DONTKILL,   //不杀
     ALWAYSKILL, //总是
     KILLFIRST   //优先
 };
 
 
-typedef struct _CUSTOMTYPE
-{
+typedef struct _CUSTOMTYPE {
     wchar_t* name;
     int type;
 } CUSTOMKILL, *PCUSTOMKILL;
 
+
+//药水, 变量名标识等级
 const wchar_t nBig50[] = L"\xd070\x0020\xbc31\xb144\xc0bc\x0020\xd68c\xbcf5\xc57d";
 const wchar_t nBig45[] = L"\xbc31\xb144\xc0bc\x0020\xd68c\xbcf5\xc57d";
 const wchar_t nBig36[] = L"\xc218\xc815\xb09c\xd480\x0020\xd68c\xbcf5\xc57d";
@@ -168,6 +197,7 @@ const wchar_t nLess10[] = L"\xc57d\xc218\x0020\xd68c\xbcf5\xc57d";
 const wchar_t nSpec1[] = L"\xd68c\xbcf5\xc57d";
 const wchar_t nSpec2[] = L"\xd589\xc6b4\xc758\x0020\xbe44\xc57d";
 
+//附魔
 const wchar_t fTo20[] = L"\xc81c\xb8e1\x0020\xc218\xb9ac\xb3c4\xad6c";
 const wchar_t fTo36[] = L"\xc0ac\xb9c9\x0020\xc218\xb9ac\xb3c4\xad6c";
 const wchar_t fTo45[] = L"\xc218\xc6d4\x0020\xc218\xb9ac\xb3c4\xad6c";
@@ -195,18 +225,6 @@ const wchar_t hun4[] = L"\xd64d\xbb38\xbb34\xd63c";
 //千魂武器
 const wchar_t qianhun[] = L"\xcc9c\xb839\xb3c4\xb07c";
 
-
-
-
-#define JINGDIANMOSHICALL_JIEGOUTOU     0x0A7CD0A4      // 经典模式CALL的结构头  
-#define QUDINGYAOJIANG_JIEGOUTOU        0x0A7CD0A4      // 确定摇奖CALL的结构头  
-#define ShuaXinBeiBao_JIEGOUTOU         0x0A7BD0A4      // 刷新背包CALL的结构头  
-#define GUANBICHUANGKOUCALL_JIEGOUTOU   0x0AD2D0A4      // 关闭窗口CALL的结构头  
-
-
-
-typedef std::vector<CUSTOMKILL> CustKillVector;
-typedef std::vector<ObjectNode*> ObjectVector;
 
 
 #endif // !defined(AFX_GAMEDEF_H__240B533F_368F_42BD_90E6_7F364A93AF17__INCLUDED_)

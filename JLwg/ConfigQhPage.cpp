@@ -4,14 +4,16 @@
 #include "stdafx.h"
 #include "jlwg.h"
 #include "ConfigQhPage.h"
+#include "GameConfig.h"
+#include "gamedef.h"
 
 #include "..\common\CIniFile.h"
-#include "..\common\common.h"
+
 
 #ifdef _DEBUG
-#define new DEBUG_NEW
-#undef THIS_FILE
-static char THIS_FILE[] = __FILE__;
+    #define new DEBUG_NEW
+    #undef THIS_FILE
+    static char THIS_FILE[] = __FILE__;
 #endif
 
 /////////////////////////////////////////////////////////////////////////////
@@ -50,31 +52,20 @@ BOOL CConfigQhPage::OnInitDialog()
 {
     CDialog::OnInitDialog();
 
-    // TODO: Add extra initialization here
+    //获取配置对象
+    GameConfig* pConfig = GameConfig::Instance();
+
     m_ComBox.AddString(strGreen);
     m_ComBox.AddString(strBlue);
     m_ComBox.AddString(strPurple);
     m_ComBox.AddString(strOrange);
     m_ComBox.SetCurSel(-1);
 
-    CIniFile configFile;
-    configFile.Open(GameInit::Instance()->GetConfigPath());
+    //获取颜色
+    //TODO: 
+//    SetDlgItemText(IDC_CHIYAOPERCENT, lpszHeYaoPercent);
 
-    TCHAR* lpszColor = configFile.GetProfileString(strNormal, strQhColor, strGreen);
-    if(lpszColor[0] == _T(''))
-    {
-        m_ComBox.SelectString(0, strGreen);
-    }
-    else
-    {
-        m_ComBox.SelectString(0, lpszColor);
-    }
 
-    TCHAR* lpszHeYaoPercent = configFile.GetProfileString(strCombat, strYaoPecent);
-    SetDlgItemText(IDC_CHIYAOPERCENT, lpszHeYaoPercent);
-
-    delete []lpszColor;
-    delete []lpszHeYaoPercent;
     return TRUE;  // return TRUE unless you set the focus to a control
     // EXCEPTION: OCX Property Pages should return FALSE
 }

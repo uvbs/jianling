@@ -366,9 +366,12 @@ int CJLkitDoc::CreateGameProcess(CString& strName, CString& strPw, BOOL bProfile
 int CJLkitDoc::LaunchGame(CString& strName, CString& strPw, CString& strConfig, CString& strScript, BOOL bProfile)
 {
 
+    //获得对象
+    JLShareMem* pSMem = JLShareMem::Instance();
+
+
     //是否已经登录
-    if(JLShareMem::Instance()->Get((LPCTSTR)strName))
-        return RESULT_ALREADY_RUNNING;
+    if(pSMem->Get((LPCTSTR)strName)) return RESULT_ALREADY_RUNNING;
 
 
     //是否有有效卡号
@@ -387,18 +390,18 @@ int CJLkitDoc::LaunchGame(CString& strName, CString& strPw, CString& strConfig, 
         _tcscpy(sai.szConfig, (LPCTSTR)strConfig);
         _tcscpy(sai.szSript, (LPCTSTR)strScript);
         _tcscpy(sai.szName, (LPCTSTR)strName);
-        JLShareMem::Instance()->Add(&sai);
+        pSMem->Add(&sai);
 
 
         CInject dllwg(_T("JLwg.dll"));
         CInject dllspeed(_T("speedhack-i386.dll"));
-        //唤起游戏进程
-        ResumeThread(pi.hThread);
-        Sleep(3000);
 
         //注入
         if(dllwg.InjectTo(pi.dwProcessId) && dllspeed.InjectTo(pi.dwProcessId)) {
             nResult = RESULT_LOGIN_SUCCESS;
+
+            //唤起游戏进程
+            ResumeThread(pi.hThread);
         }
         else {
             nResult = RESULT_FAIL_INJECT;
