@@ -21,13 +21,17 @@
 #include <afxsock.h>
 #include <afxole.h>
 #include <afxinet.h>
+#define _WIN32_WINNT 0x501
 
+#define DIRECT3D_VERSION         0x0900
+
+#include <d3d9.h>
 
 #include <IPHlpApi.h>
 #include <Psapi.h>
 #include <NtDDNdis.h>
 
-#include <d3d9.h>
+
 #include <shlwapi.h>
 
 #include <DbgHelp.h>
@@ -37,7 +41,11 @@
 #pragma comment(lib, "Psapi")
 #pragma comment(lib, "dbghelp")
 #pragma warning(disable : 4786)
+
+
+
 #include <atlconv.h>
+
 
 
 //{{AFX_INSERT_LOCATION}}

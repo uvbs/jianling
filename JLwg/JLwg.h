@@ -1,14 +1,14 @@
 #pragma once
 
 #if _MSC_VER > 1000
-#pragma once
+    #pragma once
 #endif // _MSC_VER > 1000
 
 #ifndef __AFXWIN_H__
-#error include 'stdafx.h' before including this file for PCH
+    #error include 'stdafx.h' before including this file for PCH
 #endif
 
-#include "resource.h"		// main symbols
+#include "resource.h"       // main symbols
 
 
 class CJLDlg;
@@ -19,7 +19,11 @@ public:
     ~CJLwgApp();
 
 
+    //外挂线程
     static DWORD CALLBACK WgThread(LPVOID pParam);
+
+
+    //外挂游戏过程钩子
     static LRESULT CALLBACK GameMsgProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 // Overrides

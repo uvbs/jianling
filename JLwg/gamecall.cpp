@@ -4703,8 +4703,7 @@ BOOL Gamecall::Kill_ApplyConfig(std::vector<ObjectNode*>& ObjectVec)
 
         GameConfig* pConfig = GameConfig::Instance();
 
-        CIniFile fileConfig;
-        fileConfig.Open(pConfig->m_szConfigPath);
+
         ObjectVector::iterator it;
         ObjectNode* pNode;
 
@@ -4712,9 +4711,7 @@ BOOL Gamecall::Kill_ApplyConfig(std::vector<ObjectNode*>& ObjectVec)
         for(it = ObjectVec.begin(); it != ObjectVec.end();) {
             //如果名字相同, 放到容器起始
             pNode = *it;
-            //TRACE1("%d",__LINE__);
             wchar_t* objName = GetObjectName(pNode->ObjAddress);
-            // TRACE1("%d",__LINE__);
 
             if(objName == NULL) {
                 it = ObjectVec.erase(it);
@@ -4723,10 +4720,11 @@ BOOL Gamecall::Kill_ApplyConfig(std::vector<ObjectNode*>& ObjectVec)
             else {
                 //应用全局之前先判断自定义
                 if(isCustomKill_HaveName(objName) == FALSE) {
+
                     //要是即不可杀配置文件又没有指定要杀就删掉这个元素
                     if(isCanKill(pNode) == FALSE &&
-                            fileConfig.isHave(strCombat, strAlwaysKill, objName) == FALSE) {
-                        //TRACE1("%d",__LINE__);
+                            pConfig->isHave(strCombat, strAlwaysKill, objName) == FALSE) {
+
                         it = ObjectVec.erase(it);
                         continue;
                     }
@@ -4735,21 +4733,17 @@ BOOL Gamecall::Kill_ApplyConfig(std::vector<ObjectNode*>& ObjectVec)
             it++;
         }
 
-        TRACE(_T("config循环2"));
         for(it = ObjectVec.begin(); it != ObjectVec.end();) {
 
             ObjectNode* pNode = *it;
-            //TRACE1("%d",__LINE__);
             wchar_t* objName = GetObjectName(pNode->ObjAddress);
-            //assert(objName!=NULL);
-            //TRACE1("%d",__LINE__);
 
             if(objName == NULL) {
                 it = ObjectVec.erase(it);
                 continue;
             }
             else {
-                if(fileConfig.isHave(strCombat, strFirstKill, objName)) {
+                if(pConfig->isHave(strCombat, strFirstKill, objName)) {
                     ObjectNode* pBack = pNode;
                     //TRACE1("%d",__LINE__);
                     it = ObjectVec.erase(it);
@@ -4763,13 +4757,10 @@ BOOL Gamecall::Kill_ApplyConfig(std::vector<ObjectNode*>& ObjectVec)
             it++;
         }
 
-        TRACE(_T("config循环3"));
         for(it = ObjectVec.begin(); it != ObjectVec.end();) {
             ObjectNode* pNode = *it;
-            //TRACE1("%d",__LINE__);
             wchar_t* objName = GetObjectName(pNode->ObjAddress);
-            //assert(objName!=NULL);
-            //TRACE1("%d",__LINE__);
+
             if(objName == NULL) {
                 it = ObjectVec.erase(it);
                 continue;
@@ -4778,9 +4769,7 @@ BOOL Gamecall::Kill_ApplyConfig(std::vector<ObjectNode*>& ObjectVec)
 
                 //应用全局之前先判断自定义
                 if(isCustomKill_HaveName(objName) == FALSE) {
-                    if(fileConfig.isHave(strCombat, strDontKill, objName)) {
-                        //删掉这个元素
-                        //TRACE1("%d",__LINE__);
+                    if(pConfig->isHave(strCombat, strDontKill, objName)) {
                         it = ObjectVec.erase(it);
                         continue;
                     }
@@ -4794,16 +4783,12 @@ BOOL Gamecall::Kill_ApplyConfig(std::vector<ObjectNode*>& ObjectVec)
         }
 
 
-        TRACE(_T("config循环4"));
         for(int i = 0; i < CustomName.size(); i++) {
             for(it = ObjectVec.begin(); it != ObjectVec.end();) {
 
-
                 ObjectNode* pNode = *it;
-                //TRACE1("%d",__LINE__);
                 wchar_t* objName = GetObjectName(pNode->ObjAddress);
-                //assert(objName!=NULL);
-                //TRACE1("%d",__LINE__);
+
 
                 //从自定义的列表中匹配
 
@@ -4821,9 +4806,8 @@ BOOL Gamecall::Kill_ApplyConfig(std::vector<ObjectNode*>& ObjectVec)
                     }*/
                     else if(CustomName[i].type == KILLFIRST) {
                         ObjectNode* pBack = pNode;
-                        //TRACE1("%d",__LINE__);
+
                         it = ObjectVec.erase(it);
-                        //TRACE1("%d",__LINE__);
                         it = ObjectVec.insert(ObjectVec.begin(), pBack);
                         continue;
                     }
@@ -4831,8 +4815,6 @@ BOOL Gamecall::Kill_ApplyConfig(std::vector<ObjectNode*>& ObjectVec)
                 it++;
             }
         }
-
-
 
     }
     catch(...) {
@@ -4976,7 +4958,7 @@ float Gamecall::GetPlayerViewPoint()
         }
     }
     __except(1) {
-        OutputDebugString(FUNCNAME);
+        TRACE(FUNCNAME);
     }
 
     return (float)value;
@@ -5014,13 +4996,9 @@ void Gamecall::GetRangeTaskItemToVectr(std::vector<ObjectNode*>& TastItemVector,
 
         fPosition fpos;
         //过滤掉距离远的和没距离的
-        if(GetObjectPos(RangeObject[i], &fpos) == FALSE) {
-            continue;
-        }
+        if(GetObjectPos(RangeObject[i], &fpos) == FALSE) continue;
 
-        if(fpos.x == 0 || fpos.y == 0 || fpos.z == 0) {
-            continue;
-        }
+        if(fpos.x == 0 || fpos.y == 0 || fpos.z == 0) continue;
 
         DWORD dis = (DWORD)CalcC(fpos, fmypos);
         if(dis <= range) {
@@ -5037,9 +5015,7 @@ BOOL Gamecall::isCanKill(ObjectNode* pNode)
 {
 
     //再加一个类型是4的过滤
-    if(GetObjectType(pNode->ObjAddress) != 0x4) {
-        return FALSE;
-    }
+    if(GetObjectType(pNode->ObjAddress) != 0x4) return FALSE;
 
     //过滤
     BOOL bCanKill = FALSE;
@@ -5078,25 +5054,17 @@ void Gamecall::GetRangeMonsterToVector(DWORD range, std::vector<ObjectNode*>& Mo
             fPosition fpos;
             //过滤掉距离远的和没距离的
             //log.logdv(_T("执行GetObjectPos"));
-            if(GetObjectPos(RangeObject[i], &fpos) == FALSE) {
-                continue;
-            }
+            if(GetObjectPos(RangeObject[i], &fpos) == FALSE) continue;
 
-            if(fpos.x == 0 || fpos.y == 0 || fpos.z == 0) {
-                continue;
-            }
+            if(fpos.x == 0 || fpos.y == 0 || fpos.z == 0) continue;
 
-            if(CalcC(fpos, fmypos) > range) {
-                continue;
-            }
+            if(CalcC(fpos, fmypos) > range) continue;
+
             wchar_t* objName = GetObjectName(pNode->ObjAddress);
-            if(objName == NULL) {
-                continue;
-            }
-            //log.logdv(_T("执行isCanLook"));
-            if(isCanLook(pNode->ObjAddress) == FALSE) {
-                continue;
-            }
+
+            if(objName == NULL)  continue;
+
+            if(isCanLook(pNode->ObjAddress) == FALSE) continue;
 
             //上面几个过滤是强制的, 不管配置文件有没有
             //比如: 如果配置文件强制杀一个怪物, 但是这个怪物
@@ -5175,13 +5143,9 @@ void Gamecall::GetRangeLootObjectToVector(DWORD range, std::vector<ObjectNode*>&
 
             fPosition fpos;
             //过滤掉距离远的和没距离的
-            if(GetObjectPos(RangeObject[i], &fpos) == FALSE) {
-                continue;
-            }
+            if(GetObjectPos(RangeObject[i], &fpos) == FALSE) continue;
 
-            if(fpos.x == 0 || fpos.y == 0 || fpos.z == 0) {
-                continue;
-            }
+            if(fpos.x == 0 || fpos.y == 0 || fpos.z == 0) continue;
 
             if(GetObjectType(pNode->ObjAddress) == 0xb0) {
                 if(isLoots(pNode->ObjAddress)) {
@@ -5203,9 +5167,9 @@ DWORD Gamecall::GetRangeMonsterCount(DWORD range)
     //判断是否用aoe
     std::vector<ObjectNode*> RangeObject;
     GetRangeMonsterToVector(range, RangeObject);
-    //TRACE("_T(Kill_ApplyConfig)");
+
     Kill_ApplyConfig(RangeObject);
-    //TRACE("_T(RangeObject.size())");
+
     return RangeObject.size();
 }
 
@@ -7423,7 +7387,6 @@ BOOL Gamecall::GetPlayerFightingStatus()
     return (value == 1);
 }
 
-
 BYTE ReadByte(DWORD addr)
 {
     if(!IsBadReadPtr((void*)addr, sizeof(BYTE))) {
@@ -7471,5 +7434,4 @@ char* ReadStr(DWORD addr)
     }
     return 0;
 }
-
 

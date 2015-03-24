@@ -63,7 +63,7 @@ void CConfigObjPage::RefreshObj()
 
     m_ObjList.DeleteAllItems();
     ObjectVector RangeObject;
-    TRACE(_T("GetRangeMonsterToVector"));
+
     gcall.GetRangeMonsterToVector(10000, RangeObject);
 
     fPosition fmypos;
@@ -77,18 +77,18 @@ void CConfigObjPage::RefreshObj()
 
         fPosition tarpos;
         if(gcall.GetObjectPos(pNode, &tarpos)) {
-            DWORD dis = gcall.CalcC(fmypos, tarpos);
+
             CString strDis;
-            strDis.Format(_T("%d"), dis);
+            strDis.Format(_T("%d"), gcall.CalcC(fmypos, tarpos));
             m_ObjList.SetItemText(i, 1, strDis);
         }
     }
+
 }
 BOOL CConfigObjPage::OnInitDialog()
 {
     CDialog::OnInitDialog();
 
-    // TODO: Add extra initialization here
     m_ObjList.InsertColumn(0, _T("√˚≥∆"));
     m_ObjList.InsertColumn(1, _T("æ‡¿Î"));
     m_ObjList.SetColumnWidth(0, 120);
@@ -105,7 +105,7 @@ BOOL CConfigObjPage::OnInitDialog()
 
     GameConfig* pConfig = GameConfig::Instance();
 
-    //TODO: 
+    //TODO:
 
     RefreshObj();
     return TRUE;  // return TRUE unless you set the focus to a control

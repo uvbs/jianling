@@ -85,7 +85,7 @@ HRESULT WINAPI NewPresent(
 )
 {
     {
-        ::Sleep(110);
+        ::Sleep(1000);
     }
 
     return hookPresent.OriginalFunc(5, pDxdevice, pSourceRect, pDestRect, hDestWindowOverride, pDirtyRegion);
@@ -96,16 +96,14 @@ HRESULT WINAPI NewSetRenderState(LPDIRECT3DDEVICE9 pDxdevice, D3DRENDERSTATETYPE
 
 //     pair<bool, bool> Temp = GetGameCpu();
 //     if ((Temp.first == TRUE) && (Temp.second == TRUE)) {
-//
-//         if (State == D3DRS_CULLMOD) {
-//
-//             return hookSetRenderState.OriginalFunc(5, pDxdevice, State, FALSE);
-//         }
-//
-//         if(Value) {
-//
-//             return hookSetRenderState.OriginalFunc(5, pDxdevice, State, FALSE);
-//         }
+//D3DRS_CULLMOD == 22
+        if (State == 22) {
+            return hookSetRenderState.OriginalFunc(5, pDxdevice, State, FALSE);
+        }
+
+        if(Value) {
+            return hookSetRenderState.OriginalFunc(5, pDxdevice, State, FALSE);
+        }
 //     }
 
     return hookSetRenderState.OriginalFunc(5, pDxdevice, State, Value);
@@ -737,7 +735,7 @@ BOOL WINAPI  My_GlobalMemoryStatusEx(LPMEMORYSTATUSEX lpBuffer)
 
         int inSrandValue = 0;
 //        GetRandHash(inSrandValue);
-
+        
         ::srand(inSrandValue);
         lpBuffer->ullTotalPhys += (1 + ::rand() % 32) * 1024 * 1024;
         lpBuffer->ullTotalVirtual = (1 + ::rand() % 2) * 1024 * 1024;
@@ -1040,13 +1038,9 @@ DWORD WINAPI JLOptimizer::MinMem_ThreadProc(LPVOID lpParameter)
         else {
 
             TRACE(_T("MinMem_ThreadProc for"));
-//            Temp = GetGameMem();
-//            if((Temp.first == true) && (Temp.second == true)) {
 
             ::SetProcessWorkingSetSize(::GetCurrentProcess(), 0, 0);
             ::EmptyWorkingSet(::GetCurrentProcess());
-
-//            }
 
             ::Sleep(2000);
         }
@@ -1613,45 +1607,45 @@ int JLOptimizer::Stop()
 BOOL JLOptimizer::Startup()
 {
 
-    DetourTransactionBegin();
-    DetourUpdateThread(::GetCurrentThread());
-    DetourAttach(&(PVOID&)Ole_CreateSemaphore, My_CreateSemaphore);
-    DetourAttach(&(PVOID&)Ole_GetKeyState, My_GetKeyState);
-    DetourAttach(&(PVOID&)Ole_GetAsyncKeyState, My_GetAsyncKeyState);
+//     DetourTransactionBegin();
+//     DetourUpdateThread(::GetCurrentThread());
+//     DetourAttach(&(PVOID&)Ole_CreateSemaphore, My_CreateSemaphore);
+//     DetourAttach(&(PVOID&)Ole_GetKeyState, My_GetKeyState);
+//     DetourAttach(&(PVOID&)Ole_GetAsyncKeyState, My_GetAsyncKeyState);
 //   DetourAttach(&(PVOID&)Ole_GetCursorPos, My_GetCursorPos);
 //    DetourAttach(&(PVOID&)Ole_GetAdaptersInfo, My_GetAdaptersInfo);
 //    DetourAttach(&(PVOID&)Ole_GetAdaptersAddresses, My_GetAdaptersAddresses);
-    DetourAttach(&(PVOID&)Ole_GetIfEntry, My_GetIfEntry);
-    DetourAttach(&(PVOID&)Ole_RegQueryValueEx, My_RegQueryValueEx);
-    DetourAttach(&(PVOID&)Ole_GlobalMemoryStatusEx, My_GlobalMemoryStatusEx);
-    DetourAttach(&(PVOID&)Ole_GlobalMemoryStatus, My_GlobalMemoryStatus);
-    DetourAttach(&(PVOID&)Ole_GetUserName, My_GetUserName);
-    DetourAttach(&(PVOID&)Ole_GetComputerName, My_GetComputerName);
-    DetourAttach(&(PVOID&)Ole_GetLogicalDriveStrings, My_GetLogicalDriveStrings);
-    DetourAttach(&(PVOID&)Ole_GetDiskFreeSpaceEx, My_GetDiskFreeSpaceEx);
+//     DetourAttach(&(PVOID&)Ole_GetIfEntry, My_GetIfEntry);
+//     DetourAttach(&(PVOID&)Ole_RegQueryValueEx, My_RegQueryValueEx);
+//     DetourAttach(&(PVOID&)Ole_GlobalMemoryStatusEx, My_GlobalMemoryStatusEx);
+//     DetourAttach(&(PVOID&)Ole_GlobalMemoryStatus, My_GlobalMemoryStatus);
+//     DetourAttach(&(PVOID&)Ole_GetUserName, My_GetUserName);
+//     DetourAttach(&(PVOID&)Ole_GetComputerName, My_GetComputerName);
+//     DetourAttach(&(PVOID&)Ole_GetLogicalDriveStrings, My_GetLogicalDriveStrings);
+//     DetourAttach(&(PVOID&)Ole_GetDiskFreeSpaceEx, My_GetDiskFreeSpaceEx);
 //    DetourAttach(&(PVOID&)Ole_GetVersionEx, My_GetVersionEx);
     DetourAttach(&(PVOID&)Ole_VirtualAlloc, My_VirtualAlloc);
     DetourAttach(&(PVOID&)Ole_VirtualFree, My_VirtualFree);
-    DetourAttach(&(PVOID&)Ole_EnumProcessModules, My_EnumProcessModules);
-    DetourAttach(&(PVOID&)Ole_GetModuleBaseName, My_GetModuleBaseName);
-    DetourAttach(&(PVOID&)Ole_GetModuleFileNameEx, My_GetModuleFileNameEx);
-    DetourAttach(&(PVOID&)Ole_GetModuleFileNameExA, My_GetModuleFileNameExA);
-    DetourAttach(&(PVOID&)Ole_EnumProcesses, My_EnumProcesses);
-    DetourAttach(&(PVOID&)Ole_Process32Next, My_Process32Next);
-    DetourAttach(&(PVOID&)Ole_Module32First, My_Module32First);
-    DetourAttach(&(PVOID&)Ole_Module32Next, My_Module32Next);
+//     DetourAttach(&(PVOID&)Ole_EnumProcessModules, My_EnumProcessModules);
+//     DetourAttach(&(PVOID&)Ole_GetModuleBaseName, My_GetModuleBaseName);
+//     DetourAttach(&(PVOID&)Ole_GetModuleFileNameEx, My_GetModuleFileNameEx);
+//     DetourAttach(&(PVOID&)Ole_GetModuleFileNameExA, My_GetModuleFileNameExA);
+//     DetourAttach(&(PVOID&)Ole_EnumProcesses, My_EnumProcesses);
+//     DetourAttach(&(PVOID&)Ole_Process32Next, My_Process32Next);
+//     DetourAttach(&(PVOID&)Ole_Module32First, My_Module32First);
+//    DetourAttach(&(PVOID&)Ole_Module32Next, My_Module32Next);
 //   DetourAttach(&(PVOID&)Ole_WindowFromPoint, My_WindowFromPoint);
-    DetourAttach(&(PVOID&)Ole_GetLastInputInfo, My_GetLastInputInfo);
-    DetourAttach(&(PVOID&)Ole_OpenProcess, My_OpenProcess);
+//    DetourAttach(&(PVOID&)Ole_GetLastInputInfo, My_GetLastInputInfo);
+//    DetourAttach(&(PVOID&)Ole_OpenProcess, My_OpenProcess);
 //    DetourAttach(&(PVOID&)Ole_connect, My_connect);
-    DetourAttach(&(PVOID&)Ole_FindWindowEx, My_FindWindowEx);
+//    DetourAttach(&(PVOID&)Ole_FindWindowEx, My_FindWindowEx);
 //    DetourAttach(&(PVOID&)Ole_GetForegroundWindow, My_GetForegroundWindow);
 //    DetourAttach(&(PVOID&)Ole_GetFocus, My_GetFocus);
 //    DetourAttach(&(PVOID&)Ole_GetActiveWindow, My_GetActiveWindow);
-    DetourAttach(&(PVOID&)Ole_MiniDumpWriteDump, My_MiniDumpWriteDump);
-    DetourAttach(&(PVOID&)Ole_CreateFile, My_CreateFile);
-    DetourAttach(&(PVOID&)Ole_DeviceIoControl, My_DeviceIoControl);
-    DetourTransactionCommit();
+//     DetourAttach(&(PVOID&)Ole_MiniDumpWriteDump, My_MiniDumpWriteDump);
+//    DetourAttach(&(PVOID&)Ole_CreateFile, My_CreateFile);
+//     DetourAttach(&(PVOID&)Ole_DeviceIoControl, My_DeviceIoControl);
+//     DetourTransactionCommit();
 
     hookDirect3DCreate9.Hook(::GetProcAddress(::LoadLibrary(_T("d3d9.dll")), "Direct3DCreate9"), (FARPROC)NewDirect3DCreate9);
 

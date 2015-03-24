@@ -44,7 +44,10 @@ BOOL GameConfig::Init()
     //获取共享对象
     JLShareMem* pSMem = JLShareMem::Instance();
 
-        
+    //获取共享数据
+    SHAREINFO* pMyData = pSMem->Get(GetCurrentProcessId());
+    if(!pMyData) return FALSE;
+
     //模块路径
     TCHAR szExePath[MAX_PATH] = {0};
     GetModuleFileName(GetModuleHandle(_T("JLwg")), szExePath, MAX_PATH);
@@ -73,10 +76,6 @@ BOOL GameConfig::Init()
     PathAppend(m_szLujingTest, _T("瞬移数据.bin"));
 
 
-    //获取共享数据
-    SHAREINFO* pMyData = pSMem->Get(GetCurrentProcessId());
-    if(!pMyData) return FALSE;
-
 
     //默认配置文件的路径
     PathAppend(m_szConfigPath, pMyData->szConfig);
@@ -100,7 +99,7 @@ BOOL GameConfig::Init()
         fclose(configFile);
     }
 
-    return TRUE;
+    return Open(m_szConfigPath);
 }
 
 void GameConfig::LoadConfig()
@@ -122,6 +121,20 @@ void GameConfig::LoadConfig()
 
     //喝药百分比
     m_HealthPercent = ReadInt(strCombat, strYaoPecent, 60);
+
+
+    //组队
+    m_bInvite_Auto = ReadInt(strTeam, strInvite_Auto, 0);
+    m_bInvite_ALL = ReadInt(strTeam, strInvite_All, 0);
+    m_bInvite_INMAP = ReadInt(strTeam, strInvite_InMap, 0);
+    m_bInvite_Range = ReadInt(strTeam, strInvite_Range, 0);
+    m_nInvite_Range = ReadInt(strTeam, strInvite_RangeValue, 0);
+
+    m_bAccept_INMAP = ReadInt(strTeam, strAcpt_InMap, 0);
+    m_bAccept_Auto = ReadInt(strTeam, strAcpt_Auto, 0);
+    m_bAccept_ALL = ReadInt(strTeam, strAcpt_All, 0);
+    m_bAccept_Range = ReadInt(strTeam, strAcpt_Range, 0);
+    m_nAccept_Range = ReadInt(strTeam, strAcpt_RangeValue, 0);
 
 
     szSell = ReadString(strSell, strItemName);
@@ -226,4 +239,20 @@ void GameConfig::LoadConfig()
 void GameConfig::SaveConfig()
 {
 
+    //喝药百分比
+    m_HealthPercent = WriteInt(strCombat, strYaoPecent, 60);
+
+
+    //组队
+    WriteInt(strTeam, strInvite_Auto, m_bInvite_Auto);
+    WriteInt(strTeam, strInvite_All, m_bInvite_ALL);
+    WriteInt(strTeam, strInvite_InMap, m_bInvite_INMAP);
+    WriteInt(strTeam, strInvite_Range, m_bInvite_Range);
+    WriteInt(strTeam, strInvite_RangeValue, m_nInvite_Range);
+
+    WriteInt(strTeam, strAcpt_InMap, m_bAccept_INMAP);
+    WriteInt(strTeam, strAcpt_Auto, m_bAccept_Auto);
+    WriteInt(strTeam, strAcpt_All, m_bAccept_ALL);
+    WriteInt(strTeam, strAcpt_Range, m_bAccept_Range);
+    WriteInt(strTeam, strAcpt_RangeValue, m_nAccept_Range);
 }

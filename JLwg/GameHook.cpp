@@ -9,7 +9,7 @@
 
 
 //æ≤Ã¨±‰¡ø
-GameHook* GameHook::_Instance = NULL;
+GameHook* GameHook::_inst = NULL;
 
 DWORD* GameHook::backupSendStep = NULL;
 DWORD* GameHook::backupWearEquipment = NULL;

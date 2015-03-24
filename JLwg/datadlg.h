@@ -36,9 +36,11 @@ public:
     //}}AFX_DATA
 
 
-    GameHook* m_pGameHook;
+    //卸载所有
     void CheckHook();
 
+    //钩子管理器
+    GameHook* m_pGameHook;
 
 // Overrides
     // ClassWizard generated virtual function overrides

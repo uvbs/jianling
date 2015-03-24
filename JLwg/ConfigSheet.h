@@ -18,10 +18,10 @@ public:
 
 // Attributes
 public:
-	CConfigItemPage itempage;
-	CConfigQhPage qhpage;
-	CConfigObjPage objpage;
-    CConfigPartyPage partypage;
+	CConfigItemPage m_itempage;
+	CConfigQhPage m_qhpage;
+	CConfigObjPage m_objpage;
+    CConfigPartyPage m_partypage;
 
 // Operations
 public:

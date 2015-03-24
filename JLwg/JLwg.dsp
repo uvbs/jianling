@@ -138,6 +138,18 @@ SOURCE=.\StdAfx.cpp
 
 SOURCE=.\TaskScript.cpp
 # End Source File
+# Begin Source File
+
+SOURCE=.\TaskScript1.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\TaskScript2.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\TranScript.cpp
+# End Source File
 # End Group
 # Begin Group "Header Files"
 

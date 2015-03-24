@@ -42,6 +42,9 @@ BOOL CIniFile::Open(LPCTSTR lpszFileName)
     if(hdr == UNICODE_HEADER) {
         m_bIsUnicode = TRUE;
     }
+    else {
+        SeekToBegin();
+    }
 
     return TRUE;
 }
@@ -62,22 +65,21 @@ TCHAR* CIniFile::ReadString(LPCTSTR lpAppName, LPCTSTR lpKeyName, LPCTSTR szDefa
                                             (LPCTSTR)m_strFileName);
     }
 
+
     return lpszBuf;
 }
 
 
-BOOL CIniFile::isHave(TCHAR szSec[], TCHAR szKey[], TCHAR* name)
+BOOL CIniFile::isHave(LPCTSTR lpAppName, LPCTSTR lpKeyName, LPCTSTR lpValue)
 {
-    TCHAR*  lpszTemp = ReadString(szSec, szKey);
+    TCHAR*  lpszTemp = ReadString(lpAppName, lpKeyName);
     BOOL bFind = FALSE;
-    TCHAR*  token = _tcstok(lpszTemp, _T(";"));
 
+    TCHAR*  token = _tcstok(lpszTemp, _T(";"));
     while(token != NULL) {
-        if(_tcscmp(token, name) == 0) {
+        if(_tcscmp(token, lpValue) == 0) {
             bFind = TRUE;
             break;
-        }
-        else {
         }
 
         // Get next token:
@@ -91,7 +93,7 @@ BOOL CIniFile::isHave(TCHAR szSec[], TCHAR szKey[], TCHAR* name)
 void CIniFile::SaveToFile()
 {
     //遍历所有行到文件中
-    for(std::list<TCHAR*>::iterator it = m_data.begin(); it != m_data.end(); it++) {
+    for(LineIterator it = m_data.begin(); it != m_data.end(); it++) {
 
     }
 }
@@ -104,4 +106,15 @@ BOOL CIniFile::WriteString(LPCTSTR lpAppName, LPCTSTR lpKeyName, LPCTSTR lpStrin
 UINT CIniFile::ReadInt(LPCTSTR lpAppName, LPCTSTR lpKeyName, INT nDefault)
 {
     return ::GetPrivateProfileInt(lpAppName, lpKeyName, nDefault, (LPCTSTR)m_strFileName);
+}
+
+BOOL CIniFile::WriteInt(LPCTSTR lpAppName, LPCTSTR lpKeyName, INT nValue)
+{
+    //准备变量
+    TCHAR szInt[BUFSIZ / 4] = {0};
+
+    _itot(nValue, szInt, 10);
+    TRACE(_T("%s"), szInt);
+        TRACE(_T("%s"), (LPCTSTR)m_strFileName);
+    return ::WritePrivateProfileString(lpAppName, lpKeyName, szInt, (LPCTSTR)m_strFileName);
 }

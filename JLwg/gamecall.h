@@ -403,6 +403,8 @@ protected:
     static CustKillVector CustomName;
 };
 
+
+//¸¨Öúº¯Êý
 BYTE ReadByte(DWORD addr);
 WORD ReadWORD(DWORD addr);
 DWORD ReadDWORD(DWORD addr);

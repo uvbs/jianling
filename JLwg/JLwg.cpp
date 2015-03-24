@@ -179,7 +179,6 @@ DWORD CALLBACK CJLwgApp::WgThread(LPVOID pParam)
     //AddVectoredExceptionHandler(1, TopLevelExceptionHander);
     SetUnhandledExceptionFilter(TopLevelExceptionHander);
 
-
     //设置区域
     setlocale(LC_ALL, "chs");
 
@@ -188,7 +187,6 @@ DWORD CALLBACK CJLwgApp::WgThread(LPVOID pParam)
     GamecallEx& gcall = *GamecallEx::Instance();
     JLShareMem* pJLShareMem = JLShareMem::Instance();
     GameSpend* pGameSpender = GameSpend::Instance();
-
 
     //打开共享内存
     if(!pJLShareMem->Open(SHAREOBJNAME)) return 0;
@@ -206,6 +204,9 @@ DWORD CALLBACK CJLwgApp::WgThread(LPVOID pParam)
     if(!gcall.Init()) return 0;
     if(!pGameSpender->Init()) return 0;
 
+    //加载配置
+    pConfig->LoadConfig();
+
     //改游戏窗口处理过程
     wpOrigGameProc = (WNDPROC)::SetWindowLong(gcall.GetGameWnd(), GWL_WNDPROC, (LONG)GameMsgProc);
 
@@ -214,8 +215,9 @@ DWORD CALLBACK CJLwgApp::WgThread(LPVOID pParam)
 
 
     //准备游戏线程
-    gcall.InitThread();  
-  
+    gcall.InitThread();
+
+
     //创建外挂对话框
     m_pWgDlg = new CJLDlg;
     m_pWgDlg->Create(CJLDlg::IDD);

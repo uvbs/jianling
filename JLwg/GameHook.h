@@ -25,14 +25,14 @@ protected:
 
 public:
     static GameHook* GetInstance() {
-        if(_Instance == NULL) {
-            _Instance =    new GameHook();
+        if(_inst == NULL) {
+            _inst =    new GameHook();
         }
-        return _Instance;
+        return _inst;
     }
 
 private:
-    static GameHook* _Instance;
+    static GameHook* _inst;
 
 
 

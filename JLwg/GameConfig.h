@@ -76,6 +76,40 @@ public:
     ItemVector m_QHWeapons;
 
 
+    // 自动发起组队
+    BOOL m_bInvite_Auto;
+    
+    //发起所有组队
+    BOOL m_bInvite_ALL;
+
+    //只对同地图发起组队
+    BOOL m_bInvite_INMAP;
+
+    //发起范围
+    BOOL m_bInvite_Range;
+
+    // 发起组队范围
+    int m_nInvite_Range;
+
+
+
+    // 只接受同地图内组队
+    BOOL m_bAccept_INMAP;
+
+    // 自动接受组队
+    BOOL m_bAccept_Auto;
+
+    // 接受所有组队
+    BOOL m_bAccept_ALL;
+
+    // 接受范围内组队
+    BOOL m_bAccept_Range;
+
+    //接受范围
+    int m_nAccept_Range;
+
+
+
     //初始化
 public:
     BOOL Init();

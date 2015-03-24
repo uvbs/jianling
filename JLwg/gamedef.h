@@ -71,6 +71,7 @@
 
 //这每个定义是一种配置文件中的节名
 #define strNormal       _T("普通")
+#define strTeam         _T("组队")
 #define strCombat       _T("战斗")
 #define strSell         _T("出售")
 #define strFenjie       _T("分解")
@@ -82,6 +83,17 @@
 
 
 //这是键名
+#define strInvite_Auto  _T("自动邀请")
+#define strInvite_All   _T("邀请所有")
+#define strInvite_InMap _T("邀请地图内")
+#define strInvite_Range _T("邀请范围内")
+#define strInvite_RangeValue _T("邀请范围值")
+
+#define strAcpt_Auto    _T("自动接受")
+#define strAcpt_All     _T("接受所有")
+#define strAcpt_InMap   _T("接受地图内")
+#define strAcpt_Range   _T("接受范围内")
+#define strAcpt_RangeValue _T("接受范围值")
 #define strQhColor      _T("合成颜色")
 #define strItemName     _T("物品名")
 #define strFirstKill    _T("优先")

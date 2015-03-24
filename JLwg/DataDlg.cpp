@@ -20,7 +20,7 @@
 
 
 
-static TCHAR* cli_AllObject[] = {
+TCHAR* cli_AllObject[] = {
     {_T("地址")},
     {_T("名字")},
     {_T("ID")},
@@ -31,7 +31,7 @@ static TCHAR* cli_AllObject[] = {
     {_T("坐标")}
 };
 
-static TCHAR* cli_RangeObject[] = {
+TCHAR* cli_RangeObject[] = {
     {_T("地址")},
     {_T("名字")},
     {_T("ID")},
@@ -102,6 +102,7 @@ TCHAR* cli_Loots[] = {
     {_T("坐标")},
     {_T("距离")}
 };
+
 
 
 
@@ -180,8 +181,10 @@ END_MESSAGE_MAP()
 
 void CDataDlg::CheckHook()
 {
+
     if(m_bHook_Combat)
         m_pGameHook->CombatHook.unhook();
+
     if(m_bHook_Accquest)
         m_pGameHook->aeQuestHook.unhook();
 
@@ -235,7 +238,7 @@ BOOL CDataDlg::OnInitDialog()
 {
     CDialog::OnInitDialog();
 
-    // TODO: Add extra initialization here
+    
     m_ComBox.AddString(_T("所有对象"));
     m_ComBox.AddString(_T("未接任务"));
     m_ComBox.AddString(_T("技能"));
@@ -252,10 +255,10 @@ BOOL CDataDlg::OnInitDialog()
     m_ListCtrl.SetExtendedStyle(LVS_EX_FULLROWSELECT);
 
 
-
-
     CheckHook();
-    m_pGameHook = m_pGameHook;
+
+    //初始化钩子
+    m_pGameHook = GameHook::GetInstance();
     m_pGameHook->m_lpParam = this;
     m_pGameHook->m_showHookRet = ShowHookRet;
 
@@ -947,11 +950,14 @@ void CDataDlg::OnSelchangeComboDatatype()
 
 void CDataDlg::OnBtnConfig()
 {
-    // TODO: Add your control notification handler code here
+    //隐藏主窗口
     ShowWindow(SW_HIDE);
 
+    //配置对话框
     CConfigSheet ConfigSheet;
     ConfigSheet.DoModal();
+
+    //显示主窗口
     ShowWindow(SW_SHOW);
 }
 
@@ -965,13 +971,14 @@ void CDataDlg::OnRefresh()
 //走路钩子
 void CDataDlg::OnHookSendstep()
 {
-
     UpdateData(TRUE);
-    if(m_bHook_step)
-        m_pGameHook->backupSendStep = m_pGameHook->stepHook.hook();
-    else
-        m_pGameHook->stepHook.unhook();
 
+    if(m_bHook_step) {
+        m_pGameHook->backupSendStep = m_pGameHook->stepHook.hook();
+    }
+    else {
+        m_pGameHook->stepHook.unhook();
+    }
 }
 
 
