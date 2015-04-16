@@ -613,17 +613,15 @@ CString Webpost::GetStartKey()
         cmatch matches;
 
 
-        CHAR szBuf[BUFSIZ] = {0};
-        while(ReadStringA(szBuf, BUFSIZ - 1))
+        char* pbuf = new char[httpfile->GetLength()+1];
+        httpfile->Read(pbuf, httpfile->GetLength());
+        BOOL finded = regex_search(pbuf, matches, skey);
+        delete []pbuf;
+        if(finded)
         {
-            if(szBuf[0] == '0') continue;
-
-            if(regex_search(szBuf, matches, skey))
-            {
-                CString strRet = matches.str(0).c_str();
-                TRACE(_T("%s"), (LPCTSTR)strRet);
-                return strRet;
-            }
+            CString strRet = matches.str(0).c_str();
+            TRACE(_T("%s"), (LPCTSTR)strRet);
+            return strRet;
         }
 
     }

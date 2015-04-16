@@ -30,7 +30,6 @@ enum
     RESULT_LOGIN_SUCCESS
 };
 
-class CJLkitDoc;
 
 class CJLkitView : public CListView
 {
