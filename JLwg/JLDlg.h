@@ -45,7 +45,6 @@ public:
     afx_msg void	OnWgdata();
     afx_msg void	OnStopTask();
     afx_msg void	OnClose();
-    afx_msg void	OnShowWindow(BOOL bShow, UINT nStatus);
     afx_msg void	OnUnloadwg();
     //}}AFX_MSG
     DECLARE_MESSAGE_MAP()

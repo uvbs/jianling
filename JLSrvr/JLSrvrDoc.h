@@ -9,10 +9,10 @@
     #pragma once
 #endif // _MSC_VER > 1000
 
-class CRequestSocket;
-class CListenSocket;
-class CRequest;
-class CJLSrvrDoc : public CDocument
+#include "ListenSocket.h"
+#include "../JLkit/JLkitSocket.h"
+
+class CJLSrvrDoc : public CDocument, public ITCPSocketSink
 {
 protected:
     CJLSrvrDoc();
@@ -27,36 +27,39 @@ public:
     CString m_strServer;
     CString m_strTitleBase;
 
-    //请求列表
-    CObList m_reqList;
-
-    //客户列表
-    CObList m_ClientList;
-
 
     CListenSocket* m_pListen;
     CTime m_timeStarted;
 
+    //加入一个客户端
+    bool AddClient(CJLkitSocket* pSocket);
+
+    //删除一个客户端
+    bool DeleteClient(CJLkitSocket* pSocket);
+
+    //客户端列表
+private:
+    std::list<CJLkitSocket*> _client;
 
 // Operations
 public:
     BOOL StartListening();
     void StopListening();
-    void ClientAccept();
-    void ClientClose(CRequestSocket* pSock);
-
-    //是否已经登陆
-    CRequestSocket* isLogined(TCHAR* szUserName);
-
-    //闲置处理
-    BOOL OnIdle(LONG lCount);
-
-    //
-    void DocHit(LPARAM lHint, CRequest* pObject);
 
 
-    //重写
-    // ClassWizard generated virtual function overrides
+    //网络事件
+public:
+    virtual bool OnEventTCPSocketLink(CJLkitSocket* pSocket, INT nErrorCode);
+    virtual bool OnEventTCPSocketShut(CJLkitSocket* pSocket, BYTE cbShutReason);
+    virtual bool OnEventTCPSocketRead(CJLkitSocket* pSocket, const Tcp_Head& stTcpHead, void* pData, WORD wDataSize);
+
+
+    //处理登陆
+    bool ProcessLogin(CJLkitSocket* pSocket, const Tcp_Head& stTcpHead, void* pData, WORD wDataSize);
+    bool ProcessKey(CJLkitSocket* pSocket, const Tcp_Head& stTcpHead, void* pData, WORD wDataSize);
+    bool ProcessHelp(CJLkitSocket* pSocket, const Tcp_Head& stTcpHead, void* pData, WORD wDataSize);
+
+
     //{{AFX_VIRTUAL(CJLSrvrDoc)
 public:
     virtual BOOL OnNewDocument();
@@ -74,20 +77,11 @@ public:
 #endif
 
 protected:
-
-// Generated message map functions
-protected:
     //{{AFX_MSG(CJLSrvrDoc)
-    afx_msg void OnUpdateCalcUpTime(CCmdUI* pCmdUI);
-    afx_msg void OnUpdateConnects(CCmdUI* pCmdUI);
     afx_msg void OnFileRestart();
     //}}AFX_MSG
     DECLARE_MESSAGE_MAP()
 };
 
-/////////////////////////////////////////////////////////////////////////////
 
-//{{AFX_INSERT_LOCATION}}
-// Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif // !defined(AFX_JLSRVRDOC_H__4ABA5256_27E0_427F_87E1_2E441B5CA64B__INCLUDED_)
+#endif

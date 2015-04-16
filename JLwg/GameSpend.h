@@ -6,11 +6,8 @@
 #define AFX_GAMESPEND_H__C21DB428_5D98_4535_817B_E6E7A67D8713__INCLUDED_
 
 #if _MSC_VER > 1000
-#pragma once
+    #pragma once
 #endif // _MSC_VER > 1000
-
-
-#include "..\common\CHook.h"
 
 
 
@@ -20,17 +17,7 @@ class GameSpend
 protected:
     GameSpend();
     virtual ~GameSpend();
-
-
-private:
-    static GameSpend* _inst;
-public:
-    static GameSpend* Instance(){
-        if(!_inst)
-            _inst = new GameSpend;
-
-        return _inst;
-    }
+    DECLARE_SINGLETON(GameSpend)
 
 
     BOOL Init();
@@ -39,7 +26,7 @@ public:
     _InitializeSpeedhack m_pfnInitSpeed;
 
 private:
-    HMODULE	m_hack;	//加速模块句柄
+    HMODULE m_hack; //加速模块句柄
     CHook ce_hookGetTickCount;
     CHook ce_hookQueryPerformanceCounter;
     CHook ce_hooktimeGetTime;

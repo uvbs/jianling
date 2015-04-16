@@ -35,10 +35,10 @@ RSC=rc.exe
 # PROP Use_Debug_Libraries 0
 # PROP Output_Dir "Release"
 # PROP Intermediate_Dir "Release"
-# PROP Ignore_Export_Lib 0
+# PROP Ignore_Export_Lib 1
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS" /Yu"stdafx.h" /FD /c
-# ADD CPP /nologo /MD /W3 /GX /Zi /Od /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_UNICODE" /D "_AFXDLL" /FR /Yu"stdafx.h" /FD /c
+# ADD CPP /nologo /MDd /W3 /GX /Zi /Od /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS" /D "_AFXDLL" /FR /Yu"stdafx.h" /FD /GZ /c
 # ADD BASE RSC /l 0x804 /d "NDEBUG"
 # ADD RSC /l 0x804 /d "NDEBUG" /d "_AFXDLL"
 BSC32=bscmake.exe
@@ -46,7 +46,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:console /machine:I386
-# ADD LINK32 /nologo /entry:"entry" /subsystem:console /debug /machine:I386
+# ADD LINK32 /nologo /subsystem:console /debug /machine:I386 /out:"../bin/Tester.exe"
 # SUBTRACT LINK32 /pdb:none
 # Begin Target
 
@@ -56,8 +56,16 @@ LINK32=link.exe
 # PROP Default_Filter "cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 # Begin Source File
 
+SOURCE=..\JLkit\JLkitSocket.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\StdAfx.cpp
 # ADD CPP /Yc"stdafx.h"
+# End Source File
+# Begin Source File
+
+SOURCE=.\Test.cpp
 # End Source File
 # Begin Source File
 
@@ -69,7 +77,15 @@ SOURCE=.\Tester.cpp
 # PROP Default_Filter "h;hpp;hxx;hm;inl"
 # Begin Source File
 
+SOURCE=..\JLkit\JLkitSocket.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\StdAfx.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\Test.h
 # End Source File
 # End Group
 # Begin Group "Resource Files"
@@ -77,21 +93,9 @@ SOURCE=.\StdAfx.h
 # PROP Default_Filter "ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe"
 # Begin Source File
 
-SOURCE=.\res\rt_rcdat.bin
-# End Source File
-# Begin Source File
-
-SOURCE=.\rt_rcdat.bin
-# End Source File
-# Begin Source File
-
 SOURCE=.\Tester.rc
 # End Source File
 # End Group
-# Begin Source File
-
-SOURCE=.\res\ddl.dll
-# End Source File
 # Begin Source File
 
 SOURCE=.\ReadMe.txt

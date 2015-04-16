@@ -1,11 +1,11 @@
-#if !defined _INJECT_H_
+#ifndef _INJECT_H_
 #define _INJECT_H_
 
 class CInject
 {
 public:
     CInject(const TCHAR* lpszName);
-    ~CInject(){};
+    ~CInject() {};
 
     //×¢Èë
     BOOL InjectTo(TCHAR szProcess[]);

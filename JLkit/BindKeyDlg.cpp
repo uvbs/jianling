@@ -2,13 +2,14 @@
 //
 
 #include "stdafx.h"
-#include "jlkit.h"
+#include "JLkit.h"
+#include "JLkitDoc.h"
+#include "MainFrm.h"
+#include "JLkitSocket.h"
 #include "BindKeyDlg.h"
 
 #ifdef _DEBUG
-#define new DEBUG_NEW
-#undef THIS_FILE
-static char THIS_FILE[] = __FILE__;
+    #define new DEBUG_NEW
 #endif
 
 /////////////////////////////////////////////////////////////////////////////
@@ -35,9 +36,20 @@ void CDlgBindKey::DoDataExchange(CDataExchange* pDX)
 
 BEGIN_MESSAGE_MAP(CDlgBindKey, CDialog)
     //{{AFX_MSG_MAP(CDlgBindKey)
-    // NOTE: the ClassWizard will add message map macros here
-    //}}AFX_MSG_MAP
+	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
 // CDlgBindKey message handlers
+
+void CDlgBindKey::OnOK() 
+{
+    CMainFrame* pFrame =  (CMainFrame*)AfxGetMainWnd();
+    CJLkitDoc* pDoc = (CJLkitDoc*)pFrame->GetActiveDocument();
+    CJLkitSocket& sock = pDoc->m_socket;
+    
+    BINDKEY_BUF key;
+    _tcscpy(key.key, (LPCTSTR)m_strKey);
+
+    sock.Send(M_KEY, fun_bindkey, &key, sizeof(BINDKEY_BUF));
+}

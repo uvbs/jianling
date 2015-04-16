@@ -9,7 +9,7 @@
 #include "..\common\protocol.h"
 
 #ifdef _DEBUG
-#define new DEBUG_NEW
+    #define new DEBUG_NEW
 #endif
 
 
@@ -63,10 +63,23 @@ void CDlgRegist::OnOK()
     }
     else
     {
-        CJLkitSocket::GetInstance()->Register(m_strName, m_strPw, m_strIp);
+//        CJLkitSocket::GetInstance()->Register(m_strName, m_strPw, m_strIp);
     }
 
+
 }
+
+
+WORD CDlgRegist::ConstructRegisterPacket(BYTE cbBuffer[], WORD wBufferSize)
+{
+
+    REGIST_BUF* pBuffer = (REGIST_BUF*)cbBuffer;
+    _tcsncpy(pBuffer->name, (LPCTSTR)m_strName, MAXLEN);
+    _tcsncpy(pBuffer->pw, (LPCTSTR)m_strPw, MAXLEN);
+
+    return sizeof(REGIST_BUF);
+}
+
 
 BOOL CDlgRegist::OnInitDialog()
 {

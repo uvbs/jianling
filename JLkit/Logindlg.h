@@ -3,26 +3,25 @@
 
 
 
-
 class CDlgLogin : public CDialog
 {
 // Construction
 public:
-    CDlgLogin();   // standard constructor
-
+    CDlgLogin(CWnd* pParent = NULL);   // standard constructor
 
 // Dialog Data
 public:
     //{{AFX_DATA(CDlgLogin)
     enum {IDD = IDD_LOGIN};
-    CComboBox m_ComBox;
     CString m_strName;
     CString m_strPw;
     BOOL m_bRemPw;
+    CComboBox m_ComBox;
     //}}AFX_DATA
 
-    void LoginResult(int nResult);
-    void ConnectResult(int nErrorCode);
+
+    WORD ConstructLoginPacket(BYTE cbBuffer[], WORD wBufferSize);
+
 
 // Overrides
     // ClassWizard generated virtual function overrides
@@ -40,7 +39,8 @@ protected:
     //{{AFX_MSG(CDlgLogin)
     afx_msg void OnBtnRegister();
     afx_msg void OnBtnModifybind();
-    //}}AFX_MSG
+	afx_msg void OnClose();
+	//}}AFX_MSG
     DECLARE_MESSAGE_MAP()
 
 

@@ -479,7 +479,7 @@ BEGIN
     IDS_SOCKET_INITFAIL     "套接字初始化失败"
     IDS_INVALID             "%s (Error! Not Listening!)"
     IDS_DOCTITLE_NOPORT     "%s (%s)"
-    IDS_LISTEN_INUSE        "端口正在使用中"
+    IDS_LISTEN_INUSE        "端口 %d 正在使用中"
 END
 
 #endif    // Chinese (P.R.C.) resources

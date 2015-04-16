@@ -3,22 +3,18 @@
 //////////////////////////////////////////////////////////////////////
 
 #include "stdafx.h"
-#include "JLkitDoc.h"
 #include "JLkitSocket.h"
 
-CJLkitSocket* CJLkitSocket::_Instance = NULL;
-CJLkitSocket* CJLkitSocket::GetInstance()
-{
-    if(_Instance == NULL)
-    {
-        _Instance = new CJLkitSocket;
-    }
-
-    return _Instance;
-}
+#ifdef _DEBUG
+    #define new DEBUG_NEW
+#endif
 
 CJLkitSocket::CJLkitSocket()
 {
+    m_Sink = NULL;
+    m_bConnectState = NOCONNECT;
+    m_nRecvWriterPointer = 0;
+    m_wSocketID = 0;
 }
 
 CJLkitSocket::~CJLkitSocket()
@@ -26,214 +22,220 @@ CJLkitSocket::~CJLkitSocket()
 
 }
 
-void CJLkitSocket::SetDoc(CJLkitDoc* pDoc)
-{
-    m_pDoc = pDoc;
-}
-
-
-
 // Do not edit the following lines, which are needed by ClassWizard.
 #if 0
-BEGIN_MESSAGE_MAP(CJLkitSocket, CAsyncSocket)
-    //{{AFX_MSG_MAP(CJLkitSocket)
-    //}}AFX_MSG_MAP
-END_MESSAGE_MAP()
+    BEGIN_MESSAGE_MAP(CJLkitSocket, CAsyncSocket)
+        //{{AFX_MSG_MAP(CJLkitSocket)
+        //}}AFX_MSG_MAP
+    END_MESSAGE_MAP()
 #endif  // 0
 
 
 
+void CJLkitSocket::CloseSocket()
+{
+    //断开套接字
+    Close();
 
+    //连接状态
+    m_bConnectState = NOCONNECT;
+
+}
+
+//链接通知
 void CJLkitSocket::OnConnect(int nErrorCode)
 {
-    m_pDoc->ConnectResult(nErrorCode);
+    if(nErrorCode == 0)
+    {
+        //更改链接状态
+        m_bConnectState = CONNECTED;
+    }
+    else
+    {
+        CloseSocket();
+    }
+
+    //给上层通知
+    m_Sink->OnEventTCPSocketLink(this, nErrorCode);
 }
+
 
 void CJLkitSocket::OnReceive(int nErrorCode)
 {
-    m_pDoc->ProcessRecevice();
-}
-
-void CJLkitSocket::Heart()
-{
-    BYTE b;
-    Send(&b, sizeof(BYTE));
-}
-
-
-BOOL CJLkitSocket::ConnectSrv(const CString& strHostName, int nPort)
-{
-
-    if(Connect(strHostName, nPort))
+    TRACE(_T("------------#一次收包#------------"));
+    int nRecvSize = CAsyncSocket::Receive(m_cbRecvBuf + m_nRecvWriterPointer, sizeof(m_cbRecvBuf) - m_nRecvWriterPointer, 0);
+    ASSERT(nRecvSize != 0);
+    if((nRecvSize == SOCKET_ERROR) || (nRecvSize == 0))
     {
+        m_Sink->OnEventTCPSocketShut(this, 0);
+        CloseSocket();
+        return;
+    }
+
+    TRACE(_T("长度: %d"), nRecvSize);
+
+    try
+    {
+
+
+        //缓冲区所有等待处理字节
+        int nBufSize = m_nRecvWriterPointer + nRecvSize;
+        int nProcSize = 0;  //处理过的长度
+        int nLeftSize;      //剩余长度
+        while(1)
+        {
+
+            //计算剩余长度
+            nLeftSize = nBufSize - nProcSize;
+
+            //效验, 长度不及一个包头大小
+            if(nLeftSize < sizeof(Tcp_Head))
+            {
+                TRACE(_T("处理完一个缓冲区, 剩余 %d bytes\n"), nLeftSize);
+                break;
+            }
+
+            //获取包头
+            Tcp_Head* pTcpHead = (Tcp_Head*)(m_cbRecvBuf + nProcSize);
+
+            //获取用户数据大小
+            int nDataSize = pTcpHead->wPacketSize;
+            TRACE(_T("用户数据长度: %d"), nDataSize);
+
+            //如果用户数据大于剩余处理数据
+            if(nDataSize >= nLeftSize)
+            {
+                TRACE(_T("用户数据还未收取完整"));
+                break;
+            }
+
+            //获取用户数据
+            void* pData = pTcpHead + 1;
+
+            //更改状态为处理
+            m_bConnectState = MESPROCESS;
+
+            // 让主窗体来处理这个网络消息
+            if(m_Sink)
+            {
+                m_Sink->OnEventTCPSocketRead(this, *pTcpHead, pData, nDataSize);
+            }
+
+            //已经处理的长度
+            nProcSize += sizeof(Tcp_Head) + nDataSize;
+        }
+
+        //剩余数据移动到缓冲区开始
+        if(nLeftSize > 0)
+        {
+            memmove(m_cbRecvBuf, m_cbRecvBuf + nProcSize, nLeftSize);
+        }
+
+        //同时设置缓冲区的写入偏移
+        m_nRecvWriterPointer = nLeftSize;
+        _ASSERTE(m_nRecvWriterPointer < SOCKET_TCP_BUFFER);
+    }
+    catch(...)
+    {
+        CloseSocket();
+    }
+}
+
+
+BOOL CJLkitSocket::ConnectSrv(LPCTSTR pSrv, long port)
+{
+
+    //效验参数
+    ASSERT(m_bConnectState == NOCONNECT);
+    ASSERT(m_hSocket == INVALID_SOCKET);
+
+
+    try
+    {
+        if(Create() == FALSE) return FALSE;
+
+#ifndef TEST_NETWORK
+        int iErrorCode = Connect(pSrv, PORT_SRV);
+#else
+        int iErrorCode = Connect(_T("127.0.0.1"), PORT_SRV);
+#endif
+        if(iErrorCode == 0)
+        {
+            if(WSAGetLastError() != WSAEWOULDBLOCK) FALSE;
+        }
+
+        m_bConnectState = CONNECTTING;;
         return TRUE;
     }
-    else
+    catch(...)
     {
-        if(GetLastError() == WSAEWOULDBLOCK)
-        {
-            return TRUE;
-        }
+        CloseSocket();
+        return FALSE;
     }
-
-    return FALSE;
 }
-
 
 int CJLkitSocket::Send(const void* lpBuf, int nBufLen, int nFlags /* = 0 */)
 {
+    ASSERT(nBufLen != 0);
+    ASSERT(lpBuf != NULL);
 
-    //备份这片数据
-    BYTE* pBack = new BYTE[nBufLen];
-    memcpy(pBack, lpBuf, nBufLen);
-
-    //对数据加密
-    for(int i = 0; i < nBufLen; i++)
+    WORD wSended = 0;
+    try
     {
-        BYTE q = (BYTE)i % 3;
-        pBack[i] ^= 0x93;
-        pBack[i] += q;
-    }
-
-    int nBytes = CAsyncSocket::Send(pBack, nBufLen, nFlags);
-    if(nBytes == SOCKET_ERROR)
-    {
-        ShutDown(both);
-    }
-
-    delete []pBack;
-    return nBytes;
-}
 
 
-int CJLkitSocket::Receive(void* lpBuf, int nBufLen, int nFlags /* = 0 */)
-{
-    int i;
-    BYTE* temp = (BYTE*)lpBuf;
-
-    int nBytes = CAsyncSocket::Receive(lpBuf, nBufLen, nFlags);
-    if(nBytes == SOCKET_ERROR)
-    {
-        ShutDown(both);
-    }
-    else
-    {
-        //对数据解密
-        for(i = 0; i < nBytes; i++)
+        do
         {
-            BYTE q = (BYTE)i % 3;
-            temp[i] -= q;
-            temp[i] ^= 0x93;
+            int iErrorCode = CAsyncSocket::Send((char*)lpBuf + wSended, nBufLen - wSended, nFlags);
+            if(iErrorCode == SOCKET_ERROR)
+            {
+                if(WSAGetLastError() == WSAEWOULDBLOCK)
+                {
+                    Sleep(20);
+                    continue;
+                }
+                else
+                {
+                    return SOCKET_ERROR;
+                }
+            }
+
+            wSended += iErrorCode;
         }
+        while(wSended < nBufLen);
+
+    }
+    catch(...)
+    {
+        TRACE(_T("发送数据异常"));
+        wSended = SOCKET_ERROR;
     }
 
-    return nBytes;
+    return wSended;
 }
 
-
-
-
-void CJLkitSocket::BindKey(CString& strKey)
+int CJLkitSocket::Send(int cmd_main, int cmd_sub, void* pData, WORD wDataSize)
 {
+    char cbBuffer[SOCKET_TCP_BUFFER];
 
-    KEY_BUF keybuf;
-    keybuf.fun = fun_bindkey;
-    _tcsncpy(keybuf.key, (LPCTSTR)strKey, KEYLEN);
-    _tcsncpy(keybuf.name, (LPCTSTR)m_UserInfo.name, MAXLEN);
-    _tcsncpy(keybuf.pw, (LPCTSTR)m_UserInfo.pw, MAXLEN);
-    //  memcpy(&keybuf.pcdata, &pcinfo.stPcData, sizeof(PCDATA));
+    Tcp_Head* pTcpHead = (Tcp_Head*)cbBuffer;
+    pTcpHead->wVersion = 100;
+    pTcpHead->wPacketSize = wDataSize;
+    pTcpHead->wSubCmdID = cmd_sub;
+    pTcpHead->wMainCmdID = cmd_main;
 
-    Send(&keybuf, sizeof(KEY_BUF));
-}
+    //有的请求是没有数据的.
+    if(pData != NULL && wDataSize > 0)
+    {
+        memcpy(pTcpHead + 1, pData, wDataSize);
+    }
 
-
-void CJLkitSocket::Unbindkey(CString& strKey)
-{
-    KEY_BUF keybuf;
-    keybuf.fun = fun_unbindkey;
-    _tcsncpy(keybuf.key, (LPCTSTR)strKey, KEYLEN);
-    _tcsncpy(keybuf.name, (LPCTSTR)m_UserInfo.name, MAXLEN);
-    _tcsncpy(keybuf.pw, (LPCTSTR)m_UserInfo.pw, MAXLEN);
-    Send(&keybuf, sizeof(KEY_BUF));
-}
-
-void CJLkitSocket::Register(CString& strName, CString& strPw, CString& strIP)
-{
-    REGIST_BUF registbuf;
-    registbuf.fun = fun_regist;
-
-    memcpy(registbuf.ip, (LPCTSTR)strIP, MAXLEN);
-    memcpy(registbuf.name, (LPCTSTR)strName, MAXLEN);
-    memcpy(registbuf.pw, (LPCTSTR)strPw, MAXLEN);
-
-    // memcpy(&registbuf.pcdata, &pcinfo.stPcData, sizeof(PCDATA));
-    Send(&registbuf, sizeof(REGIST_BUF));
-}
-
-void CJLkitSocket::Querykey()
-{
-    LOGIN_BUF keybuf;
-    keybuf.fun = fun_querykey;
-    _tcsncpy(keybuf.name, (LPCTSTR)m_UserInfo.name, MAXLEN);
-    _tcsncpy(keybuf.pw, (LPCTSTR)m_UserInfo.pw, MAXLEN);
-    Send(&keybuf, sizeof(LOGIN_BUF));
-
-}
-
-void CJLkitSocket::ModifyBind(CString& strName, CString& strPw, CString& strOld, CString& strNew)
-{
-    //将注册数据打包
-    MODIFYBIND_BUF modifybuf;
-    modifybuf.fun = fun_mbind;
-
-    memcpy(modifybuf.new_bind, (LPCTSTR)strNew, MAXLEN);
-    memcpy(modifybuf.old_bind, (LPCTSTR)strOld, MAXLEN);
-    memcpy(modifybuf.name, (LPCTSTR)strName, MAXLEN);
-    memcpy(modifybuf.pw, (LPCTSTR)strPw, MAXLEN);
-
-    Send(&modifybuf, sizeof(MODIFYBIND_BUF));
-
-}
-
-
-int CJLkitSocket::LoginSrv(CString& strName, CString& strPassWord)
-{
-
-    //将用户名和密码放到发包结构中
-    m_UserInfo.fun = fun_login;
-    _tcsncpy(m_UserInfo.name, (LPCTSTR)strName, MAXLEN);
-    _tcsncpy(m_UserInfo.pw, (LPCTSTR)strPassWord, MAXLEN);
-
-    return Send(&m_UserInfo, sizeof(LOGIN_BUF));
-}
-
-void CJLkitSocket::Reportbug(CString& strBug)
-{
-
-    BUG_BUF loginbuf;
-    loginbuf.fun = fun_bugrep;
-    _tcsncpy(loginbuf.name, (LPCTSTR)m_UserInfo.name, MAXLEN);
-    _tcsncpy(loginbuf.pw, (LPCTSTR)m_UserInfo.pw, MAXLEN);
-    _tcsncpy(loginbuf.szBug, (LPCTSTR)strBug, BUFSIZ);
-
-    Send(&loginbuf, sizeof(BUG_BUF));
-}
-
-void CJLkitSocket::OnSend(int nErrorCode)
-{
-    // TODO: Add your specialized code here and/or call the base class
-    TRACE(_T("OnSend"));
-    CAsyncSocket::OnSend(nErrorCode);
+    int nPacketSize = wDataSize + sizeof(Tcp_Head);
+    return Send(pTcpHead, nPacketSize);
 }
 
 void CJLkitSocket::OnClose(int nErrorCode)
 {
-    // TODO: Add your specialized code here and/or call the base class
-    AfxMessageBox(_T("您的帐号已经在其他地方登录"));
-    CAsyncSocket::OnClose(nErrorCode);
-}
-
-void CJLkitSocket::Delete()
-{
-    delete _Instance;
+    m_Sink->OnEventTCPSocketShut(this, nErrorCode);
+    CloseSocket();
 }

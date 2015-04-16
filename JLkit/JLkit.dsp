@@ -36,10 +36,11 @@ RSC=rc.exe
 # PROP Use_Debug_Libraries 0
 # PROP Output_Dir "Release"
 # PROP Intermediate_Dir "Release"
-# PROP Ignore_Export_Lib 0
+# PROP Ignore_Export_Lib 1
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /MD /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_AFXDLL" /Yu"stdafx.h" /FD /c
-# ADD CPP /nologo /MDd /W3 /GX /Zi /Od /Gf /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_UNICODE" /D "_AFXDLL" /FR /Yu"stdafx.h" /FD /c
+# ADD CPP /nologo /MDd /W3 /GX /Zi /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_UNICODE" /D "UNICODE" /D "_AFXDLL" /D "JLTW" /FAs /FR /Yu"stdafx.h" /FD /c
+# SUBTRACT CPP /Gf
 # ADD BASE MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0x804 /d "NDEBUG" /d "_AFXDLL"
@@ -49,8 +50,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 /nologo /subsystem:windows /machine:I386
-# ADD LINK32 /nologo /entry:"wWinMainCRTStartup" /subsystem:windows /debug /machine:I386 /out:"..\bin\JLkit.exe"
-# SUBTRACT LINK32 /profile /pdb:none /map
+# ADD LINK32 /nologo /entry:"wWinMainCRTStartup" /subsystem:windows /profile /map /debug /machine:I386 /out:"..\bin\JLkit.exe"
 # Begin Target
 
 # Name "JLkit - Win32 Release"
@@ -67,15 +67,15 @@ SOURCE=.\BugRepDlg.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=..\common\CallTracer.cpp
-# End Source File
-# Begin Source File
-
 SOURCE=.\ConfigMgr.cpp
 # End Source File
 # Begin Source File
 
 SOURCE=.\CVPNFile.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\GlobalUserInfo.cpp
 # End Source File
 # Begin Source File
 
@@ -107,10 +107,6 @@ SOURCE=.\Keyviewdlg.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\LaunchGameThread.cpp
-# End Source File
-# Begin Source File
-
 SOURCE=..\common\logger.cpp
 # End Source File
 # Begin Source File
@@ -127,6 +123,10 @@ SOURCE=.\Modifybind.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\MsgBox.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\registdlg.cpp
 # End Source File
 # Begin Source File
@@ -139,12 +139,20 @@ SOURCE=..\common\ShareMem.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\StatusBox.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\StdAfx.cpp
 # ADD CPP /Yc"stdafx.h"
 # End Source File
 # Begin Source File
 
 SOURCE=..\common\webpost.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\common\WHService.cpp
 # End Source File
 # End Group
 # Begin Group "Header Files"
@@ -160,15 +168,15 @@ SOURCE=.\BugRepDlg.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\common\CallTracer.h
-# End Source File
-# Begin Source File
-
 SOURCE=.\ConfigMgr.h
 # End Source File
 # Begin Source File
 
 SOURCE=.\CVPNFile.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\GlobalUserInfo.h
 # End Source File
 # Begin Source File
 
@@ -192,15 +200,7 @@ SOURCE=.\JLkitView.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\common\Job.h
-# End Source File
-# Begin Source File
-
 SOURCE=.\Keyviewdlg.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\LaunchGameThread.h
 # End Source File
 # Begin Source File
 
@@ -224,6 +224,10 @@ SOURCE=.\Modifybind.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\MsgBox.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\registdlg.h
 # End Source File
 # Begin Source File
@@ -240,16 +244,28 @@ SOURCE=..\common\ShareMem.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\StatusBox.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\StdAfx.h
 # End Source File
 # Begin Source File
 
 SOURCE=..\common\webpost.h
 # End Source File
+# Begin Source File
+
+SOURCE=..\common\WHService.h
+# End Source File
 # End Group
 # Begin Group "Resource Files"
 
 # PROP Default_Filter "ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe"
+# Begin Source File
+
+SOURCE=.\res\BnSClient.ico
+# End Source File
 # Begin Source File
 
 SOURCE=.\res\default1.bin
@@ -265,6 +281,14 @@ SOURCE=.\JLkit.rc
 # Begin Source File
 
 SOURCE=.\res\JLkit.rc2
+# End Source File
+# Begin Source File
+
+SOURCE=.\res\title.bmp
+# End Source File
+# Begin Source File
+
+SOURCE=.\res\toolbar1.bmp
 # End Source File
 # End Group
 # Begin Source File

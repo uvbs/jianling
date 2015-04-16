@@ -9,9 +9,9 @@
 #endif
 
 #include "resource.h"       // main symbols
+#include "JLDlg.h"
 
 
-class CJLDlg;
 class CJLwgApp: public CWinApp
 {
 public:
@@ -21,10 +21,14 @@ public:
 
     //外挂线程
     static DWORD CALLBACK WgThread(LPVOID pParam);
-
-
-    //外挂游戏过程钩子
     static LRESULT CALLBACK GameMsgProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+
+    //等待游戏窗口创建
+    HWND isGameWndCreated(DWORD dwPid);
+    BOOL WaitGameCreate();
+
+
+    static HWND m_hGameWnd;
 
 // Overrides
     // ClassWizard generated virtual function overrides

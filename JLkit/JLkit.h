@@ -21,9 +21,6 @@ public:
     //³ÌÐòÎ¨Ò»
     BOOL MutexWnd();
 
-private:
-    CMutex m_mutex;
-
 
 // Overrides
     // ClassWizard generated virtual function overrides
@@ -35,10 +32,14 @@ public:
     //}}AFX_VIRTUAL
 // Implementation
 
+public:
     //{{AFX_MSG(CJLkitApp)
     //}}AFX_MSG
+
 private:
     HANDLE m_Mutex;
+    ULONG_PTR m_gdiplusToken;
+    TCHAR m_szIniPath[MAX_PATH];
 };
 
 #endif

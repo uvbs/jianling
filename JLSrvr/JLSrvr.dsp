@@ -36,10 +36,10 @@ RSC=rc.exe
 # PROP Use_Debug_Libraries 0
 # PROP Output_Dir "Release"
 # PROP Intermediate_Dir "Release"
-# PROP Ignore_Export_Lib 0
+# PROP Ignore_Export_Lib 1
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /MD /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_AFXDLL" /Yu"stdafx.h" /FD /c
-# ADD CPP /nologo /MDd /W3 /GX /Zi /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_AFXDLL" /D "_UNICODE" /FR /Yu"stdafx.h" /FD /c
+# ADD CPP /nologo /MDd /W3 /GX /Zi /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_AFXDLL" /D "_UNICODE" /D "UNICODE" /FR /Yu"stdafx.h" /FD /c
 # ADD BASE MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0x804 /d "NDEBUG" /d "_AFXDLL"
@@ -49,7 +49,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 /nologo /subsystem:windows /machine:I386
-# ADD LINK32 /nologo /entry:"wWinMainCRTStartup" /subsystem:windows /debug /machine:I386 /out:"..\bin\JLSrvr.exe"
+# ADD LINK32 /nologo /entry:"wWinMainCRTStartup" /subsystem:windows /pdb:"..\bin\JLSrvr.pdb" /debug /machine:I386 /out:"..\bin\JLSrvr.exe"
 # SUBTRACT LINK32 /pdb:none
 # Begin Target
 
@@ -59,27 +59,11 @@ LINK32=link.exe
 # PROP Default_Filter "cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 # Begin Source File
 
-SOURCE=..\common\CallTracer.cpp
-# End Source File
-# Begin Source File
-
 SOURCE=.\DbMngr.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\DlgAcInfo.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\DlgAcKey.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\DlgAcKeylog.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\DlgKeyAdd.cpp
+SOURCE=..\JLkit\JLkitSocket.cpp
 # End Source File
 # Begin Source File
 
@@ -111,27 +95,7 @@ SOURCE=.\MainFrm.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\RecordAc.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\RecordKey.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\RecordKeyLog.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\Request.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\RequestSocket.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\RequestView.cpp
+SOURCE=..\common\MSJEXHND.cpp
 # End Source File
 # Begin Source File
 
@@ -144,7 +108,7 @@ SOURCE=.\StdAfx.cpp
 # PROP Default_Filter "h;hpp;hxx;hm;inl"
 # Begin Source File
 
-SOURCE=..\common\CallTracer.h
+SOURCE=.\db_sql.h
 # End Source File
 # Begin Source File
 
@@ -152,19 +116,7 @@ SOURCE=.\DbMngr.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\DlgAcInfo.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\DlgAcKey.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\DlgAcKeylog.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\DlgKeyAdd.h
+SOURCE=..\JLkit\JLkitSocket.h
 # End Source File
 # Begin Source File
 
@@ -188,35 +140,11 @@ SOURCE=.\MainFrm.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\RecordAc.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\RecordKey.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\RecordKeyLog.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\Request.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\RequestSocket.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\RequestView.h
+SOURCE=..\common\MSJEXHND.h
 # End Source File
 # Begin Source File
 
 SOURCE=.\Resource.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\sockinfo.h
 # End Source File
 # Begin Source File
 

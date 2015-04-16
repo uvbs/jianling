@@ -6,6 +6,7 @@
 #define AFX_CVPNFILE_H__48C63982_DEC4_4960_B822_BB8302AB9242__INCLUDED_
 
 
+
 class CVpnFile: public CStdioFile
 {
 public:

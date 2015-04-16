@@ -1,29 +1,40 @@
 #pragma once
+
+
 #include "gamecall.h"
+#include "..\JLkit\JLkitSocket.h"
 
-
-class GamecallEx: public Gamecall
+class GamecallEx: public Gamecall, public ITCPSocketSink
 {
 protected:
     GamecallEx();
     ~GamecallEx();
+    DECLARE_SINGLETON(GamecallEx)
 
-private:
-    static GamecallEx* _inst;
 
 public:
-    static GamecallEx* Instance() {
-        if(!_inst) {
-            _inst = new GamecallEx;
-        }
+    BOOL Init();
+    void UnInit();
 
-        return _inst;
-    }
+
+private:
+    //网络回调
+    virtual bool OnEventTCPSocketLink(CJLkitSocket* pSocket, INT nErrorCode) ;
+    virtual bool OnEventTCPSocketShut(CJLkitSocket* pSocket, BYTE cbShutReason);
+    virtual bool OnEventTCPSocketRead(CJLkitSocket* pSocket, const Tcp_Head& stTcpHead, void* pData, WORD wDataSize);
+
+    CJLkitSocket sock;
+
+public:
+    DWORD GetRangeLootCount(DWORD range);
+    DWORD GetRangeMonsterCount(DWORD range = CAN_OPERATOR); //取范围内怪物数量, 一般用来判断是否用aoe攻击
+
 
     //拾取, UI
+public:
     void Pickup(int pos, DWORD range);        //捡起范围内掉落
-    BOOL PickupTask(DWORD range = CAN_OPERATOR);	//打开任务物品, 这个范围取值是游戏内能看到f键亮的距离
-    BOOL PickupTaskts(DWORD range = CAN_OPERATOR);	//打开任务物品, 这个范围取值是游戏内能看到f键亮的距离
+    BOOL PickupTask(DWORD range = CAN_OPERATOR);    //打开任务物品, 这个范围取值是游戏内能看到f键亮的距离
+    BOOL PickupTaskts(DWORD range = CAN_OPERATOR);  //打开任务物品, 这个范围取值是游戏内能看到f键亮的距离
     BOOL PickupSpecTypeTask(DWORD range, DWORD type, wchar_t* name = NULL);
     BOOL PickupSpecTypeTaskts(DWORD range, DWORD type, wchar_t* name = NULL);
     void PickupTask(DWORD range, DWORD taskid, DWORD taskstep);
@@ -41,18 +52,29 @@ public:
 
 
     //打怪
-    int	FindThenKill(int pos, DWORD range, DWORD mode, DWORD MyQuestStep = 0, DWORD MyQuestID = 0, DWORD canKillRange = CAN_OPERATOR);    //找到杀掉
+    int FindThenKill(int pos, DWORD range, DWORD mode, DWORD MyQuestStep = 0, DWORD MyQuestID = 0, DWORD canKillRange = CAN_OPERATOR);    //找到杀掉
     void kill_PickupOnce();
     BOOL kill_PickupBody();
     BOOL kill_Task(int MyQuestID, int MyQuestStep);
     void Kill_Tab();//tab释放等待
-    void AttackNormal();	//普通攻击 , rt 循环按, 需要参数来使视角总是面向这个对象
-    void AttackAOE();						//AOE攻击
+    void AttackNormal();    //普通攻击 , rt 循环按, 需要参数来使视角总是面向这个对象
+    void AttackAOE();                       //AOE攻击
+
+    //自定义杀怪过滤
+    BOOL isCustomKill_DontKill(wchar_t* name);
+    BOOL isCustomKill_AlwaysKill(wchar_t* name);
+    BOOL isCustomKill_HaveName(wchar_t* name);
+
+    //应用杀怪策略
+    BOOL Kill_ApplyConfig(ObjectVector& ObjectVec);
 
 
+    //辅助线程
+    static UINT CALLBACK KeepAliveThread(LPVOID pParam);
+    static UINT CALLBACK AttackHelperThread(LPVOID pParam);
 
     //杀怪
-    int	KillObject(DWORD range, ObjectNode* pNode, DWORD mode, DWORD canKillRange = CAN_OPERATOR); //杀死这个对象
+    int KillObject(DWORD range, ObjectNode* pNode, DWORD mode, DWORD canKillRange = CAN_OPERATOR); //杀死这个对象
     void AddCustomKill(WCHAR* name, DWORD type);
 
 
@@ -62,7 +84,7 @@ public:
     void Stepto(wchar_t* name);
     void FollowNpc(wchar_t* name, DWORD range = 1000);
     void FuHuo();
-    BOOL _CityConvey(DWORD cityid);		//传送
+    BOOL _CityConvey(DWORD cityid);     //传送
     void CityConvey(DWORD cityid);//传送 逻辑 判断
     void Shunyi(TCHAR* szLujing);
     void NewSpend(float x);
@@ -80,17 +102,17 @@ public:
     void CunCangku(wchar_t* name, wchar_t* npcname);   //放仓库
     void CuncangkuByConfig(wchar_t* name);//配置文件存仓库
     void DeleteItem(wchar_t* name);   //删除一个物品
-    void DeleteItemByConfig();		//删除配置文件中所有物品
+    void DeleteItemByConfig();      //删除配置文件中所有物品
     void SellItem(wchar_t* name, wchar_t* npcName, BOOL bClose = TRUE);     //卖掉一个物品
-    void SellItemByConfig(wchar_t* name);			//卖掉配置文件中所有物品
-    void FenJie(wchar_t* name);		//分解指定物品, 所有数量
+    void SellItemByConfig(wchar_t* name);           //卖掉配置文件中所有物品
+    void FenJie(wchar_t* name);     //分解指定物品, 所有数量
     void FenJieByConfig();    //分解配置文件中的所有物品
 
     void JieFengHezi(wchar_t* HeZiname, UCHAR keytype, wchar_t* Keyname, DWORD keyCount); //分解盒子
     void JieFengZhuangBei(wchar_t* name, wchar_t* cailiao_name, UINT count); //分解装备
-    void FixWuqi();						//修理武器
+    void FixWuqi();                     //修理武器
 
-    BOOL XieZhuangBei(EQUITMENT_POS pos);			//卸装备
+    BOOL XieZhuangBei(EQUITMENT_POS pos);           //卸装备
     void WearEquipment(wchar_t* name, int pos);  //穿装备
 
 
@@ -110,13 +132,24 @@ public:
 
 
     //天赋
-    void AddTalent(DWORD id);	//添加一个技能点
-    void DelAllTalent();	//删除所有技能点
+    void AddTalent(DWORD id);   //添加一个技能点
+    void DelAllTalent();    //删除所有技能点
     void DelTalent(DWORD id);
     void _NewSpend(float x);
     int ClearCustom();
 
-private:
+
+    //组队
+    void AddToPary();
+
+
+
+
     //自定义的要杀的怪物名称
+private:
     Logger log;
+    HANDLE hThreads[2];
+    BOOL m_bStopThread;
+    BOOL m_bCanAoe;
+    CustKillVector CustomName;
 };

@@ -15,9 +15,23 @@
 // Insert your headers here
 #define	_CRT_SECURE_NO_WARNINGS	//关掉安全类的警告
 
+#pragma warning(disable: 4786)
+#pragma warning(disable: 4503)
+#pragma warning(once:4127)
+#pragma warning(once:4100)
+#pragma warning(once:4701)
+#pragma warning(once:4703)
+#pragma warning(once:4702)
+#pragma warning(disable:4018)
+#pragma warning(disable:4996)
+
+
 #include <afxwin.h>
 #include <afxcmn.h>
 #include <afxdlgs.h>
+#include <afxsock.h>
+
+
 
 #include <assert.h>
 #include <DbgHelp.h>
@@ -36,12 +50,13 @@
 #pragma comment(lib, "dbghelp")
 
 
-#pragma warning(once:4127)
-#pragma warning(once:4100)
-#pragma warning(once:4701)
-#pragma warning(once:4703)
-#pragma warning(once:4702)
-#pragma warning(disable:4018)
-#pragma warning(disable:4996)
 
+#include "..\common\protocol.h"
+#include "..\common\common.h"
+#include "..\common\ShareMem.h"
+#include "..\common\CHook.h"
+#include "..\common\logger.h"
+#include "..\common\inject.h"
+#include "..\common\inlinehook.h"
 
+#include "..\第三方库\SimpleIni\SimpleIni.h"

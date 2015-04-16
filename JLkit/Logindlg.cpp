@@ -5,29 +5,24 @@
 #include "JLkit.h"
 #include "JLkitSocket.h"
 #include "JLkitDoc.h"
+#include "MainFrm.h"
 #include "Logindlg.h"
 #include "Registdlg.h"
 #include "Modifybind.h"
 #include "ConfigMgr.h"
 
-#include "..\common\protocol.h"
-#include "..\common\Webpost.h"
-
 
 #ifdef _DEBUG
     #define new DEBUG_NEW
-    #undef THIS_FILE
-    static char THIS_FILE[] = __FILE__;
 #endif
-
 
 
 /////////////////////////////////////////////////////////////////////////////
 // LoginDlg dialog
 
 
-CDlgLogin::CDlgLogin()
-    : CDialog(CDlgLogin::IDD, NULL)
+CDlgLogin::CDlgLogin(CWnd* pParent)
+    : CDialog(CDlgLogin::IDD, pParent)
 {
     //{{AFX_DATA_INIT(LoginDlg)
     m_strName = _T("");
@@ -53,7 +48,8 @@ BEGIN_MESSAGE_MAP(CDlgLogin, CDialog)
     ON_BN_CLICKED(IDC_BUTTONREGISTER, OnBtnRegister)
     ON_BN_CLICKED(IDC_BTNMODIFYBIND, OnBtnModifybind)
     ON_WM_CREATE()
-    //}}AFX_MSG_MAP
+	ON_WM_CLOSE()
+	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -61,89 +57,71 @@ END_MESSAGE_MAP()
 
 void CDlgLogin::OnBtnRegister()
 {
-    CDlgRegist dlg;
-
-    ShowWindow(SW_HIDE);
-    if(dlg.DoModal() == IDOK) {
-        //注册登录帐号
-    }
-
-    ShowWindow(SW_SHOW);
+    CMainFrame *pFrame = (CMainFrame *)AfxGetMainWnd();
+    CJLkitDoc* pDoc = (CJLkitDoc *)pFrame->GetActiveDocument();
+    pDoc->ShowRegister();
 }
-
-void CDlgLogin::LoginResult(int nResult)
-{
-    if(nResult == result_ok) {
-        CJLkitSocket::GetInstance()->Querykey();
-        CDialog::OnOK();
-    }
-    else if(nResult == result_login_notuser)
-        AfxMessageBox(_T("不存在的用户名"));
-    else if(nResult == result_login_pwerror)
-        AfxMessageBox(_T("密码错误"));
-    else if(nResult == result_login_logined)
-        AfxMessageBox(_T("帐号已经登录"));
-
-    GetDlgItem(IDOK)->EnableWindow();
-}
-
 
 
 BOOL CDlgLogin::OnInitDialog()
 {
     CDialog::OnInitDialog();
 
-    //获得配置管理器
-    CConfigMgr* pConfigMgr = CConfigMgr::GetInstance();
+    
+    //加载图标
+    SetIcon(AfxGetApp()->LoadIcon(IDR_MAINFRAME), FALSE);
+    
 
-    //初始化登陆对话框
-    m_bRemPw = pConfigMgr->m_KeepPw;
-    if(m_bRemPw) {
-        m_strPw = pConfigMgr->m_szAccountPw;
-        m_strName = pConfigMgr->m_szAccountName;
+    //焦点
+    if(m_strName.IsEmpty())
+    {
+        GetDlgItem(IDC_EDITNAME)->SetFocus();
+    }
+    else
+    {
+        GetDlgItem(IDOK)->SetFocus();
     }
 
-    UpdateData(FALSE);
-    return TRUE;  // return TRUE unless you set the focus to a control
+
+    return FALSE;  // return TRUE unless you set the focus to a control
     // EXCEPTION: OCX Property Pages should return FALSE
 }
 
 void CDlgLogin::OnBtnModifybind()
 {
-    // TODO: Add your control notification handler code here
-    CDlgModifyBind dlg;
-    ShowWindow(SW_HIDE);
-    if(dlg.DoModal() == IDOK) {
-        //修改绑定信息
-    }
-    ShowWindow(SW_SHOW);
+    CMainFrame *pFrame = (CMainFrame *)AfxGetMainWnd();
+    CJLkitDoc* pDoc = (CJLkitDoc *)pFrame->GetActiveDocument();
+    pDoc->ShowModiBind();
 }
 
 void CDlgLogin::OnOK()
 {
-    UpdateData();
+    ShowWindow(SW_HIDE);
 
-    int nRet = CJLkitSocket::GetInstance()->LoginSrv(m_strName, m_strPw);
-    if(nRet == SOCKET_ERROR)
-        GetDlgItem(IDOK)->EnableWindow();
-
-    //获得配置管理器
-    CConfigMgr* pConfigMgr = CConfigMgr::GetInstance();
-
-    //保存配置
-    if(m_bRemPw) {
-        _tcscpy(pConfigMgr->m_szAccountName, (LPCTSTR)m_strName);
-        _tcscpy(pConfigMgr->m_szAccountPw, (LPCTSTR)m_strPw);
-    }
-    pConfigMgr->m_KeepPw = m_bRemPw;
-
-
+    CMainFrame *pFrame = (CMainFrame *)AfxGetMainWnd();
+    CJLkitDoc* pDoc = (CJLkitDoc *)pFrame->GetActiveDocument();
+    pDoc->PerformLogonMission();
 }
 
-void CDlgLogin::ConnectResult(int nErrorCode)
+
+WORD CDlgLogin::ConstructLoginPacket( BYTE cbBuffer[], WORD wBufferSize )
 {
-    if(nErrorCode == 0)
-        GetDlgItem(IDOK)->EnableWindow();
-    else
-        AfxMessageBox(_T("无法连接到服务器"));
+    ASSERT(this != NULL);
+
+
+    LOGIN_BUF* pLoginBuf = (LOGIN_BUF*)cbBuffer;
+
+
+    CWHService::GetMachineID(pLoginBuf->szMachineID);
+    _tcsncpy(pLoginBuf->name, (LPCTSTR)m_strName, MAXLEN);
+    _tcsncpy(pLoginBuf->pw, (LPCTSTR)m_strPw, MAXLEN);
+
+
+    return sizeof(LOGIN_BUF);
+}
+
+void CDlgLogin::OnClose() 
+{
+    AfxGetMainWnd()->DestroyWindow();
+	CDialog::OnClose();
 }

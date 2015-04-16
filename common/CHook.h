@@ -6,10 +6,8 @@
 #define AFX_INLINEHOOK_H__C46FFB69_056F_4680_9BF3_A98586E9AD31__INCLUDED_
 
 #if _MSC_VER > 1000
-#pragma once
+    #pragma once
 #endif // _MSC_VER > 1000
-
-
 
 
 class CHook
@@ -33,11 +31,11 @@ protected:
     BOOL GetPatchSize(void* Proc, DWORD dwNeedSize, LPDWORD lpPatchSize);
 
 private:
-    BYTE* m_CallAddr;	//call地址
-    BYTE* m_NewCall;	//新call地址
+    BYTE* m_CallAddr;   //call地址
+    BYTE* m_NewCall;    //新call地址
     BYTE* m_BackupCall; //备份的入口点
     BOOL m_bAutoDel;    //自动删除
-    int m_nLen;         
+    int m_nLen;
 };
 
 

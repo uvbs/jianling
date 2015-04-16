@@ -62,15 +62,6 @@ END
 
 /////////////////////////////////////////////////////////////////////////////
 //
-// Icon
-//
-
-// Icon with lowest ID value placed first to ensure application icon
-// remains consistent on all systems.
-IDR_MAINFRAME           ICON    DISCARDABLE     "res\\JLkit.ico"
-
-/////////////////////////////////////////////////////////////////////////////
-//
 // Menu
 //
 
@@ -78,12 +69,8 @@ IDR_MAINFRAME MENU DISCARDABLE
 BEGIN
     POPUP "文件(&F)"
     BEGIN
-        MENUITEM "导入(&O)...",                 ID_FILE_OPEN
-        MENUITEM SEPARATOR
-        MENUITEM "最近文件",                    ID_FILE_MRU_FILE1
-        MENUITEM SEPARATOR
-        MENUITEM "注销",                        ID_FILE_NEW
-        MENUITEM "退出(&X)",                    ID_APP_EXIT
+        MENUITEM "&打开...",                    ID_FILE_OPEN
+        MENUITEM "退出",                        ID_APP_EXIT
     END
     POPUP "操作(&E)"
     BEGIN
@@ -98,13 +85,11 @@ BEGIN
         MENUITEM "执行",                        ID_START
         MENUITEM "性能分析",                    ID_PROFILE
         MENUITEM SEPARATOR
-        MENUITEM "设置",                        ID_SETTING
+        MENUITEM "设置...",                     ID_SETTING
     END
     POPUP "帮助"
     BEGIN
-        MENUITEM "共享内存",                    ID_LOOKSHAREMEM
-        MENUITEM "报告BUG",                     ID_REPORTBUG
-        MENUITEM "套接字...",                   ID_SOCKINFO
+        MENUITEM "留言...",                     ID_REPORTBUG
         MENUITEM "更新...",                     ID_UPDATACLIENT
     END
 END
@@ -117,6 +102,11 @@ BEGIN
         MENUITEM "解除卡",                      ID_UNBIND
         MENUITEM "绑定卡",                      ID_BINDKEY
     END
+    POPUP "单个账号"
+    BEGIN
+        MENUITEM "运行游戏",                    ID_UC_START
+        MENUITEM "查看日志",                    ID_UC_LOG
+    END
 END
 
 
@@ -125,69 +115,69 @@ END
 // Dialog
 //
 
-IDD_LOGIN DIALOGEX 0, 0, 202, 99
-STYLE DS_MODALFRAME | DS_3DLOOK | WS_MINIMIZEBOX | WS_POPUP | WS_CAPTION | 
-    WS_SYSMENU
-EXSTYLE WS_EX_APPWINDOW
-CAPTION "登录"
+IDD_LOGIN DIALOGEX 0, 0, 222, 140
+STYLE DS_MODALFRAME | WS_MINIMIZEBOX | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Login"
 FONT 9, "宋体", 0, 0, 0x1
 BEGIN
-    EDITTEXT        IDC_EDITNAME,42,5,98,15,ES_AUTOHSCROLL
-    EDITTEXT        IDC_EDITPASSWORD,42,25,98,15,ES_PASSWORD | 
+    EDITTEXT        IDC_EDITNAME,45,56,100,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDITPASSWORD,45,77,100,14,ES_PASSWORD | 
                     ES_AUTOHSCROLL
-    DEFPUSHBUTTON   "登录",IDOK,48,75,105,15
-    LTEXT           "用户名:",IDC_STATIC,7,10,29,8
-    LTEXT           "密码:",IDC_STATIC,7,30,21,8
-    PUSHBUTTON      "注册新账号",IDC_BUTTONREGISTER,147,5,49,15
-    PUSHBUTTON      "修改绑定",IDC_BTNMODIFYBIND,147,25,49,15
+    DEFPUSHBUTTON   "登录",IDOK,65,119,105,14
+    LTEXT           "用户名:",IDC_STATIC,10,60,29,8
+    LTEXT           "密码:",IDC_STATIC,10,81,21,8
+    PUSHBUTTON      "注册新账号",IDC_BUTTONREGISTER,155,56,49,15
+    PUSHBUTTON      "修改绑定",IDC_BTNMODIFYBIND,155,77,50,14
     CONTROL         "记住密码",IDC_REMPASSWORD,"Button",BS_AUTOCHECKBOX | 
-                    WS_TABSTOP,42,50,48,10
+                    WS_TABSTOP,45,98,48,10
+    CONTROL         169,IDC_STATIC,"Static",SS_BITMAP | SS_CENTERIMAGE | 
+                    SS_REALSIZEIMAGE,0,0,220,49
 END
 
-IDD_REGISTER DIALOGEX 0, 0, 167, 107
+IDD_REGISTER DIALOGEX 0, 0, 177, 112
 STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
-EXSTYLE WS_EX_APPWINDOW
 CAPTION "注册"
-FONT 9, "新宋体"
+FONT 9, "新宋体", 0, 0, 0x1
 BEGIN
-    CONTROL         "",IDC_IPADDRESS,"SysIPAddress32",WS_TABSTOP,49,10,91,15
-    EDITTEXT        IDC_EDITUSERNAME,49,30,91,15,ES_AUTOHSCROLL
-    EDITTEXT        IDC_EDITPASSWORD,49,50,91,15,ES_AUTOHSCROLL
-    DEFPUSHBUTTON   "确认",IDOK,56,85,49,15
-    LTEXT           "绑定地址",IDC_STATIC,14,15,33,8
-    PUSHBUTTON      "退出",IDCANCEL,112,85,49,15
-    LTEXT           "用户名",IDC_STATIC,14,35,25,8
-    LTEXT           "密码",IDC_STATIC,14,55,25,8
+    CONTROL         "",IDC_IPADDRESS,"SysIPAddress32",WS_TABSTOP,60,7,90,14
+    EDITTEXT        IDC_EDITUSERNAME,60,28,90,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDITPASSWORD,60,49,90,14,ES_AUTOHSCROLL
+    DEFPUSHBUTTON   "确认",IDOK,65,91,50,14
+    LTEXT           "绑定地址",IDC_STATIC,20,11,33,8
+    PUSHBUTTON      "退出",IDCANCEL,120,91,50,14
+    LTEXT           "用户名",IDC_STATIC,20,32,25,8
+    LTEXT           "密码",IDC_STATIC,20,53,25,8
 END
 
-IDD_SETTING DIALOG DISCARDABLE  0, 0, 296, 191
+IDD_SETTING DIALOG DISCARDABLE  0, 0, 292, 189
 STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "设置"
 FONT 9, "宋体"
 BEGIN
-    DEFPUSHBUTTON   "确认",IDOK,185,169,49,15
-    PUSHBUTTON      "退出",IDCANCEL,240,169,49,15
-    EDITTEXT        IDC_GAMEPATH,28,47,161,15,ES_AUTOHSCROLL
-    LTEXT           "游戏路径",IDC_STATIC,28,31,33,8
-    PUSHBUTTON      "浏览",IDC_SETTING_BROWSE,201,48,49,15
+    DEFPUSHBUTTON   "确认",IDOK,180,168,50,14
+    PUSHBUTTON      "退出",IDCANCEL,235,168,50,14
+    EDITTEXT        IDC_GAMEPATH,50,35,160,14,ES_AUTOHSCROLL
+    LTEXT           "游戏路径",IDC_STATIC,10,39,33,8
+    PUSHBUTTON      "浏览",IDC_SETTING_BROWSE,220,35,50,14
+    CONTROL         "检查更新",IDC_CHECK1,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,10,77,48,10
 END
 
-IDD_MODIFYBIND DIALOGEX 0, 0, 167, 115
+IDD_MODIFYBIND DIALOGEX 0, 0, 177, 126
 STYLE DS_MODALFRAME | DS_3DLOOK | WS_POPUP | WS_CAPTION | WS_SYSMENU
-EXSTYLE WS_EX_APPWINDOW
 CAPTION "修改绑定"
 FONT 9, "宋体", 0, 0, 0x1
 BEGIN
-    CONTROL         "",IDC_OLDBIND,"SysIPAddress32",WS_TABSTOP,49,65,91,15
-    EDITTEXT        IDC_EDITUSERNAME,49,5,91,15,ES_AUTOHSCROLL
-    EDITTEXT        IDC_EDITPASSWORD,49,25,91,15,ES_AUTOHSCROLL
-    CONTROL         "",IDC_NEWBIND,"SysIPAddress32",WS_TABSTOP,49,45,91,15
-    DEFPUSHBUTTON   "确认",IDOK,28,90,56,15
-    PUSHBUTTON      "取消",IDCANCEL,91,90,56,15
-    LTEXT           "旧绑定",IDC_STATIC,21,70,25,8
-    LTEXT           "用户名",IDC_STATIC,21,10,25,8
-    LTEXT           "密码",IDC_STATIC,21,30,25,8
-    LTEXT           "新绑定",IDC_STATIC,21,50,25,8
+    CONTROL         "",IDC_OLDBIND,"SysIPAddress32",WS_TABSTOP,50,70,90,14
+    EDITTEXT        IDC_EDITUSERNAME,50,7,90,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDITPASSWORD,50,28,90,14,ES_AUTOHSCROLL
+    CONTROL         "",IDC_NEWBIND,"SysIPAddress32",WS_TABSTOP,50,49,90,14
+    DEFPUSHBUTTON   "确认",IDOK,60,105,50,14
+    PUSHBUTTON      "取消",IDCANCEL,115,105,50,14
+    LTEXT           "旧绑定",IDC_STATIC,15,74,25,8
+    LTEXT           "用户名",IDC_STATIC,15,11,25,8
+    LTEXT           "密码",IDC_STATIC,15,32,25,8
+    LTEXT           "新绑定",IDC_STATIC,15,53,25,8
 END
 
 IDD_KEY DIALOG DISCARDABLE  0, 0, 334, 139
@@ -200,35 +190,40 @@ BEGIN
                     LVS_ALIGNLEFT | WS_BORDER | WS_TABSTOP,7,15,210,95
 END
 
-IDD_BINDKEY DIALOG DISCARDABLE  0, 0, 258, 95
+IDD_BINDKEY DIALOG DISCARDABLE  0, 0, 262, 98
 STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "绑定新卡号"
 FONT 9, "宋体"
 BEGIN
-    EDITTEXT        IDC_BINDKEY,7,5,245,64,ES_MULTILINE
-    DEFPUSHBUTTON   "确认",IDOK,147,75,49,15
-    PUSHBUTTON      "取消",IDCANCEL,203,75,49,15
+    EDITTEXT        IDC_BINDKEY,5,7,245,63,ES_MULTILINE
+    DEFPUSHBUTTON   "确认",IDOK,145,77,49,15
+    PUSHBUTTON      "取消",IDCANCEL,200,77,49,15
 END
 
-IDD_REPORTBUG DIALOG DISCARDABLE  0, 0, 244, 135
+IDD_REPORTBUG DIALOG DISCARDABLE  0, 0, 247, 120
 STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "发送问题"
+CAPTION "留言"
 FONT 8, "Tahoma"
 BEGIN
-    EDITTEXT        IDC_EDIT1,7,5,175,125,ES_AUTOHSCROLL
-    DEFPUSHBUTTON   "发送",IDOK,189,5,50,14
-    PUSHBUTTON      "退出",IDCANCEL,189,25,50,14
+    EDITTEXT        IDC_EDIT1,5,7,235,84,ES_AUTOHSCROLL
+    DEFPUSHBUTTON   "发送",IDOK,130,98,50,14
+    PUSHBUTTON      "退出",IDCANCEL,185,98,50,14
 END
 
-IDD_SETTING_UPDATE DIALOG DISCARDABLE  0, 0, 296, 191
+IDD_MSGBOX DIALOG DISCARDABLE  0, 0, 238, 64
 STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "更新"
-FONT 9, "宋体"
+FONT 8, "Tahoma"
 BEGIN
-    DEFPUSHBUTTON   "确认",IDOK,185,169,49,15
-    PUSHBUTTON      "退出",IDCANCEL,240,169,49,15
-    CONTROL         "自动更新",IDC_CHECK1,"Button",BS_AUTOCHECKBOX | 
-                    WS_TABSTOP,28,77,48,10
+    CTEXT           "",IDC_TEXT,10,7,215,28,SS_CENTERIMAGE
+    DEFPUSHBUTTON   "OK",IDOK,90,42,50,14
+    LTEXT           "",IDC_LEFTTIMES,160,42,65,14,SS_NOTIFY | SS_CENTERIMAGE
+END
+
+IDD_STATUSBOX DIALOG DISCARDABLE  0, 0, 238, 58
+STYLE WS_POPUP | WS_VISIBLE | WS_BORDER
+FONT 8, "Tahoma"
+BEGIN
+    CTEXT           "",IDC_TEXT,5,7,225,42,SS_CENTERIMAGE
 END
 
 
@@ -289,42 +284,42 @@ BEGIN
     IDD_LOGIN, DIALOG
     BEGIN
         LEFTMARGIN, 6
-        RIGHTMARGIN, 195
+        RIGHTMARGIN, 215
         VERTGUIDE, 16
         VERTGUIDE, 45
         TOPMARGIN, 7
-        BOTTOMMARGIN, 92
+        BOTTOMMARGIN, 133
     END
 
     IDD_REGISTER, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 160
+        RIGHTMARGIN, 170
         VERTGUIDE, 15
         VERTGUIDE, 54
         VERTGUIDE, 142
         TOPMARGIN, 7
-        BOTTOMMARGIN, 100
+        BOTTOMMARGIN, 105
     END
 
     IDD_SETTING, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 289
+        RIGHTMARGIN, 285
         VERTGUIDE, 28
         TOPMARGIN, 7
-        BOTTOMMARGIN, 184
+        BOTTOMMARGIN, 182
     END
 
     IDD_MODIFYBIND, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 160
+        RIGHTMARGIN, 170
         VERTGUIDE, 19
         VERTGUIDE, 54
         VERTGUIDE, 142
         TOPMARGIN, 7
-        BOTTOMMARGIN, 108
+        BOTTOMMARGIN, 119
     END
 
     IDD_KEY, DIALOG
@@ -337,41 +332,37 @@ BEGIN
     IDD_BINDKEY, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 251
+        RIGHTMARGIN, 255
         VERTGUIDE, 127
         TOPMARGIN, 7
-        BOTTOMMARGIN, 88
+        BOTTOMMARGIN, 91
     END
 
     IDD_REPORTBUG, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 237
+        RIGHTMARGIN, 240
         TOPMARGIN, 7
-        BOTTOMMARGIN, 128
+        BOTTOMMARGIN, 113
     END
 
-    IDD_SETTING_UPDATE, DIALOG
+    IDD_MSGBOX, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 289
-        VERTGUIDE, 28
+        RIGHTMARGIN, 231
         TOPMARGIN, 7
-        BOTTOMMARGIN, 184
+        BOTTOMMARGIN, 57
+    END
+
+    IDD_STATUSBOX, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 231
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 51
     END
 END
 #endif    // APSTUDIO_INVOKED
-
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// Accelerator
-//
-
-IDR_MAINFRAME ACCELERATORS DISCARDABLE 
-BEGIN
-    VK_F9,          ID_STARTGAME,           VIRTKEY, CONTROL, NOINVERT
-END
 
 
 /////////////////////////////////////////////////////////////////////////////
@@ -380,6 +371,37 @@ END
 //
 
 1                       24      DISCARDABLE     "res\\default1.bin"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Bitmap
+//
+
+IDB_BITMAP1             BITMAP  DISCARDABLE     "res\\title.bmp"
+IDR_MAINFRAME           BITMAP  DISCARDABLE     "res\\toolbar1.bmp"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Toolbar
+//
+
+IDR_MAINFRAME TOOLBAR DISCARDABLE  33, 28
+BEGIN
+    BUTTON      ID_COMBO1
+    BUTTON      ID_COMBO2
+    SEPARATOR
+    BUTTON      ID_BUTTON32838
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDR_MAINFRAME           ICON    DISCARDABLE     "res\\BnSClient.ico"
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -474,6 +496,8 @@ STRINGTABLE DISCARDABLE
 BEGIN
     ID_UPDATACLIENT         "查找控制台的最新版本"
     ID_REPORTBUG            "报告BUG"
+    ID_BUTTON32827          "脚本"
+    ID_BUTTON32828          "配置"
 END
 
 STRINGTABLE DISCARDABLE 

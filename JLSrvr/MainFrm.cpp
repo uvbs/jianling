@@ -3,16 +3,14 @@
 
 #include "stdafx.h"
 #include "JLSrvr.h"
-
 #include "MainFrm.h"
 #include "JLSrvrView.h"
-#include "RequestView.h"
 
 
 #ifdef _DEBUG
-#define new DEBUG_NEW
-#undef THIS_FILE
-static char THIS_FILE[] = __FILE__;
+    #define new DEBUG_NEW
+    #undef THIS_FILE
+    static char THIS_FILE[] = __FILE__;
 #endif
 
 /////////////////////////////////////////////////////////////////////////////
@@ -27,8 +25,7 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
     //}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
-static UINT indicators[] =
-{
+static UINT indicators[] = {
     ID_SEPARATOR,           // status line indicator
     ID_INDICATOR_UPTIME,
     ID_INDICATOR_CONNECTS   //总连接数
@@ -55,8 +52,7 @@ static TCHAR szFormat[] = _T("%u,%u,%d,%d,%d,%d,%d,%d,%d,%d");
 static BOOL PASCAL NEAR ReadWindowPlacement(LPWINDOWPLACEMENT pwp)
 {
     CString strBuffer = AfxGetApp()->GetProfileString(szSection, szWindowPos);
-    if(strBuffer.IsEmpty())
-    {
+    if(strBuffer.IsEmpty()) {
         return FALSE;
     }
 
@@ -68,8 +64,7 @@ static BOOL PASCAL NEAR ReadWindowPlacement(LPWINDOWPLACEMENT pwp)
                          &wp.rcNormalPosition.left, &wp.rcNormalPosition.top,
                          &wp.rcNormalPosition.right, &wp.rcNormalPosition.bottom);
 
-    if(nRead != 10)
-    {
+    if(nRead != 10) {
         return FALSE;
     }
 
@@ -94,32 +89,31 @@ static void PASCAL NEAR WriteWindowPlacement(LPWINDOWPLACEMENT pwp)
 
 
 
-int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
+ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
-    if(CFrameWnd::OnCreate(lpCreateStruct) == -1)
-    {
+    if(CFrameWnd::OnCreate(lpCreateStruct) == -1) {
         return -1;
     }
 
-
     WINDOWPLACEMENT wp;
-    if(ReadWindowPlacement(&wp))
-    {
+    if(ReadWindowPlacement(&wp)) {
         SetWindowPlacement(&wp);
     }
-
-    if(!m_wndToolBar.Create(this))
-    {
+    
+    if(!m_wndToolBar.Create(this)) {
         TRACE0("Failed to create status bar\n");
         return -1;      // fail to create
     }
+
+    //平面风格
+    m_wndToolBar.ModifyStyle(0, TBSTYLE_FLAT);
+
 
     m_wndToolBar.LoadToolBar(IDR_MAINFRAME);
 
 
     if(!m_wndStatusBar.Create(this) ||
-            !m_wndStatusBar.SetIndicators(indicators, sizeof(indicators) / sizeof(UINT)))
-    {
+            !m_wndStatusBar.SetIndicators(indicators, sizeof(indicators) / sizeof(UINT))) {
         TRACE0("Failed to create status bar\n");
         return -1;      // fail to create
     }
@@ -152,11 +146,9 @@ void CMainFrame::OnClose()
     // TODO: Add your message handler code here and/or call default
     WINDOWPLACEMENT wp;
     wp.length = sizeof wp;
-    if(GetWindowPlacement(&wp))
-    {
+    if(GetWindowPlacement(&wp)) {
         wp.flags = 0;
-        if(IsZoomed())
-        {
+        if(IsZoomed()) {
             wp.flags |= WPF_RESTORETOMAXIMIZED;
         }
         // and write it to the .INI file
@@ -165,25 +157,4 @@ void CMainFrame::OnClose()
 
 
     CFrameWnd::OnClose();
-}
-
-BOOL CMainFrame::OnCreateClient(LPCREATESTRUCT lpcs, CCreateContext* pContext)
-{
-    if(!m_wndSplitter.CreateStatic(this, 2, 1))
-    {
-        TRACE0("Failed to create split bar ");
-        return FALSE;    // failed to create
-    }
-    if(!m_wndSplitter.CreateView(0, 0, RUNTIME_CLASS(CJLSrvrView), CSize(10, 200), pContext))
-    {
-        TRACE0("Failed to create CJLSrvrView ");
-        return FALSE;    // failed to create
-    }
-    if(!m_wndSplitter.CreateView(1, 0, RUNTIME_CLASS(CRequestView), CSize(10, 100), pContext))
-    {
-        TRACE0("Failed to create CRequestView ");
-        return FALSE;    // failed to create
-    }
-
-    return TRUE;
 }

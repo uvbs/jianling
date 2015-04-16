@@ -9,15 +9,13 @@
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
-#undef THIS_FILE
-static char THIS_FILE[] = __FILE__;
 #endif
 
 /////////////////////////////////////////////////////////////////////////////
 // CDlgBugRep dialog
 
 
-CDlgBugRep::CDlgBugRep(CJLkitDoc *pDoc)
+CDlgBugRep::CDlgBugRep()
 	: CDialog(CDlgBugRep::IDD, NULL)
 {
 	//{{AFX_DATA_INIT(CDlgBugRep)
@@ -47,6 +45,6 @@ void CDlgBugRep::OnOK()
 {
 	// TODO: Add extra validation here
     UpdateData();
-    CJLkitSocket::GetInstance()->Reportbug(m_strBug);
+
 	CDialog::OnOK();
 }

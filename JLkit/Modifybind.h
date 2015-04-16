@@ -18,6 +18,10 @@ public:
     CString m_strNewbind;
     //}}AFX_DATA
 
+    WORD ConstructModifyBindPacket(BYTE cbBuffer[], WORD wBufferSize);
+
+
+
     // ClassWizard generated virtual function overrides
     //{{AFX_VIRTUAL(CDlgModifyBind)
 protected:

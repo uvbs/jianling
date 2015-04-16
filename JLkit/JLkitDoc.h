@@ -2,47 +2,37 @@
 #define AFX_JLKITDOC_H__9C9AD6C5_69D3_45CF_A1E2_27114BFE567F__INCLUDED_
 
 #if _MSC_VER > 1000
-#pragma once
+    #pragma once
 #endif // _MSC_VER > 1000
 
 
+#include "CVPNFile.h"
+#include "Logindlg.h"
+#include "Registdlg.h"
+#include "Modifybind.h"
+#include "Keyviewdlg.h"
+#include "JLkitSocket.h"
+#include "BindKeyDlg.h"
+#include "MsgBox.h"
+#include "StatusBox.h"
 
-#include "..\common\common.h"
-#include "..\common\protocol.h"
-#include "..\common\ShareMem.h"
-
-
-
-class CDlgKeyView;
-class CWaitDlg;
-class CDlgLogin;
-class CLock;
-class CVpnFile;
-class CJob;
-class CJLkitDoc : public CDocument
+class CJLkitDoc : public CDocument, public ITCPSocketSink
 {
 protected:
     CJLkitDoc();           // protected constructor used by dynamic creation
     virtual ~CJLkitDoc();
     DECLARE_DYNCREATE(CJLkitDoc)
 
-    //错误文件
+    //记录错误
 public:
-    CStdioFile errfile;
-
-    //当前卡号
-    static KeyVec m_KeyVec;
+    CStdioFile m_ErrFile;
 
     //游戏控制
-    int LaunchGame(CString& strName, CString& strPw, CString& strConfig,
-                   CString& strScript, BOOL bProfile = FALSE);  //加载游戏
-    //创建游戏进程
-    int CreateGameProcess(CString& strName, CString& strPw, BOOL bProfile,
-                          PROCESS_INFORMATION* lppi);
+    int LaunchGame(CString& strName, CString& strPw, CString& strConfig, CString& strScript, BOOL bProfile = FALSE);  //加载游戏
 
-    //对话框
-    CDlgLogin* m_pLoginDlg;
-    CDlgKeyView* m_pKeyDlg;
+    //创建游戏进程
+    int CreateGameProcess(CString& strName, CString& strPw, BOOL bProfile, PROCESS_INFORMATION* lppi);
+
 
     //关键段锁
     CLock* m_lpLock;
@@ -51,32 +41,68 @@ public:
     CVpnFile* m_lpVpnFile;
 
     //领取激活
-    int Active(CString& strName, CString& strPw);  //激活
-    int Get(CString& strName, CString& strPw);  //领取
-    void GetandActive();                        //领取再激活
+    int Active(CString& strName, CString& strPw);   //激活
+    int Get(CString& strName, CString& strPw);      //领取
+    void GetandActive();                            //领取再激活
 
-    //处理套接字
-    void ProcessRecevice();
-
-    //连接结果
-    void ConnectResult(int nErrorCode);
 
     //是否剩余有效KEY
     BOOL IsHaveValidKey();
 
 
+    //登陆部分
+    void ShowLogin();
+    void ShowRegister();
+    void ShowModiBind();
+    bool PerformLogonMission();
 
-    //重写
+    void ShowStatus(TCHAR szText[]);
+    void ShowMsg(TCHAR szText[]);
+
+    //共享内存
+    JLShareMem m_ShraeMem;
+
+
+    //对话框
+    CDlgKeyView* m_pKeyDlg;
+    CDlgLogin* m_pLoginDlg;
+    CDlgRegist* m_pRegisterDlg;
+    CDlgModifyBind* m_pModiBind;
+    CDlgBindKey* m_pBindDlg;
+
+    CMsgBox* m_pMsgBox;
+    CStatusBox* m_pStatusBox;
+
+    //网络套接字
+    CJLkitSocket m_socket;
+
+
+    bool m_bModiBind;
+    bool m_bRegister;
+
+    //网络回调
+public:
+    virtual bool OnEventTCPSocketLink(CJLkitSocket* pSocket, INT nErrorCode);
+    virtual bool OnEventTCPSocketShut(CJLkitSocket* pSocket, BYTE cbShutReason);
+    virtual bool OnEventTCPSocketRead(CJLkitSocket* pSocket, const Tcp_Head& stTcpHead, VOID* pData, WORD wDataSize);
+
+
+    //处理网络数据
+    void ProcessLogin(CJLkitSocket* pSocket, const Tcp_Head& stTcpHead, void* pData, WORD wDataSize);
+    void ProcessKey(CJLkitSocket* pSocket, const Tcp_Head& stTcpHead, void* pData, WORD wDataSize);
+    void ProcessHelp(CJLkitSocket* pSocket, const Tcp_Head& stTcpHead, void* pData, WORD wDataSize);
+
+
+
     // ClassWizard generated virtual function overrides
     //{{AFX_VIRTUAL(CJLkitDoc)
-	public:
+public:
     virtual void Serialize(CArchive& ar);   // overridden for document i/o
+    virtual BOOL OnOpenDocument(LPCTSTR lpszPathName);
     virtual void OnCloseDocument();
-	virtual BOOL OnOpenDocument(LPCTSTR lpszPathName);
-	protected:
     virtual BOOL OnNewDocument();
     virtual void OnIdle();
-	//}}AFX_VIRTUAL
+    //}}AFX_VIRTUAL
 
 
 #ifdef _DEBUG
@@ -87,12 +113,11 @@ public:
     // Generated message map functions
 protected:
     //{{AFX_MSG(CJLkitDoc)
-    // NOTE - the ClassWizard will add and remove member functions here.
-    afx_msg void OnLookkey();
     afx_msg void OnSetting();
     afx_msg void OnUpdateValidKey(CCmdUI* pCmdUI);
     afx_msg void OnUpdateLoginedNums(CCmdUI* pCmdUI);
     afx_msg void OnUpdateAllNums(CCmdUI* pCmdUI);
+    afx_msg void OnLookkey();
     //}}AFX_MSG
     DECLARE_MESSAGE_MAP()
 };

@@ -13,9 +13,7 @@
 #endif
 
 
-//静态成员
-GameSpend* GameSpend::_inst = NULL;
-
+IMPLEMENT_SINGLETON(GameSpend)
 
 //构造函数
 GameSpend::GameSpend()
@@ -57,13 +55,15 @@ BOOL GameSpend::Init()
     ce_hookQueryPerformanceCounter.Init((void*)Query_addr, ce_querytime, FALSE);
 
 
-    if(*realGetTickCount == 0) {
+    if(*realGetTickCount == 0)
+    {
         ce_hooktimeGetTime.hook();
         void* result1 = ce_hookGetTickCount.hook();
         *realGetTickCount = (DWORD)result1;
     }
 
-    if(*realQueryPerformance == 0) {
+    if(*realQueryPerformance == 0)
+    {
         void* result2 = ce_hookQueryPerformanceCounter.hook();
         *realQueryPerformance = (DWORD)result2;
     }

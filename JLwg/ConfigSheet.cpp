@@ -7,9 +7,6 @@
 #include "GameConfig.h"
 #include "gamedef.h"
 
-#include "..\common\common.h"
-
-
 #ifdef _DEBUG
     #define new DEBUG_NEW
     #undef THIS_FILE
@@ -50,13 +47,10 @@ END_MESSAGE_MAP()
 // CConfigSheet message handlers
 void CConfigSheet::OnApplyNow()
 {
-
     Default();
 
     //ªÒ»°≈‰÷√
-    GameConfig* pConfig = GameConfig::Instance();
+    GameConfig* pConfig = GameConfig::GetInstance();
 
-
-
-
+    //TODO:
 }

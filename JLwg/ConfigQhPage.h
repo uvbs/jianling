@@ -2,7 +2,7 @@
 #define AFX_CONFIGQHPAGE_H__DF6BA6C9_4AF4_4190_BB09_A8D021D73DAF__INCLUDED_
 
 #if _MSC_VER > 1000
-#pragma once
+    #pragma once
 #endif
 
 class CConfigQhPage : public CPropertyPage
@@ -14,7 +14,8 @@ public:
 // Dialog Data
     //{{AFX_DATA(CConfigQhPage)
     enum { IDD = IDD_SETINI_QIANGHUA };
-    CComboBox	m_ComBox;
+    CComboBox   m_ComBox;
+    int     m_HealthPercent;
     //}}AFX_DATA
 
 
@@ -23,6 +24,7 @@ public:
     //{{AFX_VIRTUAL(CConfigQhPage)
 protected:
     virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+    virtual BOOL OnApply();
     //}}AFX_VIRTUAL
 
 // Implementation

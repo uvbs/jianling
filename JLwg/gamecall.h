@@ -6,12 +6,6 @@
 #include "gamestruct.h"
 #include "gamespend.h"
 
-#include "..\common\logger.h"
-#include "..\common\common.h"
-#include "..\common\CHook.h"
-#include "..\common\sharemem.h"
-
-
 typedef std::vector<CUSTOMKILL> CustKillVector;
 typedef std::vector<ObjectNode*> ObjectVector;
 
@@ -22,45 +16,29 @@ protected:
     Gamecall();
     ~Gamecall();
 
-private:
-    static Gamecall* _inst;
+    DECLARE_SINGLETON(Gamecall)
 
 public:
-    static Gamecall* Instance() {
-        if(!_inst) {
-            _inst = new Gamecall;
-        }
-
-        return _inst;
-    }
-
     //初始化
     void UnInit();
     BOOL Init();
-    BOOL InitThread();
 
 
     //等待
     void WaitPlans();   //等待过图 此函数返回表示过图完成
     BOOL LoginInGame(DWORD index);
-    HWND isGameWndCreated(DWORD dwPid);
-    BOOL WaitGameCreate();
-    HWND GetGameWnd() {return m_hGameWnd;}
-
 
     //判断对象可杀的数据
-    static DWORD m_Get11C(DWORD m_Adress);   //是 ==1 红名
-    static DWORD m_Get110(DWORD m_Adress); //==1 进行下面判断, ==2是npc
-    static DWORD m_Get2E4(DWORD m_Adress);   //==0 npc, else 黄名
+    DWORD m_Get11C(DWORD m_Adress);   //是 ==1 红名
+    DWORD m_Get110(DWORD m_Adress); //==1 进行下面判断, ==2是npc
+    DWORD m_Get2E4(DWORD m_Adress);   //==0 npc, else 黄名
 
 
     //工具
     void HookQietu(BOOL bEnable);   //hook 切图
-    void SetShuyiPath(TCHAR* szPath);
-    void SetIniPath(TCHAR* szPath);
     void KeyPress(WPARAM vk);
-    static DWORD CalcC(fPosition& p1, fPosition& p2);      //计算两个坐标距离
-    static fPosition ShortPosToFloatPos(sPosition& shortp);   //坐标转换
+    DWORD CalcC(fPosition& p1, fPosition& p2);      //计算两个坐标距离
+    fPosition ShortPosToFloatPos(sPosition& shortp);   //坐标转换
     void* GetStepCallAddr();                      //取走路call的地址
     void RandomStep(DWORD range);               //向某个方向随机走
     void JingDianMoShi(DWORD adress, DWORD adress1);  //经典模式
@@ -74,7 +52,7 @@ public:
 
     //封装的调用call, 通过消息
     DWORD call(DWORD id, LPVOID pParam);
-    static DWORD sendcall(DWORD id, LPVOID pParam);
+    DWORD sendcall(DWORD id, LPVOID pParam);
 
     //强化
     DWORD GetMuQianJingYanZongZhi(DWORD Adress);
@@ -93,57 +71,55 @@ public:
     DWORD GetPlayerHealth();            //玩家血量
     UCHAR GetPlayerLevel();         //玩家等级
     DWORD GetPlayerMaxHealth();     //玩家最大血量
-    static DWORD GetPlayerDataAddr();       //玩家数据基址
+    DWORD GetPlayerDataAddr();       //玩家数据基址
     DWORD GetPlayerID();              //id
     wchar_t* GetPlayerName();            //名
     UCHAR GetPlayerMana();          //法力值
     float GetPlayerMaxVit();            //轻功
     float GetPlayerVit();               //当前轻工值
     int GetPlayerVitStatus();       //轻功状态
-    static BOOL GetPlayerPos(fPosition* PlayerPosition);                //float坐标
+    BOOL GetPlayerPos(fPosition* PlayerPosition);                //float坐标
     BOOL GetPlayerPos2(sPosition* spos);            //short型坐标
     float GetPlayerViewPoint();     //角色面向
     DWORD GetPlayerQuestUIStatus(); //判断角色任务相关ui状态是否弹出
     DWORD GetPlayerQuestUIStatusts();   //判断角色任务相关ui状态是否弹出
-    static BYTE GetPlayerDeadStatus(); //死亡状态
+    BYTE GetPlayerDeadStatus(); //死亡状态
     DWORD GetCityID();
     BOOL GetPlayExperienceStatus();//获得经验药状态
     BOOL GetPlayExperienceStatusName(DWORD m_adressA, wchar_t* ExperienceName);  //获取经验名字  参数1是UI地址  参数2 是药品的名字
     DWORD GetExperienceNameID_SY(int i, DWORD m_adress); //获取经验药名字ID结构的索引
     DWORD GetExperienceNameID(DWORD ID); //获取经验名字ID
     wchar_t* GetExperienceName(DWORD ID); //获取经验名字
-    static BOOL GetPlayerFightingStatus();//获得战斗状态
+    BOOL GetPlayerFightingStatus();//获得战斗状态
     void _LinQuJiangLi();
 
 
 
     //对象
-    static ObjectNode* GetObjectBinTreeBaseAddr();
-    static void GetAllObjectToVector(ObjectNode* pNode, ObjectVector& RangeObject);
-    DWORD GetRangeLootCount(DWORD range);
+    ObjectNode* GetObjectBinTreeBaseAddr();
+    void GetAllObjectToVector(ObjectNode* pNode, ObjectVector& RangeObject);
     void _GetRangeObjectToVector(ObjectNode* pNode, DWORD range, ObjectVector& RangeObject);
-    static void GetRangeMonsterToVector(DWORD range, ObjectVector& MonsterVec);
-    static void GetRangeObjectToVector(ObjectNode* pNode, DWORD range, ObjectVector& RangeObject);
+    void GetRangeMonsterToVector(DWORD range, ObjectVector& MonsterVec);
+    void GetRangeObjectToVector(ObjectNode* pNode, DWORD range, ObjectVector& RangeObject);
     void GetRangeLootObjectToVector(DWORD range, ObjectVector& LootVec);
-    static DWORD GetRangeMonsterCount(DWORD range = CAN_OPERATOR); //取范围内怪物数量, 一般用来判断是否用aoe攻击
     void GetRangeTaskItemToVectr(ObjectVector& TastItemVector, DWORD range);
     ObjectNode* GetObjectByName(wchar_t szName[], DWORD range = 500);
-    static BYTE GetObjectType(DWORD pObjAddress);       //对象类型
-    static BOOL _GetObjectPos(DWORD pObjAddress, fPosition* pos);       //取对象坐标
-    static BOOL GetObjectPos(ObjectNode* pNode, fPosition* fpos);
-    static BOOL GetObjectPos_0xb(DWORD pObjAddress, sPosition* spos);      //对象short类型坐标
-    static BOOL GetObjectPos2_0x20(DWORD pObjAddress, fPosition* fpos);//0x20对象使用这个取坐标
-    static BOOL GetObjectPos2_0x90(DWORD pObjAddress, sPosition* spos);//0x90对象使用这个取坐标
-    static wchar_t* GetObjectNameByIndex(DWORD index);                   //对象名
+    BYTE GetObjectType(DWORD pObjAddress);       //对象类型
+    BOOL _GetObjectPos(DWORD pObjAddress, fPosition* pos);       //取对象坐标
+    BOOL GetObjectPos(ObjectNode* pNode, fPosition* fpos);
+    BOOL GetObjectPos_0xb(DWORD pObjAddress, sPosition* spos);      //对象short类型坐标
+    BOOL GetObjectPos2_0x20(DWORD pObjAddress, fPosition* fpos);//0x20对象使用这个取坐标
+    BOOL GetObjectPos2_0x90(DWORD pObjAddress, sPosition* spos);//0x90对象使用这个取坐标
+    wchar_t* GetObjectNameByIndex(DWORD index);                   //对象名
     wchar_t* _GetObjectNameByIndex(DWORD index);
-    static wchar_t* GetObjectName(DWORD pObjAddress);
-    static DWORD GetType4HP(DWORD pObjAddress);         //获取类型为4的对象血量
-    static DWORD GetObject_0x14(DWORD pObjAddress);
-    static DWORD GetObjectLevel(DWORD pObjAddress);     //取对象等级
-    static DWORD GetObjectSY12(DWORD pObjAddress);
-    static DWORD GetObjectSY(DWORD pObjAddress);
-    static DWORD GetObjectSy_90(DWORD pObjAddress);//取90的索引
-    static DWORD GetIndexByType(DWORD pObjAddress); //通过类型取得索引
+    wchar_t* GetObjectName(DWORD pObjAddress);
+    DWORD GetType4HP(DWORD pObjAddress);         //获取类型为4的对象血量
+    DWORD GetObject_0x14(DWORD pObjAddress);
+    DWORD GetObjectLevel(DWORD pObjAddress);     //取对象等级
+    DWORD GetObjectSY12(DWORD pObjAddress);
+    DWORD GetObjectSY(DWORD pObjAddress);
+    DWORD GetObjectSy_90(DWORD pObjAddress);//取90的索引
+    DWORD GetIndexByType(DWORD pObjAddress); //通过类型取得索引
 
 
 
@@ -161,7 +137,7 @@ public:
     BOOL        isPlayerChanneling();  //正在读条
     BOOL        isPlayerSteping();     //玩家正在走路
     BOOL        isLoginInSelectPlayer();   //判断是否进入了角色选择画面
-    static int  isLoadingMap();     //过图状态
+    int  isLoadingMap();     //过图状态
     BOOL        isHaveXianlu(int index);
     BOOL        isCityConveyLoadingMap();
     BOOL        isCityConveying();
@@ -173,8 +149,8 @@ public:
     DWORD       isStrikeLocked(int index, DWORD pAddr);
     DWORD       isStrikeCanUse(int index, DWORD pAddr);
     BOOL        isBagFull();
-    static BOOL isCanKill(ObjectNode* pNode);
-    static BOOL isCanLook(DWORD pAddr);    //可以看到的
+    BOOL isCanKill(ObjectNode* pNode);
+    BOOL isCanLook(DWORD pAddr);    //可以看到的
 
 
     //任务
@@ -261,8 +237,8 @@ public:
 
     //背包
     void        _GetAllGoodsToVector(std::vector<_BAGSTU>& RangeObject);
-    static void GetAllGoodsToVector(std::vector<_BAGSTU>& RangeObject);                // 遍历背包
-    static void GetAllBodyEquipToVector(std::vector<_BAGSTU>& RangeObject);
+    void GetAllGoodsToVector(std::vector<_BAGSTU>& RangeObject);                // 遍历背包
+    void GetAllBodyEquipToVector(std::vector<_BAGSTU>& RangeObject);
     void        _GetAllBodyEquipToVector(std::vector<_BAGSTU>& RangeObject);
 
     BOOL        GetAllBaGuaToVector(std::vector<_BAGSTU>& BaGuaVec);
@@ -377,30 +353,14 @@ public:
 
     //排序, 配置文件的优先级过滤
     static BOOL UDgreater(ObjectNode* elem1, ObjectNode* elem2);
-    static BOOL Kill_ApplyConfig(ObjectVector& ObjectVec);
 
+    //组队
+    void TuiChuDuiWu() /*退出队伍 */;
+    void YaoQingZuDui(DWORD ID, DWORD Info) /*邀请组队 参数1是对象ID 参数2 就是10000数值 */;
+    DWORD DuiWu_EndAdress() /*遍历队伍的结束地址 */;
 
-    //辅助线程
-    static UINT CALLBACK KeepAliveThread(LPVOID pParam);
-    static UINT CALLBACK AttackHelperThread(LPVOID pParam);
-
-
-    //自定义杀怪过滤
-    BOOL isCustomKill_DontKill(wchar_t* name);
-    BOOL isCustomKill_AlwaysKill(wchar_t* name);
-    static BOOL isCustomKill_HaveName(wchar_t* name);
-
-
-protected:
-    static HWND m_hGameWnd;
-    HANDLE hThreads[2];
-    static BOOL m_bStopThread;
-    static BOOL m_bCanAoe;
-    static void __stdcall ShunyiQietu();
-    CHook hookQietu;
-    static Logger log;
+private:
     HANDLE m_hModuleBsEngine;
-    static CustKillVector CustomName;
 };
 
 

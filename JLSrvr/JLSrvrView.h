@@ -6,8 +6,9 @@
 #define AFX_JLSRVRVIEW_H__B0A33F75_AC46_48D9_8A49_98C434B57456__INCLUDED_
 
 #if _MSC_VER > 1000
-#pragma once
+    #pragma once
 #endif // _MSC_VER > 1000
+
 
 class CJLSrvrDoc;
 class CJLSrvrView : public CListView
@@ -18,7 +19,7 @@ protected: // create from serialization only
 
 // Attributes
 public:
-    CJLSrvrDoc* GetDocument();
+    CJLSrvrDoc* GetDocument(){return (CJLSrvrDoc*)m_pDocument;}
 
 // Operations
 public:
@@ -55,18 +56,10 @@ protected:
     afx_msg void OnRclick(NMHDR* pNMHDR, LRESULT* pResult);
     afx_msg void OnMenuitem32774();
     afx_msg void OnMenuitem32775();
-    afx_msg void OnSocketinfo();
     //}}AFX_MSG
     DECLARE_MESSAGE_MAP()
 
 };
-
-#ifndef _DEBUG  // debug version in JLSrvrView.cpp
-inline CJLSrvrDoc* CJLSrvrView::GetDocument()
-{
-    return (CJLSrvrDoc*)m_pDocument;
-}
-#endif
 
 /////////////////////////////////////////////////////////////////////////////
 

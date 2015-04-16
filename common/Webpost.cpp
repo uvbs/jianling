@@ -4,6 +4,7 @@
 #include "stdafx.h"
 #include "webpost.h"
 
+#include "ncllm3.tlh"
 
 #if _MSC_VER <= 1500
     #include <boost\regex.hpp>
@@ -13,18 +14,75 @@
     using namespace std;
 #endif
 
-#import "ncllm3.dll" no_namespace
+#pragma comment(lib, "Wininet.lib")
+
+#ifdef _DEBUG
+    #define new DEBUG_NEW
+    #undef THIS_FILE
+    static char THIS_FILE[] = __FILE__;
+#endif
+
+
+#ifdef _UNICODE
+    typedef std::wfstream tfstream;
+    typedef std::wifstream tifstream;
+    typedef std::wiostream tiostream;
+    typedef std::wistringstream tistringstream;
+    typedef std::wofstream tofstream;
+    typedef std::wostringstream tostringstream;
+    typedef std::wstreambuf tstreambuf;
+    typedef std::wstreampos tstreampos;
+    typedef std::wstringbuf tstringbuf;
+    typedef std::wstringstream tstringstream;
+    typedef std::wstring tstring;
+
+    typedef boost::wregex tregex;
+    typedef boost::wsmatch tsmatch;
+#else
+    typedef std::string tstring;
+    typedef std::fstream tfstream;
+    typedef std::ifstream tifstream;
+    typedef std::iostream tiostream;
+    typedef std::istringstream tistringstream;
+    typedef std::ofstream tofstream;
+    typedef std::ostringstream tostringstream;
+    typedef std::streambuf tstreambuf;
+    typedef std::stringbuf tstringbuf;
+    typedef std::stringstream tstringstream;
+
+
+    typedef boost::regex tregex;
+    typedef boost::smatch tsmatch;
+#endif
 
 
 const TCHAR ten_obj[] = _T("/myshop/coupon/bns/used/list");
 const TCHAR gift_ref[] = _T("http://bns.plaync.com/story/returnplay/comeback/index");
-const TCHAR login_ref[] = _T("https://login.plaync.com/login/login");
-const TCHAR login_server[] = _T("login.plaync.com");
-const TCHAR login_objname[] = _T("/login/login");
+
+#ifdef JLTW
+    const TCHAR login_server[] = _T("tw.ncsoft.com");
+    const TCHAR login_obj[] = _T("/login/game/login");
+    const TCHAR login_query[] = _T("login_name=%s&password=%s&persistent=0&return_url=");
+    const TCHAR login_ref[] = _T("https://tw.ncsoft.com/login/game/login");
+
+#else
+    const TCHAR login_ref[] = _T("https://login.plaync.com/login/login");
+    const TCHAR login_server[] = _T("login.plaync.com");
+    const TCHAR login_obj[] = _T("/login/login");
+    const TCHAR login_query[] = _T("id=%s&pwd=%s&game_id=13&loginsite=&site_id=13&adult_yn=N&encoding_type=utf-8&ukey=%s&loginLevel=");
+
+    const TCHAR start_server[] = _T("bnslauncher.plaync.com");
+    const TCHAR start_obj[] = _T("/api/launcher/launcher");
+    const TCHAR start_query[] = _T("serverType=live&callback=jQuery17109341772997286171_1412085994722&_=1412086012077");
+    const TCHAR start_ref[] = _T("http://bns.plaync.com/story/note/index");
+
+
+#endif
+
 const TCHAR auth_server[] = _T("login.plaync.co.kr");
 const TCHAR auth_objname[] = _T("/auth/sso");
 const TCHAR auth_query[] = _T("return_url=http://bns.plaync.com/story/returnplay/comeback/index&gpvlu=%s&is_mobile=&mgpsec=&mgpsecexpireat=");
-const TCHAR login_query[] = _T("id=%s&pwd=%s&game_id=13&loginsite=&site_id=13&adult_yn=N&encoding_type=utf-8&ukey=%s&loginLevel=");
+
 const TCHAR gift_server[] = _T("bns.plaync.com");
 const TCHAR gift_get_obj[] = _T("/story/returnplay/comeback/support");
 const TCHAR active_server[] = _T("nshop.plaync.com");
@@ -33,17 +91,13 @@ const TCHAR active_obj_get[] = _T("/myshop/coupon/useGoodsCoupon.json?userCoupon
 const TCHAR active_ref[] = _T("http://nshop.plaync.com/myshop/coupon/popup/couponPopupUseForm");
 const char ten[] = "\xeb\xac\xb4\xeb\xa3\x8c\x20\xec\x97\xac\xed\x96\x89\x20\xec\x84\xa0\xeb"
                    "\xac\xbc\x20\xed\x8c\xa8\xed\x82\xa4\xec\xa7\x80";      //韩文
-const TCHAR start_server[] = _T("bnslauncher.plaync.com");
-const TCHAR start_obj[] = _T("/api/launcher/launcher");
-const TCHAR start_query[] = _T("serverType=live&callback=jQuery17109341772997286171_1412085994722&_=1412086012077");
-const TCHAR start_ref[] = _T("http://bns.plaync.com/story/note/index");
 
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-Webpost::Webpost(const TCHAR szName[], const TCHAR szPw[]): log(_T("Webpost"))
+Webpost::Webpost(const TCHAR szName[], const TCHAR szPw[])
 {
     httpfile = NULL;
     httpconnect = NULL;
@@ -61,14 +115,15 @@ Webpost::~Webpost()
 
 void Webpost::Close()
 {
-
-    if(httpfile != NULL) {
+    if(httpfile)
+    {
         httpfile->Close();
         delete httpfile;
         httpfile = NULL;
     }
 
-    if(httpconnect != NULL) {
+    if(httpconnect)
+    {
         httpconnect->Close();
         delete httpconnect;
         httpconnect = NULL;
@@ -82,30 +137,45 @@ void Webpost::Close()
 //2表示需要验证码
 int Webpost::Login()
 {
+
+
     int bRet = RESULT_LOGIN_NOUKEY;
-    try {
-        Close();
-        httpconnect = sess.GetHttpConnection(login_server,
-                                             (INTERNET_PORT)INTERNET_DEFAULT_HTTPS_PORT);
-        httpfile = httpconnect->OpenRequest(CHttpConnection::HTTP_VERB_POST, login_objname,
+
+#ifdef JLTW
+
+    bRet = RESULT_SUCCESS;
+    _RPTF0(_CRT_ERROR, "不要调用此函数, 直接调用GetStartKey");
+
+#else
+
+    try
+    {
+
+        httpconnect = sess.GetHttpConnection(login_server, (INTERNET_PORT)INTERNET_DEFAULT_HTTPS_PORT);
+
+        httpfile = httpconnect->OpenRequest(CHttpConnection::HTTP_VERB_POST, login_obj,
                                             login_ref, 1, NULL, NULL,
                                             INTERNET_FLAG_NO_AUTO_REDIRECT | INTERNET_FLAG_SECURE | INTERNET_FLAG_RELOAD);
 
+
+        //通用HTTP头
         AddOtherHeader();
+
         CString strUkey = GetUniqueKey();
-        if(strUkey == _T("")) {
-            return bRet;
-        }
+        if(strUkey == _T("")) return bRet;
 
         CString strQuery;
         strQuery.Format(login_query, ac_name, ac_pw, strUkey);
 
-        #ifdef _UNICODE
+
+#ifdef _UNICODE
         USES_CONVERSION;
         LPCSTR lpTemp = W2A((LPCTSTR)strQuery);
-        #else
+#else
         LPCSTR lpTemp = (LPCTSTR)strQuery;
-        #endif
+#endif
+
+        //发送HTTP请求
         httpfile->SendRequest(NULL, 0, (LPVOID)lpTemp, strlen(lpTemp));
 
 
@@ -114,9 +184,11 @@ int Webpost::Login()
         cmatch matches;
 
         CHAR szBuf[BUFSIZ] = {0};
-        while(ReadStringA(szBuf, BUFSIZ)) {
+        while(ReadStringA(szBuf, BUFSIZ))
+        {
             //判断是否返回 gpvlu
-            if(regex_search(szBuf, matches, gpvlu)) {
+            if(regex_search(szBuf, matches, gpvlu))
+            {
                 //保存到成员变量中
                 m_gpvlu = matches.str().c_str();
                 bRet = RESULT_SUCCESS;
@@ -124,19 +196,22 @@ int Webpost::Login()
             }
 
             regex blocking("LoginBlocking");
-            if(regex_search(szBuf, matches, blocking)) {
+            if(regex_search(szBuf, matches, blocking))
+            {
                 bRet = RESULT_FAIL_IPBLOCK;
                 break;
             }
 
             regex captcha("captcha.jpg");
-            if(regex_search(szBuf, matches, captcha)) {
+            if(regex_search(szBuf, matches, captcha))
+            {
                 bRet = RESULT_FAIL_CAPTCHA;
                 break;
             }
 
             regex pwerror("h1_type2");
-            if(regex_search(szBuf, matches, pwerror)) {
+            if(regex_search(szBuf, matches, pwerror))
+            {
                 bRet = RESULT_FAIL_PWERROR;
                 break;
             }
@@ -144,34 +219,50 @@ int Webpost::Login()
         }
 
 
-        if(bRet == RESULT_SUCCESS) {
-            if(Auth(m_gpvlu)) {
+        if(bRet == RESULT_SUCCESS)
+        {
+            if(Auth(m_gpvlu))
+            {
                 bRet = RESULT_SUCCESS;
             }
-            else {
+            else
+            {
                 bRet = RESULT_FAIL_AUTH;
             }
         }
 
     }
-    catch(CInternetException* pEx) {
+    catch(CInternetException* pEx)
+    {
         bRet = RESULT_FAIL_EXCEPTION;
-        if(pEx->m_dwError == ERROR_INTERNET_TIMEOUT) {
+        if(pEx->m_dwError == ERROR_INTERNET_TIMEOUT)
+        {
             bRet = RESULT_FAIL_TIMEOUT;
         }
 
         pEx->Delete();
     }
 
+
+    //删掉连接
+    Close();
+
+
+#endif //JLTW
+
+
     return bRet;
 }
 
-int Webpost::Get() //领取
+
+//领取
+int Webpost::Get()
 {
 
     BOOL bRet = RESULT_GET_ERROR;
-    try {
-        Close();
+    try
+    {
+
         httpconnect = sess.GetHttpConnection(gift_server,
                                              (INTERNET_PORT)INTERNET_DEFAULT_HTTP_PORT);
         httpfile = httpconnect->OpenRequest(CHttpConnection::HTTP_VERB_POST,
@@ -186,23 +277,26 @@ int Webpost::Get() //领取
         strQuery.Format(auth_query, m_gpvlu);
 
 
-        #ifdef _UNICODE
+#ifdef _UNICODE
         USES_CONVERSION;
         LPCSTR lpTemp = W2A((LPCTSTR)strQuery);
-        #else
+#else
         LPCSTR lpTemp = (LPCTSTR)strQuery;
-        #endif
+#endif
         httpfile->SendRequest(NULL, 0, (LPVOID)lpTemp, strlen(lpTemp));
 
 
         char szBuf[BUFSIZ] = {0};
-        while(httpfile->Read(szBuf, BUFSIZ - 1)) {
-            if(strstr((char*)szBuf, "SUCCESS") != NULL) {
+        while(httpfile->Read(szBuf, BUFSIZ - 1))
+        {
+            if(strstr((char*)szBuf, "SUCCESS") != NULL)
+            {
                 bRet = RESULT_SUCCESS;
                 break;
             }
 
-            if(strstr((char*)szBuf, "ALEADY_SUPPORTED") != NULL) {
+            if(strstr((char*)szBuf, "ALEADY_SUPPORTED") != NULL)
+            {
                 bRet = RESULT_GET_ALEADY;
                 break;
             }
@@ -211,25 +305,29 @@ int Webpost::Get() //领取
         }
 
     }
-    catch(CInternetException* pEx) {
+    catch(CInternetException* pEx)
+    {
         TRACE1("%d", pEx->m_dwError);
-        if(pEx->m_dwError == ERROR_INTERNET_TIMEOUT) {
+        if(pEx->m_dwError == ERROR_INTERNET_TIMEOUT)
+        {
             bRet = RESULT_FAIL_TIMEOUT;
         }
         pEx->Delete();
     }
 
+    Close();
+
     return bRet;
 }
 
-int Webpost::Active() //激活
+int Webpost::Active()   //激活
 {
     BOOL bRet = RESULT_FAIL_NOACTIVEITEMS;//没有激活条目
-    try {
+    try
+    {
         CString goodsid;
         CString couponid;
 
-        Close();
         httpconnect = sess.GetHttpConnection(active_server,
                                              (INTERNET_PORT)INTERNET_DEFAULT_HTTP_PORT);
 
@@ -244,14 +342,18 @@ int Webpost::Active() //激活
         cmatch matches;
 
         CHAR szBuf[BUFSIZ];
-        while(ReadStringA(szBuf, BUFSIZ)) {
+        while(ReadStringA(szBuf, BUFSIZ))
+        {
 
-            if(regex_search(szBuf, matches, goods)) {
+            if(regex_search(szBuf, matches, goods))
+            {
                 //匹配到, 把值取出来
                 goodsid = matches.str(1).c_str();
                 couponid = matches.str(2).c_str();
 
-                log.logdv(_T("匹配到: %s - %s"), (LPCTSTR)goodsid, (LPCTSTR)couponid);
+                TRACE(_T("匹配到: %s - %s"), (LPCTSTR)goodsid, (LPCTSTR)couponid);
+
+
                 //匹配到一个就将默认错误改成激活错误
                 bRet = RESULT_FAIL_ACTIVEITEMSERR;
 
@@ -265,64 +367,83 @@ int Webpost::Active() //激活
                 sess.GetHttpConnection(active_server,
                                        (INTERNET_PORT)INTERNET_DEFAULT_HTTP_PORT);
 
-                CHttpFile* httpfile_temp = httpconnect->OpenRequest(_T("POST"), query,
-                                           active_ref, 1, NULL, NULL,
-                                           INTERNET_FLAG_NO_AUTO_REDIRECT | INTERNET_FLAG_RELOAD);
+                CHttpFile* httpfile_temp =
+                    httpconnect->OpenRequest(
+                        _T("POST"),
+                        query,
+                        active_ref,
+                        1,
+                        NULL,
+                        NULL,
+                        INTERNET_FLAG_NO_AUTO_REDIRECT | INTERNET_FLAG_RELOAD);
 
                 httpfile_temp->SendRequest();
 
+
                 BOOL bActiveOK = FALSE;
                 CHAR szBuf[BUFSIZ] = {0};
-                while(httpfile_temp->Read(szBuf, BUFSIZ)) {
-                    if(strstr(szBuf, "resultCode\":0") != NULL) {
+                while(httpfile_temp->Read(szBuf, BUFSIZ))
+                {
+                    if(strstr(szBuf, "resultCode\":0") != NULL)
+                    {
                         bActiveOK = TRUE;
                     }
                 }
 
-                httpfile_temp->Close();
-                delete httpfile_temp;
+                //关闭连接
+                Close();
 
-                if(bActiveOK == FALSE) {
+                if(bActiveOK == FALSE)
+                {
                     bRet = RESULT_FAIL_ACTIVEITEMSERR;
                     break;  //直接跳出把， 算是激活失败
                 }
-                else {
+                else
+                {
                     bRet = RESULT_SUCCESS;
                 }
             }
         }
+
+
     }
-    catch(CInternetException* pEx) {
-        TRACE(_T("%d"), pEx->m_dwError);
-        if(pEx->m_dwError == ERROR_INTERNET_TIMEOUT) {
+    catch(CInternetException* pEx)
+    {
+        if(pEx->m_dwError == ERROR_INTERNET_TIMEOUT)
+        {
             bRet = RESULT_FAIL_TIMEOUT;
         }
         pEx->Delete();
     }
 
+    //关闭连接
+    Close();
+
+
     return bRet;
 }
 
-int Webpost::Ten()//返回 -1 激活失败, 返回 1 成功, 返回 0 没有需要激活的
+
+//返回 -1 激活失败, 返回 1 成功, 返回 0 没有需要激活的
+int Webpost::Ten()
 {
     return -1;
 }
 
-void Webpost::AddOtherHeader()  //组织http头
+
+//组织http头
+void Webpost::AddOtherHeader()
 {
-    httpfile->AddRequestHeaders(
-        _T("User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 ")
-        _T("(KHTML, like Gecko) Chrome/39.0.2171.71 Safari/537.36"));
-    httpfile->AddRequestHeaders(_T("Pragma: no-cache"));
-    httpfile->AddRequestHeaders(_T("Connection: keep-alive"));
-    httpfile->AddRequestHeaders(_T("Accept: */*"));
+    httpfile->AddRequestHeaders(_T("User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; rv:11.0) like Gecko"));
+    httpfile->AddRequestHeaders(_T("Accept: text/html, application/xhtml+xml, */*"));
     httpfile->AddRequestHeaders(_T("Content-Type: application/x-www-form-urlencoded"));
 }
 
 CString Webpost::GetUniqueKey()
 {
     CLSID clsid;
-    if(CLSIDFromProgID(OLESTR("ncllm.ncllmCtrl"), &clsid) != S_OK) {
+    if(CLSIDFromProgID(OLESTR("ncllm.ncllmCtrl"), &clsid) != S_OK)
+    {
         return _T("");
     }
 
@@ -338,50 +459,52 @@ CString Webpost::GetUniqueKey()
 
 BOOL Webpost::ReadStringA(LPSTR pLiner, DWORD dwLen)
 {
-    ASSERT(pLiner != NULL);
+    _ASSERT(pLiner != NULL);
 
-    BOOL bRet = FALSE;
+    //开始读取文本
+    char bChar = 0;
+    int i = 0;
 
-    try {
-        //开始读取文本
-        char bChar = 0;
-        int i = 0;
-        for(;;) {
+    try
+    {
+
+        for(;;)
+        {
 
             if(i == dwLen) break;
 
-            if(httpfile->Read(&bChar, sizeof(bChar)) == 0)
-                CFileException::ThrowOsError(CFileException::endOfFile);
+            if(httpfile->Read(&bChar, sizeof(bChar)) == 0) break;
 
-            if(bChar == 0x0d || bChar == 0x0a) {
+            if(bChar == 0x0d || bChar == 0x0a)
+            {
                 if(bChar == '\r')
                     httpfile->Read(&bChar, sizeof(char));
 
                 break;
             }
 
-            //if(bChar == ' ') continue;
             memcpy(&pLiner[i++], &bChar, sizeof(bChar));
         }
 
         pLiner[i] = '\0';
+        return TRUE;
 
-        bRet = TRUE;
     }
-    catch(CFileException* pEx) {
+    catch(CFileException* pEx)
+    {
         pEx->Delete();
-
     }
 
-    return bRet;
+    return FALSE;
 }
 
 
 BOOL Webpost::Auth(const CString& gpvlu)
 {
     BOOL bRet = FALSE;
-    try {
-        Close();
+    try
+    {
+
         httpconnect = sess.GetHttpConnection(auth_server,
                                              (INTERNET_PORT)INTERNET_DEFAULT_HTTPS_PORT);
         httpfile = httpconnect->OpenRequest(CHttpConnection::HTTP_VERB_POST, auth_objname,
@@ -393,12 +516,12 @@ BOOL Webpost::Auth(const CString& gpvlu)
         CString strQuery;
         strQuery.Format(auth_query, gpvlu);
 
-        #ifdef _UNICODE
+#ifdef _UNICODE
         USES_CONVERSION;
         LPCSTR lpTemp = W2A((LPCTSTR)strQuery);
-        #else
+#else
         LPCSTR lpTemp = (LPCTSTR)strQuery;
-        #endif
+#endif
 
         httpfile->SendRequest(NULL, 0, (LPVOID)lpTemp, strlen(lpTemp));
         Close();
@@ -415,79 +538,103 @@ BOOL Webpost::Auth(const CString& gpvlu)
         cmatch matches;
 
         CHAR szBuf[BUFSIZ] = {0};
-        while(ReadStringA(szBuf, BUFSIZ)) {
-            if(regex_search(szBuf, matches, isLoginFlag)) {
+        while(ReadStringA(szBuf, BUFSIZ))
+        {
+            if(regex_search(szBuf, matches, isLoginFlag))
+            {
                 bRet = TRUE;
                 break;
             }
         }
     }
-    catch(CInternetException* pEx) {
+    catch(CInternetException* pEx)
+    {
         pEx->Delete();
     }
 
+    Close();
     return bRet;
 }
 
-CString Webpost::GetGameStartKey()
-{
-    //取得网页返回的sesskey数据
-    //登录需要
-    try {
-        Close();
-        httpconnect = sess.GetHttpConnection(start_server,
-                                             (INTERNET_PORT)INTERNET_DEFAULT_HTTPS_PORT);
 
-        httpfile = httpconnect->OpenRequest(CHttpConnection::HTTP_VERB_GET, start_obj,
-                                            start_ref, 1, NULL, NULL,
-                                            INTERNET_FLAG_NO_AUTO_REDIRECT | INTERNET_FLAG_SECURE | INTERNET_FLAG_RELOAD);
+//取得网页返回的sesskey数据
+CString Webpost::GetStartKey()
+{
+
+    try
+    {
+
+#ifdef JLTW
+
+        httpconnect = sess.GetHttpConnection(login_server, (INTERNET_PORT)INTERNET_DEFAULT_HTTPS_PORT);
+
+        httpfile = httpconnect->OpenRequest(
+                       CHttpConnection::HTTP_VERB_POST, login_obj,
+                       login_ref, 1, NULL, NULL,
+                       INTERNET_FLAG_NO_AUTO_REDIRECT | INTERNET_FLAG_SECURE | INTERNET_FLAG_RELOAD);
+
+#else
+        httpconnect = sess.GetHttpConnection(start_server, (INTERNET_PORT)INTERNET_DEFAULT_HTTPS_PORT);
+
+        httpfile = httpconnect->OpenRequest(
+                       CHttpConnection::HTTP_VERB_GET, start_obj,
+                       NULL, 1, NULL, NULL,
+                       INTERNET_FLAG_NO_AUTO_REDIRECT | INTERNET_FLAG_SECURE | INTERNET_FLAG_RELOAD);
+
+
+#endif
+
 
         AddOtherHeader();
-        httpfile->SendRequest(NULL, 0, (void*)start_query, sizeof(start_query));
+
+
+#ifdef JLTW
+
+        CString strQuery;
+        strQuery.Format(login_query, ac_name, ac_pw);
+        strQuery.Replace(_T("+"), _T("%2B"));
+
+#ifdef _UNICODE
+        USES_CONVERSION;
+        LPCSTR lpTemp = W2A((LPCTSTR)strQuery);
+#else
+        LPCSTR lpTemp = (LPCTSTR)strQuery;
+#endif
+
+        httpfile->SendRequest(NULL, 0, (LPVOID)lpTemp, strlen(lpTemp));
+
+#else
+
+        httpfile->SendRequest(NULL, 0, (LPVOID)start_query, sizeof(start_query));
+
+#endif
 
         regex skey("\\w{20,}==");
         cmatch matches;
 
-        
-        CHAR szBuf[BUFSIZ] = {0};
-        while(ReadStringA(szBuf, BUFSIZ)) {
 
-            if(regex_search(szBuf, matches, skey)) {
+        CHAR szBuf[BUFSIZ] = {0};
+        while(ReadStringA(szBuf, BUFSIZ - 1))
+        {
+            if(szBuf[0] == '0') continue;
+
+            if(regex_search(szBuf, matches, skey))
+            {
                 CString strRet = matches.str(0).c_str();
+                TRACE(_T("%s"), (LPCTSTR)strRet);
                 return strRet;
             }
         }
 
     }
-    catch(CInternetException* pEx) {
-        TRACE1("%d", pEx->m_dwError);
+    catch(CInternetException* pEx)
+    {
         pEx->Delete();
     }
+
+    Close();
+
     return _T("");
-}
-
-
-//从一行中取出来用户名和密码
-BOOL Webpost::GetPwName(CString& strLine, CString& name, CString& pw)
-{
-
-    regex line("([^, ]*)([, ]*)?([^, ]*)");
-    cmatch matches;
-
-    #ifdef _UNICODE
-    USES_CONVERSION;
-    LPCSTR lpTemp = T2A((LPCTSTR)strLine);
-    #else
-    LPCSTR lpTemp = (LPCTSTR)strLine;
-    #endif
-
-    if(regex_search(lpTemp, matches, line)) {
-        name = matches.str(1).c_str();
-        pw = matches.str(3).c_str();
-        return TRUE;
-    }
-
-    return FALSE;
 }
 
 void Webpost::InitCom()

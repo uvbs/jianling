@@ -27,8 +27,8 @@ protected:
 
     // Generated message map functions
     //{{AFX_MSG(CDlgBindKey)
-    // NOTE: the ClassWizard will add member functions here
-    //}}AFX_MSG
+	virtual void OnOK();
+	//}}AFX_MSG
     DECLARE_MESSAGE_MAP()
 };
 

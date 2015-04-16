@@ -4,11 +4,8 @@
 #include "stdafx.h"
 #include "JLwg.h"
 #include "ConfigObjPage.h"
-
 #include "GamecallEx.h"
 #include "GameConfig.h"
-#include "..\common\cinifile.h"
-
 
 #ifdef _DEBUG
     #define new DEBUG_NEW
@@ -59,7 +56,7 @@ void CConfigObjPage::RefreshObj()
 {
 
     //获取游戏外挂功能
-    GamecallEx& gcall = *GamecallEx::Instance();
+    GamecallEx& gcall = *GamecallEx::GetInstance();
 
     m_ObjList.DeleteAllItems();
     ObjectVector RangeObject;
@@ -103,10 +100,35 @@ BOOL CConfigObjPage::OnInitDialog()
     m_ObjList.SetExtendedStyle(LVS_EX_FULLROWSELECT);
     m_FilterList.SetExtendedStyle(LVS_EX_FULLROWSELECT);
 
-    GameConfig* pConfig = GameConfig::Instance();
+    GameConfig* pConfig = GameConfig::GetInstance();
 
-    //TODO:
+    //战斗优先
+    ItemVector& FirstKill = pConfig->m_FirstKill;
 
+    //战斗不杀
+    ItemVector& DontKill = pConfig->m_DontKill;
+
+    //战斗必杀
+    ItemVector& AlwaysKill = pConfig->m_AlwaysKill;
+
+    int i;
+    for(i = 0; i < FirstKill.size(); i++) {
+        m_FilterList.InsertItem(i, FirstKill[i].c_str());
+        m_FilterList.SetItemText(i, 1, strFirstKill);
+    }
+
+    for(i = 0; i < DontKill.size(); i++) {
+        m_FilterList.InsertItem(i, DontKill[i].c_str());
+        m_FilterList.SetItemText(i, 1, strDontKill);
+
+    }
+
+    for(i = 0; i < AlwaysKill.size(); i++) {
+        m_FilterList.InsertItem(i, AlwaysKill[i].c_str());
+        m_FilterList.SetItemText(i, 1, strAlwaysKill);
+    }
+
+    //填充周围对象列表
     RefreshObj();
     return TRUE;  // return TRUE unless you set the focus to a control
     // EXCEPTION: OCX Property Pages should return FALSE

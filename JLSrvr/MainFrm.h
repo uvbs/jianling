@@ -29,7 +29,6 @@ public:
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CMainFrame)
 	protected:
-	virtual BOOL OnCreateClient(LPCREATESTRUCT lpcs, CCreateContext* pContext);
 	//}}AFX_VIRTUAL
 
 

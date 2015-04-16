@@ -27,6 +27,8 @@ public:
     CJLSrvrApp();
 
 
+    //计算机名
+    CString m_strDefSvr;
 
 // Overrides
     // ClassWizard generated virtual function overrides
@@ -35,13 +37,6 @@ public:
     virtual BOOL InitInstance();
     virtual BOOL OnIdle(LONG lCount);
     //}}AFX_VIRTUAL
-
-//属性
-public:
-    static LONG CALLBACK myUnhandledExceptionFilter(EXCEPTION_POINTERS* lpExceptionInfo);
-    CString m_strDefSvr;
-    static void ShowFrame(LPCTSTR szText, PVOID pParam);
-
 
 // Implementation
     //{{AFX_MSG(CJLSrvrApp)

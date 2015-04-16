@@ -7,8 +7,6 @@
 #include "GameConfig.h"
 #include "gamedef.h"
 
-#include "..\common\CIniFile.h"
-
 
 #ifdef _DEBUG
     #define new DEBUG_NEW
@@ -24,7 +22,8 @@ CConfigQhPage::CConfigQhPage(CWnd* pParent /*=NULL*/)
     : CPropertyPage(CConfigQhPage::IDD)
 {
     //{{AFX_DATA_INIT(CConfigQhPage)
-    //}}AFX_DATA_INIT
+	m_HealthPercent = 0;
+	//}}AFX_DATA_INIT
 }
 
 
@@ -33,7 +32,9 @@ void CConfigQhPage::DoDataExchange(CDataExchange* pDX)
     CDialog::DoDataExchange(pDX);
     //{{AFX_DATA_MAP(CConfigQhPage)
     DDX_Control(pDX, IDC_COMBO_ITEMCOLOR, m_ComBox);
-    //}}AFX_DATA_MAP
+	DDX_Text(pDX, IDC_CHIYAOPERCENT, m_HealthPercent);
+	DDV_MinMaxInt(pDX, m_HealthPercent, 1, 100);
+	//}}AFX_DATA_MAP
 }
 
 
@@ -53,7 +54,7 @@ BOOL CConfigQhPage::OnInitDialog()
     CDialog::OnInitDialog();
 
     //获取配置对象
-    GameConfig* pConfig = GameConfig::Instance();
+    GameConfig* pConfig = GameConfig::GetInstance();
 
     m_ComBox.AddString(strGreen);
     m_ComBox.AddString(strBlue);
@@ -62,9 +63,13 @@ BOOL CConfigQhPage::OnInitDialog()
     m_ComBox.SetCurSel(-1);
 
     //获取颜色
-    //TODO: 
-//    SetDlgItemText(IDC_CHIYAOPERCENT, lpszHeYaoPercent);
+    //TODO:
+    int nIndex = m_ComBox.SelectString(0, pConfig->m_szQHColor);
+    ASSERT(nIndex != LB_ERR);
 
+    m_HealthPercent = pConfig->m_HealthPercent;
+
+    UpdateData(FALSE);
 
     return TRUE;  // return TRUE unless you set the focus to a control
     // EXCEPTION: OCX Property Pages should return FALSE
@@ -91,4 +96,19 @@ void CConfigQhPage::OnSelchangeComboItemcolor()
 {
     // TODO: Add your control notification handler code here
     SetModified();
+}
+
+BOOL CConfigQhPage::OnApply()
+{
+     UpdateData();
+
+     GameConfig *pConfig = GameConfig::GetInstance();
+
+     pConfig->m_HealthPercent = m_HealthPercent;
+
+     TCHAR szQHColor[BUFSIZ] = {0};
+     m_ComBox.GetLBText(m_ComBox.GetCurSel(), szQHColor);
+     wcscpy(pConfig->m_szQHColor, szQHColor);
+
+    return CPropertyPage::OnApply();
 }

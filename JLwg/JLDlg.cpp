@@ -7,9 +7,6 @@
 #include "TaskScript.h"
 #include "DataDlg.h"
 
-#include "..\common\common.h"
-#include "..\common\sharemem.h"
-
 
 
 #ifdef _DEBUG
@@ -85,8 +82,7 @@ void CJLDlg::OnGotask()
 
 BOOL CJLDlg::OnInitDialog()
 {
-    CDialog::OnInitDialog();
-    return TRUE;
+    return CDialog::OnInitDialog();
 }
 
 void CJLDlg::OnWgdata()
@@ -110,12 +106,6 @@ void CJLDlg::OnStopTask()
 void CJLDlg::OnClose()
 {
     ShowWindow(SW_HIDE);
-}
-
-void CJLDlg::OnShowWindow(BOOL bShow, UINT nStatus)
-{
-    CDialog::OnShowWindow(bShow, nStatus);
-
 }
 
 void CJLDlg::OnUnloadwg()

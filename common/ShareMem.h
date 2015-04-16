@@ -10,8 +10,9 @@
 #endif // _MSC_VER > 1000
 
 
+#define SHAREMAXLEN 64
 
-#define SHAREMAXLEN 32
+
 typedef struct _SHAREINFO {
     TCHAR szName[SHAREMAXLEN];
     TCHAR szConfig[SHAREMAXLEN];
@@ -19,19 +20,12 @@ typedef struct _SHAREINFO {
     DWORD pid;
 } SHAREINFO, *PSHAREINFO;
 
-class ShareMem;
-typedef ShareMem JLShareMem;
 
 class ShareMem
 {
-protected:
-    ShareMem();
-
 public:
+    ShareMem();
     virtual ~ShareMem();
-    static ShareMem* Instance();
-private:
-    static ShareMem* _inst;
 
 public:
     BOOL Open(TCHAR szObjName[]);
@@ -61,6 +55,6 @@ protected:
     SHAREINFO* m_lpMem;
 };
 
-
+typedef ShareMem JLShareMem;
 
 #endif // !defined(AFX_SHAREMEM_H__EA35F58D_574C_4783_BF68_B196F54257E6__INCLUDED_)

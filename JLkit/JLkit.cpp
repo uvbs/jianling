@@ -9,17 +9,17 @@
 #include "configmgr.h"
 
 
-#include "../common/logger.h"
-#include "../common/protocol.h"
-#include "../common/ShareMem.h"
-#include "../common/common.h"
-
 #ifdef _DEBUG
     #define new DEBUG_NEW
 #endif
 
+using namespace Gdiplus;
+
+
 //唯一实例
 CJLkitApp   theApp;
+
+
 
 //消息映射
 BEGIN_MESSAGE_MAP(CJLkitApp, CWinApp)
@@ -32,10 +32,9 @@ END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
 
-CJLkitApp::CJLkitApp():
-    m_mutex(FALSE, m_pszAppName, NULL)
+CJLkitApp::CJLkitApp()
 {
-
+    m_szIniPath[0] = 0;
 }
 
 
@@ -51,11 +50,13 @@ BOOL CJLkitApp::UnPackResDll(LPCTSTR lpName, LPCTSTR lpType)
     DWORD dwWBytes = 0;
 
     HRSRC hRes = FindResource(NULL, lpName, lpType);
-    if(hRes) {
+    if(hRes)
+    {
         hGlobalRes =  LoadResource(NULL, hRes);
     }
 
-    if(hGlobalRes) {
+    if(hGlobalRes)
+    {
         dwResSize = SizeofResource(NULL, hRes);
         GetTempPath(sizeof(szTempPath) / sizeof(TCHAR), szTempPath);
         lstrcat(szTempPath, lpType);
@@ -74,48 +75,73 @@ BOOL CJLkitApp::UnPackResDll(LPCTSTR lpName, LPCTSTR lpType)
     return TRUE;
 }
 
+
 BOOL CJLkitApp::MutexWnd()
 {
-    //保证唯一实例
-    if(m_mutex.Lock(0) == FALSE) {
-        CWnd* pWndJLkit = CWnd::FindWindow(NULL, NULL);
-        if(pWndJLkit != NULL) {
-            if(pWndJLkit->IsIconic()) {
-                pWndJLkit->ShowWindow(SW_RESTORE);
-            }
-
-            pWndJLkit->SetActiveWindow();
-            pWndJLkit->BringWindowToTop();
-            pWndJLkit->SetForegroundWindow();
-        }
-
+    CWnd* PrevCWnd, *ChildCWnd;
+    // Determine if another window with our class name exists.
+    PrevCWnd = CWnd::FindWindow(JLKITCLASSNAME, NULL);
+    if(PrevCWnd != NULL)
+    {
+        // If so, does it have any pop-ups?
+        ChildCWnd = PrevCWnd->GetLastActivePopup();
+        // Bring the main window to the top.
+        PrevCWnd->BringWindowToTop();
+        // If iconic, restore the main window.
+        if(PrevCWnd->IsIconic())
+            PrevCWnd->ShowWindow(SW_RESTORE);
+        // If there are pop-ups, bring them along too!
+        if(PrevCWnd != ChildCWnd)
+            ChildCWnd->BringWindowToTop();
+        // Return FALSE. This isn't the first instance
+        // and we are done activating the previous one.
         return FALSE;
     }
+    else
+        // First instance. Proceed as normal.
+        return TRUE;
 
-    return TRUE;
 }
 
 BOOL CJLkitApp::InitInstance()
 {
-
-    if(!MutexWnd()) return FALSE;
+    //保证唯一实例
+    //if(!MutexWnd()) return FALSE;
 
     //解压NPDLL
     //UnPackDll(MAKEINTRESOURCE(NP), _T("DLL"));
 
-    if(!LoadLibrary(_T("JLnp.dll"))) {
+
+#ifndef JLTW
+    if(!LoadLibrary(_T("JLnp.dll")))
+    {
         AfxMessageBox(_T("加载NP失败"));
     }
+#else
+    if(!LoadLibrary(_T("JLnp_tw.dll")))
+    {
+        AfxMessageBox(_T("加载NP失败"));
+    }
+#endif
 
     //初始化套接字
-    if(!AfxSocketInit()) {
+    if(!AfxSocketInit())
+    {
         AfxMessageBox(IDP_SOCKETS_INIT_FAIL);
         return FALSE;
     }
 
+
+    //加载配置文件
+    GetModuleFileName(NULL, m_szIniPath, MAX_PATH);
+    PathRemoveExtension(m_szIniPath);
+    _tcscat(m_szIniPath, _T(".ini"));
+
     //加载配置
-    CConfigMgr::GetInstance()->LoadConfig();
-    LoadStdProfileSettings();
+    CConfigMgr* pConfig = CConfigMgr::GetInstance();
+    pConfig->LoadConfig(m_szIniPath);
+
+
 
     //创建窗口框架
     CSingleDocTemplate* pDocTemplate;
@@ -123,6 +149,13 @@ BOOL CJLkitApp::InitInstance()
         IDR_MAINFRAME, RUNTIME_CLASS(CJLkitDoc),
         RUNTIME_CLASS(CMainFrame), RUNTIME_CLASS(CJLkitView));
 
+
+    //窗口风格
+    GdiplusStartupInput gdiplusStartupInput;
+    GdiplusStartup(&m_gdiplusToken, &gdiplusStartupInput, NULL);
+
+
+    m_nCmdShow = SW_HIDE;
     AddDocTemplate(pDocTemplate);
     OnFileNew();
     return TRUE;
@@ -139,12 +172,11 @@ BOOL CJLkitApp::OnIdle(LONG lCount)
 
 int CJLkitApp::ExitInstance()
 {
+
     //保存配置
-    CConfigMgr::GetInstance()->SaveConfig();
-    CConfigMgr::GetInstance()->Delete();
+    CConfigMgr* pConfig =  CConfigMgr::GetInstance();
+    pConfig->SaveConfig(m_szIniPath);
 
-    //释放互斥
-    m_mutex.Unlock();
-
+    GdiplusShutdown(m_gdiplusToken);
     return CWinApp::ExitInstance();
 }

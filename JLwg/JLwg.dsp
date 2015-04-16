@@ -36,10 +36,11 @@ RSC=rc.exe
 # PROP Use_Debug_Libraries 0
 # PROP Output_Dir "Release"
 # PROP Intermediate_Dir "Release"
-# PROP Ignore_Export_Lib 0
+# PROP Ignore_Export_Lib 1
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /MT /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "JLWG_EXPORTS" /Yu"stdafx.h" /FD /c
-# ADD CPP /nologo /MDd /W3 /GX /Zi /Od /Gf /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_UNICODE" /D "_USRDLL" /D "JLWG_EXPORTS" /D "_WINDLL" /D "_AFXDLL" /FA /FR /Yu"stdafx.h" /FD /c
+# ADD CPP /nologo /MDd /W3 /GX /Zi /Od /Gf /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_UNICODE" /D "UNICODE" /D "_WINDLL" /D "_AFXDLL" /FA /Yu"stdafx.h" /FD /c
+# SUBTRACT CPP /Fr
 # ADD BASE MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0x804 /d "NDEBUG"
@@ -60,10 +61,6 @@ LINK32=link.exe
 # Begin Source File
 
 SOURCE=..\common\CHook.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=..\common\CIniFile.cpp
 # End Source File
 # Begin Source File
 
@@ -107,11 +104,19 @@ SOURCE=.\GameHook.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\GameLog.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\GameSpend.cpp
 # End Source File
 # Begin Source File
 
 SOURCE=.\JLDlg.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\JLkit\JLkitSocket.cpp
 # End Source File
 # Begin Source File
 
@@ -157,10 +162,6 @@ SOURCE=.\TranScript.cpp
 # Begin Source File
 
 SOURCE=..\common\CHook.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\common\CIniFile.h
 # End Source File
 # Begin Source File
 
@@ -212,6 +213,10 @@ SOURCE=.\GameHook.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\GameLog.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\GameSpend.h
 # End Source File
 # Begin Source File
@@ -225,6 +230,10 @@ SOURCE=.\JLDlg.h
 # Begin Source File
 
 SOURCE=.\JLkitDoc.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\JLkit\JLkitSocket.h
 # End Source File
 # Begin Source File
 

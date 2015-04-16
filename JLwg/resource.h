@@ -22,6 +22,7 @@
 #define IDC_HOOK_DEQUEST                1042
 #define IDC_HOOK_CHUANZHUANGBEI         1043
 #define IDC_SPEEDX                      1056
+#define IDC_ADDTOPARTY                  1057
 #define IDC_UNLOADWG                    1058
 #define IDC_HOOK_ACCEPTQUEST            1059
 #define IDC_HOOK_DUNDI                  1061
@@ -61,6 +62,10 @@
 #define ID_CONFIG_DONTKILL              40060
 #define ID_HOOKSTRIKE                   40061
 #define ID_CONFIG_ALWAYSKILL            40062
+#define IDP_SOCKETS_INIT_FAIL           61204
+#define IDP_SOCKETS_DNS_FAIL            61205
+#define IDS_CREATEFAILED                61206
+#define IDS_CONNECT_SERVER              61213
 
 // Next default values for new objects
 // 

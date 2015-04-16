@@ -9,7 +9,8 @@
 #endif // _MSC_VER > 1000
 
 
-enum {
+enum
+{
     COLUMN_TEXT_CHECKBOX = 0,
     COLUMN_TEXT_ACCOUNT,
     COLUMN_TEXT_PASSWORD,
@@ -20,7 +21,8 @@ enum {
 };
 
 
-enum {
+enum
+{
     RESULT_FAIL_INJECT = 100,
     RESULT_NOKEY,
     RESULT_ALREADY_RUNNING,
@@ -28,21 +30,14 @@ enum {
     RESULT_LOGIN_SUCCESS
 };
 
-
-
-class CLaunchThread;;
 class CJLkitDoc;
+
 class CJLkitView : public CListView
 {
 protected:
     CJLkitView();
     virtual ~CJLkitView();
     DECLARE_DYNCREATE(CJLkitView)
-
-    CJLkitDoc*  GetDocument();
-
-private:
-    CLaunchThread*  m_lpLaunchThread;
 
 public:
     //串行文本
@@ -52,7 +47,6 @@ public:
     void LaunchGame();
 
     //领取和激活
-    void GetAndActive();
     void OnGet();
     void OnActive();
 
@@ -60,14 +54,19 @@ public:
     int m_LineNums;
 
     //插入行
-    void InsertLine(int index, CString& strName, CString& strPw,
-                    CString& strConfig, CString& strScript);
-
-    //读取一行
-    BOOL ReadLine(CFile* pFile, TCHAR szLine[], BOOL bUnicode);
+    void InsertLine(int index, const TCHAR szName[], const TCHAR szPw[], const TCHAR szConfig[], const TCHAR szScript[]);
 
     //显示结果
     void SetResult(int nResult, int i);
+
+    //设置行颜色
+    void SetItemColor(DWORD iItem, COLORREF color);
+
+    //清楚多余字符
+    void Trim(std::basic_string<TCHAR>* str);
+
+private:
+    CMap<DWORD, DWORD&, COLORREF, COLORREF&> MapItemColor;
 
 
 // Overrides
@@ -84,19 +83,18 @@ protected:
 
 public:
     //{{AFX_MSG(CJLkitView)
-    afx_msg void OnLookShareMem();
-    afx_msg int     OnCreate(LPCREATESTRUCT lpCreateStruct);
-    afx_msg void    OnStart();
-    afx_msg void    OnRclick(NMHDR* pNMHDR, LRESULT* pResult);
-    afx_msg void    OnProfile();
-    afx_msg void    OnGetAndActive();
-    afx_msg void    OnUpdateProfile(CCmdUI* pCmdUI);
-    afx_msg void    OnUpdateSelectall(CCmdUI* pCmdUI);
-    afx_msg void    OnReportbug();
-    afx_msg void    OnTimer(UINT nIDEvent);
-    afx_msg void    OnUpdateStart(CCmdUI* pCmdUI);
-    afx_msg void    OnUpdateGetandactive(CCmdUI* pCmdUI);
-    afx_msg void OnSockinfo();
+    afx_msg void OnNMCustomdraw(NMHDR* pNMHDR, LRESULT* pResult);
+    afx_msg int  OnCreate(LPCREATESTRUCT lpCreateStruct);
+    afx_msg void OnStart();
+    afx_msg void OnRclick(NMHDR* pNMHDR, LRESULT* pResult);
+    afx_msg void OnProfile();
+    afx_msg void OnReportbug();
+    afx_msg void OnTimer(UINT nIDEvent);
+    afx_msg void OnUpdateProfile(CCmdUI* pCmdUI);
+    afx_msg void OnUpdateSelectall(CCmdUI* pCmdUI);
+    afx_msg void OnUpdateStart(CCmdUI* pCmdUI);
+    afx_msg void OnUpdateGetandactive(CCmdUI* pCmdUI);
+    afx_msg void OnUcStart();
     //}}AFX_MSG
     DECLARE_MESSAGE_MAP()
 };

@@ -6,7 +6,7 @@
 #include "Settingdlg.h"
 
 #ifdef _DEBUG
-#define new DEBUG_NEW
+    #define new DEBUG_NEW
 #endif
 
 /////////////////////////////////////////////////////////////////////////////
@@ -56,4 +56,6 @@ void CDlgSetting::OnSettingBrowse()
         m_strGamePath = lpCfd->GetPathName();
         UpdateData(FALSE);
     }
+
+    delete lpCfd;
 }

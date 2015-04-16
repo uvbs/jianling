@@ -7,7 +7,7 @@ class CDlgBugRep : public CDialog
 {
 // Construction
 public:
-	CDlgBugRep(CJLkitDoc *pDoc);   // standard constructor
+	CDlgBugRep();   // standard constructor
 
 // Dialog Data
 	//{{AFX_DATA(CDlgBugRep)

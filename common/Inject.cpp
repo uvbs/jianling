@@ -1,19 +1,6 @@
-
-
-// inject.cpp: implementation of the Inject class.
-//
-//////////////////////////////////////////////////////////////////////
 #include "StdAfx.h"
 #include "Inject.h"
 
-#include "../common/Toolhelp.h"
-#include "../common/logger.h"
-
-
-
-//////////////////////////////////////////////////////////////////////
-// Construction/Destruction
-//////////////////////////////////////////////////////////////////////
 
 CInject::CInject(const TCHAR* lpszName)
 {
@@ -29,14 +16,14 @@ BOOL CInject::EnableDebugPrivilege(void)
 {
     HANDLE hToken;
     BOOL fOk = FALSE;
-    if(OpenProcessToken(GetCurrentProcess(), TOKEN_ADJUST_PRIVILEGES, &hToken)) {
+    if(OpenProcessToken(GetCurrentProcess(), TOKEN_ADJUST_PRIVILEGES, &hToken))
+    {
         TOKEN_PRIVILEGES   tp;
         tp.PrivilegeCount = 1;
         if(!LookupPrivilegeValue(NULL, SE_DEBUG_NAME, &tp.Privileges[0].Luid))
             tp.Privileges[0].Attributes = SE_PRIVILEGE_ENABLED;
 
-        if(!AdjustTokenPrivileges(hToken, FALSE, &tp, sizeof(tp), NULL, NULL));
-        else
+        if(AdjustTokenPrivileges(hToken, FALSE, &tp, sizeof(tp), NULL, NULL))
             fOk = TRUE;
 
         CloseHandle(hToken);
@@ -54,17 +41,17 @@ int CInject::AddPrivilege(LPCWSTR Name)
 
     if(!OpenProcessToken(GetCurrentProcess(),
                          TOKEN_ADJUST_PRIVILEGES | TOKEN_QUERY,
-                         &hToken)) {
-        #ifdef   _DEBUG
-        printf("OpenProcessToken   error.\n ");
-        #endif
+                         &hToken))
+    {
+#ifdef   _DEBUG
+#endif
         return   1;
     }
 
-    if(!LookupPrivilegeValueW(NULL, Name, &Luid)) {
-        #ifdef   _DEBUG
-        printf("LookupPrivilegeValue   error.\n ");
-        #endif
+    if(!LookupPrivilegeValueW(NULL, Name, &Luid))
+    {
+#ifdef   _DEBUG
+#endif
         return   1;
     }
 
@@ -77,10 +64,10 @@ int CInject::AddPrivilege(LPCWSTR Name)
                               &tp,
                               sizeof(TOKEN_PRIVILEGES),
                               NULL,
-                              NULL)) {
-        #ifdef   _DEBUG
-        printf("AdjustTokenPrivileges   error.\n ");
-        #endif
+                              NULL))
+    {
+#ifdef   _DEBUG
+#endif
         return   1;
     }
 
@@ -112,7 +99,8 @@ BOOL CInject::InjectTo(DWORD pid)
     DWORD dwPathSize = GetFullPathName(m_lpszName, MAX_PATH, m_lpszPath, &lpFilePart);
     DWORD m_dwPathLen = (dwPathSize + 1) * sizeof(TCHAR);
 
-    __try {
+    __try
+    {
 
         //打开目标进程
         m_hProcess = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_CREATE_THREAD |
@@ -132,13 +120,13 @@ BOOL CInject::InjectTo(DWORD pid)
 
 
         //取远程进程LoadLibrary地址
-        #ifdef _UNICODE
+#ifdef _UNICODE
         pfnLoadLibrary = (PTHREAD_START_ROUTINE)GetProcAddress(
                              GetModuleHandle(_T("kernel32")), "LoadLibraryW");
-        #else
+#else
         pfnLoadLibrary = (PTHREAD_START_ROUTINE)GetProcAddress(
                              GetModuleHandle(_T("kernel32")), "LoadLibraryA");
-        #endif
+#endif
 
         if(pfnLoadLibrary == NULL) __leave;
 
@@ -151,16 +139,20 @@ BOOL CInject::InjectTo(DWORD pid)
         WaitForSingleObject(hThread, INFINITE);//等待远线程执行完
         bRet = TRUE;
     }
-    __finally {
-        if(m_lpMem != NULL) {
+    __finally
+    {
+        if(m_lpMem != NULL)
+        {
             VirtualFreeEx(m_hProcess, m_lpMem, 0, MEM_RELEASE);
         }
 
-        if(hThread != NULL) {
+        if(hThread != NULL)
+        {
             CloseHandle(hThread);
         }
 
-        if(m_hProcess != NULL) {
+        if(m_hProcess != NULL)
+        {
             CloseHandle(m_hProcess);
         }
 
@@ -177,7 +169,8 @@ BOOL CInject::InjectTo(TCHAR szProcess[])
 
     //枚举当前进程列表
     hProcessSnap = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
-    if(hProcessSnap == INVALID_HANDLE_VALUE) {
+    if(hProcessSnap == INVALID_HANDLE_VALUE)
+    {
         return TRUE;
     }
 
@@ -186,13 +179,14 @@ BOOL CInject::InjectTo(TCHAR szProcess[])
 
     // Retrieve information about the first process,
     // and exit if unsuccessful
-    if(!Process32First(hProcessSnap, &pe32)) {
+    if(!Process32First(hProcessSnap, &pe32))
+    {
         CloseHandle(hProcessSnap);// clean the snapshot object
         return TRUE;
     }
 
-
-    do {
+    do
+    {
         if(_tcscmp(pe32.szExeFile, szProcess) == 0)
             return InjectTo(pe32.th32ProcessID);
 

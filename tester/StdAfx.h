@@ -7,14 +7,34 @@
 #define AFX_STDAFX_H__FE22CB4B_D795_4BE0_8F8C_67B379392966__INCLUDED_
 
 #if _MSC_VER > 1000
-#pragma once
+    #pragma once
 #endif // _MSC_VER > 1000
 
-#define WIN32_LEAN_AND_MEAN		// Exclude rarely-used stuff from Windows headers
+#define WIN32_LEAN_AND_MEAN     // Exclude rarely-used stuff from Windows headers
 
+
+//关闭无关警告
+#pragma warning(disable: 4786)
+#pragma warning(disable: 4503)
+
+
+#include <afxwin.h>
+#include <afxsock.h>
+
+
+#include <tchar.h>
+#include <crtdbg.h>
+#include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <tchar.h>
+#include <iostream>
+
+#include <objbase.h>
+
+
+#include "..\common\protocol.h"
+#include "..\common\common.h"
+
 // TODO: reference additional headers your program requires here
 
 

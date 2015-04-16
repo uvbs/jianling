@@ -6,49 +6,74 @@
 #define AFX_CLIENTSOCKET_H__BF7469B0_F694_47D1_ABD7_C858631751B9__INCLUDED_
 
 
+//socket的连接状态
+enum ConnectState
+{
+    NOCONNECT = 0,     // 没有连接
+    CONNECTTING,       // 连接中
+    CONNECTED,         // 连接上
+    MESPROCESS         // 网络消息处理
+};
 
-#include "..\common\protocol.h"
+
+class CJLkitSocket;
 
 
-class CJLkitDoc;
+
+//网络接口
+interface ITCPSocketSink
+{
+    virtual bool OnEventTCPSocketLink(CJLkitSocket* pSocket, INT nErrorCode) = 0;
+    virtual bool OnEventTCPSocketShut(CJLkitSocket* pSocket, BYTE cbShutReason) = 0;
+    virtual bool OnEventTCPSocketRead(CJLkitSocket* pSocket, const Tcp_Head &stTcpHead, void* pData, WORD wDataSize) = 0;
+};
+
+
+
 class CJLkitSocket : public CAsyncSocket
 {
     //构造函数
-protected:
+public:
     CJLkitSocket();
-public:
-    static CJLkitSocket* GetInstance();
     virtual ~CJLkitSocket();
-    void SetDoc(CJLkitDoc* pDoc);
-    void Delete();
-private:
-    static CJLkitSocket* _Instance;
-    CJLkitDoc* m_pDoc;
-    LOGIN_BUF m_UserInfo;
 
+
+    //回调
+public:
+    void SetSink(ITCPSocketSink* pSink)
+    {
+        m_Sink = pSink;
+    }
+
+private:
+    ITCPSocketSink* m_Sink;
+
+
+
+    //连接状态
+    WORD m_bConnectState;                   //网络状态
+    WORD m_wSocketID;
+    
+
+    char m_cbRecvBuf[SOCKET_TCP_BUFFER];
+    int m_nRecvWriterPointer;   //缓冲区写入指针
 
 
 public:
-    int LoginSrv(CString& strName, CString& strPassWord);
-    BOOL ConnectSrv(const CString& strHostName, int nPort);
-    void Querykey();
-    void BindKey(CString& strKey);
-    void Unbindkey(CString& strKey);
-    void Reportbug(CString& strBug);
-    void Register(CString& strName, CString& strPw, CString& strIP);
-    void ModifyBind(CString& strName, CString& strPw, CString& strOld, CString& strNew);
-    void Heart();
+    BOOL ConnectSrv(LPCTSTR pSrv, long port);
 
+    //关闭套接字
+    void CloseSocket();
+
+    int Send(int cmd_main, int cmd_sub, void* pData, WORD size);
 
     // ClassWizard generated virtual function overrides
     //{{AFX_VIRTUAL(CJLkitSocket)
 public:
     virtual void OnReceive(int nErrorCode);
     virtual void OnConnect(int nErrorCode);
-    virtual int Send(const void* lpBuf, int nBufLen, int nFlags = 0);
-    virtual int Receive(void* lpBuf, int nBufLen, int nFlags = 0);
-    virtual void OnSend(int nErrorCode);
     virtual void OnClose(int nErrorCode);
+    virtual int Send(const void* lpBuf, int nBufLen, int nFlags = 0);
     //}}AFX_VIRTUAL
 
     // Generated message map functions
@@ -56,5 +81,9 @@ public:
     // NOTE - the ClassWizard will add and remove member functions here.
     //}}AFX_MSG
 };
+
+
+
+
 
 #endif // !defined(AFX_CLIENTSOCKET_H__BF7469B0_F694_47D1_ABD7_C858631751B9__INCLUDED_)

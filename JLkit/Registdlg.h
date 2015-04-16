@@ -1,6 +1,8 @@
 #if !defined _CREGISTDLG_H_
 #define _CREGISTDLG_H_
 
+
+
 class CDlgRegist : public CDialog
 {
 // Construction
@@ -15,6 +17,7 @@ public:
     CString m_strIp;
     //}}AFX_DATA
 
+    WORD ConstructRegisterPacket(BYTE cbBuffer[], WORD wBufferSize);
 // Overrides
     // ClassWizard generated virtual function overrides
     //{{AFX_VIRTUAL(CDlgRegist)

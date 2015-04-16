@@ -12,6 +12,11 @@
 
 #define VC_EXTRALEAN		// Exclude rarely-used stuff from Windows headers
 
+//关闭调试长度警告
+#pragma warning(disable: 4786)
+
+
+
 #include <afxwin.h>         // MFC core and standard components
 #include <afxext.h>         // MFC extensions
 #include <afxcview.h>
@@ -24,6 +29,15 @@
 #include <afxsock.h>
 #include <afxdb.h>
 #include <afxmt.h>
+
+#include <string>
+#include <list>
+#include <vector>
+#include <map>
+
+#include "..\common\common.h"
+#include "..\common\protocol.h"
+#include "..\common\Lock.h"
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.

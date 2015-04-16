@@ -73,13 +73,14 @@
 #define strNormal       _T("普通")
 #define strTeam         _T("组队")
 #define strCombat       _T("战斗")
-#define strSell         _T("出售")
-#define strFenjie       _T("分解")
-#define strCunCang      _T("存仓")
-#define strJiaoyi       _T("交易")
-#define strQhWuqi       _T("强化武器")
-#define strQhShipin     _T("强化饰品")
-#define strCuihui       _T("摧毁")
+
+#define strSellItem         _T("出售")
+#define strDisenchantItem   _T("分解")
+#define strBankItem         _T("存仓")
+#define strTradeItem        _T("交易")
+#define strQHWeapons        _T("强化武器")
+#define strQHAccessories    _T("强化饰品")
+#define strDelItem          _T("摧毁")
 
 
 //这是键名
@@ -88,6 +89,7 @@
 #define strInvite_InMap _T("邀请地图内")
 #define strInvite_Range _T("邀请范围内")
 #define strInvite_RangeValue _T("邀请范围值")
+
 
 #define strAcpt_Auto    _T("自动接受")
 #define strAcpt_All     _T("接受所有")
@@ -100,6 +102,7 @@
 #define strDontKill     _T("不杀")
 #define strAlwaysKill   _T("必杀")
 #define strYaoPecent    _T("喝药百分比")
+
 
 //这是值
 #define strGreen        _T("绿色")

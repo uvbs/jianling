@@ -2,7 +2,7 @@
 #define AFX_DATADLG1_H__2800A9AC_001C_43E1_8873_9016C0DF9B34__INCLUDED_
 
 #if _MSC_VER > 1000
-#pragma once
+    #pragma once
 #endif // _MSC_VER > 1000
 // DataDlg1.h : header file
 //
@@ -12,7 +12,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // CDataDlg dialog
 class GameHook;
-class CDataDlg : public CDialog 
+class CDataDlg : public CDialog
 {
 // Construction
 public:
@@ -22,25 +22,22 @@ public:
 // Dialog Data
     //{{AFX_DATA(CDataDlg)
     enum { IDD = IDD_WGDATA };
-    CListCtrl	m_ListCtrl;
-    CEdit	m_hEdit;
-    CComboBox	m_ComBox;
-    UINT	m_nRange;
-    BOOL	m_bHook_step;
-    BOOL	m_bHook_Dundi;
-    BOOL	m_bHook_Pickup1;
-    BOOL	m_bHook_quest;
-    BOOL	m_bHook_Weaquit;
-    BOOL	m_bHook_Accquest;
-    BOOL	m_bHook_Combat;
+    CListCtrl   m_ListCtrl;
+    CEdit   m_hEdit;
+    CComboBox   m_ComBox;
+    UINT    m_nRange;
+    BOOL    m_bHook_step;
+    BOOL    m_bHook_Dundi;
+    BOOL    m_bHook_Pickup1;
+    BOOL    m_bHook_quest;
+    BOOL    m_bHook_Weaquit;
+    BOOL    m_bHook_Accquest;
+    BOOL    m_bHook_Combat;
     //}}AFX_DATA
 
 
     //卸载所有
     void CheckHook();
-
-    //钩子管理器
-    GameHook* m_pGameHook;
 
 // Overrides
     // ClassWizard generated virtual function overrides
@@ -97,6 +94,7 @@ protected:
     afx_msg void OnHookAcceptquest();
     afx_msg void OnHookstrike();
     afx_msg void OnHookCombat();
+    afx_msg void OnAddtoparty();
     //}}AFX_MSG
     DECLARE_MESSAGE_MAP()
 };

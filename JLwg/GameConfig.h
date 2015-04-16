@@ -9,28 +9,20 @@
     #pragma once
 #endif // _MSC_VER > 1000
 
-#include "..\common\CIniFile.h"
-
-typedef std::vector<wchar_t*> ItemVector;
+typedef std::vector<std::wstring> ItemVector;
+typedef std::vector<std::wstring>::iterator ItemIterator;
 
 //游戏配置
-class GameConfig: public CIniFile
+class GameConfig: public CSimpleIniW
 {
 protected:
     GameConfig();
     virtual ~GameConfig();
 
+    DECLARE_SINGLETON(GameConfig)
+
 public:
-    static GameConfig* Instance() {
-        if(_inst == NULL) {
-            _inst = new GameConfig;
-        }
-        return _inst;
-    }
-private:
-    static GameConfig* _inst;
-
-
+    bool isHave(ItemVector& vec, wchar_t* pszItem);
 
     //配置文件路径
 public:
@@ -43,16 +35,22 @@ public:
     ItemVector m_SellItem;
 
     //存仓
-    ItemVector m_Bank;
+    ItemVector m_BankItem;
 
     //分解
-    ItemVector m_Disenchant;
+    ItemVector m_DisenchantItem;
 
     //交易
-    ItemVector m_Trade;
+    ItemVector m_TradeItem;
 
     //删除
     ItemVector m_DelItem;
+
+    //强化饰品
+    ItemVector m_QHAccessories;
+
+    //强化武器
+    ItemVector m_QHWeapons;
 
     //战斗优先
     ItemVector m_FirstKill;
@@ -69,16 +67,12 @@ public:
     //强化材料最低颜色
     TCHAR m_szQHColor[BUFSIZ / 4];
 
-    //强化饰品
-    ItemVector m_QHAccessories;
 
-    //强化武器
-    ItemVector m_QHWeapons;
 
 
     // 自动发起组队
     BOOL m_bInvite_Auto;
-    
+
     //发起所有组队
     BOOL m_bInvite_ALL;
 
@@ -110,6 +104,13 @@ public:
 
 
 
+    SHAREINFO* m_pMyData;
+
+
+    //共享内存
+private:
+    JLShareMem m_SMem;
+
     //初始化
 public:
     BOOL Init();
@@ -119,6 +120,9 @@ public:
 
     //保存配置
     void SaveConfig();
+
+    //清空配置
+    void ClearConfig();
 };
 
 #endif // !defined(AFX_GAMECONFIG_H__F88A8AE2_C451_47B0_A88C_A933A4EAE5E1__INCLUDED_)

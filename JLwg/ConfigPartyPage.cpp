@@ -71,7 +71,7 @@ BOOL CConfigPartyPage::OnInitDialog()
 {
     CPropertyPage::OnInitDialog();
 
-    GameConfig* pConfig = GameConfig::Instance();
+    GameConfig* pConfig = GameConfig::GetInstance();
 
     m_bInvite_Auto  = pConfig->m_bInvite_Auto;
     m_bInvite_ALL   = pConfig->m_bInvite_ALL;
@@ -96,7 +96,7 @@ BOOL CConfigPartyPage::OnApply()
     //获得控件值
     UpdateData(TRUE);
 
-    GameConfig* pConfig = GameConfig::Instance();
+    GameConfig* pConfig = GameConfig::GetInstance();
 
     pConfig->m_bInvite_Auto = m_bInvite_Auto ;
     pConfig->m_bInvite_ALL = m_bInvite_ALL   ;
@@ -110,8 +110,6 @@ BOOL CConfigPartyPage::OnApply()
     pConfig->m_bAccept_INMAP =  m_bAccept_INMAP ;
     pConfig->m_bAccept_Range = m_bAccept_Range ;
     pConfig->m_nAccept_Range = m_nAccept_Range ;
-
-    pConfig->SaveConfig();
 
     return CPropertyPage::OnApply();
 }

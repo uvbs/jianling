@@ -45,10 +45,10 @@ public:
     HRESULT InitSymbols();
     static DWORD m_dwSymClients; // counter of symbol clients
 
-
 protected:
     CONTEXT m_Context;
     DWORD   m_dwOptions;
 };
+
 
 #endif // !defined(AFX_CALLTRACER_H__011E66DE_47A6_4BFA_A4B2_70048EBEA677__INCLUDED_)

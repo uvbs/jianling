@@ -2,9 +2,9 @@
 #include "LDasm.h"
 
 
-static UCHAR OpcodeFlags[256] = 
+static UCHAR OpcodeFlags[256] =
 {
-	OP_MODRM,                      // 00
+    OP_MODRM,                      // 00
     OP_MODRM,                      // 01
     OP_MODRM,                      // 02
     OP_MODRM,                      // 03
@@ -463,7 +463,7 @@ static UCHAR OpcodeFlagsExt[256] =
     OP_MODRM,                      // C3
     OP_MODRM | OP_DATA_I8,         // C4
     OP_MODRM | OP_DATA_I8,         // C5
-    OP_MODRM | OP_DATA_I8,         // C6 
+    OP_MODRM | OP_DATA_I8,         // C6
     OP_MODRM,                      // C7
     OP_NONE,                       // C8
     OP_NONE,                       // C9
@@ -512,7 +512,7 @@ static UCHAR OpcodeFlagsExt[256] =
     OP_MODRM,                      // F4
     OP_MODRM,                      // F5
     OP_MODRM,                      // F6
-    OP_MODRM,                      // F7 
+    OP_MODRM,                      // F7
     OP_MODRM,                      // F8
     OP_MODRM,                      // F9
     OP_MODRM,                      // FA
@@ -524,110 +524,112 @@ static UCHAR OpcodeFlagsExt[256] =
 };
 
 
-unsigned long __fastcall LDasm::SizeOfCode(void *Code, unsigned char **pOpcode)
+unsigned long __fastcall LDasm::SizeOfCode(void* Code, unsigned char** pOpcode)
 {
-	PUCHAR cPtr;
-	UCHAR Flags;
-	BOOLEAN PFX66, PFX67;
-	BOOLEAN SibPresent;
-	UCHAR iMod, iRM, iReg;
-	UCHAR OffsetSize, Add;
-	UCHAR Opcode;
+    PUCHAR cPtr;
+    UCHAR Flags;
+    BOOLEAN PFX66, PFX67;
+    BOOLEAN SibPresent;
+    UCHAR iMod, iRM, iReg;
+    UCHAR OffsetSize, Add;
+    UCHAR Opcode;
 
-	OffsetSize = 0;
-	PFX66 = FALSE;
-	PFX67 = FALSE;
-	cPtr = (PUCHAR)Code;
+    OffsetSize = 0;
+    PFX66 = FALSE;
+    PFX67 = FALSE;
+    cPtr = (PUCHAR)Code;
 
-	while ( (*cPtr == 0x2E) || (*cPtr == 0x3E) || (*cPtr == 0x36) ||
-		    (*cPtr == 0x26) || (*cPtr == 0x64) || (*cPtr == 0x65) || 
-			(*cPtr == 0xF0) || (*cPtr == 0xF2) || (*cPtr == 0xF3) ||
-			(*cPtr == 0x66) || (*cPtr == 0x67) ) 
-	{
-		if (*cPtr == 0x66) PFX66 = TRUE;
-		if (*cPtr == 0x67) PFX67 = TRUE;
-		cPtr++;
-		if (cPtr > (PUCHAR)Code + 16) return 0; 
-	}
-	Opcode = *cPtr;
-	if (pOpcode) *pOpcode = cPtr; 
+    while ( (*cPtr == 0x2E) || (*cPtr == 0x3E) || (*cPtr == 0x36) ||
+            (*cPtr == 0x26) || (*cPtr == 0x64) || (*cPtr == 0x65) ||
+            (*cPtr == 0xF0) || (*cPtr == 0xF2) || (*cPtr == 0xF3) ||
+            (*cPtr == 0x66) || (*cPtr == 0x67) )
+    {
+        if (*cPtr == 0x66) PFX66 = TRUE;
+        if (*cPtr == 0x67) PFX67 = TRUE;
+        cPtr++;
+        if (cPtr > (PUCHAR)Code + 16) return 0;
+    }
+    Opcode = *cPtr;
+    if (pOpcode) *pOpcode = cPtr;
 
-	if (*cPtr == 0x0F)
-	{
-		cPtr++;
-		Flags = OpcodeFlagsExt[*cPtr];
-	} else 
-	{
-		Flags = OpcodeFlags[Opcode];
+    if (*cPtr == 0x0F)
+    {
+        cPtr++;
+        Flags = OpcodeFlagsExt[*cPtr];
+    }
+    else
+    {
+        Flags = OpcodeFlags[Opcode];
 
-		if (Opcode >= 0xA0 && Opcode <= 0xA3) PFX66 = PFX67;
-	}
-	cPtr++;
-	if (Flags & OP_WORD) cPtr++;	
+        if (Opcode >= 0xA0 && Opcode <= 0xA3) PFX66 = PFX67;
+    }
+    cPtr++;
+    if (Flags & OP_WORD) cPtr++;
 
-	if (Flags & OP_MODRM)
-	{
-		iMod = *cPtr >> 6;
-		iReg = (*cPtr & 0x38) >> 3;  
-		iRM  = *cPtr &  7;
-		cPtr++;
+    if (Flags & OP_MODRM)
+    {
+        iMod = *cPtr >> 6;
+        iReg = (*cPtr & 0x38) >> 3;
+        iRM  = *cPtr &  7;
+        cPtr++;
 
-		if ((Opcode == 0xF6) && !iReg) Flags |= OP_DATA_I8;    
-		if ((Opcode == 0xF7) && !iReg) Flags |= OP_DATA_PRE66_67; 
+        if ((Opcode == 0xF6) && !iReg) Flags |= OP_DATA_I8;
+        if ((Opcode == 0xF7) && !iReg) Flags |= OP_DATA_PRE66_67;
 
 
-		SibPresent = (!PFX67) & (iRM == 4);
-		switch (iMod)
-		{
-			case 0: 
-			  if ( PFX67 && (iRM == 6)) OffsetSize = 2;
-			  if (!PFX67 && (iRM == 5)) OffsetSize = 4; 
-			 break;
-			case 1: OffsetSize = 1;
-			 break; 
-			case 2: if (PFX67) OffsetSize = 2; else OffsetSize = 4;
-			 break;
-			case 3: SibPresent = FALSE;
-		}
-		if (SibPresent)
-		{
-			if (((*cPtr & 7) == 5) && ( (!iMod) || (iMod == 2) )) OffsetSize = 4;
-			cPtr++;
-		}
-		cPtr = (PUCHAR)(ULONG)cPtr + OffsetSize;
-	}
+        SibPresent = (!PFX67) & (iRM == 4);
+        switch (iMod)
+        {
+            case 0:
+                if ( PFX67 && (iRM == 6)) OffsetSize = 2;
+                if (!PFX67 && (iRM == 5)) OffsetSize = 4;
+                break;
+            case 1: OffsetSize = 1;
+                break;
+            case 2: if (PFX67) OffsetSize = 2; else OffsetSize = 4;
+                break;
+            case 3: SibPresent = FALSE;
+        }
+        if (SibPresent)
+        {
+            if (((*cPtr & 7) == 5) && ( (!iMod) || (iMod == 2) )) OffsetSize = 4;
+            cPtr++;
+        }
+        cPtr = (PUCHAR)(ULONG)cPtr + OffsetSize;
+    }
 
-	if (Flags & OP_DATA_I8)  cPtr++;
-	if (Flags & OP_DATA_I16) cPtr += 2;
-	if (Flags & OP_DATA_I32) cPtr += 4;
-	if (PFX66) Add = 2; else Add = 4;
-	if (Flags & OP_DATA_PRE66_67) cPtr += Add;
-	return (ULONG)cPtr - (ULONG)Code;
+    if (Flags & OP_DATA_I8)  cPtr++;
+    if (Flags & OP_DATA_I16) cPtr += 2;
+    if (Flags & OP_DATA_I32) cPtr += 4;
+    if (PFX66) Add = 2; else Add = 4;
+    if (Flags & OP_DATA_PRE66_67) cPtr += Add;
+    return (ULONG)cPtr - (ULONG)Code;
 }
 
 
-unsigned long __fastcall LDasm::SizeOfProc(void *Proc)
+unsigned long __fastcall LDasm::SizeOfProc(void* Proc)
 {
-	ULONG  Length;
-	PUCHAR pOpcode;
-	ULONG  Result = 0;
+    ULONG  Length;
+    PUCHAR pOpcode;
+    ULONG  Result = 0;
 
-	do
-	{
-		Length = SizeOfCode(Proc, &pOpcode);
-		Result += Length;
-		if ((Length == 1) && (*pOpcode == 0xC3)) break;
-		if ((Length == 3) && (*pOpcode == 0xC2)) break;
-		Proc = (PVOID)((ULONG)Proc + Length);
-	} while (Length);
-	return Result;
+    do
+    {
+        Length = SizeOfCode(Proc, &pOpcode);
+        Result += Length;
+        if ((Length == 1) && (*pOpcode == 0xC3)) break;
+        if ((Length == 3) && (*pOpcode == 0xC2)) break;
+        Proc = (PVOID)((ULONG)Proc + Length);
+    }
+    while (Length);
+    return Result;
 }
 
 
-char __fastcall LDasm::IsRelativeCmd(unsigned char *pOpcode)
+char __fastcall LDasm::IsRelativeCmd(unsigned char* pOpcode)
 {
-	UCHAR Flags;
-	if (*pOpcode == 0x0F) Flags = OpcodeFlagsExt[*(PUCHAR)((ULONG)pOpcode + 1)]; 
-	    else Flags = OpcodeFlags[*pOpcode];
-	return (Flags & OP_REL32);
+    UCHAR Flags;
+    if (*pOpcode == 0x0F) Flags = OpcodeFlagsExt[*(PUCHAR)((ULONG)pOpcode + 1)];
+    else Flags = OpcodeFlags[*pOpcode];
+    return (Flags & OP_REL32);
 }

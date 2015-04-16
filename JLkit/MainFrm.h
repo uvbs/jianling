@@ -2,35 +2,41 @@
 #define _MAINFRM_H_
 
 
-class CJLkitView;
 class CMainFrame : public CFrameWnd
 {
 public:
-	CMainFrame();
-	DECLARE_DYNCREATE(CMainFrame)
+    CMainFrame();
+    DECLARE_DYNCREATE(CMainFrame)
 
 
 public:
-	virtual ~CMainFrame();
-    void RestoreWinPos();
-protected:
-	// ClassWizard generated virtual function overrides
-	//{{AFX_VIRTUAL(CMainFrame)
-	public:
-	//}}AFX_VIRTUAL
+    virtual ~CMainFrame();
 
+
+    void RestoreWinPos();
+    void InitComBox();
+
+protected:
+    // ClassWizard generated virtual function overrides
+    //{{AFX_VIRTUAL(CMainFrame)
+protected:
+    virtual BOOL PreCreateWindow(CREATESTRUCT& cs);
+    //}}AFX_VIRTUAL
+
+public:
+    CComboBox m_cbConfig;
+    CComboBox m_cbScript;
 
 protected:  // control bar embedded members
     CStatusBar  m_wndStatusBar;
-
+    CToolBar m_wndToolBar;
     // Generated message map functions
 protected:
     //{{AFX_MSG(CMainFrame)
     afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
     afx_msg void OnClose();
-	//}}AFX_MSG
+    //}}AFX_MSG
     DECLARE_MESSAGE_MAP()
-
 };
 
-#endif 
+#endif

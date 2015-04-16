@@ -7,11 +7,6 @@
 #include "GamecallEx.h"
 #include "GameConfig.h"
 
-#include "..\common\common.h"
-#include "..\common\cinifile.h"
-
-
-
 #ifdef _DEBUG
     #define new DEBUG_NEW
     #undef THIS_FILE
@@ -79,8 +74,8 @@ BOOL CConfigItemPage::OnInitDialog()
     int i = 0;
 
     //获取对象
-    GamecallEx& gcall = *GamecallEx::Instance();
-    GameConfig* pConfigMgr = GameConfig::Instance();
+    GamecallEx& gcall = *GamecallEx::GetInstance();
+    GameConfig* pConfig = GameConfig::GetInstance();
 
     //填充背包
     std::vector<_BAGSTU> GoodsVec;
@@ -94,9 +89,39 @@ BOOL CConfigItemPage::OnInitDialog()
 
     }
 
-    //TODO:
+    ItemVector& SellItem = pConfig->m_SellItem;
+    ItemVector& BankItem = pConfig->m_BankItem;
+    ItemVector& DisenchantItem = pConfig->m_DisenchantItem;
+    ItemVector& TradeItem = pConfig->m_TradeItem;
+    ItemVector& DelItem = pConfig->m_DelItem;
 
 
+    //出售
+    for(i = 0; i < SellItem.size(); i++) {
+        m_FilterList.InsertItem(i, SellItem[i].c_str());
+        m_FilterList.SetItemText(i, 1, strSellItem);
+    }
+
+    //存仓
+    for(i = 0; i < BankItem.size(); i++) {
+        m_FilterList.InsertItem(i, BankItem[i].c_str());
+        m_FilterList.SetItemText(i, 1, strBankItem);
+    }
+    //分解
+    for(i = 0; i < DisenchantItem.size(); i++) {
+        m_FilterList.InsertItem(i, DisenchantItem[i].c_str());
+        m_FilterList.SetItemText(i, 1, strDisenchantItem);
+    }
+    //交易
+    for(i = 0; i < TradeItem.size(); i++) {
+        m_FilterList.InsertItem(i, TradeItem[i].c_str());
+        m_FilterList.SetItemText(i, 1, strTradeItem);
+    }
+    //摧毁
+    for(i = 0; i < DelItem.size(); i++) {
+        m_FilterList.InsertItem(i, DelItem[i].c_str());
+        m_FilterList.SetItemText(i, 1, strDelItem);
+    }
 
     return TRUE;  // return TRUE unless you set the focus to a control
     // EXCEPTION: OCX Property Pages should return FALSE
@@ -135,37 +160,37 @@ void CConfigItemPage::GetSelToFilterList(TCHAR szName[])
 void CConfigItemPage::OnConfigCuncang()
 {
     // TODO: Add your command handler code here
-    GetSelToFilterList(strCunCang);
+    GetSelToFilterList(strBankItem);
 }
 
 void CConfigItemPage::OnConfigFenjie()
 {
     // TODO: Add your command handler code here
-    GetSelToFilterList(strFenjie);
+    GetSelToFilterList(strDisenchantItem);
 }
 
 void CConfigItemPage::OnConfigJiaoyi()
 {
     // TODO: Add your command handler code here
-    GetSelToFilterList(strJiaoyi);
+    GetSelToFilterList(strTradeItem);
 }
 
 void CConfigItemPage::OnConfigQhsp()
 {
     // TODO: Add your command handler code here
-    GetSelToFilterList(strQhShipin);
+    GetSelToFilterList(strQHAccessories);
 }
 
 void CConfigItemPage::OnConfigQhwq()
 {
     // TODO: Add your command handler code here
-    GetSelToFilterList(strQhWuqi);
+    GetSelToFilterList(strQHWeapons);
 }
 
 void CConfigItemPage::OnConfigSell()
 {
     // TODO: Add your command handler code here
-    GetSelToFilterList(strSell);
+    GetSelToFilterList(strSellItem);
 }
 
 void CConfigItemPage::OnDblclkListBagsfilter(NMHDR* pNMHDR, LRESULT* pResult)

@@ -11,16 +11,16 @@
 
 /////////////////////////////////////////////////////////////////////////////
 // CListenSocket command target
-class CJLSrvrDoc;
-class CListenSocket : public CAsyncSocket
+
+class CListenSocket : public CSocket
 {
 // Attributes
 public:
-    CJLSrvrDoc* m_pDoc;
+
 
 // Operations
 public:
-    CListenSocket(CJLSrvrDoc* pDoc);
+    CListenSocket();
     virtual ~CListenSocket();
 
 // Overrides

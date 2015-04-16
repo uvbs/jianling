@@ -55,7 +55,7 @@ END
 IDD_WGDLG DIALOGEX 0, 0, 92, 133
 STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 EXSTYLE WS_EX_WINDOWEDGE
-FONT 9, "宋体"
+FONT 9, "宋体", 0, 0, 0x1
 BEGIN
     PUSHBUTTON      "游戏数据",IDC_WGDATA,15,49,60,21
     PUSHBUTTON      "开始任务",IDC_GOTASK,15,21,60,21
@@ -96,6 +96,7 @@ BEGIN
     PUSHBUTTON      "配置文件",IDC_BTNCONFIG,275,7,45,14
     CONTROL         "战斗",IDC_HOOK_COMBAT,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,275,238,35,10
+    PUSHBUTTON      "组队",IDC_ADDTOPARTY,105,238,45,21
 END
 
 IDD_SETINI_PARTY DIALOG DISCARDABLE  0, 0, 321, 157
@@ -318,6 +319,20 @@ END
 //
 
 1                       24      DISCARDABLE     "res\\default1.bin"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDP_SOCKETS_INIT_FAIL   "套接字初始化失败"
+    IDP_SOCKETS_DNS_FAIL    "域名解析失败"
+    IDS_CREATEFAILED        "套接字创建失败"
+    IDS_CONNECT_SERVER      "liyhtning.xicp.net"
+END
+
 #endif    // Chinese (P.R.C.) resources
 /////////////////////////////////////////////////////////////////////////////
 

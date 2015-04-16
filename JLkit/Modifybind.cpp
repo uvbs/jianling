@@ -6,7 +6,11 @@
 #include "Modifybind.h"
 #include "JLkitSocket.h"
 
-#include "..\common\protocol.h"
+
+
+#ifdef _DEBUG
+    #define new DEBUG_NEW
+#endif
 
 
 // CDlgModifyBind dialog
@@ -65,7 +69,17 @@ void CDlgModifyBind::OnOK()
             m_strPw.IsEmpty())
         AfxMessageBox(_T("²»ÄÜÎª¿Õ"));
     else
-        CJLkitSocket::GetInstance()->ModifyBind(m_strName, m_strPw, m_strOldbind, m_strNewbind);
+//        CJLkitSocket::GetInstance()->ModifyBind(m_strName, m_strPw, m_strOldbind, m_strNewbind);
 
-    CDialog::OnOK();
+        CDialog::OnOK();
+}
+
+WORD CDlgModifyBind::ConstructModifyBindPacket( BYTE cbBuffer[], WORD wBufferSize )
+{
+    MODIFYBIND_BUF* pModifyBuf = (MODIFYBIND_BUF*)cbBuffer;
+
+    _tcsncpy(pModifyBuf->old_bind, (LPCTSTR)m_strOldbind, MAXLEN);
+    _tcsncpy(pModifyBuf->new_bind, (LPCTSTR)m_strNewbind, MAXLEN);
+
+    return sizeof(MODIFYBIND_BUF);
 }

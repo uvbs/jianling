@@ -2,41 +2,43 @@
 #define _LOGGER_H
 
 #if _MSC_VER > 1000
-#pragma once
+    #pragma once
 #endif // _MSC_VER > 1000
 
 #include <string>
+#include "Lock.h"
 
-class CLock;
+
+#include <stdexcept>
+using std::runtime_error;
+
 class Logger
 {
 public:
-    Logger(TCHAR* name = _T("Logger"), UCHAR type = 0);
-    ~ Logger();
+    Logger();
+    Logger(TCHAR* pFileName, TCHAR* pMode = _T("at"));
+    ~Logger();
+    void InitValue();
 
-    void logva(const TCHAR* pattern, va_list vp);
+
+    BOOL open(TCHAR* pFileName, TCHAR* pMode = _T("at"));
+
     void info(const TCHAR* szText, ...);
 
-    //–¥»’÷æ
-    void logdv(const TCHAR szFormat[], ...);
-    void logdvHex(BYTE szFormat[]);
+protected:
+    void logva(const TCHAR* pattern, va_list vp);
+
+
+#ifdef _UNICODE
+    typedef std::wstring tstring;
+#else
+    typedef std::string tstring
+#endif
 
 private:
     CLock* m_lpMsgMut;
-
-    FILE* fp_console;
     FILE* fp_file;
-    FILE* fp_dbview;
-    int m_day;
-
-#ifdef _UNICODE
-    std::wstring m_name;
-    std::wstring m_file;
-#else
-    std::string m_name;
-    std::string m_file;
-#endif
-
+    tstring m_strFileName;
 };
 
 #endif
