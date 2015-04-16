@@ -76,9 +76,9 @@ BOOL CHook::GetPatchSize(void* Proc, DWORD dwNeedSize, LPDWORD lpPatchSize)
 //返回入口点
 DWORD* CHook::hook()
 {
+	//TRACE1("Hook addr:%08x", m_CallAddr);
     if(m_BackupCall != NULL)
-    {
-
+	{
         return (DWORD*)m_BackupCall;
     }
 

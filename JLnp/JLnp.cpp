@@ -49,9 +49,9 @@ CreateRemoteThreadLoadDll RemoteLoadDll;
 
 
 //这几个硬编码的地址
-DWORD dwInitNP1 = 0x00b85450;
-DWORD dwInitNP2 = 0x00b85410;//-40
-DWORD CheckNP = 0x00b85620;//1c0
+DWORD dwInitNP1 = 0x00b85580;
+DWORD dwInitNP2 = 0x00b85540;//-40
+DWORD CheckNP = 0x00b85750;//1c0
 
 DWORD dw1;
 DWORD dw2;

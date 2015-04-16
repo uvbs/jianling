@@ -52,14 +52,15 @@ END_MESSAGE_MAP()
 
 static UINT TaskThread(LPVOID pParam)
 {
-    try {
-        TaskScript task;
-        task.BeginTask();
-    }
-    catch(...) {
-        TRACE(_T("任务报错"));
-    }
-
+	try
+	{
+		TaskScript task;
+		task.BeginTask();
+	}
+	catch (...)
+	{
+		TRACE(_T("任务报错"));
+	}
     return 0;
 }
 

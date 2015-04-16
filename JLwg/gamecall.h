@@ -264,7 +264,7 @@ public:
     DWORD       Getcanshu2(DWORD pAddr);        //参数2
     DWORD       Getcanshu1(DWORD pAddr);        //参数1
 
-    BOOL        GetGoodsFromBagByName(const wchar_t* name, _BAGSTU* goods);      //根据名字取物品信息
+    BOOL        GetGoodsFromBagByName(const wchar_t* name, _BAGSTU* goods,BOOL Blur = FALSE);      //根据名字取物品信息
     BOOL        GetGoodsFromBagByName(const wchar_t* name, std::vector<_BAGSTU>& GoodsVec);
     BOOL        GetGoodsFromEquipByName(wchar_t* name, _BAGSTU* goods);
     BOOL        GetGoodsByEquipPos(DWORD pos, _BAGSTU* goods);      //根据位置取得物品信息

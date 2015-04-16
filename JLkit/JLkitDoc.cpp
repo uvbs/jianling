@@ -415,7 +415,7 @@ int CJLkitDoc::LaunchGame(CString& strName, CString& strPw, CString& strConfig, 
     }
 
 
-    return nResult;;
+    return nResult;
 }
 
 int CJLkitDoc::Get(CString& strName, CString& strPw)

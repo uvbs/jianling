@@ -460,8 +460,10 @@ void CDataDlg::PrintfPlayerEquip()
     gcall.GetAllBodyEquipToVector(GoodsItem);
 
     for(DWORD i = 0; i < GoodsItem.size() ; i++)
+    {
         InertBagItem(i, GoodsItem[i]);
 
+    }
 }
 
 
@@ -487,7 +489,9 @@ void CDataDlg::PrintfRangeTaskItem()
         //名字
         wchar_t* name = gcall.GetObjectName(pNode->ObjAddress);
         if(name != NULL)
+        {
             m_ListCtrl.InsertItem(i, name);
+        }
 
 
         //距离
@@ -564,7 +568,9 @@ void CDataDlg::PrintfQuest()
 
         wchar_t* name = (wchar_t*)gcall.sendcall(id_msg_GatTaskName, (LPVOID)name_id);
         if(name)
+        {
             m_ListCtrl.InsertItem(i, name);
+        }
         else
         {
             //遍历完成
@@ -598,7 +604,9 @@ void CDataDlg::PrintfBag()
 
     CString strTemp;
     for(DWORD i = 0; i < RangeObject.size(); i++)
+    {
         InertBagItem(i, RangeObject[i]);
+    }
 }
 
 //遍历背包
@@ -690,9 +698,13 @@ void CDataDlg::PrintfStrike()
         else
         {
             if(RangeObject[i].canUse == 0)
+            {
                 strTemp.Format(_T("可使用"));
+            }
             else
+            {
                 strTemp.Format(_T("不可用"));
+            }
             //strTemp.Format(_T("%d"), RangeObject[i].canUse);
             m_ListCtrl.SetItemText(i, 2, strTemp);
             strTemp.Format(_T("已解锁"));
@@ -721,7 +733,9 @@ void CDataDlg::PrintfRangeMonster(BOOL bApplyConfig)
     gcall.GetRangeMonsterToVector(m_nRange, RangeObject);
 
     if(bApplyConfig)
+    {
         gcall.Kill_ApplyConfig(RangeObject);
+    }
     //判续对象, 根据距离
     std::sort(RangeObject.begin(), RangeObject.end(), GamecallEx::UDgreater);
 
@@ -860,9 +874,13 @@ void CDataDlg::PrintfRangeObject()
 
         //是否是怪物
         if(gcall.isCanKill(pNode))
+        {
             m_ListCtrl.SetItemText(index, 8, L"是");
+        }
         else
+        {
             m_ListCtrl.SetItemText(index, 8, L"否");
+        }
 
 
 
@@ -927,7 +945,9 @@ void CDataDlg::OnSelchangeComboDatatype()
     for(;;)
     {
         if(m_ListCtrl.DeleteColumn(0) == FALSE)
+        {
             break;
+        }
     }
 
     if(strSel == _T("背包"))
@@ -993,7 +1013,9 @@ void CDataDlg::OnSelchangeComboDatatype()
     for(;;)
     {
         if(m_ListCtrl.SetColumnWidth(i++, LVSCW_AUTOSIZE_USEHEADER) == FALSE)
+        {
             break;
+        }
     }
 
 }
@@ -1055,7 +1077,7 @@ void CDataDlg::OnHookDequest()
 
     else
         GameHook::GetInstance()->deQuestHook.unhook();
-}
+    }
 
 void CDataDlg::OnHookChuanzhuangbei()
 {
@@ -1125,7 +1147,9 @@ void CDataDlg::OnSteptoobjet()
 
     POSITION pos = m_ListCtrl.GetFirstSelectedItemPosition();
     if(pos == NULL)
+    {
         TRACE0("No items were selected!\n");
+    }
     else
     {
         while(pos)
@@ -1146,12 +1170,12 @@ void CDataDlg::OnRclickList(NMHDR* pNMHDR, LRESULT* pResult)
 
     if(m_ListCtrl.GetSelectedCount() != 0)
     {
-        POINT point;
-        GetCursorPos(&point);
+    POINT point;
+    GetCursorPos(&point);
 
-        CMenu menu;
-        menu.LoadMenu(IDR_OBJECT);
-        menu.GetSubMenu(0)->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point.x, point.y, this);
+    CMenu menu;
+    menu.LoadMenu(IDR_OBJECT);
+    menu.GetSubMenu(0)->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point.x, point.y, this);
 
 
     }
