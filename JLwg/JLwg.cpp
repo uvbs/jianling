@@ -181,11 +181,7 @@ DWORD CALLBACK CJLwgApp::WgThread(LPVOID pParam)
     GameConfig* pConfig = GameConfig::GetInstance();
 
 #ifndef TEST_CONFIG
-<<<<<<< Updated upstream
     GamecallEx *pCall = GamecallEx::GetInstance();
-=======
-    GamecallEx *pcall = GamecallEx::GetInstance();
->>>>>>> Stashed changes
     GameSpend* pGameSpender = GameSpend::GetInstance();
 #endif
 
@@ -193,11 +189,7 @@ DWORD CALLBACK CJLwgApp::WgThread(LPVOID pParam)
     //³õÊ¼»¯
     if(!pConfig->Init()) return 0;
 #ifndef TEST_CONFIG
-<<<<<<< Updated upstream
     if(!pCall->Init()) return 0;
-=======
-    if(!pcall->Init()) return 0;
->>>>>>> Stashed changes
     if(!pGameSpender->Init()) return 0;
 #endif
 

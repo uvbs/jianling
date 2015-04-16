@@ -7,7 +7,9 @@
 #include "gamedata.h"
 #else
 #include "gamedata-tw.h"
-#end
+#endif
+
+
 #include "gamedef.h"
 #include "gamestruct.h"
 #include "gamespend.h"
