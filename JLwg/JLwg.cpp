@@ -181,7 +181,7 @@ DWORD CALLBACK CJLwgApp::WgThread(LPVOID pParam)
     GameConfig* pConfig = GameConfig::GetInstance();
 
 #ifndef TEST_CONFIG
-    GamecallEx& gcall = *GamecallEx::GetInstance();
+    GamecallEx *pCall = GamecallEx::GetInstance();
     GameSpend* pGameSpender = GameSpend::GetInstance();
 #endif
 
@@ -189,7 +189,7 @@ DWORD CALLBACK CJLwgApp::WgThread(LPVOID pParam)
     //初始化
     if(!pConfig->Init()) return 0;
 #ifndef TEST_CONFIG
-    if(!gcall.Init()) return 0;
+    if(!pCall->Init()) return 0;
     if(!pGameSpender->Init()) return 0;
 #endif
 
@@ -236,7 +236,7 @@ DWORD CALLBACK CJLwgApp::WgThread(LPVOID pParam)
 
     //卸载游戏功能
 #ifndef TEST_CONFIG
-    gcall.UnInit();
+    pCall->UnInit();
 #endif //TEST_CONFIG
 
     //保存配置

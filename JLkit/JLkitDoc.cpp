@@ -391,7 +391,8 @@ int CJLkitDoc::LaunchGame(CString& strName, CString& strPw, CString& strConfig, 
 
 #ifdef JLTW
 
-        if(dllspeed.InjectTo(pi.dwProcessId))
+        if(dllspeed.InjectTo(pi.dwProcessId) &&
+            dllwg.InjectTo(pi.dwProcessId))
         {
             nResult = RESULT_LOGIN_SUCCESS;
 
