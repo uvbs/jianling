@@ -35,6 +35,10 @@
 #include <vector>
 #include <map>
 
+#include <DbgHelp.h>
+#pragma comment(lib, "dbghelp")
+
+
 #include "..\common\common.h"
 #include "..\common\protocol.h"
 #include "..\common\Lock.h"

@@ -1,6 +1,9 @@
 #ifndef __MSJEXHND_H__
 #define __MSJEXHND_H__
 
+#include <dbghelp.h>
+
+
 class MSJExceptionHandler
 {
 public:

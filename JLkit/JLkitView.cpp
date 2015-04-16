@@ -14,10 +14,14 @@
 
 
 #include <boost/regex.hpp>
-typedef boost::basic_regex<TCHAR> tregex;
-typedef boost::match_results<TCHAR const*> tmatch;
 
-
+#ifdef _UNICODE
+typedef boost::wregex tregex;
+typedef boost::wsmatch tmatch;
+#else
+typedef boost::regex tregex;
+typedef boost::smatch tmatch;
+#endif
 
 #ifdef _DEBUG
     #define new DEBUG_NEW

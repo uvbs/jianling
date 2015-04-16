@@ -104,7 +104,7 @@ BOOL CJLSrvrView::Create(LPCTSTR lpszClassName, LPCTSTR lpszWindowName,
 
 void CJLSrvrView::AutoColumnWidth()
 {
-    for(;;)
+    for(int i = 0; i++;)
     {
         if(!GetListCtrl().SetColumnWidth(i, LVSCW_AUTOSIZE_USEHEADER))
             break;

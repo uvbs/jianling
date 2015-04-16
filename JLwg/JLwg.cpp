@@ -67,10 +67,10 @@ LRESULT CALLBACK CJLwgApp::GameMsgProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPAR
         case WM_CUSTOM_GCALL:
         {
             //获取游戏外挂功能
-            GamecallEx& gcall = *GamecallEx::GetInstance();
+            GamecallEx *pcall = GamecallEx::GetInstance();
 
             //此处实现游戏call的调用
-            return gcall.call((DWORD)wParam, (LPVOID*)lParam);
+            return pcall->call((DWORD)wParam, (LPVOID*)lParam);
         }
 
 
@@ -181,7 +181,11 @@ DWORD CALLBACK CJLwgApp::WgThread(LPVOID pParam)
     GameConfig* pConfig = GameConfig::GetInstance();
 
 #ifndef TEST_CONFIG
+<<<<<<< Updated upstream
     GamecallEx *pCall = GamecallEx::GetInstance();
+=======
+    GamecallEx *pcall = GamecallEx::GetInstance();
+>>>>>>> Stashed changes
     GameSpend* pGameSpender = GameSpend::GetInstance();
 #endif
 
@@ -189,7 +193,11 @@ DWORD CALLBACK CJLwgApp::WgThread(LPVOID pParam)
     //初始化
     if(!pConfig->Init()) return 0;
 #ifndef TEST_CONFIG
+<<<<<<< Updated upstream
     if(!pCall->Init()) return 0;
+=======
+    if(!pcall->Init()) return 0;
+>>>>>>> Stashed changes
     if(!pGameSpender->Init()) return 0;
 #endif
 

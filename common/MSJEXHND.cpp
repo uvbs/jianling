@@ -7,6 +7,8 @@
 #include <windows.h>
 #include <tchar.h>
 #include "msjexhnd.h"
+
+
 //============================== Global Variables =============================
 //
 // Declare the static variables of the MSJExceptionHandler class

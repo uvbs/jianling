@@ -1,7 +1,13 @@
 #ifndef _GAMECALL_H_
 #define _GAMECALL_H_
 
+
+#ifdef JLTW
+
 #include "gamedata.h"
+#else
+#include "gamedata-tw.h"
+#end
 #include "gamedef.h"
 #include "gamestruct.h"
 #include "gamespend.h"

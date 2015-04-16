@@ -79,6 +79,6 @@ IncllmCtrl : IDispatch
 // Wrapper method implementations
 //
 
-#include "d:\code\jl_hanfu\common\ncllm3.tli"
+#include "ncllm3.tli"
 
 #pragma pack(pop)
