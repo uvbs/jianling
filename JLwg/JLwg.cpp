@@ -67,7 +67,7 @@ LRESULT CALLBACK CJLwgApp::GameMsgProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPAR
         case WM_CUSTOM_GCALL:
         {
             //获取游戏外挂功能
-            GamecallEx *pcall = GamecallEx::GetInstance();
+            GamecallEx* pcall = GamecallEx::GetInstance();
 
             //此处实现游戏call的调用
             return pcall->call((DWORD)wParam, (LPVOID*)lParam);
@@ -181,19 +181,22 @@ DWORD CALLBACK CJLwgApp::WgThread(LPVOID pParam)
     GameConfig* pConfig = GameConfig::GetInstance();
 
 #ifndef TEST_CONFIG
-    GamecallEx *pCall = GamecallEx::GetInstance();
+    GamecallEx* pCall = GamecallEx::GetInstance();
     GameSpend* pGameSpender = GameSpend::GetInstance();
 #endif
 
 
     //初始化
+    log.info(_T("初始化配置文件"));
     if(!pConfig->Init()) return 0;
 #ifndef TEST_CONFIG
+    log.info(_T("初始化外挂"));
     if(!pCall->Init()) return 0;
+    log.info(_T("初始化加速"));
     if(!pGameSpender->Init()) return 0;
 #endif
 
-
+    
     SHAREINFO* pMyData = pConfig->m_pMyData;
 
     //加载配置
@@ -257,12 +260,10 @@ DWORD CALLBACK CJLwgApp::WgThread(LPVOID pParam)
 
 CJLwgApp::CJLwgApp()
 {
-    OutputDebugString(_T("CJLwgApp()"));
 }
 
 CJLwgApp::~CJLwgApp()
 {
-    OutputDebugString(_T("~CJLwgApp()"));
 }
 
 //判断游戏窗口是否创建
@@ -328,9 +329,8 @@ BOOL CJLwgApp::InitInstance()
 
     try
     {
-        log.open(_T("test.cppp"));
-        log.info(_T("Hello WOrlf"));
-
+        VERIFY(log.open(_T("test.cppp")) != FALSE);
+        log.info(_T("外挂启动"));
         //初始化套接字
         if(!AfxSocketInit())
         {
@@ -343,7 +343,6 @@ BOOL CJLwgApp::InitInstance()
         HANDLE hThread = ::CreateThread(NULL, 0, WgThread, 0, 0, 0);
         CloseHandle(hThread);
 
-        log.info(_T("创建游戏线程"));
     }
     catch(runtime_error err)
     {

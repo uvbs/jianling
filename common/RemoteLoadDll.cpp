@@ -76,13 +76,16 @@ BOOL CreateRemoteThreadLoadDll::LoadDll(LPCWSTR lpwLibFile, HANDLE hProcess)
 
         DWORD   cch   =   1   +   lstrlenW(lpwLibFile);
         DWORD   cb   =   cch   *   sizeof(WCHAR);
+
+
         //DbgPrint("cb:%d\n",cb);
         //DbgPrint("cb1:%d\n",sizeof(lpwLibFile));
+
+
         //2.申请足够的空间，以便把我们的dll写入目标进程中这个空间里
         pszLibRemoteFile   =  VirtualAllocEx(hProcess, NULL, cb, MEM_COMMIT, PAGE_READWRITE);
 
-        if(pszLibRemoteFile   ==   NULL)
-            __leave;
+        if(pszLibRemoteFile   ==   NULL)  __leave;
         //3.正式把我们的dll写入上面申请的空间
         BOOL   bw   =   WriteProcessMemory(hProcess,   pszLibRemoteFile, (PVOID)lpwLibFile,   cb,   &dwWritten);
         if(dwWritten != cb)
@@ -271,28 +274,15 @@ HANDLE CreateRemoteThreadLoadDll::MyCreateRemoteThread(HANDLE hProcess, LPTHREAD
             //DbgPrint("MyCreateRemoteThread() : GetProcAddress(\"NtCreateThreadEx\") 调用失败！错误代码: [%d]/n",GetLastError());
             return FALSE;
         }
-        ZwCreateThreadEx(
-            &hThread,
-            0x1FFFFF,
-            NULL,
-            hProcess,
-            pThreadProc,
-            pRemoteBuf,
-            FALSE,
-            NULL,
-            NULL,
-            NULL,
-            NULL);
+
+
+        ZwCreateThreadEx(&hThread, 0x1FFFFF, NULL, hProcess, pThreadProc, pRemoteBuf, FALSE, NULL, NULL, NULL, NULL);
     }
-    else                    // 2000, XP, Server2003
+    else
     {
-        hThread = CreateRemoteThread(hProcess,
-                                     NULL,
-                                     0,
-                                     pThreadProc,
-                                     pRemoteBuf,
-                                     0,
-                                     NULL);
+        // 2000, XP, Server2003
+        hThread = CreateRemoteThread(hProcess, NULL, 0, pThreadProc, pRemoteBuf, 0, NULL);
+
     }
     return hThread ;
 }

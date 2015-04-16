@@ -100,6 +100,8 @@ ShareMem::~ShareMem()
 
 BOOL ShareMem::Add(SHAREINFO* pShareInfo)
 {
+    _ASSERTE(pShareInfo != NULL);
+
 
     SHAREINFO* pItor = m_lpMem;
     for(DWORD i = 0; i < m_dwCount; i++)
@@ -177,12 +179,6 @@ BOOL ShareMem::Open(TCHAR szObjName[])
 
     }
 
-    if(bRet == FALSE)
-    {
-        TRACE(_T("没能打开共享内存"));
-    }
-
-
     return bRet;
 }
 
@@ -239,7 +235,6 @@ SHAREINFO* ShareMem::Get(LPCTSTR lpszName)
         pItor++;
     }
 
-    TRACE(_T("没能获取相关数据"));
     return NULL;
 }
 

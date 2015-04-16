@@ -108,7 +108,7 @@ void CJLkitView::OnProfile()
         CString strPw = GetListCtrl().GetItemText(nItem, COLUMN_TEXT_PASSWORD);
         CString strConfig = GetListCtrl().GetItemText(nItem, COLUMN_TEXT_CONFIG);
         CString strScript = GetListCtrl().GetItemText(nItem, COLUMN_TEXT_SCRIPT);
-        pDoc->LaunchGame(strName, strPw, strConfig, strScript, 1);
+        pDoc->CreateGameProcess(strName, strPw);
     }
 }
 
@@ -223,7 +223,7 @@ void CJLkitView::LaunchGame()
             CString strConfig = list.GetItemText(i, COLUMN_TEXT_CONFIG);
             CString strScript = list.GetItemText(i, COLUMN_TEXT_SCRIPT);
             list.SetItemText(i, COLUMN_TEXT_STATUS, _T("开始运行.."));
-            int nReslt = pDoc->LaunchGame(strName, strPw, strConfig, strScript);
+            int nReslt = pDoc->CreateGameProcess(strName, strPw);
             SetResult(nReslt, i);
         }
     }
@@ -333,11 +333,11 @@ void CJLkitView::OnInitialUpdate()
 {
 
     //自动加载账号文档
-    CConfigMgr* lpConfig = CConfigMgr::GetInstance();
-    if(lpConfig->m_szFileName[0] != 0)
-    {
-        GetDocument()->OnOpenDocument(lpConfig->m_szFileName);
-    }
+//     CConfigMgr* lpConfig = CConfigMgr::GetInstance();
+//     if(lpConfig->m_szFileName[0] != 0)
+//     {
+//        GetDocument()->OnOpenDocument(lpConfig->m_szFileName);
+//     }
 
     //设置列宽
     for(int i = 0; i < COLUMN_TEXT_NUMS; i++)
@@ -373,9 +373,10 @@ bool CJLkitView::ReadLine(std::basic_string<TCHAR>& strLine, CFile* pFile)
                 return false;
 
 
-            if(cbChar == 0x0d || cbChar == 0x0a)
+            if(cbChar ==0x0d || cbChar == 0x0a)
             {
-                break;
+                if(cbChar == 0x0a) break;
+                continue;
             }
 
             strLine += cbChar;
@@ -402,8 +403,6 @@ void CJLkitView::SerializeText(CArchive& ar)
     }
     else
     {
-        //清空列表框
-        GetListCtrl().DeleteAllItems();
 
         //准备对象
         CConfigMgr* pConfig = CConfigMgr::GetInstance();
@@ -437,6 +436,9 @@ void CJLkitView::SerializeText(CArchive& ar)
 
         }
 
+        //创建共享内存
+        CJLkitDoc *pDoc =  (CJLkitDoc *)GetDocument();
+        pDoc->m_ShraeMem.Create(m_LineNums, SHAREOBJNAME);
     }
 }
 
@@ -504,7 +506,7 @@ void CJLkitView::OnUcStart()
         CString strConfig = list.GetItemText(i, COLUMN_TEXT_CONFIG);
         CString strScript = list.GetItemText(i, COLUMN_TEXT_SCRIPT);
         list.SetItemText(i, COLUMN_TEXT_STATUS, _T("开始运行.."));
-        int nReslt = pDoc->LaunchGame(strName, strPw, strConfig, strScript);
+        int nReslt = pDoc->CreateGameProcess(strName, strPw);
         SetResult(nReslt, i);
     }
 

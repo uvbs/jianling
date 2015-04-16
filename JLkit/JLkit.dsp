@@ -39,8 +39,8 @@ RSC=rc.exe
 # PROP Ignore_Export_Lib 1
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /MD /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_AFXDLL" /Yu"stdafx.h" /FD /c
-# ADD CPP /nologo /MDd /W3 /GX /Zi /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_UNICODE" /D "UNICODE" /D "_AFXDLL" /D "JLTW" /FAs /FR /Yu"stdafx.h" /FD /c
-# SUBTRACT CPP /Gf
+# ADD CPP /nologo /MDd /W3 /GX /Zi /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_UNICODE" /D "UNICODE" /D "_AFXDLL" /D "JLTW" /FAs /Yu"stdafx.h" /FD /c
+# SUBTRACT CPP /Gf /Fr
 # ADD BASE MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0x804 /d "NDEBUG" /d "_AFXDLL"
@@ -50,7 +50,8 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 /nologo /subsystem:windows /machine:I386
-# ADD LINK32 /nologo /entry:"wWinMainCRTStartup" /subsystem:windows /profile /map /debug /machine:I386 /out:"..\bin\JLkit.exe"
+# ADD LINK32 /nologo /entry:"wWinMainCRTStartup" /subsystem:windows /debug /machine:I386 /out:"..\bin\JLkit.exe"
+# SUBTRACT LINK32 /profile /map
 # Begin Target
 
 # Name "JLkit - Win32 Release"
@@ -128,6 +129,10 @@ SOURCE=.\MsgBox.cpp
 # Begin Source File
 
 SOURCE=.\registdlg.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\common\RemoteLoadDll.cpp
 # End Source File
 # Begin Source File
 

@@ -3,7 +3,6 @@
 
 
 #ifdef JLTW
-
 #include "gamedata.h"
 #else
 #include "gamedata-tw.h"

@@ -27,11 +27,8 @@ protected:
 public:
     CStdioFile m_ErrFile;
 
-    //游戏控制
-    int LaunchGame(CString& strName, CString& strPw, CString& strConfig, CString& strScript, BOOL bProfile = FALSE);  //加载游戏
-
     //创建游戏进程
-    int CreateGameProcess(CString& strName, CString& strPw, BOOL bProfile, PROCESS_INFORMATION* lppi);
+    int CreateGameProcess(CString& strName, CString& strPw, BOOL bProfile = FALSE);
 
 
     //关键段锁
@@ -61,7 +58,6 @@ public:
 
     //共享内存
     JLShareMem m_ShraeMem;
-
 
     //对话框
     CDlgKeyView* m_pKeyDlg;

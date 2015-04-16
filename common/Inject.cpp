@@ -4,10 +4,7 @@
 
 CInject::CInject(const TCHAR* lpszName)
 {
-    m_dwPathLen = (_tcslen(lpszName) + 1) * sizeof(TCHAR);
     m_lpszName = lpszName;
-    m_hProcess = INVALID_HANDLE_VALUE;
-    m_lpMem = NULL;
 }
 
 
@@ -93,46 +90,51 @@ BOOL CInject::InjectTo(DWORD pid)
 {
     BOOL bRet = FALSE;
     HANDLE hThread = NULL;
+    HANDLE hProcess = INVALID_HANDLE_VALUE;
+    LPVOID lpMem = NULL;
+
+    EnableDebugPrivilege();
 
     //计算全路径
     LPTSTR lpFilePart;
-    DWORD dwPathSize = GetFullPathName(m_lpszName, MAX_PATH, m_lpszPath, &lpFilePart);
-    DWORD m_dwPathLen = (dwPathSize + 1) * sizeof(TCHAR);
+    TCHAR szFullPath[MAX_PATH] = {0};
+    DWORD dwPathSize = GetFullPathName(m_lpszName, MAX_PATH, szFullPath, &lpFilePart);
+    _ASSERTE(dwPathSize != 0);
+    DWORD dwPathLen = (dwPathSize + 1) * sizeof(TCHAR);
 
     __try
     {
 
         //打开目标进程
-        m_hProcess = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_CREATE_THREAD |
-                                 PROCESS_VM_OPERATION | PROCESS_VM_WRITE | PROCESS_VM_READ, TRUE, pid);
-        if(m_hProcess == NULL) __leave;
+        hProcess = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_CREATE_THREAD |
+                               PROCESS_VM_OPERATION | PROCESS_VM_WRITE | PROCESS_VM_READ, TRUE, pid);
+        if(hProcess == NULL) __leave;
 
         //准备内存
-        m_lpMem = VirtualAllocEx(m_hProcess, NULL, m_dwPathLen,
-                                 MEM_COMMIT, PAGE_READWRITE);
-        if(m_lpMem == NULL) __leave;
+        lpMem = VirtualAllocEx(hProcess, NULL, dwPathLen, MEM_COMMIT, PAGE_READWRITE);
+        if(lpMem == NULL) __leave;
 
         //写入远程进程
         DWORD dwWriteBytes;
-        int result = WriteProcessMemory(m_hProcess, m_lpMem, (LPVOID)m_lpszPath, m_dwPathLen, &dwWriteBytes);
+        int result = WriteProcessMemory(hProcess, lpMem, (LPVOID)szFullPath, dwPathLen, &dwWriteBytes);
         if(result == 0) __leave;
-        ASSERT(dwWriteBytes == m_dwPathLen);
+        ASSERT(dwWriteBytes == dwPathLen);
 
 
         //取远程进程LoadLibrary地址
 #ifdef _UNICODE
-        pfnLoadLibrary = (PTHREAD_START_ROUTINE)GetProcAddress(
-                             GetModuleHandle(_T("kernel32")), "LoadLibraryW");
+        PTHREAD_START_ROUTINE pfnLoadLibrary = (PTHREAD_START_ROUTINE)GetProcAddress(
+                GetModuleHandle(_T("kernel32")), "LoadLibraryW");
 #else
-        pfnLoadLibrary = (PTHREAD_START_ROUTINE)GetProcAddress(
-                             GetModuleHandle(_T("kernel32")), "LoadLibraryA");
+        PTHREAD_START_ROUTINE pfnLoadLibrary = (PTHREAD_START_ROUTINE)GetProcAddress(
+                GetModuleHandle(_T("kernel32")), "LoadLibraryA");
 #endif
 
         if(pfnLoadLibrary == NULL) __leave;
 
         //远线程执行
         DWORD dwThreadId;
-        hThread = CreateRemoteThread(m_hProcess, NULL, 0, pfnLoadLibrary, m_lpMem, 0, &dwThreadId);
+        hThread = CreateRemoteThread(hProcess, NULL, 0, pfnLoadLibrary, lpMem, 0, &dwThreadId);
         if(hThread == NULL) __leave;
 
         //等待结束
@@ -141,9 +143,9 @@ BOOL CInject::InjectTo(DWORD pid)
     }
     __finally
     {
-        if(m_lpMem != NULL)
+        if(lpMem != NULL)
         {
-            VirtualFreeEx(m_hProcess, m_lpMem, 0, MEM_RELEASE);
+            VirtualFreeEx(hProcess, lpMem, 0, MEM_RELEASE);
         }
 
         if(hThread != NULL)
@@ -151,9 +153,9 @@ BOOL CInject::InjectTo(DWORD pid)
             CloseHandle(hThread);
         }
 
-        if(m_hProcess != NULL)
+        if(hProcess != NULL)
         {
-            CloseHandle(m_hProcess);
+            CloseHandle(hProcess);
         }
 
     }

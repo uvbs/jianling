@@ -18,12 +18,7 @@ public:
 
 
 private:
-    TCHAR m_lpszPath[MAX_PATH];
     const TCHAR* m_lpszName;
-    DWORD m_dwPathLen;
-    PTHREAD_START_ROUTINE pfnLoadLibrary;
-    LPVOID m_lpMem;
-    HANDLE m_hProcess;
 };
 
 #endif

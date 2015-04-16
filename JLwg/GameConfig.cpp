@@ -6,7 +6,7 @@
 #include "jlwg.h"
 #include "GameConfig.h"
 #include "gamedef.h"
-
+#include "gamelog.h"
 
 
 #ifdef _DEBUG
@@ -69,11 +69,19 @@ BOOL GameConfig::Init()
 #ifndef TEST_CONFIG
 
     //打开共享内存
-    if(!m_SMem.Open(SHAREOBJNAME)) return FALSE;
+    if(!m_SMem.Open(SHAREOBJNAME))
+    {
+        log.info(_T("打开共享失败"));
+        return FALSE;
+    }
 
     //获取共享数据
     m_pMyData = m_SMem.Get(GetCurrentProcessId());
-    if(m_pMyData == NULL) return FALSE;
+    if(m_pMyData == NULL) 
+    {
+        log.info(_T("获取游戏数据失败"));
+        return FALSE;
+    }
 
 #endif //TEST_CONFIG
 

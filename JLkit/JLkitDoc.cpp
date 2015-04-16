@@ -9,7 +9,6 @@
 #include "MsgBox.h"
 #include "GlobalUserInfo.h"
 
-
 #ifdef _DEBUG
     #define new DEBUG_NEW
 #endif
@@ -286,12 +285,24 @@ _WriteError:
 }
 
 //创建游戏进程
-int CJLkitDoc::CreateGameProcess(CString& strName, CString& strPw, BOOL bProfile, PROCESS_INFORMATION* lppi)
+int CJLkitDoc::CreateGameProcess(CString& strName, CString& strPw, BOOL bProfile)
 {
     int RetCode;
 
     CString strGameStart;
     CString strCmdLine;
+
+
+    //是否已经登录
+    if(m_ShraeMem.Get((LPCTSTR)strName)) return RESULT_ALREADY_RUNNING;
+
+
+    //是否有有效卡号
+    if(IsHaveValidKey() == FALSE) return RESULT_NOKEY;
+
+
+    PROCESS_INFORMATION pi;
+    ZeroMemory(&pi, sizeof(PROCESS_INFORMATION));
 
     STARTUPINFO si;
     ZeroMemory(&si, sizeof(STARTUPINFO));
@@ -341,87 +352,60 @@ int CJLkitDoc::CreateGameProcess(CString& strName, CString& strPw, BOOL bProfile
     }
     else
     {
-        if(!CreateProcess(NULL, strGameStart.GetBuffer(MAX_PATH), NULL, NULL, FALSE, CREATE_SUSPENDED, NULL, NULL, &si, lppi))
+        if(!CreateProcess(NULL, strGameStart.GetBuffer(MAX_PATH), NULL, NULL, FALSE, CREATE_SUSPENDED, NULL, NULL, &si, &pi))
         {
             RetCode = RESULT_FAIL_CREATEGAMEPROCESS;
         }
         else
         {
+
+
+            //添加到共享内存
+            SHAREINFO sai;
+            sai.pid = pi.dwProcessId;
+            _tcscpy(sai.szConfig, _T(""));
+            _tcscpy(sai.szSript,  _T(""));
+            _tcscpy(sai.szName, (LPCTSTR)strName);
+            m_ShraeMem.Add(&sai);
+
+
+
+            ResumeThread(pi.hThread);
+            Sleep(2000);
+            //注入
+#ifdef JLTW
+            CInject wgdll(_T("JLwg_tw.dll"));
+#else
+            CInject wgdll(_T("JLwg.dll"));
+#endif
+
+            CInject spdll(_T("speedhack-i386.dll"));
+            if(!wgdll.InjectTo(pi.dwProcessId))
+            {
+                RetCode = RESULT_FAIL_INJECT;
+                TerminateProcess(pi.hProcess, 0);
+                return RetCode;
+            }
+
+
+            Sleep(100);
+            if(!spdll.InjectTo(pi.dwProcessId))
+            {
+                RetCode = RESULT_FAIL_INJECT;
+                TerminateProcess(pi.hProcess, 0);
+                return RetCode;
+            }
+
             RetCode = RESULT_LOGIN_SUCCESS;
+
         }
+
+        strGameStart.ReleaseBuffer();
     }
 
-    strGameStart.ReleaseBuffer();
     return RetCode;
 }
 
-//加载游戏
-int CJLkitDoc::LaunchGame(CString& strName, CString& strPw, CString& strConfig, CString& strScript, BOOL bProfile)
-{
-
-    //是否已经登录
-    if(m_ShraeMem.Get((LPCTSTR)strName)) return RESULT_ALREADY_RUNNING;
-
-
-    //是否有有效卡号
-    if(IsHaveValidKey() == FALSE) return RESULT_NOKEY;
-
-
-    PROCESS_INFORMATION pi;
-    ZeroMemory(&pi, sizeof(PROCESS_INFORMATION));
-
-    //创建进程
-    int nResult = CreateGameProcess(strName, strPw, bProfile, &pi);
-    if(nResult == RESULT_SUCCESS)
-    {
-
-        //添加到共享内存
-        SHAREINFO sai;
-        sai.pid = pi.dwProcessId;
-        _tcscpy(sai.szConfig, (LPCTSTR)strConfig);
-        _tcscpy(sai.szSript, (LPCTSTR)strScript);
-        _tcscpy(sai.szName, (LPCTSTR)strName);
-        m_ShraeMem.Add(&sai);
-
-        //注入
-
-#ifndef JLTW
-        CInject dllwg(_T("JLwg.dll"));
-#else
-        CInject dllwg(_T("JLwg_tw.dll"));
-#endif
-        CInject dllspeed(_T("speedhack-i386.dll"));
-
-
-
-#ifdef JLTW
-
-        if(dllspeed.InjectTo(pi.dwProcessId) &&
-            dllwg.InjectTo(pi.dwProcessId))
-        {
-            nResult = RESULT_LOGIN_SUCCESS;
-
-#else
-        if(dllwg.InjectTo(pi.dwProcessId) &&
-                dllspeed.InjectTo(pi.dwProcessId))
-        {
-            nResult = RESULT_LOGIN_SUCCESS;
-
-#endif
-            //唤起游戏进程
-            Sleep(500);
-            ResumeThread(pi.hThread);
-        }
-        else
-        {
-            nResult = RESULT_FAIL_INJECT;
-            TerminateProcess(pi.hProcess, 0);
-        }
-    }
-
-
-    return nResult;
-}
 
 int CJLkitDoc::Get(CString& strName, CString& strPw)
 {

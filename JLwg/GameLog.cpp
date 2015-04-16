@@ -19,7 +19,6 @@ IMPLEMENT_SINGLETON(GameLog)
 //构造函数
 GameLog::GameLog()
 {
-    OutputDebugString(_T("GameLog"));
 }
 
 //析构函数

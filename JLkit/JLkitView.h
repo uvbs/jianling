@@ -61,9 +61,6 @@ public:
     //设置行颜色
     void SetItemColor(DWORD iItem, COLORREF color);
 
-    //清楚多余字符
-    void Trim(std::basic_string<TCHAR>* str);
-
 private:
     CMap<DWORD, DWORD&, COLORREF, COLORREF&> MapItemColor;
 

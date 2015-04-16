@@ -2993,7 +2993,11 @@ DWORD GamecallEx::GetRangeLootCount(DWORD range)
 
 BOOL GamecallEx::Init()
 {
-    Gamecall::Init();
+    if(!Gamecall::Init())
+    {
+        log.info(_T("初始化失败"));
+        return FALSE;
+    }
 
     //等待进入游戏
     WaitPlans();
