@@ -5,6 +5,9 @@
     #pragma once
 #endif // _MSC_VER > 1000
 
+#include <string>
+
+
 enum POSTRET
 {
     RESULT_FAIL_EXCEPTION,
@@ -21,6 +24,7 @@ enum POSTRET
     RESULT_LOGIN_NOUKEY,
     RESULT_FAIL_GETUKEY
 };
+
 
 
 class Webpost
@@ -41,7 +45,7 @@ public:
     BOOL Auth(const CString& str);  //验证
     BOOL Ten();
 
-    CString GetStartKey();
+    bool GetStartKey(std::basic_string<TCHAR>& strkey);
 
 
 private:
@@ -51,7 +55,7 @@ private:
     CString GetUniqueKey();
 
     //读取一行
-    BOOL ReadStringA(LPSTR pLiner, DWORD dwLen);
+    bool ReadLine(std::basic_string<TCHAR>& strLine);
 
     CString ac_name;
     CString ac_pw;

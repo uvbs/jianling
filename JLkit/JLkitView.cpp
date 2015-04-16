@@ -16,11 +16,11 @@
 #include <boost/regex.hpp>
 
 #ifdef _UNICODE
-typedef boost::wregex tregex;
-typedef boost::wsmatch tmatch;
+    typedef boost::wregex tregex;
+    typedef boost::wsmatch tmatch;
 #else
-typedef boost::regex tregex;
-typedef boost::smatch tmatch;
+    typedef boost::regex tregex;
+    typedef boost::smatch tmatch;
 #endif
 
 #ifdef _DEBUG
@@ -91,8 +91,6 @@ int CJLkitView::OnCreate(LPCREATESTRUCT lpCreateStruct)
     }
 
     GetListCtrl().SetExtendedStyle(LVS_EX_FULLROWSELECT | LVS_EX_CHECKBOXES);
-    //CHeaderCtrl* pHeadctrl = GetListCtrl().GetHeaderCtrl();
-    //pHeadctrl->ModifyStyle(0, HDS_CHECKBOXES);
     return 0;
 }
 
@@ -330,8 +328,10 @@ void CJLkitView::OnRclick(NMHDR* pNMHDR, LRESULT* pResult)
     *pResult = 0;
 }
 
+
 void CJLkitView::OnInitialUpdate()
 {
+
     //自动加载账号文档
     CConfigMgr* lpConfig = CConfigMgr::GetInstance();
     if(lpConfig->m_szFileName[0] != 0)
@@ -339,8 +339,15 @@ void CJLkitView::OnInitialUpdate()
         GetDocument()->OnOpenDocument(lpConfig->m_szFileName);
     }
 
+    //设置列宽
+    for(int i = 0; i < COLUMN_TEXT_NUMS; i++)
+    {
+        GetListCtrl().SetColumnWidth(i, LVSCW_AUTOSIZE_USEHEADER);
+    }
+
     CListView::OnInitialUpdate();
 }
+
 
 
 void CJLkitView::InsertLine(int index, const TCHAR szName[], const TCHAR szPw[], const TCHAR szConfig[], const TCHAR szScript[])
@@ -352,40 +359,38 @@ void CJLkitView::InsertLine(int index, const TCHAR szName[], const TCHAR szPw[],
     GetListCtrl().SetItemText(index, COLUMN_TEXT_CONFIG, szConfig);
 }
 
-void CJLkitView::Trim(std::basic_string<TCHAR>* str)
+
+bool CJLkitView::ReadLine(std::basic_string<TCHAR>& strLine, CFile* pFile)
 {
-
-    _ASSERTE(NULL != str);
-    if(str->empty()) return;
-
-    // Trim begin chars.
-    std::basic_string<TCHAR>::iterator it = str->begin();
-    while(it != str->end())
+    char cbChar = 0;
+    strLine = _T("");
+    try
     {
-        if(*it == 0xfeff) it++;
-        if(!_istspace(*it)) break;
-        ++it;
+
+        for(;;)
+        {
+            if(pFile->Read(&cbChar, sizeof(cbChar)) == 0)
+                return false;
+
+
+            if(cbChar == 0x0d || cbChar == 0x0a)
+            {
+                break;
+            }
+
+            strLine += cbChar;
+
+        }
+
+        return true;
+
+    }
+    catch(CFileException* pEx)
+    {
+        pEx->Delete();
     }
 
-    str->erase(str->begin(), it);
-
-    // Trim end chars;
-    std::basic_string<TCHAR>::iterator it2 = str->end();
-    if(it2 == it)
-    {
-        str->erase();
-        return;
-    }
-
-    while(it2 != it)
-    {
-        if(*it2 == 0) it2--;
-
-        if(!_istspace(*it2)) break;
-        it2--;
-    }
-
-    str->erase(++it2, str->end());
+    return false;
 }
 
 //串行
@@ -397,6 +402,8 @@ void CJLkitView::SerializeText(CArchive& ar)
     }
     else
     {
+        //清空列表框
+        GetListCtrl().DeleteAllItems();
 
         //准备对象
         CConfigMgr* pConfig = CConfigMgr::GetInstance();
@@ -409,117 +416,25 @@ void CJLkitView::SerializeText(CArchive& ar)
         //获取对象指针
         CFile* pFile = ar.GetFile();
 
-        //文件大小
-        DWORD dwFileSize = pFile->GetLength();
-        if(dwFileSize < 3) return;
-
-        char* pCastBuf = new char[dwFileSize + 2];
-        ZeroMemory(pCastBuf, dwFileSize + 2);
-
-        //完整读取
-        pFile->Read(pCastBuf, dwFileSize);
-
-        //探测编码
-        INT nTestMode = IS_TEXT_UNICODE_UNICODE_MASK;
-        BOOL bIsUnicode = ::IsTextUnicode(pCastBuf, dwFileSize, &nTestMode);
-
-
-        TCHAR* pTbuf = NULL;
-        //根据编码转换为TCHAR
-        if(bIsUnicode)
-        {
-#ifndef _UNICODE
-
-            pTbuf = new char[dwFileSize / sizeof(TCHAR)];
-            ZeroMemory(pTbuf, dwFileSize);
-
-            //转换成ANSI
-            AtlW2AHelper(pTbuf, (LPWSTR)pCastBuf, dwFileSize, CP_ACP);
-#else
-            pTbuf = (TCHAR*)pCastBuf;
-#endif
-        }
-        else
-        {
-#ifdef _UNICODE
-
-            pTbuf = new wchar_t[dwFileSize + 1];
-            ZeroMemory(pTbuf, (dwFileSize + 1)*sizeof(wchar_t));
-
-            //转换成UNICODE
-            mbstowcs((LPWSTR)pTbuf, (LPSTR)pCastBuf, strlen(pCastBuf));
-#else
-            pTbuf = (TCHAR*)pCastBuf;
-#endif
-        }
-
-        //字符串流
-        std::basic_stringstream<wchar_t> fmt(pTbuf);
         std::basic_string<TCHAR> strLine;
+        std::basic_string<TCHAR> strName;
+        std::basic_string<TCHAR> strPw;
+        std::basic_string<TCHAR> strConfig;
+        std::basic_string<TCHAR> strScript;
 
-
-        //清空列表框
-        GetListCtrl().DeleteAllItems();
-
-        CString strConfig;
-        CString strScript;
-
-        //插入行
-        while(std::getline(fmt, strLine))
+        while(ReadLine(strLine, pFile))
         {
-            std::basic_string<TCHAR> strName;
-            std::basic_string<TCHAR> strPw;
-
-            Trim(&strLine);
-
-            if(strLine.length() <= 0) continue;
-
-            tregex line(_T("([^,;]*)[,; ]*([^,;]*)"));
+            tregex line(_T("([^,; ]+)[,; ]+([^,; ]+)"));
             tmatch matches;
 
             if(boost::regex_search(strLine, matches, line))
             {
                 strName = matches.str(1);
                 strPw = matches.str(2);
+
+                InsertLine(m_LineNums++, strName.c_str(), strPw.c_str(), strConfig.c_str(), strScript.c_str());
             }
 
-            if(cbConfig.GetLBTextLen(cbConfig.GetCurSel()) == -1)
-            {
-                strConfig = _T("");
-            }
-            else
-            {
-                cbConfig.GetLBText(cbConfig.GetCurSel(), strConfig);
-            }
-
-            if(cbScript.GetLBTextLen(cbScript.GetCurSel()) == -1)
-            {
-                strScript = _T("");
-            }
-            else
-            {
-
-                cbScript.GetLBText(cbScript.GetCurSel(), strScript);
-            }
-
-            InsertLine(m_LineNums++, strName.c_str(), strPw.c_str(), (LPCTSTR)strConfig, (LPCTSTR)strScript);
-        }
-
-
-        //设置列宽
-        for(int i = 0; i < COLUMN_TEXT_NUMS; i++)
-        {
-            GetListCtrl().SetColumnWidth(i, LVSCW_AUTOSIZE_USEHEADER);
-        }
-
-        if(pTbuf == (TCHAR*)pCastBuf)
-        {
-            SafeDelete(pTbuf);
-        }
-        else
-        {
-            SafeDelete(pTbuf);
-            SafeDelete(pCastBuf);
         }
 
     }
@@ -575,7 +490,7 @@ void CJLkitView::PostNcDestroy()
 
 void CJLkitView::OnUcStart()
 {
-    CJLkitDoc* pDoc = (CJLkitDoc *)GetDocument();
+    CJLkitDoc* pDoc = (CJLkitDoc*)GetDocument();
     CListCtrl& list = GetListCtrl();
 
     //当前选中的条目

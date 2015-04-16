@@ -292,7 +292,6 @@ int CJLkitDoc::CreateGameProcess(CString& strName, CString& strPw, BOOL bProfile
 
     CString strGameStart;
     CString strCmdLine;
-    CString strSKey;
 
     STARTUPINFO si;
     ZeroMemory(&si, sizeof(STARTUPINFO));
@@ -307,19 +306,19 @@ int CJLkitDoc::CreateGameProcess(CString& strName, CString& strPw, BOOL bProfile
 #endif
 
     //获取启动KEY
-    strSKey = poster.GetStartKey();
-    if(strSKey == _T("")) return RESULT_FAIL_GETUKEY;
+    std::basic_string<TCHAR> strkey;
+    if(!poster.GetStartKey(strkey)) return RESULT_FAIL_GETUKEY;
 
     //获取配置
     CConfigMgr* pConfig = CConfigMgr::GetInstance();
 
     //启动游戏
     strCmdLine.Format(
-        _T("/LaunchByLauncher /SessKey:\"%s\" /CompanyID:\"0\" /ChannelGroupIndex:\"-1\""), (LPCTSTR)strSKey);
+        _T("/LaunchByLauncher /SessKey:\"%s\" /CompanyID:\"0\" /ChannelGroupIndex:\"-1\""), strkey.c_str());
 
     strGameStart.Format(
         _T("%s /LaunchByLauncher /SessKey:\"%s\" /CompanyID:\"0\" /ChannelGroupIndex:\"-1\""),
-        pConfig->m_szGamePath, (LPCTSTR)strSKey);
+        pConfig->m_szGamePath, strkey.c_str());
 
 
     if(bProfile)
@@ -343,7 +342,13 @@ int CJLkitDoc::CreateGameProcess(CString& strName, CString& strPw, BOOL bProfile
     else
     {
         if(!CreateProcess(NULL, strGameStart.GetBuffer(MAX_PATH), NULL, NULL, FALSE, CREATE_SUSPENDED, NULL, NULL, &si, lppi))
+        {
             RetCode = RESULT_FAIL_CREATEGAMEPROCESS;
+        }
+        else
+        {
+            RetCode = RESULT_LOGIN_SUCCESS;
+        }
     }
 
     strGameStart.ReleaseBuffer();
@@ -537,7 +542,6 @@ bool CJLkitDoc::PerformLogonMission()
 
     ShowStatus(_T("连接服务器中..."));
 
-
     CString strSrvIp;
     _ASSERTE(strSrvIp.LoadString(IDS_CONNECT_SERVER) == TRUE);
 
@@ -547,7 +551,7 @@ bool CJLkitDoc::PerformLogonMission()
         return false;
     }
 
-    Sleep(250);
+    Sleep(100);
     return true;
 }
 
@@ -632,7 +636,6 @@ void CJLkitDoc::ProcessLogin(CJLkitSocket* pSocket, const Tcp_Head& stTcpHead, v
         case fun_login_ok:
         {
             LOGIN_SUCCESS* pLoginSucess = (LOGIN_SUCCESS*)pData;
-
             m_socket.Send(M_KEY, fun_querykey, NULL, 0);
 
             ((CMainFrame*)AfxGetMainWnd())->ShowWindow(SW_SHOW);
@@ -801,6 +804,7 @@ void CJLkitDoc::ShowStatus(TCHAR szText[])
 
     m_pStatusBox->SetMsg(szText);
     m_pStatusBox->ShowWindow(SW_SHOW);
+    m_pStatusBox->SetForegroundWindow();
 }
 
 void CJLkitDoc::ShowMsg(TCHAR szText[])

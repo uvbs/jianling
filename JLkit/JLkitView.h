@@ -67,6 +67,7 @@ public:
 private:
     CMap<DWORD, DWORD&, COLORREF, COLORREF&> MapItemColor;
 
+    bool ReadLine(std::basic_string<TCHAR>& strLine, CFile *pFile);
 
 // Overrides
     // ClassWizard generated virtual function overrides

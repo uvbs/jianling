@@ -3,8 +3,8 @@
 //////////////////////////////////////////////////////////////////////
 #include "stdafx.h"
 #include "webpost.h"
-
 #include "ncllm3.tlh"
+
 
 #if _MSC_VER <= 1500
     #include <boost\regex.hpp>
@@ -14,7 +14,13 @@
     using namespace std;
 #endif
 
-#pragma comment(lib, "Wininet.lib")
+#ifdef _UNICODE
+    typedef boost::wregex tregex;
+    typedef boost::wsmatch tsmatch;
+#else
+    typedef boost::regex tregex;
+    typedef boost::smatch tsmatch;
+#endif
 
 #ifdef _DEBUG
     #define new DEBUG_NEW
@@ -22,38 +28,6 @@
     static char THIS_FILE[] = __FILE__;
 #endif
 
-
-#ifdef _UNICODE
-    typedef std::wfstream tfstream;
-    typedef std::wifstream tifstream;
-    typedef std::wiostream tiostream;
-    typedef std::wistringstream tistringstream;
-    typedef std::wofstream tofstream;
-    typedef std::wostringstream tostringstream;
-    typedef std::wstreambuf tstreambuf;
-    typedef std::wstreampos tstreampos;
-    typedef std::wstringbuf tstringbuf;
-    typedef std::wstringstream tstringstream;
-    typedef std::wstring tstring;
-
-    typedef boost::wregex tregex;
-    typedef boost::wsmatch tsmatch;
-#else
-    typedef std::string tstring;
-    typedef std::fstream tfstream;
-    typedef std::ifstream tifstream;
-    typedef std::iostream tiostream;
-    typedef std::istringstream tistringstream;
-    typedef std::ofstream tofstream;
-    typedef std::ostringstream tostringstream;
-    typedef std::streambuf tstreambuf;
-    typedef std::stringbuf tstringbuf;
-    typedef std::stringstream tstringstream;
-
-
-    typedef boost::regex tregex;
-    typedef boost::smatch tsmatch;
-#endif
 
 
 const TCHAR ten_obj[] = _T("/myshop/coupon/bns/used/list");
@@ -338,14 +312,14 @@ int Webpost::Active()   //激活
         AddOtherHeader();
         httpfile->SendRequest();
 
-        regex goods("\\[(\\d+)\\],\\s*\'(\\d+)\'");
-        cmatch matches;
+        tregex goods(_T("\\[(\\d+)\\],\\s*\'(\\d+)\'"));
+        tsmatch matches;
 
-        CHAR szBuf[BUFSIZ];
-        while(ReadStringA(szBuf, BUFSIZ))
+        std::basic_string<TCHAR> strLine;
+        while(ReadLine(strLine))
         {
 
-            if(regex_search(szBuf, matches, goods))
+            if(regex_search(strLine, matches, goods))
             {
                 //匹配到, 把值取出来
                 goodsid = matches.str(1).c_str();
@@ -457,37 +431,33 @@ CString Webpost::GetUniqueKey()
 
 }
 
-BOOL Webpost::ReadStringA(LPSTR pLiner, DWORD dwLen)
+bool Webpost::ReadLine(std::basic_string<TCHAR>& strLine)
 {
-    _ASSERT(pLiner != NULL);
-
-    //开始读取文本
-    char bChar = 0;
-    int i = 0;
-
+    char cbChar = 0;
+    strLine = _T("");
     try
     {
 
         for(;;)
         {
+            if(httpfile->Read(&cbChar, sizeof(cbChar)) == 0) break;
 
-            if(i == dwLen) break;
+            strLine += cbChar;
 
-            if(httpfile->Read(&bChar, sizeof(bChar)) == 0) break;
-
-            if(bChar == 0x0d || bChar == 0x0a)
+            if(cbChar == 0x0d || cbChar == 0x0a)
             {
-                if(bChar == '\r')
-                    httpfile->Read(&bChar, sizeof(char));
+                if(cbChar == 0x0a)
+                {
+                    break;
+                }
 
-                break;
+                continue;
             }
 
-            memcpy(&pLiner[i++], &bChar, sizeof(bChar));
+
         }
 
-        pLiner[i] = '\0';
-        return TRUE;
+        return true;
 
     }
     catch(CFileException* pEx)
@@ -495,7 +465,7 @@ BOOL Webpost::ReadStringA(LPSTR pLiner, DWORD dwLen)
         pEx->Delete();
     }
 
-    return FALSE;
+    return false;
 }
 
 
@@ -534,13 +504,13 @@ BOOL Webpost::Auth(const CString& gpvlu)
         httpfile->SendRequest();
 
         //直接对行匹配正则
-        regex isLoginFlag("isLoginFlag = \"Y\"");
-        cmatch matches;
+        tregex isLoginFlag(_T("isLoginFlag = \"Y\""));
+        tsmatch matches;
 
-        CHAR szBuf[BUFSIZ] = {0};
-        while(ReadStringA(szBuf, BUFSIZ))
+        std::basic_string<TCHAR> strLine;
+        while(ReadLine(strLine))
         {
-            if(regex_search(szBuf, matches, isLoginFlag))
+            if(regex_search(strLine, matches, isLoginFlag))
             {
                 bRet = TRUE;
                 break;
@@ -558,7 +528,7 @@ BOOL Webpost::Auth(const CString& gpvlu)
 
 
 //取得网页返回的sesskey数据
-CString Webpost::GetStartKey()
+bool Webpost::GetStartKey(std::basic_string<TCHAR>& strkey)
 {
 
     try
@@ -609,19 +579,17 @@ CString Webpost::GetStartKey()
 
 #endif
 
-        regex skey("\\w{20,}==");
-        cmatch matches;
+        tregex skey(_T("\\w{20,}=="));
+        tsmatch matches;
 
-
-        char* pbuf = new char[httpfile->GetLength()+1];
-        httpfile->Read(pbuf, httpfile->GetLength());
-        BOOL finded = regex_search(pbuf, matches, skey);
-        delete []pbuf;
-        if(finded)
+        std::basic_string<TCHAR> strLine;
+        while(ReadLine(strLine))
         {
-            CString strRet = matches.str(0).c_str();
-            TRACE(_T("%s"), (LPCTSTR)strRet);
-            return strRet;
+            if(regex_search(strLine, matches, skey))
+            {
+                strkey = matches.str(0);
+                return true;
+            }
         }
 
     }
@@ -631,8 +599,7 @@ CString Webpost::GetStartKey()
     }
 
     Close();
-
-    return _T("");
+    return false;
 }
 
 void Webpost::InitCom()
