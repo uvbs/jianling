@@ -61,41 +61,6 @@ CMainFrame::~CMainFrame()
 
 }
 
-static TCHAR szFormat[] = _T("%u,%u,%d,%d,%d,%d,%d,%d,%d,%d");
-static BOOL PASCAL NEAR ReadWindowPlacement(LPWINDOWPLACEMENT pwp)
-{
-    CConfigMgr* pConfig = CConfigMgr::GetInstance();
-
-    if(pConfig->m_szWindowPos[0] == '\0') return FALSE;
-
-    WINDOWPLACEMENT wp;
-    int nRead = _stscanf(
-                    pConfig->m_szWindowPos,
-                    szFormat,
-                    &wp.flags, &wp.showCmd,
-                    &wp.ptMinPosition.x, &wp.ptMinPosition.y,
-                    &wp.ptMaxPosition.x, &wp.ptMaxPosition.y,
-                    &wp.rcNormalPosition.left, &wp.rcNormalPosition.top,
-                    &wp.rcNormalPosition.right, &wp.rcNormalPosition.bottom);
-
-    if(nRead != 10)
-        return FALSE;
-
-    wp.length = sizeof wp;
-    *pwp = wp;
-    return TRUE;
-}
-
-
-void CMainFrame::RestoreWinPos()
-{
-    WINDOWPLACEMENT wp;
-    if(ReadWindowPlacement(&wp))
-    {
-        wp.showCmd = SW_HIDE;
-        SetWindowPlacement(&wp);
-    }
-}
 
 void CMainFrame::InitComBox()
 {
@@ -159,7 +124,6 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
     m_wndToolBar.LoadToolBar(IDR_MAINFRAME);
 
 
-    //设置工具栏信息
     int nIndex1 = m_wndToolBar.GetToolBarCtrl().CommandToIndex(ID_COMBO1);
     int nIndex2 = m_wndToolBar.GetToolBarCtrl().CommandToIndex(ID_COMBO2);
     m_wndToolBar.SetButtonInfo(nIndex1, ID_COMBO1, TBBS_SEPARATOR, 100);
@@ -192,8 +156,6 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
     //列表框
     InitComBox();
 
-    //恢复
-    RestoreWinPos();
     return 0;
 }
 
@@ -206,34 +168,8 @@ void CMainFrame::OnClose()
 
     //获取配置对象
     CConfigMgr* pConfig = CConfigMgr::GetInstance();
-
-
-    WINDOWPLACEMENT wp;
-    wp.length = sizeof wp;
-    if(GetWindowPlacement(&wp))
-    {
-        wp.flags = 0;
-        if(IsZoomed()) wp.flags |= WPF_RESTORETOMAXIMIZED;
-
-        //写到配置文件
-        wsprintf(
-            pConfig->m_szWindowPos,
-            szFormat,
-            wp.flags,
-            wp.showCmd,
-            wp.ptMinPosition.x,
-            wp.ptMinPosition.y,
-            wp.ptMaxPosition.x,
-            wp.ptMaxPosition.y,
-            wp.rcNormalPosition.left,
-            wp.rcNormalPosition.top,
-            wp.rcNormalPosition.right,
-            wp.rcNormalPosition.bottom);
-    }
-
     m_cbConfig.GetLBText(m_cbConfig.GetCurSel(), pConfig->m_szGameConfig);
     m_cbScript.GetLBText(m_cbScript.GetCurSel(), pConfig->m_szGameScript);
-
 
     CFrameWnd::OnClose();
 }

@@ -4,7 +4,9 @@
 
 CInject::CInject(const TCHAR* lpszName)
 {
-    m_lpszName = lpszName;
+    _ASSERTE(lpszName != NULL);
+
+    _tcscpy(m_szName, lpszName);
 }
 
 
@@ -93,32 +95,35 @@ BOOL CInject::InjectTo(DWORD pid)
     HANDLE hProcess = INVALID_HANDLE_VALUE;
     LPVOID lpMem = NULL;
 
-    EnableDebugPrivilege();
+    //文件存在
+    if(!PathFileExists(m_szName)) return FALSE;
 
-    //计算全路径
-    LPTSTR lpFilePart;
-    TCHAR szFullPath[MAX_PATH] = {0};
-    DWORD dwPathSize = GetFullPathName(m_lpszName, MAX_PATH, szFullPath, &lpFilePart);
-    _ASSERTE(dwPathSize != 0);
-    DWORD dwPathLen = (dwPathSize + 1) * sizeof(TCHAR);
+    //需要在远近程上申请的大小
+    DWORD dwAllLen = (_tcslen(m_szName)+1)*sizeof(TCHAR);
+
+    //方便调试, 注入自己
+    if(pid == 0)
+    {
+        pid = GetCurrentProcessId();
+    }
 
     __try
     {
 
         //打开目标进程
         hProcess = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_CREATE_THREAD |
-                               PROCESS_VM_OPERATION | PROCESS_VM_WRITE | PROCESS_VM_READ, TRUE, pid);
+                               PROCESS_VM_OPERATION | PROCESS_VM_WRITE | PROCESS_VM_READ, FALSE, pid);
         if(hProcess == NULL) __leave;
 
         //准备内存
-        lpMem = VirtualAllocEx(hProcess, NULL, dwPathLen, MEM_COMMIT, PAGE_READWRITE);
+        lpMem = VirtualAllocEx(hProcess, NULL, dwAllLen, MEM_COMMIT, PAGE_READWRITE);
         if(lpMem == NULL) __leave;
 
         //写入远程进程
         DWORD dwWriteBytes;
-        int result = WriteProcessMemory(hProcess, lpMem, (LPVOID)szFullPath, dwPathLen, &dwWriteBytes);
+        int result = WriteProcessMemory(hProcess, lpMem, (LPVOID)m_szName, dwAllLen, &dwWriteBytes);
         if(result == 0) __leave;
-        ASSERT(dwWriteBytes == dwPathLen);
+        _ASSERTE(dwWriteBytes == dwAllLen);
 
 
         //取远程进程LoadLibrary地址

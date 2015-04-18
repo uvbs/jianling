@@ -99,6 +99,7 @@ void CConfigMgr::LoadConfig(const TCHAR szConfigPath[])
     {
 
     }
+
 }
 
 
@@ -114,5 +115,6 @@ void CConfigMgr::SaveConfig(const TCHAR szConfigPath[])
     SetValue(_T("设置"), _T("游戏配置"), m_szGameConfig);
     SetValue(_T("设置"), _T("游戏脚本"), m_szGameScript);
 
-    SaveFile(szConfigPath);
+    if(szConfigPath[0] != _T('\0'))
+        SaveFile(szConfigPath);
 }

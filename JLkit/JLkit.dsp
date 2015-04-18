@@ -132,15 +132,7 @@ SOURCE=.\registdlg.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=..\common\RemoteLoadDll.cpp
-# End Source File
-# Begin Source File
-
 SOURCE=.\settingdlg.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=..\common\ShareMem.cpp
 # End Source File
 # Begin Source File
 
@@ -158,6 +150,10 @@ SOURCE=..\common\webpost.cpp
 # Begin Source File
 
 SOURCE=..\common\WHService.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\WorkThread.cpp
 # End Source File
 # End Group
 # Begin Group "Header Files"
@@ -245,10 +241,6 @@ SOURCE=.\settingdlg.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\common\ShareMem.h
-# End Source File
-# Begin Source File
-
 SOURCE=.\StatusBox.h
 # End Source File
 # Begin Source File
@@ -262,6 +254,10 @@ SOURCE=..\common\webpost.h
 # Begin Source File
 
 SOURCE=..\common\WHService.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\WorkThread.h
 # End Source File
 # End Group
 # Begin Group "Resource Files"

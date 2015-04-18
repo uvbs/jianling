@@ -8,6 +8,9 @@
 #include "ConfigMgr.h"
 #include "MsgBox.h"
 #include "GlobalUserInfo.h"
+#include "WorkThread.h"
+
+
 
 #ifdef _DEBUG
     #define new DEBUG_NEW
@@ -20,9 +23,6 @@ IMPLEMENT_DYNCREATE(CJLkitDoc, CDocument)
 
 CJLkitDoc::CJLkitDoc()
 {
-    m_lpVpnFile = NULL;
-    m_lpLock = NULL;
-
 
     m_pModiBind = NULL;
     m_pRegisterDlg = NULL;
@@ -44,22 +44,10 @@ CJLkitDoc::CJLkitDoc()
 
 BOOL CJLkitDoc::OnNewDocument()
 {
-    if(!CDocument::OnNewDocument()) return FALSE;
-
-
-    //初始化
-    if(!m_lpVpnFile)
-    {
-        m_lpVpnFile = new CVpnFile;
-    }
-
-    if(!m_lpLock)
-    {
-        m_lpLock = new CLock;
-    }
+    if(!CDocument::OnNewDocument())
+        return FALSE;
 
     ShowLogin();
-
     return TRUE;
 }
 
@@ -126,18 +114,10 @@ void CJLkitDoc::OnUpdateValidKey(CCmdUI* pCmdUI)
 
 void CJLkitDoc::OnUpdateLoginedNums(CCmdUI* pCmdUI)
 {
-    pCmdUI->Enable(TRUE);
-    CString strTemp;
-    strTemp.Format(IDS_LOGINED, m_ShraeMem.GetUsedCount());
-    pCmdUI->SetText(strTemp);
 }
 
 void CJLkitDoc::OnUpdateAllNums(CCmdUI* pCmdUI)
 {
-    pCmdUI->Enable(TRUE);
-    CString strTemp;
-    strTemp.Format(IDS_ALLNUMS, m_ShraeMem.GetAllCount());
-    pCmdUI->SetText(strTemp);
 }
 
 
@@ -154,257 +134,15 @@ void CJLkitDoc::OnSetting()
 }
 
 
-
 //检查是否还有有效的KEY供打开一个游戏进程
 //这里是一个KEY对应一个游戏进程
 BOOL CJLkitDoc::IsHaveValidKey()
 {
-
-
     CGlobalUserInfo* pGlobalUserInfo = CGlobalUserInfo::GetInstance();
     KeyVec& key = pGlobalUserInfo->m_KeyVec;
-
-
-    DWORD games = m_ShraeMem.GetUsedCount();
-    if(games >= key.size())
-    {
-        return FALSE;
-    }
-
     return TRUE;
 }
 
-
-void CJLkitDoc::GetandActive()
-{
-    //获取vpn文本
-    TCHAR szPathName[MAX_PATH];
-    GetModuleFileName(NULL, szPathName, MAX_PATH);
-    PathRemoveFileSpec(szPathName);
-
-    //工作目录
-    SetCurrentDirectory(szPathName);
-    PathAppend(szPathName, _T("VPN.txt"));
-
-    //打开文本
-    if(m_lpVpnFile->Open(szPathName))
-    {
-        AfxMessageBox(_T("无法打开代理文件"));
-        return;
-    }
-
-    //取得当前模块路径
-    TCHAR szPath[MAX_PATH] = {0};
-    GetModuleFileName(NULL, szPath, MAX_PATH);
-
-    CTime time = CTime::GetCurrentTime();
-    CString strTime = time.Format("%d日%H时%M分");
-    CreateDirectory(strTime, NULL);
-    PathAppend(szPath, strTime);
-    SetCurrentDirectory(szPath);
-
-    m_ErrFile.Open(_T("错误帐号.txt"), CFile::modeReadWrite | CFile::modeCreate);
-
-
-    CJLkitView* pView = (CJLkitView*)m_viewList.GetHead();
-    CListCtrl& listctr = pView->GetListCtrl();
-
-    //开始
-    for(int i = 0; i < listctr.GetItemCount(); i++)
-    {
-        CString strName = listctr.GetItemText(i, COLUMN_TEXT_ACCOUNT);
-        CString strPw = listctr.GetItemText(i, COLUMN_TEXT_PASSWORD);
-
-        CString strLine = strName + _T(", ") + strPw + _T("\n");
-        Webpost poster(strName, strPw);
-
-        int LoginTimes = 0;
-        BOOL bError = FALSE;
-
-_Again:
-        listctr.SetItemText(i, COLUMN_TEXT_STATUS, _T("正在登录"));
-        int nResult = poster.Login();
-        pView->SetResult(nResult, i);
-        if(nResult != RESULT_SUCCESS)
-        {
-
-            if(nResult == RESULT_FAIL_CAPTCHA || nResult == RESULT_FAIL_IPBLOCK)
-            {
-                //这两种情况直接换ip
-                m_lpVpnFile->AlwaysConnect();
-                LoginTimes = 0;
-            }
-            else if(nResult == RESULT_FAIL_PWERROR)
-            {
-                //这种情况直接退
-                strLine.Remove(_T('\n'));
-                strLine += _T(" : 密码错误");
-                strLine += _T("\n");
-
-                bError = TRUE;
-                goto _WriteError;
-            }
-            else
-            {
-                //剩余情况等两次
-                TRACE1("失败%d次", LoginTimes++);
-                if(LoginTimes == 2)
-                {
-                    m_lpVpnFile->AlwaysConnect();
-                    LoginTimes = 0;
-                }
-            }
-
-            goto _Again;
-        }
-
-        listctr.SetItemText(i, COLUMN_TEXT_STATUS, _T("正在领取"));
-        nResult = poster.Get();
-        pView->SetResult(nResult, i);
-
-        listctr.SetItemText(i, COLUMN_TEXT_STATUS, _T("正在激活"));
-        nResult = poster.Active();
-        pView->SetResult(nResult, i);
-
-        if(nResult != RESULT_SUCCESS)
-        {
-            bError = TRUE;
-        }
-
-
-_WriteError:
-        if(bError)
-        {
-            m_ErrFile.WriteString(strLine);
-        }
-    }
-
-    m_ErrFile.Close();
-    m_lpVpnFile->Close();
-
-}
-
-//创建游戏进程
-int CJLkitDoc::CreateGameProcess(CString& strName, CString& strPw, BOOL bProfile)
-{
-    int RetCode;
-
-    CString strGameStart;
-    CString strCmdLine;
-
-
-    //是否已经登录
-    if(m_ShraeMem.Get((LPCTSTR)strName)) return RESULT_ALREADY_RUNNING;
-
-
-    //是否有有效卡号
-    if(IsHaveValidKey() == FALSE) return RESULT_NOKEY;
-
-
-    PROCESS_INFORMATION pi;
-    ZeroMemory(&pi, sizeof(PROCESS_INFORMATION));
-
-    STARTUPINFO si;
-    ZeroMemory(&si, sizeof(STARTUPINFO));
-    si.cb = sizeof(si);
-
-    Webpost poster(strName, strPw);
-#ifdef JLTW
-    //台服不用登陆
-#else
-    RetCode = poster.Login();
-    if(RetCode != RESULT_SUCCESS) return RetCode;
-#endif
-
-    //获取启动KEY
-    std::basic_string<TCHAR> strkey;
-    if(!poster.GetStartKey(strkey)) return RESULT_FAIL_GETUKEY;
-
-    //获取配置
-    CConfigMgr* pConfig = CConfigMgr::GetInstance();
-
-    //启动游戏
-    strCmdLine.Format(
-        _T("/LaunchByLauncher /SessKey:\"%s\" /CompanyID:\"0\" /ChannelGroupIndex:\"-1\""), strkey.c_str());
-
-    strGameStart.Format(
-        _T("%s /LaunchByLauncher /SessKey:\"%s\" /CompanyID:\"0\" /ChannelGroupIndex:\"-1\""),
-        pConfig->m_szGamePath, strkey.c_str());
-
-
-    if(bProfile)
-    {
-        //执行批处理
-        CString strTemp;
-        strTemp.Format(
-            _T("cmd /k profileJL.bat JLwg %s \"%s\"\""), pConfig->m_szGamePath, strCmdLine);
-
-
-        LPCSTR lpszLine;
-#ifdef UNICODE
-        USES_CONVERSION;
-        lpszLine = W2A((LPCTSTR)strTemp);
-#else
-        lpszLine = (LPCTSTR)strTemp;
-#endif
-
-        WinExec(lpszLine, SW_SHOW);
-    }
-    else
-    {
-        if(!CreateProcess(NULL, strGameStart.GetBuffer(MAX_PATH), NULL, NULL, FALSE, CREATE_SUSPENDED, NULL, NULL, &si, &pi))
-        {
-            RetCode = RESULT_FAIL_CREATEGAMEPROCESS;
-        }
-        else
-        {
-
-
-            //添加到共享内存
-            SHAREINFO sai;
-            sai.pid = pi.dwProcessId;
-            _tcscpy(sai.szConfig, _T(""));
-            _tcscpy(sai.szSript,  _T(""));
-            _tcscpy(sai.szName, (LPCTSTR)strName);
-            m_ShraeMem.Add(&sai);
-
-
-
-            ResumeThread(pi.hThread);
-            Sleep(2000);
-            //注入
-#ifdef JLTW
-            CInject wgdll(_T("JLwg_tw.dll"));
-#else
-            CInject wgdll(_T("JLwg.dll"));
-#endif
-
-            CInject spdll(_T("speedhack-i386.dll"));
-            if(!wgdll.InjectTo(pi.dwProcessId))
-            {
-                RetCode = RESULT_FAIL_INJECT;
-                TerminateProcess(pi.hProcess, 0);
-                return RetCode;
-            }
-
-
-            Sleep(100);
-            if(!spdll.InjectTo(pi.dwProcessId))
-            {
-                RetCode = RESULT_FAIL_INJECT;
-                TerminateProcess(pi.hProcess, 0);
-                return RetCode;
-            }
-
-            RetCode = RESULT_LOGIN_SUCCESS;
-
-        }
-
-        strGameStart.ReleaseBuffer();
-    }
-
-    return RetCode;
-}
 
 
 int CJLkitDoc::Get(CString& strName, CString& strPw)
@@ -452,13 +190,11 @@ BOOL CJLkitDoc::OnOpenDocument(LPCTSTR lpszPathName)
 void CJLkitDoc::OnCloseDocument()
 {
 
-    SafeDelete(m_lpLock);
     SafeDelete(m_pStatusBox);
     SafeDelete(m_pMsgBox);
     SafeDelete(m_pBindDlg);
     SafeDelete(m_pRegisterDlg);
     SafeDelete(m_pLoginDlg);
-    SafeDelete(m_lpVpnFile);
     SafeDelete(m_pModiBind);
 
     CDocument::OnCloseDocument();
@@ -622,7 +358,17 @@ void CJLkitDoc::ProcessLogin(CJLkitSocket* pSocket, const Tcp_Head& stTcpHead, v
             LOGIN_SUCCESS* pLoginSucess = (LOGIN_SUCCESS*)pData;
             m_socket.Send(M_KEY, fun_querykey, NULL, 0);
 
-            ((CMainFrame*)AfxGetMainWnd())->ShowWindow(SW_SHOW);
+            //自动加载上次打开的文件
+            CConfigMgr* pConfig = CConfigMgr::GetInstance();
+
+            if(pConfig->m_szFileName[0] != _T('\0'))
+            {
+                AfxGetApp()->m_nCmdShow = SW_HIDE;
+                AfxGetApp()->OpenDocumentFile(pConfig->m_szFileName);
+            }
+
+            //显示主窗口
+            ((CMainFrame*)AfxGetMainWnd())->ActivateFrame();
             break;
         }
 

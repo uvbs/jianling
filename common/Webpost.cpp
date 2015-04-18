@@ -440,7 +440,7 @@ bool Webpost::ReadLine(std::basic_string<TCHAR>& strLine)
 
         for(;;)
         {
-            if(httpfile->Read(&cbChar, sizeof(cbChar)) == 0) break;
+            if(httpfile->Read(&cbChar, sizeof(cbChar)) == 0) return false;
 
             strLine += cbChar;
 

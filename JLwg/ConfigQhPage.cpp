@@ -22,8 +22,8 @@ CConfigQhPage::CConfigQhPage(CWnd* pParent /*=NULL*/)
     : CPropertyPage(CConfigQhPage::IDD)
 {
     //{{AFX_DATA_INIT(CConfigQhPage)
-	m_HealthPercent = 0;
-	//}}AFX_DATA_INIT
+    m_HealthPercent = 0;
+    //}}AFX_DATA_INIT
 }
 
 
@@ -32,9 +32,9 @@ void CConfigQhPage::DoDataExchange(CDataExchange* pDX)
     CDialog::DoDataExchange(pDX);
     //{{AFX_DATA_MAP(CConfigQhPage)
     DDX_Control(pDX, IDC_COMBO_ITEMCOLOR, m_ComBox);
-	DDX_Text(pDX, IDC_CHIYAOPERCENT, m_HealthPercent);
-	DDV_MinMaxInt(pDX, m_HealthPercent, 1, 100);
-	//}}AFX_DATA_MAP
+    DDX_Text(pDX, IDC_CHIYAOPERCENT, m_HealthPercent);
+    DDV_MinMaxInt(pDX, m_HealthPercent, 1, 100);
+    //}}AFX_DATA_MAP
 }
 
 
@@ -100,15 +100,15 @@ void CConfigQhPage::OnSelchangeComboItemcolor()
 
 BOOL CConfigQhPage::OnApply()
 {
-     UpdateData();
+    UpdateData();
 
-     GameConfig *pConfig = GameConfig::GetInstance();
+    GameConfig* pConfig = GameConfig::GetInstance();
 
-     pConfig->m_HealthPercent = m_HealthPercent;
+    pConfig->m_HealthPercent = m_HealthPercent;
 
-     TCHAR szQHColor[BUFSIZ] = {0};
-     m_ComBox.GetLBText(m_ComBox.GetCurSel(), szQHColor);
-     wcscpy(pConfig->m_szQHColor, szQHColor);
+    TCHAR szQHColor[BUFSIZ] = {0};
+    m_ComBox.GetLBText(m_ComBox.GetCurSel(), szQHColor);
+    wcscpy(pConfig->m_szQHColor, szQHColor);
 
     return CPropertyPage::OnApply();
 }

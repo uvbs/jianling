@@ -15,21 +15,18 @@ public:
     CJLkitApp();
     ~CJLkitApp();
 
-    //Ω‚—πDLL
-    BOOL UnPackResDll(LPCTSTR lpName, LPCTSTR lpType);
-
     //≥Ã–ÚŒ®“ª
     BOOL MutexWnd();
+
 
 
 // Overrides
     // ClassWizard generated virtual function overrides
     //{{AFX_VIRTUAL(CJLkitApp)
-public:
+	public:
     virtual BOOL InitInstance();
-    virtual BOOL OnIdle(LONG lCount);
     virtual int ExitInstance();
-    //}}AFX_VIRTUAL
+	//}}AFX_VIRTUAL
 // Implementation
 
 public:

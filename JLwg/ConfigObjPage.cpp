@@ -66,14 +66,16 @@ void CConfigObjPage::RefreshObj()
     fPosition fmypos;
     gcall.GetPlayerPos(&fmypos);
     TRACE1("GetRangeMonsterToVector:%d", RangeObject.size());
-    for(unsigned i = 0; i < RangeObject.size(); i++) {
+    for(unsigned i = 0; i < RangeObject.size(); i++)
+    {
         ObjectNode* pNode = RangeObject[i];
 
         wchar_t* pName = gcall.GetObjectName(pNode->ObjAddress);
         m_ObjList.InsertItem(i, pName);
 
         fPosition tarpos;
-        if(gcall.GetObjectPos(pNode, &tarpos)) {
+        if(gcall.GetObjectPos(pNode, &tarpos))
+        {
 
             CString strDis;
             strDis.Format(_T("%d"), gcall.CalcC(fmypos, tarpos));
@@ -112,18 +114,21 @@ BOOL CConfigObjPage::OnInitDialog()
     ItemVector& AlwaysKill = pConfig->m_AlwaysKill;
 
     int i;
-    for(i = 0; i < FirstKill.size(); i++) {
+    for(i = 0; i < FirstKill.size(); i++)
+    {
         m_FilterList.InsertItem(i, FirstKill[i].c_str());
         m_FilterList.SetItemText(i, 1, strFirstKill);
     }
 
-    for(i = 0; i < DontKill.size(); i++) {
+    for(i = 0; i < DontKill.size(); i++)
+    {
         m_FilterList.InsertItem(i, DontKill[i].c_str());
         m_FilterList.SetItemText(i, 1, strDontKill);
 
     }
 
-    for(i = 0; i < AlwaysKill.size(); i++) {
+    for(i = 0; i < AlwaysKill.size(); i++)
+    {
         m_FilterList.InsertItem(i, AlwaysKill[i].c_str());
         m_FilterList.SetItemText(i, 1, strAlwaysKill);
     }
@@ -156,11 +161,14 @@ void CConfigObjPage::OnRclickListObjects(NMHDR* pNMHDR, LRESULT* pResult)
 void CConfigObjPage::GetSelToFilterList(TCHAR szName[])
 {
     POSITION pos = m_ObjList.GetFirstSelectedItemPosition();
-    if(pos == NULL) {
+    if(pos == NULL)
+    {
         TRACE0("No items were selected!\n");
     }
-    else {
-        while(pos) {
+    else
+    {
+        while(pos)
+        {
             int nItem = m_ObjList.GetNextSelectedItem(pos);
             TRACE1("Item %d was selected!\n", nItem);
             // you could do your own processing on nItem here
@@ -221,4 +229,38 @@ void CConfigObjPage::OnConfigAlwayskill()
 {
     // TODO: Add your command handler code here
     GetSelToFilterList(strAlwaysKill);
+}
+
+BOOL CConfigObjPage::OnApply()
+{
+
+    GameConfig* pConfig = GameConfig::GetInstance();
+    ItemVector& dontkill = pConfig->m_DontKill;
+    ItemVector& alwayskill = pConfig->m_AlwaysKill;
+    ItemVector& firstkill = pConfig->m_FirstKill;
+
+
+    for(int i = 0; i < m_FilterList.GetItemCount(); i++)
+    {
+        CString strName = m_FilterList.GetItemText(i, 0);
+        CString strAttri = m_FilterList.GetItemText(i, 1);
+        if(strAttri == strDontKill)
+        {
+            dontkill.push_back((LPCTSTR)strName);
+        }
+        else if(strAttri == strFirstKill)
+        {
+            firstkill.push_back((LPCTSTR)strName);
+        }
+        else
+        {
+            alwayskill.push_back((LPCTSTR)strName);
+        }
+
+
+    }
+
+    pConfig->SaveConfig();
+
+    return TRUE;
 }

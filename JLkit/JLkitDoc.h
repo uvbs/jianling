@@ -6,7 +6,7 @@
 #endif // _MSC_VER > 1000
 
 
-#include "CVPNFile.h"
+
 #include "Logindlg.h"
 #include "Registdlg.h"
 #include "Modifybind.h"
@@ -16,6 +16,8 @@
 #include "MsgBox.h"
 #include "StatusBox.h"
 
+
+
 class CJLkitDoc : public CDocument, public ITCPSocketSink
 {
 protected:
@@ -23,24 +25,11 @@ protected:
     virtual ~CJLkitDoc();
     DECLARE_DYNCREATE(CJLkitDoc)
 
-    //记录错误
 public:
-    CStdioFile m_ErrFile;
-
-    //创建游戏进程
-    int CreateGameProcess(CString& strName, CString& strPw, BOOL bProfile = FALSE);
-
-
-    //关键段锁
-    CLock* m_lpLock;
-
-    //拨号vpn
-    CVpnFile* m_lpVpnFile;
 
     //领取激活
     int Active(CString& strName, CString& strPw);   //激活
     int Get(CString& strName, CString& strPw);      //领取
-    void GetandActive();                            //领取再激活
 
 
     //是否剩余有效KEY
@@ -56,8 +45,6 @@ public:
     void ShowStatus(TCHAR szText[]);
     void ShowMsg(TCHAR szText[]);
 
-    //共享内存
-    JLShareMem m_ShraeMem;
 
     //对话框
     CDlgKeyView* m_pKeyDlg;
@@ -87,7 +74,6 @@ public:
     void ProcessLogin(CJLkitSocket* pSocket, const Tcp_Head& stTcpHead, void* pData, WORD wDataSize);
     void ProcessKey(CJLkitSocket* pSocket, const Tcp_Head& stTcpHead, void* pData, WORD wDataSize);
     void ProcessHelp(CJLkitSocket* pSocket, const Tcp_Head& stTcpHead, void* pData, WORD wDataSize);
-
 
 
     // ClassWizard generated virtual function overrides

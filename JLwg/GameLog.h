@@ -6,24 +6,23 @@
 #define AFX_GAMELOG_H__19788572_D147_4859_9C00_494F1D5A7832__INCLUDED_
 
 #if _MSC_VER > 1000
-#pragma once
+    #pragma once
 #endif // _MSC_VER > 1000
 
 #include "..\COMMON\logger.h"
 
 
 
-
-class GameLog : public Logger  
+class GameLog : public Logger
 {
 public:
-	GameLog();
-	virtual ~GameLog();
+    GameLog();
+    virtual ~GameLog();
 
     DECLARE_SINGLETON(GameLog)
 };
 
-#define log (*GameLog::GetInstance())
 
+#define LOGER   GameLog::GetInstance()->info
 
 #endif // !defined(AFX_GAMELOG_H__19788572_D147_4859_9C00_494F1D5A7832__INCLUDED_)

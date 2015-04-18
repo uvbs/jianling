@@ -6,17 +6,12 @@ class CMainFrame : public CFrameWnd
 {
 public:
     CMainFrame();
+    virtual ~CMainFrame();
     DECLARE_DYNCREATE(CMainFrame)
 
 
-public:
-    virtual ~CMainFrame();
-
-
-    void RestoreWinPos();
     void InitComBox();
 
-protected:
     // ClassWizard generated virtual function overrides
     //{{AFX_VIRTUAL(CMainFrame)
 protected:

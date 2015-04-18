@@ -22,15 +22,14 @@ public:
 
     WORD ConstructLoginPacket(BYTE cbBuffer[], WORD wBufferSize);
 
-
 // Overrides
     // ClassWizard generated virtual function overrides
     //{{AFX_VIRTUAL(CDlgLogin)
-protected:
+	protected:
     virtual BOOL OnInitDialog();
     virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
     virtual void OnOK();
-    //}}AFX_VIRTUAL
+	//}}AFX_VIRTUAL
 
 // Implementation
 protected:

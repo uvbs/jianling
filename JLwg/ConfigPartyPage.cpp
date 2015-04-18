@@ -92,9 +92,9 @@ BOOL CConfigPartyPage::OnInitDialog()
 
 BOOL CConfigPartyPage::OnApply()
 {
-    TRACE(_T("OnApply"));
+
     //获得控件值
-    UpdateData(TRUE);
+    UpdateData();
 
     GameConfig* pConfig = GameConfig::GetInstance();
 

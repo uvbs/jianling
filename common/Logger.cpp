@@ -73,7 +73,7 @@ void Logger::logva(const TCHAR* pattern, va_list vp)
     if(NULL != fp_file)
     {
         _ftprintf(fp_file, _T("%04d/%02d/%02d "), now->tm_year + 1900, now->tm_mon + 1, now->tm_mday);
-        _ftprintf(fp_file, _T("%02d:%02d:%02d.%03d "), system.wHour, system.wMinute, system.wSecond, system.wMilliseconds);
+        _ftprintf(fp_file, _T("%02d:%02d:%02d  "), system.wHour, system.wMinute, system.wSecond);
         _vftprintf(fp_file, pattern, vp);
         _ftprintf(fp_file, _T("\n"));
         fflush(fp_file);
@@ -82,7 +82,7 @@ void Logger::logva(const TCHAR* pattern, va_list vp)
     m_lpMsgMut->unlock();
 }
 
-BOOL Logger::open(TCHAR* pFileName, TCHAR *pMode)
+BOOL Logger::open(const TCHAR* pFileName, TCHAR *pMode)
 {
     if(m_lpMsgMut == NULL)
         m_lpMsgMut = new CLock;

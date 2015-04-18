@@ -80,7 +80,8 @@ BOOL CConfigItemPage::OnInitDialog()
     //填充背包
     std::vector<_BAGSTU> GoodsVec;
     gcall.GetAllGoodsToVector(GoodsVec);
-    for(i = 0; i < GoodsVec.size(); i++) {
+    for(i = 0; i < GoodsVec.size(); i++)
+    {
         m_BagList.InsertItem(i, GoodsVec[i].name);
 
         CString strPos;
@@ -97,28 +98,33 @@ BOOL CConfigItemPage::OnInitDialog()
 
 
     //出售
-    for(i = 0; i < SellItem.size(); i++) {
+    for(i = 0; i < SellItem.size(); i++)
+    {
         m_FilterList.InsertItem(i, SellItem[i].c_str());
         m_FilterList.SetItemText(i, 1, strSellItem);
     }
 
     //存仓
-    for(i = 0; i < BankItem.size(); i++) {
+    for(i = 0; i < BankItem.size(); i++)
+    {
         m_FilterList.InsertItem(i, BankItem[i].c_str());
         m_FilterList.SetItemText(i, 1, strBankItem);
     }
     //分解
-    for(i = 0; i < DisenchantItem.size(); i++) {
+    for(i = 0; i < DisenchantItem.size(); i++)
+    {
         m_FilterList.InsertItem(i, DisenchantItem[i].c_str());
         m_FilterList.SetItemText(i, 1, strDisenchantItem);
     }
     //交易
-    for(i = 0; i < TradeItem.size(); i++) {
+    for(i = 0; i < TradeItem.size(); i++)
+    {
         m_FilterList.InsertItem(i, TradeItem[i].c_str());
         m_FilterList.SetItemText(i, 1, strTradeItem);
     }
     //摧毁
-    for(i = 0; i < DelItem.size(); i++) {
+    for(i = 0; i < DelItem.size(); i++)
+    {
         m_FilterList.InsertItem(i, DelItem[i].c_str());
         m_FilterList.SetItemText(i, 1, strDelItem);
     }
@@ -141,20 +147,17 @@ void CConfigItemPage::OnRclickListBags(NMHDR* pNMHDR, LRESULT* pResult)
 void CConfigItemPage::GetSelToFilterList(TCHAR szName[])
 {
     POSITION pos = m_BagList.GetFirstSelectedItemPosition();
-    if (pos == NULL)
-        TRACE0("No items were selected!\n");
-    else {
-        while(pos) {
-            int nItem = m_BagList.GetNextSelectedItem(pos);
-            TRACE1("Item %d was selected!\n", nItem);
-            // you could do your own processing on nItem here
-            CString strItem = m_BagList.GetItemText(nItem, 0);
+    while(pos)
+    {
+        int nItem = m_BagList.GetNextSelectedItem(pos);
 
-            //添加到过滤控件
-            DWORD dwCount = m_FilterList.GetItemCount();
-            m_FilterList.InsertItem(dwCount, strItem);
-            m_FilterList.SetItemText(dwCount, 1, szName);
-        }
+        // you could do your own processing on nItem here
+        CString strItem = m_BagList.GetItemText(nItem, 0);
+
+        //添加到过滤控件
+        DWORD dwCount = m_FilterList.GetItemCount();
+        m_FilterList.InsertItem(dwCount, strItem);
+        m_FilterList.SetItemText(dwCount, 1, szName);
     }
 }
 void CConfigItemPage::OnConfigCuncang()
@@ -222,4 +225,58 @@ void CConfigItemPage::OnDeleteitemListBagsfilter(NMHDR* pNMHDR, LRESULT* pResult
     // TODO: Add your control notification handler code here
     SetModified();
     *pResult = 0;
+}
+
+BOOL CConfigItemPage::OnApply()
+{
+    GameConfig* pConfig = GameConfig::GetInstance();
+
+    ItemVector& sell = pConfig-> m_SellItem;    //出售
+    ItemVector& bank = pConfig-> m_BankItem;    //存仓
+    ItemVector& disenchant = pConfig-> m_DisenchantItem;    //分解
+    ItemVector& trade = pConfig-> m_TradeItem;    //交易
+    ItemVector& dell = pConfig-> m_DelItem;    //删除
+    ItemVector& qhacce = pConfig-> m_QHAccessories;    //强化饰品
+    ItemVector& qhweapon = pConfig-> m_QHWeapons;    //强化武器
+
+
+    for(int i = 0; i < m_FilterList.GetItemCount(); i++)
+    {
+        TCHAR szName[MAX_PATH];
+        m_FilterList.GetItemText(i, 0, szName, MAX_PATH);
+        CString strAttri = m_FilterList.GetItemText(i, 1);
+        if(strAttri == strSellItem)
+        {
+            sell.push_back(szName);
+        }
+        else if(strAttri == strDelItem)
+        {
+            dell.push_back(szName);
+        }
+        else if(strAttri == strTradeItem)
+        {
+            trade.push_back(szName);
+        }
+        else if(strAttri == strDisenchantItem)
+        {
+            disenchant.push_back(szName);
+        }
+        else if(strAttri == strQHAccessories)
+        {
+            qhacce.push_back(szName);
+        }
+        else if(strAttri == strQHWeapons)
+        {
+            qhweapon.push_back(szName);
+        }
+        else if(strAttri == strBankItem)
+        {
+            bank.push_back(szName);
+        }
+
+    }
+
+    pConfig->SaveConfig();
+
+    return TRUE;
 }

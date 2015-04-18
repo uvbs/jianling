@@ -9,6 +9,8 @@
 #endif // _MSC_VER > 1000
 
 
+#include "CVPNFile.h"
+
 enum
 {
     COLUMN_TEXT_CHECKBOX = 0,
@@ -42,13 +44,6 @@ public:
     //串行文本
     void SerializeText(CArchive& ar);
 
-    //加载游戏
-    void LaunchGame();
-
-    //领取和激活
-    void OnGet();
-    void OnActive();
-
     //账号数量
     int m_LineNums;
 
@@ -61,10 +56,25 @@ public:
     //设置行颜色
     void SetItemColor(DWORD iItem, COLORREF color);
 
+
+    //工作线程
+    int CreateGameProcess(int inItem);
+    static UINT AFX_CDECL IPCThread(LPVOID lpParam);
+
+
+    static UINT AFX_CDECL WorkThread(LPVOID pVoid);
+    CWinThread* m_pWorkThread;
+    bool m_bWorking;
+
+
+    //记录错误
+    CStdioFile* m_pErrFile;
+    CVpnFile* m_lpVpnFile;
+
 private:
     CMap<DWORD, DWORD&, COLORREF, COLORREF&> MapItemColor;
 
-    bool ReadLine(std::basic_string<TCHAR>& strLine, CFile *pFile);
+    bool ReadLine(std::basic_string<TCHAR>& strLine, CFile* pFile);
 
 // Overrides
     // ClassWizard generated virtual function overrides
@@ -73,7 +83,6 @@ protected:
     virtual void    OnInitialUpdate();
     virtual BOOL    PreCreateWindow(CREATESTRUCT& cs);
     virtual void    OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint);
-    virtual void    PostNcDestroy();
     //}}AFX_VIRTUAL
 // Generated message map functions
 
@@ -82,17 +91,18 @@ public:
     //{{AFX_MSG(CJLkitView)
     afx_msg void OnNMCustomdraw(NMHDR* pNMHDR, LRESULT* pResult);
     afx_msg int  OnCreate(LPCREATESTRUCT lpCreateStruct);
-    afx_msg void OnStart();
     afx_msg void OnRclick(NMHDR* pNMHDR, LRESULT* pResult);
-    afx_msg void OnProfile();
-    afx_msg void OnReportbug();
-    afx_msg void OnTimer(UINT nIDEvent);
-    afx_msg void OnUpdateProfile(CCmdUI* pCmdUI);
-    afx_msg void OnUpdateSelectall(CCmdUI* pCmdUI);
-    afx_msg void OnUpdateStart(CCmdUI* pCmdUI);
-    afx_msg void OnUpdateGetandactive(CCmdUI* pCmdUI);
+    afx_msg void OnStart();
     afx_msg void OnUcStart();
-    //}}AFX_MSG
+    afx_msg void OnGet();
+    afx_msg void OnActive();
+    afx_msg void OnUpdateStart(CCmdUI* pCmdUI);
+    afx_msg void OnGetAndActive();
+    afx_msg void OnUpdateUcStart(CCmdUI* pCmdUI);
+	afx_msg void OnUcLog();
+	afx_msg void OnStopOp();
+	afx_msg void OnUpdateStopOp(CCmdUI* pCmdUI);
+	//}}AFX_MSG
     DECLARE_MESSAGE_MAP()
 };
 

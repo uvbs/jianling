@@ -28,6 +28,16 @@
 #endif
 
 
+enum WORKTHREADMSGID
+{
+    WM_WORKTHREAD_GET = WM_USER + 555,
+    WM_WORKTHREAD_ACTIVE,
+    WM_WORKTHREAD_GETANDACTIVE,
+    WM_WORKTHREAD_RUN_ALL_GAME,
+    WM_WORKTHREAD_RUN_SINGLE_GAME
+};
+
+
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
@@ -40,21 +50,21 @@ BEGIN_MESSAGE_MAP(CJLkitView, CListView)
     //{{AFX_MSG_MAP(CJLkitView)
     ON_NOTIFY_REFLECT(NM_CUSTOMDRAW, OnNMCustomdraw)
     ON_WM_CREATE()
-    ON_COMMAND(ID_START, OnStart)
     ON_NOTIFY_REFLECT(NM_RCLICK, OnRclick)
-    ON_COMMAND(ID_PROFILE, OnProfile)
-    ON_UPDATE_COMMAND_UI(ID_PROFILE, OnUpdateProfile)
-    ON_UPDATE_COMMAND_UI(ID_SELECTALL, OnUpdateSelectall)
-    ON_COMMAND(ID_REPORTBUG, OnReportbug)
-    ON_WM_TIMER()
-    ON_UPDATE_COMMAND_UI(ID_GET, OnUpdateStart)
+    ON_COMMAND(ID_START, OnStart)
     ON_COMMAND(ID_UC_START, OnUcStart)
-    ON_WM_RBUTTONUP()
     ON_COMMAND(ID_GET, OnGet)
     ON_COMMAND(ID_ACTIVE, OnActive)
+    ON_UPDATE_COMMAND_UI(ID_GET, OnUpdateStart)
+    ON_COMMAND(ID_GETANDACTIVE, OnGetAndActive)
+    ON_UPDATE_COMMAND_UI(ID_UC_START, OnUpdateUcStart)
+    ON_COMMAND(ID_UC_LOG, OnUcLog)
+    ON_COMMAND(ID_STOPOP, OnStopOp)
+    ON_WM_RBUTTONUP()
     ON_UPDATE_COMMAND_UI(ID_ACTIVE, OnUpdateStart)
     ON_UPDATE_COMMAND_UI(ID_START, OnUpdateStart)
     ON_UPDATE_COMMAND_UI(ID_GETANDACTIVE, OnUpdateStart)
+    ON_UPDATE_COMMAND_UI(ID_STOPOP, OnUpdateStopOp)
     //}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
@@ -63,10 +73,23 @@ CJLkitView::CJLkitView()
 {
     m_dwDefaultStyle |= LVS_REPORT;
     m_LineNums = 0;
+    m_lpVpnFile = NULL;
+    m_pErrFile = NULL;
 }
 
 CJLkitView::~CJLkitView()
 {
+    //释放线程
+    if(m_pWorkThread)
+    {
+        m_bWorking = false;
+        m_pWorkThread->PostThreadMessage(WM_QUIT, 0, 0);
+        WaitForSingleObject(m_pWorkThread->m_hThread, INFINITE);
+
+    }
+
+    SafeDelete(m_lpVpnFile);
+    SafeDelete(m_pErrFile);
 
 }
 
@@ -92,24 +115,6 @@ int CJLkitView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
     GetListCtrl().SetExtendedStyle(LVS_EX_FULLROWSELECT | LVS_EX_CHECKBOXES);
     return 0;
-}
-
-
-
-void CJLkitView::OnProfile()
-{
-    CJLkitDoc* pDoc = (CJLkitDoc*)GetDocument();
-    POSITION rpos = GetListCtrl().GetFirstSelectedItemPosition();
-
-    if(rpos != NULL)
-    {
-        int nItem = GetListCtrl().GetNextSelectedItem(rpos);
-        CString strName = GetListCtrl().GetItemText(nItem, COLUMN_TEXT_ACCOUNT);
-        CString strPw = GetListCtrl().GetItemText(nItem, COLUMN_TEXT_PASSWORD);
-        CString strConfig = GetListCtrl().GetItemText(nItem, COLUMN_TEXT_CONFIG);
-        CString strScript = GetListCtrl().GetItemText(nItem, COLUMN_TEXT_SCRIPT);
-        pDoc->CreateGameProcess(strName, strPw);
-    }
 }
 
 
@@ -203,85 +208,39 @@ void CJLkitView::SetResult(int nReslt, int i)
 
 void CJLkitView::OnStart()
 {
-    LaunchGame();
+    m_pWorkThread->PostThreadMessage(WM_WORKTHREAD_RUN_ALL_GAME, 0, 0);
 }
-
-
-void CJLkitView::LaunchGame()
-{
-
-    CJLkitDoc* pDoc = (CJLkitDoc*)GetDocument();
-    CListCtrl& list = GetListCtrl();
-
-    //当前选中的条目
-    for(int i = 0; i < list.GetItemCount(); i++)
-    {
-        if(list.GetCheck(i))
-        {
-            CString strName = list.GetItemText(i, COLUMN_TEXT_ACCOUNT);
-            CString strPw = list.GetItemText(i, COLUMN_TEXT_PASSWORD);
-            CString strConfig = list.GetItemText(i, COLUMN_TEXT_CONFIG);
-            CString strScript = list.GetItemText(i, COLUMN_TEXT_SCRIPT);
-            list.SetItemText(i, COLUMN_TEXT_STATUS, _T("开始运行.."));
-            int nReslt = pDoc->CreateGameProcess(strName, strPw);
-            SetResult(nReslt, i);
-        }
-    }
-
-}
-
 
 void CJLkitView::OnUpdateStart(CCmdUI* pCmdUI)
 {
-    pCmdUI->Enable(FALSE);
-    int count = GetListCtrl().GetItemCount();
 
-    for(int i = 0; i < count; i++)
+
+    if(m_bWorking == false)
     {
-        if(GetListCtrl().GetCheck(i))
+        int count = GetListCtrl().GetItemCount();
+        for(int i = 0; i < count; i++)
         {
-            pCmdUI->Enable();
-            break;
+            if(GetListCtrl().GetCheck(i))
+            {
+                pCmdUI->Enable();
+                return;
+            }
         }
+
     }
+
+    pCmdUI->Enable(FALSE);
 }
 
 
 void CJLkitView::OnGet()
 {
-
-    int count = GetListCtrl().GetItemCount();
-    CJLkitDoc* pDoc = (CJLkitDoc*)GetDocument();
-
-    for(int i = 0; i < count; i++)
-    {
-        if(GetListCtrl().GetCheck(i))
-        {
-            CString strName = GetListCtrl().GetItemText(i, COLUMN_TEXT_ACCOUNT);
-            CString strPw = GetListCtrl().GetItemText(i, COLUMN_TEXT_PASSWORD);
-            int nRet = pDoc->Get(strName, strPw);
-            SetResult(nRet, i);
-        }
-    }
+    m_pWorkThread->PostThreadMessage(WM_WORKTHREAD_GET, 0, 0);
 }
 
 void CJLkitView::OnActive()
 {
-    int count = GetListCtrl().GetItemCount();
-    CJLkitDoc* pDoc = (CJLkitDoc*)GetDocument();
-
-    for(int i = 0; i < count; i++)
-    {
-        if(GetListCtrl().GetCheck(i))
-        {
-            CString strName = GetListCtrl().GetItemText(i, COLUMN_TEXT_ACCOUNT);
-            CString strPw = GetListCtrl().GetItemText(i, COLUMN_TEXT_PASSWORD);
-
-            GetListCtrl().SetItemText(i, COLUMN_TEXT_STATUS, _T("正在登录"));
-            int nRet = pDoc->Active(strName, strPw);
-            SetResult(nRet, i);
-        }
-    }
+    m_pWorkThread->PostThreadMessage(WM_WORKTHREAD_ACTIVE, 0, 0);
 }
 
 
@@ -332,12 +291,20 @@ void CJLkitView::OnRclick(NMHDR* pNMHDR, LRESULT* pResult)
 void CJLkitView::OnInitialUpdate()
 {
 
-    //自动加载账号文档
-//     CConfigMgr* lpConfig = CConfigMgr::GetInstance();
-//     if(lpConfig->m_szFileName[0] != 0)
-//     {
-//        GetDocument()->OnOpenDocument(lpConfig->m_szFileName);
-//     }
+    //初始化工作线程
+    m_pWorkThread = AfxBeginThread(WorkThread, this);
+    if(!m_pWorkThread) return;
+
+    //初始化
+    if(!m_lpVpnFile)
+    {
+        m_lpVpnFile = new CVpnFile;
+    }
+
+    if(!m_pErrFile)
+    {
+        m_pErrFile = new CStdioFile;
+    }
 
     //设置列宽
     for(int i = 0; i < COLUMN_TEXT_NUMS; i++)
@@ -373,7 +340,7 @@ bool CJLkitView::ReadLine(std::basic_string<TCHAR>& strLine, CFile* pFile)
                 return false;
 
 
-            if(cbChar ==0x0d || cbChar == 0x0a)
+            if(cbChar == 0x0d || cbChar == 0x0a)
             {
                 if(cbChar == 0x0a) break;
                 continue;
@@ -403,7 +370,6 @@ void CJLkitView::SerializeText(CArchive& ar)
     }
     else
     {
-
         //准备对象
         CConfigMgr* pConfig = CConfigMgr::GetInstance();
 
@@ -421,6 +387,37 @@ void CJLkitView::SerializeText(CArchive& ar)
         std::basic_string<TCHAR> strConfig;
         std::basic_string<TCHAR> strScript;
 
+        TCHAR szConfig[MAX_PATH];
+        TCHAR szScript[MAX_PATH];
+        if(cbScript.GetLBText(cbScript.GetCurSel(), szScript) &&
+                cbConfig.GetLBText(cbConfig.GetCurSel(), szConfig))
+        {
+            strConfig = szConfig;
+            strScript = szScript;
+        }
+        else
+        {
+            if(pConfig->m_szGameConfig[0] != _T('\0'))
+            {
+                strConfig = pConfig->m_szGameConfig;
+            }
+            else
+            {
+                strConfig = _T("default.ini");
+            }
+
+            if(pConfig->m_szGameScript[0] != _T('\0'))
+            {
+                strScript = pConfig->m_szGameScript;
+            }
+            else
+            {
+                strScript = _T("default.ini");
+            }
+
+        }
+
+
         while(ReadLine(strLine, pFile))
         {
             tregex line(_T("([^,; ]+)[,; ]+([^,; ]+)"));
@@ -435,81 +432,416 @@ void CJLkitView::SerializeText(CArchive& ar)
             }
 
         }
-
-        //创建共享内存
-        CJLkitDoc *pDoc =  (CJLkitDoc *)GetDocument();
-        pDoc->m_ShraeMem.Create(m_LineNums, SHAREOBJNAME);
     }
 }
 
-void CJLkitView::OnUpdateProfile(CCmdUI* pCmdUI)
-{
-    // TODO: Add your command update UI handler code here
-    pCmdUI->Enable(FALSE);
-    int count = GetListCtrl().GetItemCount();
 
-    for(int i = 0; i < count; i++)
+
+#define PIPE_TIMEOUT 4000
+UINT AFX_CDECL CJLkitView::IPCThread(LPVOID lpParam)
+{
+
+    PIPEDATA stPipeData = *(PPIPEDATA)lpParam;
+
+    HANDLE hPipe = INVALID_HANDLE_VALUE;
+    HANDLE hEvent = NULL;
+    __try
     {
-        if(GetListCtrl().GetCheck(i))
+
+
+        TCHAR szPipi[MAX_PATH];
+        wsprintf(szPipi, _T("\\\\.\\Pipe\\JLwg_%d"), stPipeData.dwPid);
+
+        hPipe = CreateNamedPipe(szPipi, PIPE_ACCESS_DUPLEX | FILE_FLAG_OVERLAPPED, PIPE_TYPE_MESSAGE, 1, BUFSIZ, BUFSIZ, PIPE_TIMEOUT, NULL);
+
+        if(hPipe == INVALID_HANDLE_VALUE) __leave;
+
+        hEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
+        if(hEvent == NULL)  __leave;
+
+        OVERLAPPED ovlp;
+        ZeroMemory(&ovlp, sizeof(OVERLAPPED));
+        ovlp.hEvent = hEvent;
+
+        if(!ConnectNamedPipe(hPipe, &ovlp))
         {
-            pCmdUI->Enable();
-            break;
+            if(ERROR_IO_PENDING != GetLastError()) __leave;
+        }
+
+        WaitForSingleObject(hEvent, 15 * 1000);
+
+        //写入一次数据
+        DWORD dwBytesWrited = 0;
+        WriteFile(hPipe, &stPipeData, sizeof(PIPEDATA), &dwBytesWrited, NULL);
+
+
+        //之后用事件等待
+//         while(1)
+//         {
+//             DWORD dwRetCode = WaitForSingleObject(hEvent, 6000);
+//             if(dwRetCode == WAIT_OBJECT_0)
+//             {
+//                 TRACE(_T("WAIT_OBJECT_0"));
+//             }
+//             else
+//             {
+//
+//             }
+//         }
+
+
+    }
+    __finally
+    {
+        if(hPipe != INVALID_HANDLE_VALUE)
+        {
+            CloseHandle(hPipe);
+        }
+
+        if(hEvent != NULL)
+        {
+            CloseHandle(hEvent);
         }
     }
 
-    if(GetListCtrl().GetSelectedCount() != 0)
+    return 0;
+}
+
+
+
+//创建游戏进程
+int CJLkitView::CreateGameProcess(int inItem)
+{
+    int RetCode;
+
+    CJLkitDoc* pDoc = (CJLkitDoc*)GetDocument();
+
+
+    std::basic_string<TCHAR> strName = GetListCtrl().GetItemText(inItem, COLUMN_TEXT_ACCOUNT);
+    std::basic_string<TCHAR> strPw = GetListCtrl().GetItemText(inItem, COLUMN_TEXT_PASSWORD);
+    std::basic_string<TCHAR> strConfig = GetListCtrl().GetItemText(inItem, COLUMN_TEXT_CONFIG);
+    std::basic_string<TCHAR> strScript = GetListCtrl().GetItemText(inItem, COLUMN_TEXT_SCRIPT);
+
+
+
+    //是否已经登录
+    //if(m_ShraeMem.Get((LPCTSTR)strName)) return RESULT_ALREADY_RUNNING;
+
+
+    //是否有有效卡号
+    if(pDoc->IsHaveValidKey() == FALSE) return RESULT_NOKEY;
+
+
+    PROCESS_INFORMATION pi;
+    ZeroMemory(&pi, sizeof(PROCESS_INFORMATION));
+
+    STARTUPINFO si;
+    ZeroMemory(&si, sizeof(STARTUPINFO));
+    si.cb = sizeof(si);
+
+    Webpost poster(strName.c_str(), strPw.c_str());
+    GetListCtrl().SetItemText(inItem, COLUMN_TEXT_STATUS, _T("登陆.."));
+
+#ifdef JLTW
+    //台服不用登陆
+#else
+    RetCode = poster.Login();
+    if(RetCode != RESULT_SUCCESS) return RetCode;
+#endif
+
+
+    //获取启动KEY
+    std::basic_string<TCHAR> strkey;
+    if(!poster.GetStartKey(strkey)) return RESULT_FAIL_GETUKEY;
+    GetListCtrl().SetItemText(inItem, COLUMN_TEXT_STATUS, _T("获取启动命令.."));
+
+    //获取配置
+    CConfigMgr* pConfig = CConfigMgr::GetInstance();
+
+    //启动游戏
+    TCHAR szCmdLine[MAX_PATH];
+    wsprintf(szCmdLine, _T("%s /LaunchByLauncher /SessKey:\"%s\" /CompanyID:\"0\" /ChannelGroupIndex:\"-1\""),
+             pConfig->m_szGamePath, strkey.c_str());
+
+    GetListCtrl().SetItemText(inItem, COLUMN_TEXT_STATUS, _T("创建进程.."));
+    if(!CreateProcess(NULL, szCmdLine, NULL, NULL, FALSE, CREATE_SUSPENDED, NULL, NULL, &si, &pi))
     {
-        pCmdUI->Enable();
+        RetCode = RESULT_FAIL_CREATEGAMEPROCESS;
     }
-}
-
-void CJLkitView::OnUpdateSelectall(CCmdUI* pCmdUI)
-{
-}
-
-void CJLkitView::OnReportbug()
-{
-    CDlgBugRep dlg;
-    dlg.DoModal();
-}
-
-void CJLkitView::OnTimer(UINT nIDEvent)
-{
-    if(nIDEvent == ID_TESTSOCKET)
+    else
     {
 
+        GetListCtrl().SetItemText(inItem, COLUMN_TEXT_STATUS, _T("创建通信.."));
+
+        PIPEDATA stData;
+        stData.dwPid = pi.dwProcessId;
+        _tcscpy(stData.szConfig, strConfig.c_str());
+        _tcscpy(stData.szScript, strScript.c_str());
+        _tcscpy(stData.szPassWord, strPw.c_str());
+        _tcscpy(stData.szAccount, strName.c_str());
+
+        //创建新线程和外挂通信
+        AfxBeginThread(IPCThread, &stData);
+
+
+        //注入
+        TCHAR szLibFile[MAX_PATH] = {0};
+        GetModuleFileName(NULL, szLibFile, MAX_PATH);
+
+#ifdef JLTW
+        _tcscpy(_tcsrchr(szLibFile, TEXT('\\')) + 1, TEXT("JLwg_tw.dll"));
+        CInject wgdll(szLibFile);
+#else
+        _tcscpy(_tcsrchr(szLibFile, TEXT('\\')) + 1, TEXT("JLwg.dll"));
+        CInject wgdll(szLibFile);
+#endif
+        _tcscpy(_tcsrchr(szLibFile, TEXT('\\')) + 1, TEXT("speedhack-i386.dll"));
+        CInject spdll(szLibFile);
+
+        if(wgdll.InjectTo(pi.dwProcessId) && spdll.InjectTo(pi.dwProcessId))
+        {
+
+            ResumeThread(pi.hThread);
+            RetCode = RESULT_LOGIN_SUCCESS;
+
+        }
+        else
+        {
+            RetCode = RESULT_FAIL_INJECT;
+            TerminateProcess(pi.hProcess, 0);
+            return RetCode;
+        }
+
     }
+
+    return RetCode;
 }
 
-void CJLkitView::OnUpdateGetandactive(CCmdUI* pCmdUI)
+
+
+UINT AFX_CDECL CJLkitView::WorkThread(LPVOID pVoid)
 {
+    CJLkitView* pView = (CJLkitView*)pVoid;
+
+    CListCtrl& listctr = pView->GetListCtrl();
+    CJLkitDoc* pDoc = (CJLkitDoc*)pView->GetDocument();
+
+
+    //创建线程消息队列
+    MSG msg;
+    PeekMessage(&msg, NULL, WM_USER, WM_USER, PM_NOREMOVE);
+
+    while(1)
+    {
+
+        //状态
+        pView->m_bWorking = false;
+
+        GetMessage(&msg, NULL, 0, 0);
+        pView->m_bWorking = true;
+
+        switch(msg.message)
+        {
+            case WM_QUIT:
+                return 1;
+
+            //自定义消息1处理
+            case WM_WORKTHREAD_GET:
+            {
+
+                int count = listctr.GetItemCount();
+                for(int i = 0; i < count; i++)
+                {
+                    if(listctr.GetCheck(i) && pView->m_bWorking == true)
+                    {
+                        CString strName = listctr.GetItemText(i, COLUMN_TEXT_ACCOUNT);
+                        CString strPw = listctr.GetItemText(i, COLUMN_TEXT_PASSWORD);
+                        int nRet = pDoc->Get(strName, strPw);
+                        pView->SetResult(nRet, i);
+                    }
+                }
+
+                break;
+            }
+
+            //自定义消息2处理
+            case WM_WORKTHREAD_ACTIVE:
+            {
+                int count = listctr.GetItemCount();
+                for(int i = 0; i < count; i++)
+                {
+                    if(listctr.GetCheck(i) && pView->m_bWorking == true)
+                    {
+                        CString strName = listctr.GetItemText(i, COLUMN_TEXT_ACCOUNT);
+                        CString strPw = listctr.GetItemText(i, COLUMN_TEXT_PASSWORD);
+                        listctr.SetItemText(i, COLUMN_TEXT_STATUS, _T("正在登录"));
+                        int nRet = pDoc->Active(strName, strPw);
+                        pView->SetResult(nRet, i);
+                    }
+                }
+                break;
+            }
+
+
+            case WM_WORKTHREAD_GETANDACTIVE:
+            {
+
+                CVpnFile* lpVpnFile = pView->m_lpVpnFile;
+                CStdioFile& ErrFile = *pView->m_pErrFile;
+
+                //获取vpn文本
+                TCHAR szPathName[MAX_PATH];
+                GetModuleFileName(NULL, szPathName, MAX_PATH);
+                PathRemoveFileSpec(szPathName);
+
+                //工作目录
+                SetCurrentDirectory(szPathName);
+                PathAppend(szPathName, _T("VPN.txt"));
+
+                //打开文本
+                if(lpVpnFile->Open(szPathName))
+                {
+                    AfxMessageBox(_T("无法打开代理文件"));
+                    return 0;
+                }
+
+                //取得当前模块路径
+                TCHAR szPath[MAX_PATH] = {0};
+                GetModuleFileName(NULL, szPath, MAX_PATH);
+
+                CTime time = CTime::GetCurrentTime();
+                CString strTime = time.Format("%d日%H时%M分");
+                CreateDirectory(strTime, NULL);
+                PathAppend(szPath, strTime);
+                SetCurrentDirectory(szPath);
+
+                ErrFile.Open(_T("错误帐号.txt"), CFile::modeReadWrite | CFile::modeCreate);
+
+
+                //开始
+                for(int i = 0; i < listctr.GetItemCount(), pView->m_bWorking == true; i++)
+                {
+
+                    CString strName = listctr.GetItemText(i, COLUMN_TEXT_ACCOUNT);
+                    CString strPw = listctr.GetItemText(i, COLUMN_TEXT_PASSWORD);
+
+                    CString strLine = strName + _T(", ") + strPw + _T("\n");
+                    Webpost poster(strName, strPw);
+
+                    int LoginTimes = 0;
+                    BOOL bError = FALSE;
+
+_Again:
+                    listctr.SetItemText(i, COLUMN_TEXT_STATUS, _T("正在登录"));
+                    int nResult = poster.Login();
+                    pView->SetResult(nResult, i);
+                    if(nResult != RESULT_SUCCESS)
+                    {
+
+                        if(nResult == RESULT_FAIL_CAPTCHA || nResult == RESULT_FAIL_IPBLOCK)
+                        {
+                            //这两种情况直接换ip
+                            lpVpnFile->AlwaysConnect();
+                            LoginTimes = 0;
+                        }
+                        else if(nResult == RESULT_FAIL_PWERROR)
+                        {
+                            //这种情况直接退
+                            strLine.Remove(_T('\n'));
+                            strLine += _T(" : 密码错误");
+                            strLine += _T("\n");
+
+                            bError = TRUE;
+                            goto _WriteError;
+                        }
+                        else
+                        {
+                            //剩余情况等两次
+                            TRACE1("失败%d次", LoginTimes++);
+                            if(LoginTimes == 2)
+                            {
+                                lpVpnFile->AlwaysConnect();
+                                LoginTimes = 0;
+                            }
+                        }
+
+                        goto _Again;
+                    }
+
+                    listctr.SetItemText(i, COLUMN_TEXT_STATUS, _T("正在领取"));
+                    nResult = poster.Get();
+                    pView->SetResult(nResult, i);
+
+                    listctr.SetItemText(i, COLUMN_TEXT_STATUS, _T("正在激活"));
+                    nResult = poster.Active();
+                    pView->SetResult(nResult, i);
+
+                    if(nResult != RESULT_SUCCESS)
+                    {
+                        bError = TRUE;
+                    }
+
+
+_WriteError:
+                    if(bError)
+                    {
+                        ErrFile.WriteString(strLine);
+                    }
+                }
+
+                ErrFile.Close();
+                lpVpnFile->Close();
+
+                break;
+            }
+
+            case WM_WORKTHREAD_RUN_ALL_GAME:
+            {
+
+                //当前选中的条目
+                for(int i = 0; i < listctr.GetItemCount(); i++)
+                {
+                    if(listctr.GetCheck(i) && pView->m_bWorking == true)
+                    {
+                        listctr.SetItemText(i, COLUMN_TEXT_STATUS, _T("开始运行.."));
+                        int nReslt = pView->CreateGameProcess(i);
+                        pView->SetResult(nReslt, i);
+                    }
+                }
+
+                break;
+            }
+
+
+            case WM_WORKTHREAD_RUN_SINGLE_GAME:
+            {
+
+                //当前选中的条目
+                POSITION pos = listctr.GetFirstSelectedItemPosition();
+
+                while(pos && (pView->m_bWorking == true))
+                {
+                    int i = listctr.GetNextSelectedItem(pos);
+                    listctr.SetItemText(i, COLUMN_TEXT_STATUS, _T("开始运行.."));
+                    int nReslt = pView->CreateGameProcess(i);
+                    pView->SetResult(nReslt, i);
+                }
+
+                break;
+            }
+
+        }
+
+    }
+
+
+    return 0;
 }
 
-void CJLkitView::PostNcDestroy()
-{
-    CListView::PostNcDestroy();
-}
 
 void CJLkitView::OnUcStart()
 {
-    CJLkitDoc* pDoc = (CJLkitDoc*)GetDocument();
-    CListCtrl& list = GetListCtrl();
-
-    //当前选中的条目
-    POSITION pos = list.GetFirstSelectedItemPosition();
-
-    while(pos)
-    {
-        int i = list.GetNextSelectedItem(pos);
-        CString strName = list.GetItemText(i, COLUMN_TEXT_ACCOUNT);
-        CString strPw = list.GetItemText(i, COLUMN_TEXT_PASSWORD);
-        CString strConfig = list.GetItemText(i, COLUMN_TEXT_CONFIG);
-        CString strScript = list.GetItemText(i, COLUMN_TEXT_SCRIPT);
-        list.SetItemText(i, COLUMN_TEXT_STATUS, _T("开始运行.."));
-        int nReslt = pDoc->CreateGameProcess(strName, strPw);
-        SetResult(nReslt, i);
-    }
-
+    m_pWorkThread->PostThreadMessage(WM_WORKTHREAD_RUN_SINGLE_GAME, 0, 0);
 }
 
 void CJLkitView::OnNMCustomdraw(NMHDR* pNMHDR, LRESULT* pResult)
@@ -538,4 +870,47 @@ void CJLkitView::OnNMCustomdraw(NMHDR* pNMHDR, LRESULT* pResult)
         }
         break;
     }
+}
+
+void CJLkitView::OnGetAndActive()
+{
+    m_pWorkThread->PostThreadMessage(WM_WORKTHREAD_GETANDACTIVE, 0, 0);
+}
+
+void CJLkitView::OnUpdateUcStart(CCmdUI* pCmdUI)
+{
+    pCmdUI->Enable(m_bWorking == false);
+}
+
+void CJLkitView::OnUcLog()
+{
+    POSITION rpos = GetListCtrl().GetFirstSelectedItemPosition();
+    if(rpos)
+    {
+        int inItem = GetListCtrl().GetNextSelectedItem(rpos);
+        std::basic_string<TCHAR> strName = GetListCtrl().GetItemText(inItem, COLUMN_TEXT_ACCOUNT);
+
+        TCHAR szExePath[MAX_PATH];
+        GetModuleFileName(NULL, szExePath, MAX_PATH);
+        PathRemoveFileSpec(szExePath);
+        PathAppend(szExePath, _T("日志"));
+        PathAppend(szExePath, strName.c_str());
+        _tcscat(szExePath, _T(".txt"));
+
+
+        ShellExecute(0, _T("open"), _T("notepad.exe"), szExePath, NULL, SW_SHOWNORMAL);
+    }
+}
+
+void CJLkitView::OnStopOp()
+{
+    if(IDOK == AfxMessageBox(_T("确定取消当前操作?")))
+    {
+        m_bWorking = false;
+    }
+}
+
+void CJLkitView::OnUpdateStopOp(CCmdUI* pCmdUI)
+{
+    pCmdUI->Enable(m_bWorking == true);
 }

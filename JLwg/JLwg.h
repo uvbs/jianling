@@ -25,9 +25,9 @@ public:
 
     //等待游戏窗口创建
     HWND isGameWndCreated(DWORD dwPid);
-    BOOL WaitGameCreate();
+    BOOL WaitGameCreate(int inMaxTime);
 
-
+    PIPEDATA m_stData;
     static HWND m_hGameWnd;
 
 // Overrides

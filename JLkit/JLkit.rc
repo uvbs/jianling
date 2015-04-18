@@ -74,22 +74,20 @@ BEGIN
     END
     POPUP "操作(&E)"
     BEGIN
-        MENUITEM "列表全选",                    ID_SELECTALL
-        MENUITEM SEPARATOR
         MENUITEM "卡号...",                     ID_LOOKKEY
         MENUITEM SEPARATOR
         MENUITEM "领取",                        ID_GET
         MENUITEM "激活",                        ID_ACTIVE
         MENUITEM "领取激活",                    ID_GETANDACTIVE
         MENUITEM SEPARATOR
-        MENUITEM "执行",                        ID_START
-        MENUITEM "性能分析",                    ID_PROFILE
+        MENUITEM "运行游戏",                    ID_START
+        MENUITEM SEPARATOR
+        MENUITEM "取消当前操作..",              ID_STOPOP
         MENUITEM SEPARATOR
         MENUITEM "设置...",                     ID_SETTING
     END
     POPUP "帮助"
     BEGIN
-        MENUITEM "留言...",                     ID_REPORTBUG
         MENUITEM "更新...",                     ID_UPDATACLIENT
     END
 END
@@ -382,26 +380,24 @@ IDR_MAINFRAME           BITMAP  DISCARDABLE     "res\\toolbar1.bmp"
 
 /////////////////////////////////////////////////////////////////////////////
 //
-// Toolbar
-//
-
-IDR_MAINFRAME TOOLBAR DISCARDABLE  33, 28
-BEGIN
-    BUTTON      ID_COMBO1
-    BUTTON      ID_COMBO2
-    SEPARATOR
-    BUTTON      ID_BUTTON32838
-END
-
-
-/////////////////////////////////////////////////////////////////////////////
-//
 // Icon
 //
 
 // Icon with lowest ID value placed first to ensure application icon
 // remains consistent on all systems.
 IDR_MAINFRAME           ICON    DISCARDABLE     "res\\BnSClient.ico"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Toolbar
+//
+
+IDR_MAINFRAME TOOLBAR DISCARDABLE  16, 15
+BEGIN
+    BUTTON      ID_COMBO1
+    BUTTON      ID_COMBO2
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //

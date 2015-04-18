@@ -42,21 +42,21 @@ BOOL GamecallEx::HeChengWuQi_Po5(EQUITMENT_POS pos, wchar_t* name)
 
 
     //参数有, 再判断合成目标有没有已经满5
-	BOOL isFull5_fu = TRUE;
+    BOOL isFull5_fu = TRUE;
 
-	//破5的武器貌似都改成蓝颜色了，并且无需强化
-	//if (_wcsicmp(fu.name,qianhun) == 0)
-	//{
-	//	isFull5_fu = TRUE;
-	//}else
-	//{
-	//	if(fu.m_PingJi == 5 &&
-	//		(fu.m_DangQianJingYanZhi == fu.m_DangQianJingYanZongZhi))
-	//	{
-	//		//已经满5
-	//		isFull5_fu = TRUE;
-	//	}
-	//}
+    //破5的武器貌似都改成蓝颜色了，并且无需强化
+    //if (_wcsicmp(fu.name,qianhun) == 0)
+    //{
+    //  isFull5_fu = TRUE;
+    //}else
+    //{
+    //  if(fu.m_PingJi == 5 &&
+    //      (fu.m_DangQianJingYanZhi == fu.m_DangQianJingYanZongZhi))
+    //  {
+    //      //已经满5
+    //      isFull5_fu = TRUE;
+    //  }
+    //}
 
 
     if(isFull5_fu)
@@ -105,7 +105,7 @@ BOOL GamecallEx::HeChengWuQiByHun(EQUITMENT_POS pos)
             }
         }
 
-		
+
         if(bFind == FALSE)
         {
             if(GetGoodsFromBagByName(hun2, &zhu) == FALSE)
@@ -269,7 +269,7 @@ BOOL GamecallEx::HeChengWuQi(EQUITMENT_POS pos)
         }
     }
 
-	//TRACE1("所有材料:%d",Cailiao.size());
+    //TRACE1("所有材料:%d",Cailiao.size());
     //使用所有材料
     for(DWORD j = 0; j < Cailiao.size(); j++)
     {
@@ -324,8 +324,8 @@ void GamecallEx::FuHuo()
     {
 
         sendcall(id_msg_Fuhuo, &uiAddr);
-		//复活后等待10秒 等待进入读图阶段 宁可复活后多等 时间少容易报错
-		Sleep(10000);
+        //复活后等待10秒 等待进入读图阶段 宁可复活后多等 时间少容易报错
+        Sleep(10000);
 
         /*for(;;)
         {
@@ -451,17 +451,18 @@ void GamecallEx::BuyItem(DWORD nums, DWORD index, wchar_t* npcname, BOOL bClose)
 BOOL GamecallEx::XieZhuangBei(EQUITMENT_POS pos)
 {
     _PARAM_JIEFENGZHUANGBEI temp;
-	temp.argv1 = (DWORD)pos;
-	sendcall(id_msg_XieZhuangBei,&temp);
-	//修理
-	_BAGSTU stu;
-	if (GetGoodsByEquipPos(WUQI, &stu) == FALSE)
-	{
-		return TRUE;
-	}else
-	{
-		return FALSE;
-	}
+    temp.argv1 = (DWORD)pos;
+    sendcall(id_msg_XieZhuangBei, &temp);
+    //修理
+    _BAGSTU stu;
+    if(GetGoodsByEquipPos(WUQI, &stu) == FALSE)
+    {
+        return TRUE;
+    }
+    else
+    {
+        return FALSE;
+    }
 }
 
 //瞬间移动
@@ -470,16 +471,23 @@ void GamecallEx::Shunyi(TCHAR* szLujing)
 {
     GameConfig* pConfig = GameConfig::GetInstance();
 
-    TCHAR szFull[MAX_PATH] = {0};
-    _tcscat(szFull, pConfig->m_szLujingPath);
-    PathAppend(szFull, szLujing);
-    _tcscat(szFull, _T(".bin"));
+    TCHAR szExe[MAX_PATH] = {0};
+    GetModuleFileName(AfxGetInstanceHandle(), szExe, MAX_PATH);
+    PathRemoveFileSpec(szExe);
+    PathAppend(szExe, _T("路径"));
+    if(!PathFileExists(szExe))
+    {
+        _tmkdir(szExe);
+    }
+
+    PathAppend(szExe, szLujing);
+    _tcscat(szExe, _T(".bin"));
 
 
-    FILE* file = _tfopen(szFull, _T("rb"));
+    FILE* file = _tfopen(szExe, _T("rb"));
     if(file == NULL)
     {
-        log.info(_T("%s: open fail"), FUNCNAME);
+        LOGER(_T("%s: open fail"), FUNCNAME);
         return;
     }
     else
@@ -608,7 +616,7 @@ BOOL GamecallEx::kill_Task(int MyQuestID, int MyQuestStep)
 //添加自定义杀怪规则
 void GamecallEx::AddCustomKill(WCHAR* name, DWORD type)
 {
-    
+
     CUSTOMKILL cust;
 
     int len = wcslen(name);
@@ -624,14 +632,14 @@ void GamecallEx::AddCustomKill(WCHAR* name, DWORD type)
 //清空自定义杀怪规则
 int GamecallEx::ClearCustom()
 {
-	CustomName.clear();
+    CustomName.clear();
     //释放掉new的内存
     for(int i = 0; i < CustomName.size(); i++)
     {
         delete []CustomName[i].name;
     }
 
-    
+
     return 0;
 }
 
@@ -642,7 +650,7 @@ int GamecallEx::ClearCustom()
 //参数3: 模式
 int GamecallEx::FindThenKill(int pos, DWORD range, DWORD mode, DWORD MyQuestStep, DWORD MyQuestID, DWORD canKillRange)
 {
-    
+
 
 
     fPosition fmypos;
@@ -687,16 +695,16 @@ startKiLL:
         }
         if(mode & modePickupBody)
         {
-            
+
             if(kill_PickupBody())
             {
                 break;
             }
-			/*else
-			{
-				log.info(_T("没有举起或没有拾起"));
-				goto startKiLL;
-			}*/
+            /*else
+            {
+                log.info(_T("没有举起或没有拾起"));
+                goto startKiLL;
+            }*/
         }
         if(mode & modePickupOnce)
         {
@@ -807,44 +815,44 @@ void GamecallEx::DeliverQuests(DWORD id, DWORD step, wchar_t* name, DWORD questt
 //参数2: 任务步骤
 //参数3: 任务名字
 //参数4: 任务的类型, 通常是 0 1 2 3 这几个值
-void GamecallEx::DeliverQuests(DWORD id, DWORD step, DWORD npcid1,DWORD npcid2, DWORD questtype, DWORD ff, DWORD unknow)
+void GamecallEx::DeliverQuests(DWORD id, DWORD step, DWORD npcid1, DWORD npcid2, DWORD questtype, DWORD ff, DWORD unknow)
 {
 
-	//ObjectNode* Node;
-	//int npcid1;
-	//int npcid2;
+    //ObjectNode* Node;
+    //int npcid1;
+    //int npcid2;
 
-	//if(name == NULL)
-	//{
-	//	npcid1 = 0;
-	//	npcid2 = 0;
-	//}
-	//else
-	//{
-	//	Node = GetObjectByName(name);
-	//	if(Node == NULL)
-	//	{
-	//		log.info(_T("%s: 没有找到这个NPC"), FUNCNAME);
-	//		return;
-	//	}
+    //if(name == NULL)
+    //{
+    //  npcid1 = 0;
+    //  npcid2 = 0;
+    //}
+    //else
+    //{
+    //  Node = GetObjectByName(name);
+    //  if(Node == NULL)
+    //  {
+    //      log.info(_T("%s: 没有找到这个NPC"), FUNCNAME);
+    //      return;
+    //  }
 
-	//	npcid1 = Node->id;
-	//	npcid2 = Node->id2;
-	//}
+    //  npcid1 = Node->id;
+    //  npcid2 = Node->id2;
+    //}
 
-	//取任务面板地址, 测试不用这个地址
-	//DWORD dwUIAddr;
-	//GetUIAddrByName(GetUIBinTreeBaseAddr(), L"TalkProgressMissionPanel", &dwUIAddr);
-	PARAM_DELIVERQUEST temp;
-	temp.ff = ff;
-	temp.id = id;
-	temp.mianban = 0;
-	temp.npcid1 = npcid1;
-	temp.npcid2 = npcid2;
-	temp.questtype = questtype;
-	temp.unknow = unknow;
-	temp.step = step;
-	sendcall(id_msg_DeliverQuests, &temp);
+    //取任务面板地址, 测试不用这个地址
+    //DWORD dwUIAddr;
+    //GetUIAddrByName(GetUIBinTreeBaseAddr(), L"TalkProgressMissionPanel", &dwUIAddr);
+    PARAM_DELIVERQUEST temp;
+    temp.ff = ff;
+    temp.id = id;
+    temp.mianban = 0;
+    temp.npcid1 = npcid1;
+    temp.npcid2 = npcid2;
+    temp.questtype = questtype;
+    temp.unknow = unknow;
+    temp.step = step;
+    sendcall(id_msg_DeliverQuests, &temp);
 }
 
 
@@ -932,7 +940,7 @@ TaskOK:
 
 
 
-BOOL GamecallEx::PickupSpecTypeTask(DWORD range, DWORD type, wchar_t* name,BOOL flag)
+BOOL GamecallEx::PickupSpecTypeTask(DWORD range, DWORD type, wchar_t* name, BOOL flag)
 {
 
     try
@@ -958,15 +966,15 @@ BOOL GamecallEx::PickupSpecTypeTask(DWORD range, DWORD type, wchar_t* name,BOOL 
                     continue;
                 }
             }
-			if (flag)
-			{
-				fPosition fpos;
-				sPosition spos;
-				GetObjectPos2_0x90(RangeObject[i]->ObjAddress, &spos);
-				fpos = ShortPosToFloatPos(spos);
-				Stepto(fpos.y,fpos.x,fpos.z,20,10,range + 100);
-			}
-			
+            if(flag)
+            {
+                fPosition fpos;
+                sPosition spos;
+                GetObjectPos2_0x90(RangeObject[i]->ObjAddress, &spos);
+                fpos = ShortPosToFloatPos(spos);
+                Stepto(fpos.y, fpos.x, fpos.z, 20, 10, range + 100);
+            }
+
             if(GetObjectType(RangeObject[i]->ObjAddress) == type)
             {
                 Gamecall::PickupTask(RangeObject[i]);
@@ -1119,7 +1127,7 @@ void GamecallEx::randXianlu(DWORD MaxXianlu)
 //装备物品
 //参数1: 装备名字
 //参数2: 装备类型
-void GamecallEx::WearEquipment(wchar_t* name, int pos,BOOL Blur)
+void GamecallEx::WearEquipment(wchar_t* name, int pos, BOOL Blur)
 {
 
     std::vector<_BAGSTU> RangeObject;
@@ -1130,33 +1138,34 @@ void GamecallEx::WearEquipment(wchar_t* name, int pos,BOOL Blur)
         DWORD i;
         for(i = 0; i < RangeObject.size(); i++)
         {
-			if (Blur == TRUE)
-			{
-				int len = wcslen(name);
-				wchar_t* fixName = new wchar_t[len];
-				wcscpy(fixName, name);
-				fixName[len] = L'\0';
-				//MessageBox(NULL,fixName,NULL,NULL);
-				if(wcsstr(RangeObject[i].name, fixName) != NULL)
-				{
-					RangeObject[i].m_ID = pos;
-					sendcall(id_msg_WearEquipment, (LPVOID)&RangeObject[i]);
-					return;
-				}
-			}else
-			{
-				if(wcscmp(RangeObject[i].name, name) == 0)
-				{
-					RangeObject[i].m_ID = pos;
-					sendcall(id_msg_WearEquipment, (LPVOID)&RangeObject[i]);
-					return;
-				}
-			}
+            if(Blur == TRUE)
+            {
+                int len = wcslen(name);
+                wchar_t* fixName = new wchar_t[len];
+                wcscpy(fixName, name);
+                fixName[len] = L'\0';
+                //MessageBox(NULL,fixName,NULL,NULL);
+                if(wcsstr(RangeObject[i].name, fixName) != NULL)
+                {
+                    RangeObject[i].m_ID = pos;
+                    sendcall(id_msg_WearEquipment, (LPVOID)&RangeObject[i]);
+                    return;
+                }
+            }
+            else
+            {
+                if(wcscmp(RangeObject[i].name, name) == 0)
+                {
+                    RangeObject[i].m_ID = pos;
+                    sendcall(id_msg_WearEquipment, (LPVOID)&RangeObject[i]);
+                    return;
+                }
+            }
         }
     }
     catch(...)
     {
-		log.info(_T("穿装备: error"));
+        log.info(_T("穿装备: error"));
     }
 
     log.info(_T("穿装备: 没有找到匹配的名字"));
@@ -1166,16 +1175,16 @@ void GamecallEx::WearEquipment(wchar_t* name, int pos,BOOL Blur)
 BOOL Gamecall::Stepto(fPosition& tarpos, double timeOut, DWORD okRange, DWORD tooLong, BOOL sp3x)
 {
 
-	while (isLoadingMap() != 3)
-	{
-		TRACE(_T("执行走路时在读图，等待一会。"));
-		Sleep(2000);
-	}
+    while(isLoadingMap() != 3)
+    {
+        TRACE(_T("执行走路时在读图，等待一会。"));
+        Sleep(2000);
+    }
     //首先, 人得是活的
     if(GetPlayerDeadStatus() == 1 ||
             GetPlayerDeadStatus() == 2)
     {
-		TRACE(_T("走路时人物死亡"));
+        TRACE(_T("走路时人物死亡"));
         return FALSE;
     }
 
@@ -1185,7 +1194,7 @@ BOOL Gamecall::Stepto(fPosition& tarpos, double timeOut, DWORD okRange, DWORD to
     fPosition fmypos;
     if(GetPlayerPos(&fmypos) == FALSE)
     {
-        log.info(_T("没能获取自身坐标"));
+        LOGER(_T("没能获取自身坐标"));
         return FALSE;
     }
 
@@ -1193,7 +1202,7 @@ BOOL Gamecall::Stepto(fPosition& tarpos, double timeOut, DWORD okRange, DWORD to
     DWORD dis = (DWORD)CalcC(fmypos, tarpos);
     if(dis >= tooLong)
     {
-        log.info(_T("%s: 目的距离太远"), FUNCNAME);
+        LOGER(_T("%s: 目的距离太远"), FUNCNAME);
         return FALSE;
     }
 
@@ -1217,7 +1226,7 @@ BOOL Gamecall::Stepto(fPosition& tarpos, double timeOut, DWORD okRange, DWORD to
         fmypos;
         if(GetPlayerPos(&fmypos) == FALSE)
         {
-            log.info(_T("没能获取自身坐标"));
+            LOGER(_T("没能获取自身坐标"));
             return FALSE;
         }
 
@@ -1231,13 +1240,13 @@ BOOL Gamecall::Stepto(fPosition& tarpos, double timeOut, DWORD okRange, DWORD to
 
         if((GetTickCount() - tc1) >= (timeOut * 1000))
         {
-			if (isLoadingMap() != 3)
-			{
-				TRACE(_T("走路超时,准备执行SS，读图等待。"));
-				WaitPlans();
-				return FALSE;
-			}
-            log.info(_T("超时"));
+            if(isLoadingMap() != 3)
+            {
+                TRACE(_T("走路超时,准备执行SS，读图等待。"));
+                WaitPlans();
+                return FALSE;
+            }
+            LOGER(_T("超时"));
             sendcall(id_msg_attack, (LPVOID)0x5e6a);
             return FALSE;
         }
@@ -1305,35 +1314,35 @@ BOOL GamecallEx::_CityConvey(DWORD cityid)
 {
 
     //if(GetCityID() == cityid){
-    //	log.info(_T("相同的城市ID取消传送"));
-    //	return FALSE;
+    //  log.info(_T("相同的城市ID取消传送"));
+    //  return FALSE;
     //}
 
 
     __try
     {
-		int cs;
-		cs = 0;
-		bool isInMapLoading = false;
+        int cs;
+        cs = 0;
+        bool isInMapLoading = false;
         sendcall(id_msg_DunDi, (LPVOID)cityid);
 
         Sleep(4000);
-		for(;;)
-		{
-			if (cs > 5)
-			{
-				TRACE(_T("读条可能被打断,长时间没进入读图状态"));
-				return FALSE;
-			}
-			//读条完毕或被打断
-			if(isLoadingMap() == 5)
-			{
-				isInMapLoading = TRUE;
-				break;
-			}
-			cs++;
-			Sleep(2000);
-		}
+        for(;;)
+        {
+            if(cs > 5)
+            {
+                TRACE(_T("读条可能被打断,长时间没进入读图状态"));
+                return FALSE;
+            }
+            //读条完毕或被打断
+            if(isLoadingMap() == 5)
+            {
+                isInMapLoading = TRUE;
+                break;
+            }
+            cs++;
+            Sleep(2000);
+        }
 
         WaitPlans();
 
@@ -1364,33 +1373,33 @@ void GamecallEx::NPCJieRenWu(DWORD canshu1, DWORD canshu2, DWORD canshu3, DWORD 
 //NPC接任务
 void GamecallEx::NPCJieRenWu(wchar_t* name, DWORD canshu3, DWORD canshu4, DWORD canshu5)
 {
-	ObjectNode* Node;
-	int npcid1;
-	int npcid2;
-	if(name == NULL)
-	{
-		npcid1 = 0;
-		npcid2 = 0;
-	}
-	else
-	{
-		Node = GetObjectByName(name);
-		if(Node == NULL)
-		{
-			log.info(_T("%s: 没有找到这个NPC"), FUNCNAME);
-			return;
-		}
+    ObjectNode* Node;
+    int npcid1;
+    int npcid2;
+    if(name == NULL)
+    {
+        npcid1 = 0;
+        npcid2 = 0;
+    }
+    else
+    {
+        Node = GetObjectByName(name);
+        if(Node == NULL)
+        {
+            log.info(_T("%s: 没有找到这个NPC"), FUNCNAME);
+            return;
+        }
 
-		npcid1 = Node->id;
-		npcid2 = Node->id2;
-	}
-	PARAM_JIEFENGZHUANGBEI temp;
-	temp.argv1 = npcid1;
-	temp.argv2 = npcid2;
-	temp.argv3 = canshu3;
-	temp.argv4 = canshu4;
-	temp.argv5 = canshu5;
-	sendcall(id_msg_NPCJieRenWu, &temp);
+        npcid1 = Node->id;
+        npcid2 = Node->id2;
+    }
+    PARAM_JIEFENGZHUANGBEI temp;
+    temp.argv1 = npcid1;
+    temp.argv2 = npcid2;
+    temp.argv3 = canshu3;
+    temp.argv4 = canshu4;
+    temp.argv5 = canshu5;
+    sendcall(id_msg_NPCJieRenWu, &temp);
 }
 
 BOOL GamecallEx::BuqiBaGua()
@@ -1886,12 +1895,12 @@ _kaihezi_begin:
         }
 
     }
-	std::vector<_BAGSTU> HeZiVecyz;
-	GetGoodsByName_Hezi(BaGuaname, HeZiVecyz);
-	if (HeZiVec.size() > 0)
-	{
-		goto _kaihezi_begin;
-	}
+    std::vector<_BAGSTU> HeZiVecyz;
+    GetGoodsByName_Hezi(BaGuaname, HeZiVecyz);
+    if(HeZiVec.size() > 0)
+    {
+        goto _kaihezi_begin;
+    }
 }
 
 
@@ -2206,116 +2215,117 @@ void GamecallEx::AttackAOE()
 //canKillRange 设定多远距离可直接攻击
 int GamecallEx::KillObject(DWORD range, ObjectNode* pNode, DWORD mode, DWORD canKillRange)
 {
-	//记录当下状态来判断目标是否死亡或者杀怪超时
-	DWORD oriTime = GetTickCount();
-	DWORD tarHealth = GetType4HP(pNode->ObjAddress);;
+    //记录当下状态来判断目标是否死亡或者杀怪超时
+    DWORD oriTime = GetTickCount();
+    DWORD tarHealth = GetType4HP(pNode->ObjAddress);;
 
-	fPosition mypos;
-	fPosition targetpos;
-	for(;;)
-	{
- 
-		//TRACE(_T("判断人物死亡"));
-		if(GetPlayerHealth() <= 0)
-		{
-			log.info(_T("%s: 人物死亡了"), FUNCNAME);
-			return RESULT_KILL_PLAYDEAD;
-		}
+    fPosition mypos;
+    fPosition targetpos;
+    for(;;)
+    {
 
-		//整个逻辑根据距离来作为输入数据来做判断
-		//TRACE(_T("执行血量判断"));
-		if(GetType4HP(pNode->ObjAddress) == -1 || GetType4HP(pNode->ObjAddress) == 0)
-		{
-			log.info(_T("%s: 血量判断怪死了"), FUNCNAME);
-			return RESULT_KILL_OK;
-		}
+        //TRACE(_T("判断人物死亡"));
+        if(GetPlayerHealth() <= 0)
+        {
+            log.info(_T("%s: 人物死亡了"), FUNCNAME);
+            return RESULT_KILL_PLAYDEAD;
+        }
 
-
-		ZeroMemory(&mypos, sizeof(fPosition));
-		GetPlayerPos(&mypos);
-
-		//通过距离判断目标死亡
-		//TRACE(_T("执行类型判断"));
-		ZeroMemory(&targetpos, sizeof(fPosition));
-
-		if(GetObjectType(pNode->ObjAddress) != 0x4)
-		{
-			log.info(_T("%s: 类型判断怪死了"), FUNCNAME);
-			return RESULT_KILL_OK;
-		}
-
-		//TRACE(_T("执行坐标判断"));
-		if(_GetObjectPos(pNode->ObjAddress, &targetpos) == FALSE)
-		{
-			log.info(_T("%s: 坐标判断怪死了"), FUNCNAME);
-			return RESULT_KILL_OK;
-		}
-		DWORD dis = (DWORD)CalcC(targetpos, mypos);
-		//TRACE(_T("执行距离判断"));
-		if(dis >= range)
-		{
-			log.info(_T("%s: 距离判断怪死了"), FUNCNAME);
-			return RESULT_KILL_OK;
-		}
+        //整个逻辑根据距离来作为输入数据来做判断
+        //TRACE(_T("执行血量判断"));
+        if(GetType4HP(pNode->ObjAddress) == -1 || GetType4HP(pNode->ObjAddress) == 0)
+        {
+            log.info(_T("%s: 血量判断怪死了"), FUNCNAME);
+            return RESULT_KILL_OK;
+        }
 
 
+        ZeroMemory(&mypos, sizeof(fPosition));
+        GetPlayerPos(&mypos);
 
-		/*
-		不可用
-		if(GetObject_0x14(pNode->ObjAddress) == 0){
-		log.info(_T("%s: 0x14判断怪死了"), FUNCNAME);
-		return RESULT_KILL_OK;
-		}*/
+        //通过距离判断目标死亡
+        //TRACE(_T("执行类型判断"));
+        ZeroMemory(&targetpos, sizeof(fPosition));
+
+        if(GetObjectType(pNode->ObjAddress) != 0x4)
+        {
+            log.info(_T("%s: 类型判断怪死了"), FUNCNAME);
+            return RESULT_KILL_OK;
+        }
+
+        //TRACE(_T("执行坐标判断"));
+        if(_GetObjectPos(pNode->ObjAddress, &targetpos) == FALSE)
+        {
+            log.info(_T("%s: 坐标判断怪死了"), FUNCNAME);
+            return RESULT_KILL_OK;
+        }
+        DWORD dis = (DWORD)CalcC(targetpos, mypos);
+        //TRACE(_T("执行距离判断"));
+        if(dis >= range)
+        {
+            log.info(_T("%s: 距离判断怪死了"), FUNCNAME);
+            return RESULT_KILL_OK;
+        }
 
 
-		//可继续走
-		if(dis > canKillRange)
-		{
-			targetpos.x = targetpos.x - 10;
-			targetpos.y = targetpos.y - 10;
-			Gamecall::Stepto(targetpos, 10, CAN_OPERATOR, range);
-			/*}else if(dis <= 2){
-			log.info(_T("自己的坐标X:%d,y:%d,怪物的坐标X:%d,Y:%d"),(int)mypos.x,(int)mypos.y,(int)targetpos.x,(int)targetpos.y);
-			log.info(_T("%s: 重叠怪物"), FUNCNAME);
-			RandomStep(30);*/
-		}
-		else if(dis <= canKillRange)
-		{
-			//判断倒地状态
-			if(isPlayerDaodi())
-			{
-				//5E60->5EA6->5EB0->5E9C
-				TRACE(_T("进入倒地状态"));
-				Sleep(500);
-				if(isStrikeCd(0x5e60) == TRUE)
-				{
-					TRACE(_T("进入倒地状态:0x5e60"));
-					sendcall(id_msg_attack, (LPVOID)0x5e60);
-					Sleep(1000);
-				}
-				else if(isStrikeCd(0x5EA6) == TRUE)
-				{
-					TRACE(_T("进入倒地状态:0x5EA6"));
-					sendcall(id_msg_attack, (LPVOID)0x5EA6);
-				}
-				else if(isStrikeCd(0x5E9C) == TRUE)
-				{
-					TRACE(_T("进入倒地状态:0x5E9C"));
-					sendcall(id_msg_attack, (LPVOID)0x5E9C);
-				}
-				/*else if(isStrikeCd(0x5EB0) == TRUE)
-				{
-					TRACE(_T("进入倒地状态:0x5EB0"));
-					sendcall(id_msg_attack, (LPVOID)0x5EB0);
-				}*/
 
-			}
-			//杀怪时才需要转向
-			Gamecall::TurnTo(targetpos);
-			if (mode & modeOnlyAoe)
-			{
-				AttackAOE();
-			}else
+        /*
+        不可用
+        if(GetObject_0x14(pNode->ObjAddress) == 0){
+        log.info(_T("%s: 0x14判断怪死了"), FUNCNAME);
+        return RESULT_KILL_OK;
+        }*/
+
+
+        //可继续走
+        if(dis > canKillRange)
+        {
+            targetpos.x = targetpos.x - 10;
+            targetpos.y = targetpos.y - 10;
+            Gamecall::Stepto(targetpos, 10, CAN_OPERATOR, range);
+            /*}else if(dis <= 2){
+            log.info(_T("自己的坐标X:%d,y:%d,怪物的坐标X:%d,Y:%d"),(int)mypos.x,(int)mypos.y,(int)targetpos.x,(int)targetpos.y);
+            log.info(_T("%s: 重叠怪物"), FUNCNAME);
+            RandomStep(30);*/
+        }
+        else if(dis <= canKillRange)
+        {
+            //判断倒地状态
+            if(isPlayerDaodi())
+            {
+                //5E60->5EA6->5EB0->5E9C
+                TRACE(_T("进入倒地状态"));
+                Sleep(500);
+                if(isStrikeCd(0x5e60) == TRUE)
+                {
+                    TRACE(_T("进入倒地状态:0x5e60"));
+                    sendcall(id_msg_attack, (LPVOID)0x5e60);
+                    Sleep(1000);
+                }
+                else if(isStrikeCd(0x5EA6) == TRUE)
+                {
+                    TRACE(_T("进入倒地状态:0x5EA6"));
+                    sendcall(id_msg_attack, (LPVOID)0x5EA6);
+                }
+                else if(isStrikeCd(0x5E9C) == TRUE)
+                {
+                    TRACE(_T("进入倒地状态:0x5E9C"));
+                    sendcall(id_msg_attack, (LPVOID)0x5E9C);
+                }
+                /*else if(isStrikeCd(0x5EB0) == TRUE)
+                {
+                    TRACE(_T("进入倒地状态:0x5EB0"));
+                    sendcall(id_msg_attack, (LPVOID)0x5EB0);
+                }*/
+
+            }
+            //杀怪时才需要转向
+            Gamecall::TurnTo(targetpos);
+            if(mode & modeOnlyAoe)
+            {
+                AttackAOE();
+            }
+            else
             {
                 if(mode & modeAoe)
                 {
@@ -2324,38 +2334,39 @@ int GamecallEx::KillObject(DWORD range, ObjectNode* pNode, DWORD mode, DWORD can
                         //TRACE(_T("执行AEO"));
                         AttackAOE();
                     }
-					{
-						//TRACE(_T("执行RT"));
-						//TRACE(_T("执行RT"));
-						AttackNormal();
-					}
-				}
-				else{
-					//TRACE(_T("执行AOE外的RT"));
-					//TRACE(_T("执行AOE外的RT"));
-					AttackNormal();
-				}
-			}
-			//5秒没能打掉血就退
-			DWORD curTime = GetTickCount();
-			if((curTime - oriTime) >= 5000)
-			{
-				DWORD curHealth = GetType4HP(pNode->ObjAddress);
-				if(curHealth < tarHealth)
-				{
-					oriTime = GetTickCount();
-					tarHealth = GetType4HP(pNode->ObjAddress);
-					
-				}
-				else
-				{
-					log.info(_T("%s: 超时退出"), FUNCNAME);
-					return RESULT_KILL_TIMEOUT;
-				}
-			}
-			Sleep(50);
-		}//for
-	}
+                    {
+                        //TRACE(_T("执行RT"));
+                        //TRACE(_T("执行RT"));
+                        AttackNormal();
+                    }
+                }
+                else
+                {
+                    //TRACE(_T("执行AOE外的RT"));
+                    //TRACE(_T("执行AOE外的RT"));
+                    AttackNormal();
+                }
+            }
+            //5秒没能打掉血就退
+            DWORD curTime = GetTickCount();
+            if((curTime - oriTime) >= 5000)
+            {
+                DWORD curHealth = GetType4HP(pNode->ObjAddress);
+                if(curHealth < tarHealth)
+                {
+                    oriTime = GetTickCount();
+                    tarHealth = GetType4HP(pNode->ObjAddress);
+
+                }
+                else
+                {
+                    log.info(_T("%s: 超时退出"), FUNCNAME);
+                    return RESULT_KILL_TIMEOUT;
+                }
+            }
+            Sleep(50);
+        }//for
+    }
 }
 
 void GamecallEx::CityConvey(DWORD cityid)
@@ -2437,11 +2448,11 @@ BOOL GamecallEx::HeChengWuQi_Po10(wchar_t* zname, wchar_t* name)
     //    TRACE(_T("装备位置没有物品"));
     //    return FALSE;
     //}
-	if(GetGoodsFromBagByName(zname, &zhu) == FALSE)
-	{
-		log.info(_T("背包里没有对应的主武器"));
-		return FALSE;
-	}
+    if(GetGoodsFromBagByName(zname, &zhu) == FALSE)
+    {
+        log.info(_T("背包里没有对应的主武器"));
+        return FALSE;
+    }
 
     //先判断参数传的有没有, 没有算逑
     _BAGSTU fu;
@@ -2456,35 +2467,35 @@ BOOL GamecallEx::HeChengWuQi_Po10(wchar_t* zname, wchar_t* name)
     BOOL isFull5_fu = TRUE;
     //if (_wcsicmp(fu.name,qianhun) == 0)
     //{
-    //	isFull5_fu = TRUE;
+    //  isFull5_fu = TRUE;
     //}else
     //{
-    //	if(fu.m_PingJi == 5 &&
-    //		(fu.m_DangQianJingYanZhi == fu.m_DangQianJingYanZongZhi))
-    //	{
-    //		//已经满5
-    //		isFull5_fu = TRUE;
-    //	}
+    //  if(fu.m_PingJi == 5 &&
+    //      (fu.m_DangQianJingYanZhi == fu.m_DangQianJingYanZongZhi))
+    //  {
+    //      //已经满5
+    //      isFull5_fu = TRUE;
+    //  }
     //}
     TRACE2("zhu:%x,fu:%x", zhu.m_Info, fu.m_Info);
 
-	DWORD tempaddress = HuoQuWuQiPo10CanShu(zhu.m_Base);
-	if (tempaddress == -1)
-	{
-		TRACE(_T("没有找到address的参数地址"));
-		return FALSE;
-	}
+    DWORD tempaddress = HuoQuWuQiPo10CanShu(zhu.m_Base);
+    if(tempaddress == -1)
+    {
+        TRACE(_T("没有找到address的参数地址"));
+        return FALSE;
+    }
     if(isFull5_fu)
     {
 
         PARAM_GETUIADDRBYNAME temp;
         temp.argv1 = (DWORD)&zhu;
         temp.argv2 = (DWORD)&fu;
-		temp.argv3 = tempaddress;
+        temp.argv3 = tempaddress;
         sendcall(id_msg_HeChengWuQi_Po10, &temp);
         Sleep(1000);
         //破5级后继续强化
-		//HeChengWuQi(pos);
+        //HeChengWuQi(pos);
     }
     else
     {
@@ -2495,7 +2506,7 @@ BOOL GamecallEx::HeChengWuQi_Po10(wchar_t* zname, wchar_t* name)
             return HeChengWuQi_Po10(pos, name);
         }
         log.info(_T("合成完毕, 依然不满5"));*/
-		return FALSE;
+        return FALSE;
     }
 
     return TRUE;
@@ -2569,46 +2580,46 @@ BOOL GamecallEx::PickupTaskts(DWORD range /*= CAN_OPERATOR*/)
 
 DWORD GamecallEx::HuoQuWuQiPo10CanShu(DWORD m_adressA)  //参数是主武器的首地址;
 {
-	TRACE1("进入:%x",m_adressA);
-	DWORD shuzhi = 0;
-	DWORD Adress = 0;
-	Adress = GetKaiShiAdress();  //获取开始地址
-	if ( Adress == 0 )
-	{
-		return -1;
-	}
-	int Num = 922;
-	DWORD canshu = 0;
-	DWORD canshu1 = 0;
-	//TRACE1("开始地址:%x",Adress);
-	for ( int i = 1; i < Num ; i++  )
-	{
-		//TRACE(_T("1"));
-		if ( GetBiJiaoShu2(i,Adress) == 0x4 || GetBiJiaoShu2(i,Adress) == 0x5 || GetBiJiaoShu2(i,Adress) == 0x6 )
-		{
-			//TRACE(_T("2"));
-			if ( GetBiJiaoShu3(m_adressA) == GetBiJiaoShu4(i,Adress) )
-			{
-				canshu = GetBiJiaoShu(i,Adress);
-				//TRACE1("+30de %X",canshu);
-				if (  canshu > 0 )
-				{
-					canshu1 = IsCanShu(canshu,m_adressA);
-					//TRACE1("是否是这个 %X",canshu1);
-					if ( canshu1 == 1 )
-					{
-						//TRACE(_T("找到这个结构了"));
-						shuzhi = GetBiJiaoShu1(i,Adress);  //获取比较数值1
-						TRACE1("找到这个结构地址:%X",shuzhi);
-						return shuzhi;
-					}
-				}
-			}
-		}
-	}
+    TRACE1("进入:%x", m_adressA);
+    DWORD shuzhi = 0;
+    DWORD Adress = 0;
+    Adress = GetKaiShiAdress();  //获取开始地址
+    if(Adress == 0)
+    {
+        return -1;
+    }
+    int Num = 922;
+    DWORD canshu = 0;
+    DWORD canshu1 = 0;
+    //TRACE1("开始地址:%x",Adress);
+    for(int i = 1; i < Num ; i++)
+    {
+        //TRACE(_T("1"));
+        if(GetBiJiaoShu2(i, Adress) == 0x4 || GetBiJiaoShu2(i, Adress) == 0x5 || GetBiJiaoShu2(i, Adress) == 0x6)
+        {
+            //TRACE(_T("2"));
+            if(GetBiJiaoShu3(m_adressA) == GetBiJiaoShu4(i, Adress))
+            {
+                canshu = GetBiJiaoShu(i, Adress);
+                //TRACE1("+30de %X",canshu);
+                if(canshu > 0)
+                {
+                    canshu1 = IsCanShu(canshu, m_adressA);
+                    //TRACE1("是否是这个 %X",canshu1);
+                    if(canshu1 == 1)
+                    {
+                        //TRACE(_T("找到这个结构了"));
+                        shuzhi = GetBiJiaoShu1(i, Adress); //获取比较数值1
+                        TRACE1("找到这个结构地址:%X", shuzhi);
+                        return shuzhi;
+                    }
+                }
+            }
+        }
+    }
 
-	TRACE(_T("没有找到"));
-	return -1;
+    TRACE(_T("没有找到"));
+    return -1;
 }
 
 //进入组队
@@ -2638,20 +2649,10 @@ bool GamecallEx::OnEventTCPSocketLink(CJLkitSocket* pSocket, INT nErrorCode)
 
         PartyPlayer player;
 
-#ifdef TEST_CONFIG
-        player.mid = 123;
-        player.pid = 234;
-        player.pos.x = 100;
-        player.pos.y = 200;
-        player.pos.z = 300;
-
-#else
 
         player.mid = GetCityID();
         player.pid = GetPlayerID();
         GetPlayerPos((fPosition*)&player.pos);
-
-#endif
 
         sock.Send(M_ADDPARTY, fun_group_find, &player, sizeof(PartyPlayer));
     }
@@ -2993,20 +2994,30 @@ DWORD GamecallEx::GetRangeLootCount(DWORD range)
 
 BOOL GamecallEx::Init()
 {
-    if(!Gamecall::Init())
+
+    //等待进入游戏
+    if(WaitPlans(120))
     {
-        log.info(_T("初始化失败"));
+        LOGER(_T("进入游戏完成"));
+    }
+    else
+    {
+        LOGER(_T("没能进入游戏"));
         return FALSE;
     }
 
-    //等待进入游戏
-    WaitPlans();
+
 
     //创建辅助线程
     hThreads[0] = (HANDLE)_beginthreadex(0, 0, KeepAliveThread, this, 0, 0);
     hThreads[1] = (HANDLE)_beginthreadex(0, 0, AttackHelperThread, this, 0, 0);
     SetThreadPriority(hThreads[0], THREAD_PRIORITY_LOWEST);
     SetThreadPriority(hThreads[1], THREAD_PRIORITY_LOWEST);
+
+    if(!Gamecall::Init())
+    {
+        return FALSE;
+    }
 
     return TRUE;
 }

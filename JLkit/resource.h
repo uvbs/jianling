@@ -66,7 +66,7 @@
 #define ID_COMBO2                       32830
 #define ID_UC_START                     32831
 #define ID_UC_LOG                       32832
-#define ID_BUTTON32838                  32838
+#define ID_STOPOP                       32840
 #define IDS_LOGINED                     57346
 #define IDS_ALLNUMS                     57347
 #define IDS_VALIDKEY                    57348
@@ -86,8 +86,8 @@
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_3D_CONTROLS                     1
-#define _APS_NEXT_RESOURCE_VALUE        179
-#define _APS_NEXT_COMMAND_VALUE         32839
+#define _APS_NEXT_RESOURCE_VALUE        181
+#define _APS_NEXT_COMMAND_VALUE         32841
 #define _APS_NEXT_CONTROL_VALUE         1046
 #define _APS_NEXT_SYMED_VALUE           115
 #endif

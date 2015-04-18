@@ -48,8 +48,8 @@ BEGIN_MESSAGE_MAP(CDlgLogin, CDialog)
     ON_BN_CLICKED(IDC_BUTTONREGISTER, OnBtnRegister)
     ON_BN_CLICKED(IDC_BTNMODIFYBIND, OnBtnModifybind)
     ON_WM_CREATE()
-	ON_WM_CLOSE()
-	//}}AFX_MSG_MAP
+    ON_WM_CLOSE()
+    //}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -57,8 +57,8 @@ END_MESSAGE_MAP()
 
 void CDlgLogin::OnBtnRegister()
 {
-    CMainFrame *pFrame = (CMainFrame *)AfxGetMainWnd();
-    CJLkitDoc* pDoc = (CJLkitDoc *)pFrame->GetActiveDocument();
+    CMainFrame* pFrame = (CMainFrame*)AfxGetMainWnd();
+    CJLkitDoc* pDoc = (CJLkitDoc*)pFrame->GetActiveDocument();
     pDoc->ShowRegister();
 }
 
@@ -67,10 +67,9 @@ BOOL CDlgLogin::OnInitDialog()
 {
     CDialog::OnInitDialog();
 
-    
+
     //¼ÓÔØÍ¼±ê
     SetIcon(AfxGetApp()->LoadIcon(IDR_MAINFRAME), FALSE);
-    
 
     //½¹µã
     if(m_strName.IsEmpty())
@@ -89,8 +88,8 @@ BOOL CDlgLogin::OnInitDialog()
 
 void CDlgLogin::OnBtnModifybind()
 {
-    CMainFrame *pFrame = (CMainFrame *)AfxGetMainWnd();
-    CJLkitDoc* pDoc = (CJLkitDoc *)pFrame->GetActiveDocument();
+    CMainFrame* pFrame = (CMainFrame*)AfxGetMainWnd();
+    CJLkitDoc* pDoc = (CJLkitDoc*)pFrame->GetActiveDocument();
     pDoc->ShowModiBind();
 }
 
@@ -98,13 +97,13 @@ void CDlgLogin::OnOK()
 {
     ShowWindow(SW_HIDE);
 
-    CMainFrame *pFrame = (CMainFrame *)AfxGetMainWnd();
-    CJLkitDoc* pDoc = (CJLkitDoc *)pFrame->GetActiveDocument();
+    CMainFrame* pFrame = (CMainFrame*)AfxGetMainWnd();
+    CJLkitDoc* pDoc = (CJLkitDoc*)pFrame->GetActiveDocument();
     pDoc->PerformLogonMission();
 }
 
 
-WORD CDlgLogin::ConstructLoginPacket( BYTE cbBuffer[], WORD wBufferSize )
+WORD CDlgLogin::ConstructLoginPacket(BYTE cbBuffer[], WORD wBufferSize)
 {
     ASSERT(this != NULL);
 
@@ -120,8 +119,8 @@ WORD CDlgLogin::ConstructLoginPacket( BYTE cbBuffer[], WORD wBufferSize )
     return sizeof(LOGIN_BUF);
 }
 
-void CDlgLogin::OnClose() 
+void CDlgLogin::OnClose()
 {
     AfxGetMainWnd()->DestroyWindow();
-	CDialog::OnClose();
+    CDialog::OnClose();
 }

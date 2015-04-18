@@ -31,9 +31,10 @@
 #include <afxdlgs.h>
 #include <afxsock.h>
 
+#include <string>
+#include <sstream>
 
 
-#include <assert.h>
 #include <DbgHelp.h>
 #include <locale.h>
 #include <process.h>
@@ -53,7 +54,6 @@
 
 #include "..\common\protocol.h"
 #include "..\common\common.h"
-#include "..\common\ShareMem.h"
 #include "..\common\CHook.h"
 #include "..\common\logger.h"
 #include "..\common\inject.h"

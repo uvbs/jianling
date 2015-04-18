@@ -3,9 +3,9 @@
 
 
 #ifdef JLTW
-#include "gamedata.h"
+    #include "gamedata-tw.h"
 #else
-#include "gamedata-tw.h"
+    #include "gamedata.h"
 #endif
 
 
@@ -32,7 +32,7 @@ public:
 
 
     //等待
-    void WaitPlans();   //等待过图 此函数返回表示过图完成
+    bool WaitPlans(int inMaxTime = 30);   //等待过图 此函数返回表示过图完成
     BOOL LoginInGame(DWORD index);
 
     //判断对象可杀的数据
@@ -271,7 +271,7 @@ public:
     DWORD       Getcanshu2(DWORD pAddr);        //参数2
     DWORD       Getcanshu1(DWORD pAddr);        //参数1
 
-    BOOL        GetGoodsFromBagByName(const wchar_t* name, _BAGSTU* goods,BOOL Blur = FALSE);      //根据名字取物品信息
+    BOOL        GetGoodsFromBagByName(const wchar_t* name, _BAGSTU* goods, BOOL Blur = FALSE);     //根据名字取物品信息
     BOOL        GetGoodsFromBagByName(const wchar_t* name, std::vector<_BAGSTU>& GoodsVec);
     BOOL        GetGoodsFromEquipByName(wchar_t* name, _BAGSTU* goods);
     BOOL        GetGoodsByEquipPos(DWORD pos, _BAGSTU* goods);      //根据位置取得物品信息

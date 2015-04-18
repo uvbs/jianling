@@ -47,5 +47,13 @@ x::Nested x::m_nest;
 
 
 
+typedef struct _PIPEDATA
+{
+    DWORD dwPid;
+    TCHAR szAccount[MAX_PATH];
+    TCHAR szPassWord[MAX_PATH];
+    TCHAR szConfig[MAX_PATH];
+    TCHAR szScript[MAX_PATH];
+}PIPEDATA, *PPIPEDATA;
 
 #endif

@@ -52,9 +52,6 @@ IMPLEMENT_SINGLETON(GameConfig)
 //构造函数
 GameConfig::GameConfig()
 {
-    m_szConfigPath[0] = _T('\0');
-    m_szLujingPath[0] = _T('\0');
-    m_szLujingTest[0] = _T('\0');
 }
 
 GameConfig::~GameConfig()
@@ -63,106 +60,29 @@ GameConfig::~GameConfig()
 }
 
 
-BOOL GameConfig::Init()
+BOOL GameConfig::LoadConfig()
 {
 
-#ifndef TEST_CONFIG
-
-    //打开共享内存
-    if(!m_SMem.Open(SHAREOBJNAME))
+    TCHAR szExe[MAX_PATH] = {0};
+    GetModuleFileName(AfxGetInstanceHandle(), szExe, MAX_PATH);
+    PathRemoveFileSpec(szExe);
+    PathAppend(szExe, _T("配置"));
+    if(!PathFileExists(szExe))
     {
-        log.info(_T("打开共享失败"));
-        return FALSE;
+        _tmkdir(szExe);
     }
 
-    //获取共享数据
-    m_pMyData = m_SMem.Get(GetCurrentProcessId());
-    if(m_pMyData == NULL) 
-    {
-        log.info(_T("获取游戏数据失败"));
-        return FALSE;
-    }
-
-#endif //TEST_CONFIG
-
-
-    //模块路径
-    TCHAR szExePath[MAX_PATH] = {0};
-    GetModuleFileName(GetModuleHandle(_T("JLwg")), szExePath, MAX_PATH);
-    PathRemoveFileSpec(szExePath);
-
-
-
-    //配置文件路径
-    _tcscpy(m_szConfigPath, szExePath);
-    PathAppend(m_szConfigPath, _T("配置"));
-    if(PathFileExists(m_szConfigPath) == FALSE)
-    {
-        _wmkdir(m_szConfigPath);
-    }
-
-
-    //瞬移的路径
-    _tcscpy(m_szLujingPath, szExePath);
-    PathAppend(m_szLujingPath, _T("路径"));
-    if(PathFileExists(m_szLujingPath) == FALSE)
-    {
-        _wmkdir(m_szLujingPath);
-    }
-
-
-    //录制瞬移文件路径
-    _tcscpy(m_szLujingTest, m_szLujingPath);
-    PathAppend(m_szLujingTest, _T("瞬移数据.bin"));
-
-
-#ifndef TEST_CONFIG
-    //默认配置文件的路径
-    PathAppend(m_szConfigPath, m_pMyData->szConfig);
-    _tcscat(m_szConfigPath, _T(".ini"));
-#else
-    PathAppend(m_szConfigPath, _T("test"));
-    _tcscat(m_szConfigPath, _T(".ini"));
-#endif
-
-    //如果配置文件不存在
-    if(PathFileExists(m_szConfigPath) == FALSE)
-    {
-#ifndef TEST_CONFIG
-        FILE* configFile = _tfopen(_T("default.ini"), _T("w+"));
-#else
-        FILE* configFile = _tfopen(_T("test.ini"), _T("w+"));
-#endif
-        if(configFile == NULL)
-        {
-            TRACE(_T("创建配置文件失败"));
-            return FALSE;
-        }
-
-        //UNICODE
-        WORD hdr = 0xfeff;
-        if(fwrite(&hdr, 1, sizeof(WORD), configFile) != sizeof(WORD))
-        {
-            return FALSE;
-        }
-
-        fclose(configFile);
-    }
-
-    return TRUE;
-}
-
-void GameConfig::LoadConfig()
-{
-    _ASSERTE(m_szConfigPath[0] != '\0');
+    CJLwgApp* pApp = (CJLwgApp*)AfxGetApp();
+    PIPEDATA& data = pApp->m_stData;
+    PathAppend(szExe, data.szConfig);
 
 
     //打开配置文件
-    SetMultiKey();
     SetUnicode();
-    if(LoadFile(m_szConfigPath) < 0) return;
-
-    TRACE(_T("配置文件加载完成.."));
+    if(LoadFile(szExe) < 0)
+    {
+        return FALSE;
+    }
 
 
     //清空配置
@@ -197,6 +117,8 @@ void GameConfig::LoadConfig()
     GOTOLIST2(DisenchantItem, ItemName);
     GOTOLIST2(QHAccessories, ItemName);
     GOTOLIST2(QHWeapons, ItemName);
+
+    return TRUE;
 }
 
 void GameConfig::SaveConfig()
@@ -204,6 +126,7 @@ void GameConfig::SaveConfig()
 
     //喝药百分比
     SetLongValue(strCombat, strYaoPecent, m_HealthPercent);
+    SetValue(strQhColor, strQhColor, m_szQHColor);
 
     //组队
     SetLongValue(strTeam, strInvite_Auto, m_bInvite_Auto);
@@ -218,6 +141,7 @@ void GameConfig::SaveConfig()
     SetLongValue(strTeam, strAcpt_Range, m_bAccept_Range);
     SetLongValue(strTeam, strAcpt_RangeValue, m_nAccept_Range);
 
+    SetMultiKey();
     GOTODATA(BankItem, ItemName);
     GOTODATA(DelItem, ItemName);
     GOTODATA(SellItem, ItemName);
@@ -229,9 +153,22 @@ void GameConfig::SaveConfig()
     GOTODATA2(Combat, FirstKill);
     GOTODATA2(Combat, DontKill);
     GOTODATA2(Combat, AlwaysKill);
+    SetMultiKey(false);
 
+    TCHAR szExe[MAX_PATH] = {0};
+    GetModuleFileName(AfxGetInstanceHandle(), szExe, MAX_PATH);
+    PathRemoveFileSpec(szExe);
+    PathAppend(szExe, _T("配置"));
+    if(!PathFileExists(szExe))
+    {
+        _tmkdir(szExe);
+    }
 
-    this->SaveFile(m_szConfigPath);
+    CJLwgApp* pApp = (CJLwgApp*)AfxGetApp();
+    PIPEDATA& data = pApp->m_stData;
+    PathAppend(szExe, data.szConfig);
+
+    SaveFile(szExe);
 }
 
 void GameConfig::ClearConfig()

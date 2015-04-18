@@ -26,40 +26,20 @@ public:
 
     //配置文件路径
 public:
-    TCHAR m_szLujingPath[MAX_PATH];
-    TCHAR m_szConfigPath[MAX_PATH];
-    TCHAR m_szLujingTest[MAX_PATH];
 
+    ItemVector m_SellItem;    //出售
+    ItemVector m_BankItem;    //存仓
+    ItemVector m_DisenchantItem;    //分解
+    ItemVector m_TradeItem;    //交易
+    ItemVector m_DelItem;    //删除
+    ItemVector m_QHAccessories;    //强化饰品
+    ItemVector m_QHWeapons;    //强化武器
 
-    //出售
-    ItemVector m_SellItem;
-
-    //存仓
-    ItemVector m_BankItem;
-
-    //分解
-    ItemVector m_DisenchantItem;
-
-    //交易
-    ItemVector m_TradeItem;
-
-    //删除
-    ItemVector m_DelItem;
-
-    //强化饰品
-    ItemVector m_QHAccessories;
-
-    //强化武器
-    ItemVector m_QHWeapons;
-
-    //战斗优先
+    //战斗
     ItemVector m_FirstKill;
-
-    //战斗不杀
     ItemVector m_DontKill;
-
-    //战斗必杀
     ItemVector m_AlwaysKill;
+
 
     //喝药百分比
     int m_HealthPercent;
@@ -104,19 +84,9 @@ public:
 
 
 
-    SHAREINFO* m_pMyData;
-
-
-    //共享内存
-private:
-    JLShareMem m_SMem;
-
-    //初始化
 public:
-    BOOL Init();
-
     //加载配置
-    void LoadConfig();
+    BOOL LoadConfig();
 
     //保存配置
     void SaveConfig();

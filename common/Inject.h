@@ -12,13 +12,12 @@ public:
     BOOL InjectTo(DWORD pid);
 
     //х╗оч
-    BOOL EnableDebugPrivilege(void);
+    static BOOL EnableDebugPrivilege(void);
     int AddPrivilege(LPCWSTR Name);
     BOOL IsVistaOrLater(void);
 
-
 private:
-    const TCHAR* m_lpszName;
+    TCHAR m_szName[MAX_PATH];
 };
 
 #endif

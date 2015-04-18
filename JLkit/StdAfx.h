@@ -46,7 +46,6 @@
 #include "..\common\protocol.h"
 #include "..\common\common.h"
 #include "..\common\webpost.h"
-#include "..\common\ShareMem.h"
 #include "..\common\Inject.h"
 #include "..\common\Lock.h"
 #include "..\common\WHService.h"

@@ -21,7 +21,7 @@ public:
     void InitValue();
 
 
-    BOOL open(TCHAR* pFileName, TCHAR* pMode = _T("at"));
+    BOOL open(const TCHAR* pFileName, TCHAR* pMode = _T("at"));
 
     void info(const TCHAR* szText, ...);
 

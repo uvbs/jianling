@@ -6,7 +6,7 @@
 #define AFX_GLOBALUSERINFO_H__1B9E3163_A17F_491B_BE28_C5867DAA6FEE__INCLUDED_
 
 #if _MSC_VER > 1000
-#pragma once
+    #pragma once
 #endif // _MSC_VER > 1000
 
 //KEY
@@ -16,8 +16,8 @@ typedef std::vector<QUERYKEY_SUCCESS> KeyVec;
 class CGlobalUserInfo
 {
 protected:
-	CGlobalUserInfo();
-	virtual ~CGlobalUserInfo();
+    CGlobalUserInfo();
+    virtual ~CGlobalUserInfo();
 
 public:
     DWORD dwKeyNums; //keyÊýÁ¿

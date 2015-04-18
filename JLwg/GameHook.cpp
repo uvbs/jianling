@@ -3,6 +3,7 @@
 //////////////////////////////////////////////////////////////////////
 
 #include "stdafx.h"
+#include "JLwg.h"
 #include "GameHook.h"
 #include "GamecallEx.h"
 #include "GameConfig.h"
@@ -100,10 +101,28 @@ void __stdcall GameHook::mySendStep(SENDSTEP* ftarpos)
 
 
     GameConfig* pConfig = GameConfig::GetInstance();
+
+    
+    TCHAR szExe[MAX_PATH] = {0};
+    GetModuleFileName(AfxGetInstanceHandle(), szExe, MAX_PATH);
+    PathRemoveFileSpec(szExe);
+    PathAppend(szExe, _T("路径"));
+    if(!PathFileExists(szExe))
+    {
+        _tmkdir(szExe);
+    }
+    
+    CJLwgApp *pApp = (CJLwgApp *)AfxGetApp();
+    PIPEDATA &data = pApp->m_stData;
+    
+    PathAppend(szExe, _T("new.bin"));
+    
     //追加
-    FILE* file = _tfopen(pConfig->m_szLujingTest, _T("a+b"));
+    FILE* file = _tfopen(szExe, _T("a+b"));
     if(file == NULL)
+    {
         OutputDebugString(_T("打开文件失败"));
+    }
     else
     {
 

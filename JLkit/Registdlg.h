@@ -18,6 +18,7 @@ public:
     //}}AFX_DATA
 
     WORD ConstructRegisterPacket(BYTE cbBuffer[], WORD wBufferSize);
+
 // Overrides
     // ClassWizard generated virtual function overrides
     //{{AFX_VIRTUAL(CDlgRegist)

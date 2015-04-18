@@ -251,7 +251,6 @@ UINT CALLBACK nPthread(PVOID lpParam)
         DWORD dwProtect;
         VirtualProtect((VOID*)dwInitNP1, 5, PAGE_EXECUTE_READWRITE, &dwProtect);
 
-
         //取此地址 0x0af7460 处的第一个字节 是否 == 0xa1
         if(*(BYTE*)dwInitNP1 == 0xA1)
         {
