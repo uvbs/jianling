@@ -70,11 +70,16 @@ void CMainFrame::InitComBox()
 
 
     //设置工作目录
-    _tchdir(pConfig->m_szGameScriptPath);
+    TCHAR szExe[MAX_PATH];
+    GetModuleFileName(NULL, szExe, MAX_PATH);
+    PathRemoveFileSpec(szExe);
 
+    std::basic_string<TCHAR> strCurPath = szExe;
+    strCurPath += _T("脚本");
+    strCurPath += _T("*.ini");
 
     WIN32_FIND_DATA FindData;
-    HANDLE hFinder = FindFirstFile(_T("*.ini"), &FindData);
+    HANDLE hFinder = FindFirstFile(strCurPath.c_str(), &FindData);
     if(hFinder != INVALID_HANDLE_VALUE)
     {
         do
@@ -83,10 +88,15 @@ void CMainFrame::InitComBox()
         }
         while(FindNextFile(hFinder, &FindData));
     }
+    else
+    {
+        m_cbScript.AddString(_T("default.ini"));
+    }
 
-    //设置工作目录
-    _tchdir(pConfig->m_szGameConfigPath);
-    hFinder = FindFirstFile(_T("*.ini"), &FindData);
+    strCurPath = szExe;
+    strCurPath += _T("配置");
+    strCurPath += _T("*.ini");
+    hFinder = FindFirstFile(strCurPath.c_str(), &FindData);
     if(hFinder != INVALID_HANDLE_VALUE)
     {
         do
@@ -95,12 +105,15 @@ void CMainFrame::InitComBox()
         }
         while(FindNextFile(hFinder, &FindData));
     }
-
+    else
+    {
+        m_cbConfig.AddString(_T("default.ini"));
+    }
 
 
     //选中配置
-    m_cbConfig.SelectString(-1, pConfig->m_szGameConfig);
-    m_cbScript.SelectString(-1, pConfig->m_szGameScript);
+    m_cbConfig.SelectString(-1, pConfig->m_szGameConfig.c_str());
+    m_cbScript.SelectString(-1, pConfig->m_szGameScript.c_str());
 
 }
 
@@ -136,7 +149,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
     m_wndToolBar.GetToolBarCtrl().GetItemRect(nIndex1, &rect);
     m_wndToolBar.GetToolBarCtrl().GetItemRect(nIndex2, &rect2);
 
- 
+
     //创建列表框
     if(!m_cbConfig.Create(
                 WS_VISIBLE | WS_CHILD | CBS_DROPDOWNLIST | CBS_AUTOHSCROLL | WS_VSCROLL | CBS_HASSTRINGS, rect, &m_wndToolBar, ID_COMBO1))
@@ -168,8 +181,15 @@ void CMainFrame::OnClose()
 
     //获取配置对象
     CConfigMgr* pConfig = CConfigMgr::GetInstance();
-    m_cbConfig.GetLBText(m_cbConfig.GetCurSel(), pConfig->m_szGameConfig);
-    m_cbScript.GetLBText(m_cbScript.GetCurSel(), pConfig->m_szGameScript);
+    TCHAR szStr[MAX_PATH];
+
+    int inSel = m_cbConfig.GetCurSel();
+    m_cbConfig.GetLBText(inSel, szStr);
+    pConfig->m_szGameConfig = szStr;
+
+    inSel = m_cbScript.GetCurSel();
+    m_cbScript.GetLBText(inSel, szStr);
+    pConfig->m_szGameScript = szStr;
 
     CFrameWnd::OnClose();
 }
@@ -192,5 +212,7 @@ BOOL CMainFrame::PreCreateWindow(CREATESTRUCT& cs)
         cs.lpszClass = szClassName;
     }
 
+    cs.cx=600;
+    cs.cy=400;
     return TRUE;
 }

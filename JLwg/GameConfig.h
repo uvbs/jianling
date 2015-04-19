@@ -45,7 +45,7 @@ public:
     int m_HealthPercent;
 
     //强化材料最低颜色
-    TCHAR m_szQHColor[BUFSIZ / 4];
+    std::basic_string<TCHAR> m_szQHColor;
 
 
 

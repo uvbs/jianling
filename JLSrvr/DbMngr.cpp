@@ -13,8 +13,6 @@
 #endif
 
 
-IMPLEMENT_SINGLETON(CDbMngr)
-
 CDbMngr::CDbMngr()
 {
 }
@@ -85,8 +83,8 @@ BOOL CDbMngr::NewRegist(TCHAR szUserName[], TCHAR szPassword[], TCHAR szBindIP[]
 int CDbMngr::Bindkey(TCHAR *pszName, TCHAR *pszKey, const TCHAR szIp[])
 {
 
+    CDBVariant ret;
     CString strSql;
-
     strSql.Format(db_sql_bindkey, pszName, pszKey, szIp, _T("ac"), _T("0"), _T("0"), _T("0"), _T("0"), _T("0"));
 
     try
@@ -98,9 +96,9 @@ int CDbMngr::Bindkey(TCHAR *pszName, TCHAR *pszKey, const TCHAR szIp[])
         }
 
         CString strRet;
-        record.GetFieldValue(_T("返回值"), strRet);
+        record.GetFieldValue(_T("返回值"), ret);
 
-        return _ttoi((LPCTSTR)strRet);
+        return ret.m_iVal;
 
     }
     catch(CDBException* pEx)
@@ -108,7 +106,7 @@ int CDbMngr::Bindkey(TCHAR *pszName, TCHAR *pszKey, const TCHAR szIp[])
         pEx->Delete();
     }
 
-    return FALSE;
+    return 0;
 }
 
 
@@ -134,7 +132,7 @@ BOOL CDbMngr::Querykey(std::vector<QUERYKEY_SUCCESS>& vecKeyInfo, TCHAR szUserNa
         CString strKeyType;
         CString strRemainTime;
 
-        int count = record.GetRecordCount();
+
         while(record.IsEOF() == FALSE)
         {
             QUERYKEY_SUCCESS QueryRetInfo;
@@ -179,12 +177,11 @@ int CDbMngr::CheckUser(TCHAR szUsername[], TCHAR szPassw[])
         CRecordset record(this);
         if(record.Open(AFX_DB_USE_DEFAULT_TYPE, (LPCTSTR)strSql) == false)
         {
-            return false;
+            return 0;
         }
         else
         {
-
-            record.GetFieldValue(_T("用户密码"), varValue);
+            record.GetFieldValue(_T("返回值"), varValue);
         }
 
     }

@@ -5,7 +5,7 @@
 #include "Jlwg.h"
 #include "DataDlg.h"
 #include "GameHook.h"
-
+#include "GameConfig.h"
 #include "ConfigItemPage.h"
 #include "ConfigObjPage.h"
 #include "ConfigQhPage.h"
@@ -267,7 +267,7 @@ BOOL CDataDlg::OnInitDialog()
     CheckHook();
 
     //初始化钩子
-    GameHook *pGameHook = GameHook::GetInstance();
+    GameHook* pGameHook = GameHook::GetInstance();
     pGameHook->m_lpParam = this;
     pGameHook->m_showHookRet = ShowHookRet;
 
@@ -944,10 +944,7 @@ void CDataDlg::OnSelchangeComboDatatype()
     m_ListCtrl.DeleteAllItems();
     for(;;)
     {
-        if(m_ListCtrl.DeleteColumn(0) == FALSE)
-        {
-            break;
-        }
+        if(m_ListCtrl.DeleteColumn(0) == FALSE) break;
     }
 
     if(strSel == _T("背包"))
@@ -1026,8 +1023,23 @@ void CDataDlg::OnBtnConfig()
     ShowWindow(SW_HIDE);
 
     //配置对话框
-    CConfigSheet ConfigSheet;
-    ConfigSheet.DoModal();
+    CPropertySheet sheet;
+    CConfigQhPage qhpage;
+    CConfigObjPage objpage;
+    CConfigItemPage itempage;
+    CConfigPartyPage partypage;
+
+    sheet.AddPage(&qhpage);
+    sheet.AddPage(&objpage);
+    sheet.AddPage(&itempage);
+    sheet.AddPage(&partypage);
+
+
+    if(sheet.DoModal() == IDOK)
+    {
+        GameConfig::GetInstance()->SaveConfig();
+    }
+
 
     //显示主窗口
     ShowWindow(SW_SHOW);
@@ -1077,7 +1089,7 @@ void CDataDlg::OnHookDequest()
 
     else
         GameHook::GetInstance()->deQuestHook.unhook();
-    }
+}
 
 void CDataDlg::OnHookChuanzhuangbei()
 {
@@ -1170,12 +1182,12 @@ void CDataDlg::OnRclickList(NMHDR* pNMHDR, LRESULT* pResult)
 
     if(m_ListCtrl.GetSelectedCount() != 0)
     {
-    POINT point;
-    GetCursorPos(&point);
+        POINT point;
+        GetCursorPos(&point);
 
-    CMenu menu;
-    menu.LoadMenu(IDR_OBJECT);
-    menu.GetSubMenu(0)->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point.x, point.y, this);
+        CMenu menu;
+        menu.LoadMenu(IDR_OBJECT);
+        menu.GetSubMenu(0)->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point.x, point.y, this);
 
 
     }

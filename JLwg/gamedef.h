@@ -123,7 +123,7 @@ enum EQUITMENT_POS {
 
 //ÏûÏ¢ID
 enum CUSTOMMSGID {
-    id_msg_step,
+    id_msg_step = 0,
     id_msg_step3x,
     id_msg_guanshangdian,
     id_msg_attack,

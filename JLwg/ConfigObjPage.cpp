@@ -42,9 +42,6 @@ BEGIN_MESSAGE_MAP(CConfigObjPage, CDialog)
     ON_COMMAND(ID_CONFIG_FIRST, OnConfigFirst)
     ON_COMMAND(ID_CONFIG_DONTKILL, OnConfigDontkill)
     ON_NOTIFY(NM_DBLCLK, IDC_LIST_OBJECTFILTER, OnDblclkListObjectfilter)
-    ON_NOTIFY(LVN_ITEMCHANGED, IDC_LIST_OBJECTFILTER, OnItemchangedListObjectfilter)
-    ON_NOTIFY(LVN_DELETEITEM, IDC_LIST_OBJECTFILTER, OnDeleteitemListObjectfilter)
-    ON_NOTIFY(LVN_INSERTITEM, IDC_LIST_OBJECTFILTER, OnInsertitemListObjectfilter)
     ON_COMMAND(ID_CONFIG_ALWAYSKILL, OnConfigAlwayskill)
     //}}AFX_MSG_MAP
 END_MESSAGE_MAP()
@@ -202,28 +199,6 @@ void CConfigObjPage::OnDblclkListObjectfilter(NMHDR* pNMHDR, LRESULT* pResult)
     *pResult = 0;
 }
 
-void CConfigObjPage::OnItemchangedListObjectfilter(NMHDR* pNMHDR, LRESULT* pResult)
-{
-    NM_LISTVIEW* pNMListView = (NM_LISTVIEW*)pNMHDR;
-    // TODO: Add your control notification handler code here
-    *pResult = 0;
-}
-
-void CConfigObjPage::OnDeleteitemListObjectfilter(NMHDR* pNMHDR, LRESULT* pResult)
-{
-    NM_LISTVIEW* pNMListView = (NM_LISTVIEW*)pNMHDR;
-    // TODO: Add your control notification handler code here
-    SetModified();
-    *pResult = 0;
-}
-
-void CConfigObjPage::OnInsertitemListObjectfilter(NMHDR* pNMHDR, LRESULT* pResult)
-{
-    NM_LISTVIEW* pNMListView = (NM_LISTVIEW*)pNMHDR;
-    // TODO: Add your control notification handler code here
-    SetModified();
-    *pResult = 0;
-}
 
 void CConfigObjPage::OnConfigAlwayskill()
 {
@@ -233,13 +208,14 @@ void CConfigObjPage::OnConfigAlwayskill()
 
 BOOL CConfigObjPage::OnApply()
 {
+    UpdateData();
 
-    GameConfig* pConfig = GameConfig::GetInstance();
+    GameConfig *pConfig = GameConfig::GetInstance();
+
     ItemVector& dontkill = pConfig->m_DontKill;
     ItemVector& alwayskill = pConfig->m_AlwaysKill;
     ItemVector& firstkill = pConfig->m_FirstKill;
-
-
+    
     for(int i = 0; i < m_FilterList.GetItemCount(); i++)
     {
         CString strName = m_FilterList.GetItemText(i, 0);
@@ -252,15 +228,23 @@ BOOL CConfigObjPage::OnApply()
         {
             firstkill.push_back((LPCTSTR)strName);
         }
-        else
+        else if(strAttri == strAlwaysKill)
         {
             alwayskill.push_back((LPCTSTR)strName);
         }
+        }
 
-
-    }
-
-    pConfig->SaveConfig();
 
     return TRUE;
+}
+
+BOOL CConfigObjPage::OnCommand(WPARAM wParam, LPARAM lParam)
+{
+    int Notifyid = HIWORD(wParam);
+    if(Notifyid == NM_DBLCLK)
+    {
+        SetModified();
+    }
+
+    return CDialog::OnCommand(wParam, lParam);
 }

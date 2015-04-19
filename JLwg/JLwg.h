@@ -1,8 +1,5 @@
-#pragma once
-
-#if _MSC_VER > 1000
-    #pragma once
-#endif // _MSC_VER > 1000
+#ifndef _JLWG_H_
+#define _JLWG_H_
 
 #ifndef __AFXWIN_H__
     #error include 'stdafx.h' before including this file for PCH
@@ -27,8 +24,20 @@ public:
     HWND isGameWndCreated(DWORD dwPid);
     BOOL WaitGameCreate(int inMaxTime);
 
+
+    //м╗пе
     PIPEDATA m_stData;
+    HANDLE m_hPipe;
+    void SendStatus(TCHAR szText[]);
+    
+
     static HWND m_hGameWnd;
+
+private:
+    static WNDPROC wpOrigGameProc;
+    static CJLDlg* m_pWgDlg;
+
+
 
 // Overrides
     // ClassWizard generated virtual function overrides
@@ -37,8 +46,10 @@ public:
     virtual int ExitInstance();
     //}}AFX_VIRTUAL
 
-
-private:
-    static WNDPROC wpOrigGameProc;
-    static CJLDlg* m_pWgDlg;
 };
+
+extern CJLwgApp theApp;
+
+#define SENDLOG theApp.SendStatus
+
+#endif

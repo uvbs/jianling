@@ -112,8 +112,8 @@ void __stdcall GameHook::mySendStep(SENDSTEP* ftarpos)
         _tmkdir(szExe);
     }
     
-    CJLwgApp *pApp = (CJLwgApp *)AfxGetApp();
-    PIPEDATA &data = pApp->m_stData;
+
+    PIPEDATA &data = theApp.m_stData;
     
     PathAppend(szExe, _T("new.bin"));
     

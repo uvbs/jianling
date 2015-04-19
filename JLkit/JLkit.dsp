@@ -18,6 +18,7 @@ CFG=JLKIT - WIN32 RELEASE
 !MESSAGE Possible choices for configuration are:
 !MESSAGE 
 !MESSAGE "JLkit - Win32 Release" (based on "Win32 (x86) Application")
+!MESSAGE "JLkit - Win32 JLTW" (based on "Win32 (x86) Application")
 !MESSAGE 
 
 # Begin Project
@@ -27,6 +28,9 @@ CFG=JLKIT - WIN32 RELEASE
 CPP=cl.exe
 MTL=midl.exe
 RSC=rc.exe
+
+!IF  "$(CFG)" == "JLkit - Win32 Release"
+
 # PROP BASE Use_MFC 6
 # PROP BASE Use_Debug_Libraries 0
 # PROP BASE Output_Dir "Release"
@@ -39,7 +43,7 @@ RSC=rc.exe
 # PROP Ignore_Export_Lib 1
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /MD /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_AFXDLL" /Yu"stdafx.h" /FD /c
-# ADD CPP /nologo /MDd /W3 /GX /Zi /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_UNICODE" /D "UNICODE" /D "_AFXDLL" /D "JLTW" /FAs /Yu"stdafx.h" /FD /c
+# ADD CPP /nologo /MDd /W3 /GX /Zi /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_UNICODE" /D "UNICODE" /D "_AFXDLL" /FAs /Yu"stdafx.h" /FD /c
 # SUBTRACT CPP /Gf /Fr
 # ADD BASE MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "NDEBUG" /mktyplib203 /win32
@@ -52,9 +56,44 @@ LINK32=link.exe
 # ADD BASE LINK32 /nologo /subsystem:windows /machine:I386
 # ADD LINK32 /nologo /entry:"wWinMainCRTStartup" /subsystem:windows /debug /machine:I386 /out:"..\bin\JLkit.exe"
 # SUBTRACT LINK32 /profile /map
+
+!ELSEIF  "$(CFG)" == "JLkit - Win32 JLTW"
+
+# PROP BASE Use_MFC 6
+# PROP BASE Use_Debug_Libraries 0
+# PROP BASE Output_Dir "JLkit___Win32_JLTW"
+# PROP BASE Intermediate_Dir "JLkit___Win32_JLTW"
+# PROP BASE Ignore_Export_Lib 1
+# PROP BASE Target_Dir ""
+# PROP Use_MFC 6
+# PROP Use_Debug_Libraries 0
+# PROP Output_Dir "JLTW"
+# PROP Intermediate_Dir "JLTW"
+# PROP Ignore_Export_Lib 1
+# PROP Target_Dir ""
+# ADD BASE CPP /nologo /MDd /W3 /GX /Zi /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_UNICODE" /D "UNICODE" /D "_AFXDLL" /D "JLTW" /FAs /Yu"stdafx.h" /FD /c
+# SUBTRACT BASE CPP /Gf /Fr
+# ADD CPP /nologo /MDd /W3 /GX /Zi /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_UNICODE" /D "UNICODE" /D "_AFXDLL" /D "JLTW" /FAs /Yu"stdafx.h" /FD /c
+# SUBTRACT CPP /Gf /Fr
+# ADD BASE MTL /nologo /D "NDEBUG" /mktyplib203 /win32
+# ADD MTL /nologo /D "NDEBUG" /mktyplib203 /win32
+# ADD BASE RSC /l 0x804 /d "NDEBUG" /d "_AFXDLL"
+# ADD RSC /l 0x804 /d "NDEBUG" /d "_AFXDLL"
+BSC32=bscmake.exe
+# ADD BASE BSC32 /nologo
+# ADD BSC32 /nologo
+LINK32=link.exe
+# ADD BASE LINK32 /nologo /entry:"wWinMainCRTStartup" /subsystem:windows /debug /machine:I386 /out:"..\bin\JLkit.exe"
+# SUBTRACT BASE LINK32 /profile /map
+# ADD LINK32 /nologo /entry:"wWinMainCRTStartup" /subsystem:windows /pdb:"../bin/JLkit_tw.pdb" /debug /machine:I386 /out:"..\bin\JLkit_tw.exe"
+# SUBTRACT LINK32 /profile /map
+
+!ENDIF 
+
 # Begin Target
 
 # Name "JLkit - Win32 Release"
+# Name "JLkit - Win32 JLTW"
 # Begin Group "Source Files"
 
 # PROP Default_Filter "cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"

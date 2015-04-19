@@ -5,14 +5,28 @@
 #include "GameConfig.h"
 #include "GameLog.h"
 
+
+
 //程序实例唯一
-CJLwgApp CWinApp;
+CJLwgApp theApp;
 
 
 //静态变量
 WNDPROC CJLwgApp::wpOrigGameProc = NULL;
 CJLDlg* CJLwgApp::m_pWgDlg = NULL;
 HWND CJLwgApp::m_hGameWnd = NULL;
+
+
+
+
+CJLwgApp::CJLwgApp()
+{
+}
+
+CJLwgApp::~CJLwgApp()
+{
+}
+
 
 //钩游戏的消息窗口
 LRESULT CALLBACK CJLwgApp::GameMsgProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
@@ -31,11 +45,7 @@ LRESULT CALLBACK CJLwgApp::GameMsgProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPAR
         {
             if(wParam == VK_INSERT)
             {
-                int result = MessageBox(
-                                 hwnd,
-                                 _T("你按下了 VK_INSERT 按键.\n确认执行任务?"),
-                                 NULL,
-                                 MB_OKCANCEL);
+                int result = MessageBox(hwnd, _T("你按下了 VK_INSERT 按键.\n确认执行任务?"), NULL, MB_OKCANCEL);
                 if(result == IDOK)
                 {
                     m_pWgDlg->OnGotask();
@@ -180,19 +190,19 @@ DWORD CALLBACK CJLwgApp::WgThread(LPVOID pParam)
 {
     AFX_MANAGE_STATE(AfxGetStaticModuleState())
 
+    if(!AfxSocketInit())
+    {
+        LOGER(_T("套接字初始化失败"));
+        ExitProcess(0);
+        return FALSE;
+    }
+
 
     //全局异常处理
     SetUnhandledExceptionFilter(TopLevelExceptionHander);
 
 
-    //获取配置对象
-    CJLwgApp* pApp = (CJLwgApp*)pParam;
-    GameConfig* pConfig = GameConfig::GetInstance();
-    GamecallEx* pCall = GamecallEx::GetInstance();
-    GameSpend* pGameSpender = GameSpend::GetInstance();
-
-
-    if(!pApp->WaitGameCreate(20))
+    if(!theApp.WaitGameCreate(20))
     {
         LOGER(_T("等待游戏窗口超时"));
         ExitProcess(0);
@@ -205,6 +215,7 @@ DWORD CALLBACK CJLwgApp::WgThread(LPVOID pParam)
 
 
     LOGER(_T("初始化加速"));
+    GameSpend* pGameSpender = GameSpend::GetInstance();
     if(!pGameSpender->Init())
     {
         ExitProcess(0);
@@ -213,10 +224,13 @@ DWORD CALLBACK CJLwgApp::WgThread(LPVOID pParam)
 
 
     LOGER(_T("加载配置"));
+    GameConfig* pConfig = GameConfig::GetInstance();
     pConfig->LoadConfig();
 
 
     //初始化
+    GamecallEx* pCall = GamecallEx::GetInstance();
+
 //     LOGER(_T("初始化外挂功能"));
 //     if(!pCall->Init())
 //     {
@@ -228,57 +242,36 @@ DWORD CALLBACK CJLwgApp::WgThread(LPVOID pParam)
     //改游戏窗口处理过程
     wpOrigGameProc = (WNDPROC)::SetWindowLong(m_hGameWnd, GWL_WNDPROC, (LONG)GameMsgProc);
 
+    //通信数据
+    PIPEDATA& data = theApp.m_stData;
+    ::SetWindowText(m_hGameWnd, data.szAccount);
 
-    //改游戏窗口标题
-    ::SetWindowText(m_hGameWnd, _T(""));
+
+    SENDLOG(_T("对话框启动了"));
 
     //创建外挂对话框
     m_pWgDlg = new CJLDlg;
-    m_pWgDlg->Create(CJLDlg::IDD);
-    m_pWgDlg->ShowWindow(SW_SHOW);
-
-    //改标题
-    m_pWgDlg->SetWindowText(_T(""));
+    m_pWgDlg->DoModal();
 
 
-    //创建消息循环
-    MSG msg;
-    BOOL bRet;
-    while((bRet = GetMessage(&msg, NULL, 0, 0)) != 0)
-    {
-        if(bRet == -1) break;
-        if(!IsWindow(m_pWgDlg->m_hWnd) || !IsDialogMessage(m_pWgDlg->m_hWnd, &msg))
-        {
-            TranslateMessage(&msg);
-            DispatchMessage(&msg);
-        }
-    }
 
-
-    //卸载游戏功能
-    pCall->UnInit();
-
+    LOGER(_T("外挂被手动卸载掉了"));
+    
+    
     //保存配置
     pConfig->SaveConfig();
-
-    if(wpOrigGameProc)
+    
+    
+    if(wpOrigGameProc) 
     {
         ::SetWindowLong(m_hGameWnd, GWL_WNDPROC, (LONG)wpOrigGameProc);
     }
-
-
-    FreeLibraryAndExitThread(AfxGetApp()->m_hInstance, 0);
+    
+    FreeLibraryAndExitThread(theApp.m_hInstance, 0);
     return 0;
 }
 
 
-CJLwgApp::CJLwgApp()
-{
-}
-
-CJLwgApp::~CJLwgApp()
-{
-}
 
 //判断游戏窗口是否创建
 HWND CJLwgApp::isGameWndCreated(DWORD dwPid)
@@ -301,10 +294,7 @@ HWND CJLwgApp::isGameWndCreated(DWORD dwPid)
         }
 
         hGameWnd = FindWindowEx(NULL, hGameWnd, _T("LaunchUnrealUWindowsClient"), NULL);
-        if(hGameWnd == NULL)
-        {
-            return NULL;
-        }
+        if(hGameWnd == NULL) return NULL;
     }
 }
 
@@ -316,11 +306,7 @@ BOOL CJLwgApp::WaitGameCreate(int inMaxTime)
     //判断当前游戏的窗口是否创建
     for(int i = 0; i < inMaxTime; i++)
     {
-        if(isGameWndCreated(GetCurrentProcessId()) != NULL)
-        {
-            return TRUE;
-        }
-
+        if(isGameWndCreated(GetCurrentProcessId()) != NULL) return TRUE;
         Sleep(1000);
     }
 
@@ -330,22 +316,21 @@ BOOL CJLwgApp::WaitGameCreate(int inMaxTime)
 BOOL CJLwgApp::InitInstance()
 {
 
-
     //设置区域
     setlocale(LC_ALL, "chs");
 
     //1, 获取通信数据
     TCHAR szPipe[MAX_PATH];
     wsprintf(szPipe, _T("\\\\.\\Pipe\\JLwg_%d"), GetCurrentProcessId());
-    if(!::WaitNamedPipe(szPipe, NMPWAIT_WAIT_FOREVER))
+    if(!::WaitNamedPipe(szPipe, NMPWAIT_USE_DEFAULT_WAIT))
     {
         TRACE(_T("can't find pipe!"));
         return FALSE;
     }
 
     // 打开管道
-    HANDLE hPipe = CreateFile(szPipe, GENERIC_READ | GENERIC_WRITE, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL) ;
-    if(hPipe == INVALID_HANDLE_VALUE)
+    m_hPipe = CreateFile(szPipe, GENERIC_READ | GENERIC_WRITE, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL) ;
+    if(m_hPipe == INVALID_HANDLE_VALUE)
     {
         TRACE(_T("can't open console pipe!")) ;
         ExitProcess(0);
@@ -354,12 +339,16 @@ BOOL CJLwgApp::InitInstance()
 
     //读取数据
     DWORD dwBytesReaded = 0;
-    if(!ReadFile(hPipe, &m_stData, sizeof(PIPEDATA), &dwBytesReaded, NULL))
+    if(!ReadFile(m_hPipe, &m_stData, sizeof(PIPEDATA), &dwBytesReaded, NULL))
     {
         TRACE(_T("can't read pipe data!"));
         ExitProcess(0);
         return FALSE;
     }
+
+    //设置成不等待模式
+    DWORD dwMode = PIPE_NOWAIT | PIPE_READMODE_MESSAGE;
+    SetNamedPipeHandleState(m_hPipe, &dwMode, NULL, NULL);
 
 
     //2, 初始化日志
@@ -385,20 +374,11 @@ BOOL CJLwgApp::InitInstance()
         return FALSE;
     }
 
-    //至此日志能用了
-    LOGER(_T("外挂启动"));
-
-
-    if(!AfxSocketInit())
-    {
-        LOGER(_T("套接字初始化失败"));
-        ExitProcess(0);
-        return FALSE;
-    }
-
+    //至此日志能
+    LOGER(_T("#外挂启动"));
 
     //外挂线程
-    HANDLE hThread = ::CreateThread(NULL, 0, WgThread, 0, 0, 0);
+    HANDLE hThread = ::CreateThread(NULL, 0, WgThread, this, 0, 0);
     if(hThread == NULL)
     {
         LOGER(_T("主线程创建失败"));
@@ -413,9 +393,36 @@ BOOL CJLwgApp::InitInstance()
 }
 
 
-int CJLwgApp::ExitInstance()
+void CJLwgApp::SendStatus(TCHAR szText[])
 {
-    OutputDebugString(_T("外挂退出"));
-    return CWinApp::ExitInstance();
+    PIPESTATUS status;
+    status.dwPid = m_stData.dwPid;
+    status.dwItem = m_stData.dwItem;
+    _tcsncpy(status.szStatus, szText, _tcslen(szText) + 1);
+
+    DWORD dwWriten;
+    WriteFile(m_hPipe, &status, sizeof(PIPESTATUS), &dwWriten, NULL);
 }
 
+
+int CJLwgApp::ExitInstance()
+{
+    LOGER(_T("外挂随游戏正常退出了"));
+ 
+    
+    m_pWgDlg->EndDialog(IDOK);
+    
+    
+    //保存配置
+    GameConfig* pConfig = GameConfig::GetInstance();
+    pConfig->SaveConfig();
+    
+    
+    if(wpOrigGameProc)
+    {
+        ::SetWindowLong(m_hGameWnd, GWL_WNDPROC, (LONG)wpOrigGameProc);
+    }
+    
+
+    return CWinApp::ExitInstance();
+}

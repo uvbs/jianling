@@ -21,6 +21,7 @@ IMPLEMENT_DYNCREATE(CJLSrvrDoc, CDocument)
 BEGIN_MESSAGE_MAP(CJLSrvrDoc, CDocument)
     //{{AFX_MSG_MAP(CJLSrvrDoc)
     ON_COMMAND(ID_FILE_RESTART, OnFileRestart)
+    ON_UPDATE_COMMAND_UI(ID_INDICATOR_CONNECTS, OnUpdateConnects)
     //}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
@@ -33,6 +34,7 @@ CJLSrvrDoc::CJLSrvrDoc()
 //析构函数
 CJLSrvrDoc::~CJLSrvrDoc()
 {
+
 }
 
 
@@ -51,10 +53,8 @@ BOOL CJLSrvrDoc::OnNewDocument()
 
 
     //初始化数据库
-#ifndef TEST_NETWORK
-    if(!CDbMngr::GetInstance()->Init())
+    if(!m_db.Init())
         return FALSE;
-#endif
 
     SetTitle(NULL);
 
@@ -234,10 +234,34 @@ bool CJLSrvrDoc::ProcessLogin(CJLkitSocket* pSocket, const Tcp_Head& stTcpHead, 
     {
         case fun_login:
         {
-            LOGIN_SUCCESS LoginBuf;
-            _tcscpy(LoginBuf.szWelcome, _T("北京欢迎你."));
+            PROCESS_DESCRIBE LoginBuf;
+            LOGIN_BUF* pLogin = (LOGIN_BUF*)pData;
 
-            pSocket->Send(M_LOGIN, fun_login_ok, &LoginBuf, sizeof(LOGIN_SUCCESS));
+
+            //保存用户登陆数据
+            _userdata[pSocket] = *pLogin;
+
+
+            int inResult;
+            int inDbRet = m_db.CheckUser(pLogin->name, pLogin->pw);
+            if(inDbRet == 0)
+            {
+                inResult = fun_login_ok;
+                _tcscpy(LoginBuf.szDescribe, _T("北京欢迎你."));
+            }
+            else if(inDbRet == 2)
+            {
+                inResult = fun_login_fail;
+                _tcscpy(LoginBuf.szDescribe, _T("已经登陆"));
+            }
+            else
+            {
+                inResult = fun_login_fail;
+                _tcscpy(LoginBuf.szDescribe, _T("密码错误"));
+            }
+
+
+            pSocket->Send(M_LOGIN, inResult, &LoginBuf, sizeof(PROCESS_DESCRIBE));
 
             break;
         }
@@ -273,20 +297,43 @@ bool CJLSrvrDoc::ProcessKey(CJLkitSocket* pSocket, const Tcp_Head& stTcpHead, vo
         case fun_querykey:
         {
 
-            QUERYKEY_SUCCESS qkey[10];
-            for(int i = 0; i < 10; i++)
+            std::vector<QUERYKEY_SUCCESS> KeyVec;
+            BOOL bDbRet = m_db.Querykey(KeyVec, _userdata[pSocket].name, _userdata[pSocket].pw);
+            if(KeyVec.size())
             {
-                qkey[i].buildtime = 11100;
-                qkey[i].remaintime = 100;
-                _tcscpy(qkey[i].key, _T("1111"));
-                _tcscpy(qkey[i].type, _T("type"));
+                for(std::vector<QUERYKEY_SUCCESS>::iterator it = KeyVec.begin(); it != KeyVec.end(); it++)
+                {
+                    pSocket->Send(M_KEY, fun_querykey_ok, &it, sizeof(QUERYKEY_SUCCESS));
+                }
+            }
+            else
+            {
+                PROCESS_DESCRIBE des;
+                _tcscpy(des.szDescribe, _T("此账号没有绑定任何卡号"));
+                pSocket->Send(M_KEY, fun_querykey_fail, &des, sizeof(PROCESS_DESCRIBE));
             }
 
 
-            pSocket->Send(M_KEY, fun_querykey_ok, &qkey, sizeof(QUERYKEY_SUCCESS) * 10);
             break;
         }
 
+        case fun_bindkey:
+            {
+                BINDKEY_BUF *pBuf = (BINDKEY_BUF *)pData;
+                if(m_db.Bindkey(_userdata[pSocket].name, pBuf->key, _T("")))
+                {
+                    pSocket->Send(M_KEY, fun_bindkey_ok, NULL, 0);
+                }
+                else
+                {
+                    PROCESS_DESCRIBE des;
+                    _tcscpy(des.szDescribe, _T("绑定失败"));
+                    pSocket->Send(M_KEY, fun_bindkey_fail, &des, sizeof(PROCESS_DESCRIBE));
+                }
+                break;
+            }
+
+   
         default:
             break;
     }
@@ -308,6 +355,15 @@ bool CJLSrvrDoc::AddClient(CJLkitSocket* pSocket)
 bool CJLSrvrDoc::DeleteClient(CJLkitSocket* pSocket)
 {
     _client.remove(pSocket);
-    TRACE(_T("%08x"), pSocket);
+    _userdata.erase(pSocket);
+    SafeDelete(pSocket);
+
     return true;
+}
+
+void CJLSrvrDoc::OnUpdateConnects(CCmdUI* pCmdUI)
+{
+    CString strTemp;
+    strTemp.Format(_T("连接数: %d"), _client.size());
+    pCmdUI->SetText(strTemp);
 }

@@ -22,20 +22,18 @@ public:
     //用户配置
 public:
     BOOL m_KeepPw; //记住密码
-    TCHAR m_szFileName[MAX_PATH]; //最后加载的文件名
-    TCHAR m_szGamePath[MAX_PATH]; //游戏路径
-    TCHAR m_szAccountName[MAX_PATH]; //账号名称
-    TCHAR m_szAccountPw[MAX_PATH]; //账号密码
-    TCHAR m_szWindowPos[MAX_PATH];
-    TCHAR m_szGameScript[MAX_PATH];
-    TCHAR m_szGameConfig[MAX_PATH];
+    std::basic_string<TCHAR> m_szFileName; //最后加载的文件名
+    std::basic_string<TCHAR> m_szGamePath; //游戏路径
+    std::basic_string<TCHAR> m_szAccountName; //账号名称
+    std::basic_string<TCHAR> m_szAccountPw; //账号密码
+    std::basic_string<TCHAR> m_szWindowPos;
+    std::basic_string<TCHAR> m_szGameScript;
+    std::basic_string<TCHAR> m_szGameConfig;
 
 
-    TCHAR m_szGameScriptPath[MAX_PATH];
-    TCHAR m_szGameConfigPath[MAX_PATH];
 
 public:
-    void LoadConfig(const TCHAR szConfigPath[]);
+    BOOL LoadConfig(const TCHAR szConfigPath[]);
     void SaveConfig(const TCHAR szConfigPath[]);
 };
 

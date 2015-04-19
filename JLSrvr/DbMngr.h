@@ -12,12 +12,9 @@
 
 class CDbMngr: public CDatabase
 {
-    //ππ‘Ï
-protected:
+public:
     CDbMngr();
     virtual ~CDbMngr();
-
-    DECLARE_SINGLETON(CDbMngr)
 
 
     // Ù–‘

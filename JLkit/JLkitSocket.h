@@ -47,12 +47,6 @@ public:
 
 private:
     ITCPSocketSink* m_Sink;
-
-
-
-    //Á¬½Ó×´Ì¬
-    WORD m_bConnectState;                   //ÍøÂç×´Ì¬
-    WORD m_wSocketID;
     
 
     char m_cbRecvBuf[SOCKET_TCP_BUFFER];
@@ -61,9 +55,6 @@ private:
 
 public:
     BOOL ConnectSrv(LPCTSTR pSrv, long port);
-
-    //¹Ø±ÕÌ×½Ó×Ö
-    void CloseSocket();
 
     int Send(int cmd_main, int cmd_sub, void* pData, WORD size);
 

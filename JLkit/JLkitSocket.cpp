@@ -12,9 +12,7 @@
 CJLkitSocket::CJLkitSocket()
 {
     m_Sink = NULL;
-    m_bConnectState = NOCONNECT;
     m_nRecvWriterPointer = 0;
-    m_wSocketID = 0;
 }
 
 CJLkitSocket::~CJLkitSocket()
@@ -31,30 +29,9 @@ CJLkitSocket::~CJLkitSocket()
 #endif  // 0
 
 
-
-void CJLkitSocket::CloseSocket()
-{
-    //断开套接字
-    Close();
-
-    //连接状态
-    m_bConnectState = NOCONNECT;
-
-}
-
 //链接通知
 void CJLkitSocket::OnConnect(int nErrorCode)
 {
-    if(nErrorCode == 0)
-    {
-        //更改链接状态
-        m_bConnectState = CONNECTED;
-    }
-    else
-    {
-        CloseSocket();
-    }
-
     //给上层通知
     m_Sink->OnEventTCPSocketLink(this, nErrorCode);
 }
@@ -68,7 +45,6 @@ void CJLkitSocket::OnReceive(int nErrorCode)
     if((nRecvSize == SOCKET_ERROR) || (nRecvSize == 0))
     {
         m_Sink->OnEventTCPSocketShut(this, 0);
-        CloseSocket();
         return;
     }
 
@@ -85,43 +61,49 @@ void CJLkitSocket::OnReceive(int nErrorCode)
         while(1)
         {
 
-            //计算剩余长度
+            //calc buf left noprocess size;
             nLeftSize = nBufSize - nProcSize;
 
-            //效验, 长度不及一个包头大小
+            //check , size not complete
             if(nLeftSize < sizeof(Tcp_Head))
             {
-                TRACE(_T("处理完一个缓冲区, 剩余 %d bytes\n"), nLeftSize);
+                TRACE(_T("完成处理, 剩余长度 %d bytes\n"), nLeftSize);
                 break;
             }
 
-            //获取包头
+            //get data head
             Tcp_Head* pTcpHead = (Tcp_Head*)(m_cbRecvBuf + nProcSize);
 
-            //获取用户数据大小
+            //get user data len
             int nDataSize = pTcpHead->wPacketSize;
             TRACE(_T("用户数据长度: %d"), nDataSize);
 
-            //如果用户数据大于剩余处理数据
-            if(nDataSize >= nLeftSize)
+            //if user data big than left size
+            if(nDataSize > (nLeftSize - sizeof(Tcp_Head)))
             {
-                TRACE(_T("用户数据还未收取完整"));
+                TRACE(_T("用户数据还没完整"));
                 break;
             }
 
-            //获取用户数据
-            void* pData = pTcpHead + 1;
+            //get user data
+            void* pData;
+            if(nDataSize == 0)
+            {
+                pData = NULL;
+            }
+            else
+            {
+                pData = pTcpHead + 1;
+            }
 
-            //更改状态为处理
-            m_bConnectState = MESPROCESS;
 
-            // 让主窗体来处理这个网络消息
+            //call back
             if(m_Sink)
             {
                 m_Sink->OnEventTCPSocketRead(this, *pTcpHead, pData, nDataSize);
             }
 
-            //已经处理的长度
+            //processed len
             nProcSize += sizeof(Tcp_Head) + nDataSize;
         }
 
@@ -137,7 +119,7 @@ void CJLkitSocket::OnReceive(int nErrorCode)
     }
     catch(...)
     {
-        CloseSocket();
+        TRACE(_T("Revice Err!"));
     }
 }
 
@@ -146,7 +128,6 @@ BOOL CJLkitSocket::ConnectSrv(LPCTSTR pSrv, long port)
 {
 
     //效验参数
-    ASSERT(m_bConnectState == NOCONNECT);
     ASSERT(m_hSocket == INVALID_SOCKET);
 
 
@@ -154,24 +135,22 @@ BOOL CJLkitSocket::ConnectSrv(LPCTSTR pSrv, long port)
     {
         if(Create() == FALSE) return FALSE;
 
-#ifndef TEST_NETWORK
+
         int iErrorCode = Connect(pSrv, PORT_SRV);
-#else
-        int iErrorCode = Connect(_T("127.0.0.1"), PORT_SRV);
-#endif
         if(iErrorCode == 0)
         {
             if(WSAGetLastError() != WSAEWOULDBLOCK) FALSE;
         }
 
-        m_bConnectState = CONNECTTING;;
+
         return TRUE;
     }
     catch(...)
     {
-        CloseSocket();
-        return FALSE;
+        TRACE(_T("Connect Err!"));
     }
+
+    return FALSE;
 }
 
 int CJLkitSocket::Send(const void* lpBuf, int nBufLen, int nFlags /* = 0 */)
@@ -196,7 +175,7 @@ int CJLkitSocket::Send(const void* lpBuf, int nBufLen, int nFlags /* = 0 */)
                 }
                 else
                 {
-                    return SOCKET_ERROR;
+                    throw;
                 }
             }
 
@@ -237,5 +216,4 @@ int CJLkitSocket::Send(int cmd_main, int cmd_sub, void* pData, WORD wDataSize)
 void CJLkitSocket::OnClose(int nErrorCode)
 {
     m_Sink->OnEventTCPSocketShut(this, nErrorCode);
-    CloseSocket();
 }

@@ -40,9 +40,6 @@ void CConfigQhPage::DoDataExchange(CDataExchange* pDX)
 
 BEGIN_MESSAGE_MAP(CConfigQhPage, CDialog)
     //{{AFX_MSG_MAP(CConfigQhPage)
-    ON_CBN_EDITCHANGE(IDC_COMBO_ITEMCOLOR, OnEditchangeComboItemcolor)
-    ON_EN_CHANGE(IDC_CHIYAOPERCENT, OnChangeChiyaopercent)
-    ON_CBN_SELCHANGE(IDC_COMBO_ITEMCOLOR, OnSelchangeComboItemcolor)
     //}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
@@ -63,40 +60,17 @@ BOOL CConfigQhPage::OnInitDialog()
     m_ComBox.SetCurSel(-1);
 
     //»ñÈ¡ÑÕÉ«
-    //TODO:
-    int nIndex = m_ComBox.SelectString(0, pConfig->m_szQHColor);
-    ASSERT(nIndex != LB_ERR);
+    _ASSERTE(!pConfig->m_szQHColor.empty());
+    int nIndex = m_ComBox.SelectString(-1, pConfig->m_szQHColor.c_str());
+    _ASSERTE(nIndex != LB_ERR);
 
     m_HealthPercent = pConfig->m_HealthPercent;
 
     UpdateData(FALSE);
-
     return TRUE;  // return TRUE unless you set the focus to a control
     // EXCEPTION: OCX Property Pages should return FALSE
 }
 
-void CConfigQhPage::OnEditchangeComboItemcolor()
-{
-    // TODO: Add your control notification handler code here
-
-}
-
-void CConfigQhPage::OnChangeChiyaopercent()
-{
-    // TODO: If this is a RICHEDIT control, the control will not
-    // send this notification unless you override the CDialog::OnInitDialog()
-    // function and call CRichEditCtrl().SetEventMask()
-    // with the ENM_CHANGE flag ORed into the mask.
-
-    // TODO: Add your control notification handler code here
-    SetModified();
-}
-
-void CConfigQhPage::OnSelchangeComboItemcolor()
-{
-    // TODO: Add your control notification handler code here
-    SetModified();
-}
 
 BOOL CConfigQhPage::OnApply()
 {
@@ -107,8 +81,24 @@ BOOL CConfigQhPage::OnApply()
     pConfig->m_HealthPercent = m_HealthPercent;
 
     TCHAR szQHColor[BUFSIZ] = {0};
-    m_ComBox.GetLBText(m_ComBox.GetCurSel(), szQHColor);
-    wcscpy(pConfig->m_szQHColor, szQHColor);
+    int inSel = m_ComBox.GetCurSel();
+    m_ComBox.GetLBText(inSel, szQHColor);
+    pConfig->m_szQHColor = szQHColor;
+
 
     return CPropertyPage::OnApply();
+}
+
+BOOL CConfigQhPage::OnCommand(WPARAM wParam, LPARAM lParam)
+{
+
+    int Notifyid = HIWORD(wParam);
+    if(Notifyid == EN_CHANGE ||
+            Notifyid == BM_CLICK)
+    {
+        SetModified();
+    }
+
+
+    return CDialog::OnCommand(wParam, lParam);
 }

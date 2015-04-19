@@ -37,7 +37,6 @@ CConfigSheet::~CConfigSheet()
 
 BEGIN_MESSAGE_MAP(CConfigSheet, CPropertySheet)
     //{{AFX_MSG_MAP(CConfigSheet)
-    // NOTE - the ClassWizard will add and remove mapping macros here.
     ON_COMMAND(ID_APPLY_NOW, OnApplyNow)
     //}}AFX_MSG_MAP
 END_MESSAGE_MAP()
@@ -47,10 +46,17 @@ END_MESSAGE_MAP()
 // CConfigSheet message handlers
 void CConfigSheet::OnApplyNow()
 {
+
+
     Default();
 
-    //ªÒ»°≈‰÷√
-    GameConfig* pConfig = GameConfig::GetInstance();
+}
 
-    //TODO:
+BOOL CConfigSheet::OnInitDialog()
+{
+    CPropertySheet::OnInitDialog();
+
+
+    return TRUE;  // return TRUE unless you set the focus to a control
+    // EXCEPTION: OCX Property Pages should return FALSE
 }

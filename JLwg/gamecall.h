@@ -26,8 +26,6 @@ protected:
     DECLARE_SINGLETON(Gamecall)
 
 public:
-    //≥ı ºªØ
-    void UnInit();
     BOOL Init();
 
 

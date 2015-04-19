@@ -39,7 +39,7 @@ public:
 protected:
 	//{{AFX_MSG(CConfigSheet)
 	afx_msg void OnApplyNow();
-		// NOTE - the ClassWizard will add and remove member functions here.
+	virtual BOOL OnInitDialog();
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 };

@@ -96,9 +96,6 @@ void CJLkitDoc::Serialize(CArchive& ar)
 
 void CJLkitDoc::OnUpdateValidKey(CCmdUI* pCmdUI)
 {
-    pCmdUI->Enable(TRUE);
-
-
     CGlobalUserInfo* pGlobalUserInfo = CGlobalUserInfo::GetInstance();
     KeyVec& key = pGlobalUserInfo->m_KeyVec;
 
@@ -125,11 +122,11 @@ void CJLkitDoc::OnSetting()
 {
     CDlgSetting dlg;
     CConfigMgr* pConfig =  CConfigMgr::GetInstance();
-    dlg.m_strGamePath = pConfig->m_szGamePath;
+    dlg.m_strGamePath = pConfig->m_szGamePath.c_str();
     if(dlg.DoModal() == IDOK)
     {
         //保存配置信息
-        _tcscpy(pConfig->m_szGamePath, (LPCTSTR)dlg.m_strGamePath);
+        pConfig->m_szGamePath = (LPCTSTR)dlg.m_strGamePath;
     }
 }
 
@@ -182,7 +179,7 @@ BOOL CJLkitDoc::OnOpenDocument(LPCTSTR lpszPathName)
     if(!CDocument::OnOpenDocument(lpszPathName)) return FALSE;
 
     CConfigMgr* pConfig = CConfigMgr::GetInstance();
-    _tcscpy(pConfig->m_szFileName, lpszPathName);
+    pConfig->m_szFileName = lpszPathName;
 
     return TRUE;
 }
@@ -221,8 +218,8 @@ void CJLkitDoc::ShowLogin()
     m_pLoginDlg->m_bRemPw = pConfigMgr->m_KeepPw;
     if(m_pLoginDlg->m_bRemPw)
     {
-        m_pLoginDlg->m_strPw = pConfigMgr->m_szAccountPw;
-        m_pLoginDlg->m_strName = pConfigMgr->m_szAccountName;
+        m_pLoginDlg->m_strPw = pConfigMgr->m_szAccountPw.c_str();
+        m_pLoginDlg->m_strName = pConfigMgr->m_szAccountName.c_str();
     }
 
     if(m_pLoginDlg->m_hWnd == NULL)
@@ -333,8 +330,6 @@ void CJLkitDoc::ProcessLogin(CJLkitSocket* pSocket, const Tcp_Head& stTcpHead, v
         {
             PROCESS_DESCRIBE* pLoginFail = (PROCESS_DESCRIBE*)pData;
 
-            m_socket.CloseSocket();
-
             AfxMessageBox(pLoginFail->szDescribe);
 
             if(m_bRegister == false)
@@ -355,7 +350,7 @@ void CJLkitDoc::ProcessLogin(CJLkitSocket* pSocket, const Tcp_Head& stTcpHead, v
 
         case fun_login_ok:
         {
-            LOGIN_SUCCESS* pLoginSucess = (LOGIN_SUCCESS*)pData;
+            PROCESS_DESCRIBE* pLoginSucess = (PROCESS_DESCRIBE*)pData;
             m_socket.Send(M_KEY, fun_querykey, NULL, 0);
 
             //自动加载上次打开的文件
@@ -364,7 +359,7 @@ void CJLkitDoc::ProcessLogin(CJLkitSocket* pSocket, const Tcp_Head& stTcpHead, v
             if(pConfig->m_szFileName[0] != _T('\0'))
             {
                 AfxGetApp()->m_nCmdShow = SW_HIDE;
-                AfxGetApp()->OpenDocumentFile(pConfig->m_szFileName);
+                AfxGetApp()->OpenDocumentFile(pConfig->m_szFileName.c_str());
             }
 
             //显示主窗口
@@ -422,25 +417,11 @@ void CJLkitDoc::ProcessKey(CJLkitSocket* pSocket, const Tcp_Head& stTcpHead, voi
 
             QUERYKEY_SUCCESS* pKey = (QUERYKEY_SUCCESS*)pData;
 
-            //用户层的Recv应该保证收到的都是完整的数据
-            //下面判断小于包的语句可以省略吧
-
-            key.clear();
-            for(int i = 0; ; i++, pKey++)
-            {
-
-                //此处可以省略?
-                if(wDataSize < sizeof(QUERYKEY_SUCCESS))
-                    break;
-
-                //放到用户全局数据中
-                key.push_back(*pKey);
-
-                wDataSize -= sizeof(QUERYKEY_SUCCESS);
-            }
-
+            //放到用户全局数据中
+            key.push_back(*pKey);
             break;
         }
+
 
         case fun_querykey_fail:
         {
@@ -448,8 +429,6 @@ void CJLkitDoc::ProcessKey(CJLkitSocket* pSocket, const Tcp_Head& stTcpHead, voi
             {
                 CListCtrl& listctr = m_pKeyDlg->m_ListCtrl;
                 listctr.DeleteAllItems();
-
-                listctr.InsertItem(0, _T("查询失败"));
 
             }
             break;

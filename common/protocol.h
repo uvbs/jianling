@@ -161,12 +161,6 @@ struct BUG_BUF
 };
 
 
-//µÇÂ½Íê³É
-struct LOGIN_SUCCESS
-{
-    TCHAR szWelcome[DESLEN];
-};
-
 //µÇÂ½Ê§°Ü
 struct PROCESS_DESCRIBE
 {

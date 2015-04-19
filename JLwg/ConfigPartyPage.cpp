@@ -92,12 +92,9 @@ BOOL CConfigPartyPage::OnInitDialog()
 
 BOOL CConfigPartyPage::OnApply()
 {
-
-    //获得控件值
     UpdateData();
 
     GameConfig* pConfig = GameConfig::GetInstance();
-
     pConfig->m_bInvite_Auto = m_bInvite_Auto ;
     pConfig->m_bInvite_ALL = m_bInvite_ALL   ;
     pConfig->m_bInvite_INMAP = m_bInvite_INMAP ;
@@ -111,24 +108,21 @@ BOOL CConfigPartyPage::OnApply()
     pConfig->m_bAccept_Range = m_bAccept_Range ;
     pConfig->m_nAccept_Range = m_nAccept_Range ;
 
+
     return CPropertyPage::OnApply();
 }
 
-BOOL CConfigPartyPage::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult)
-{
 
-
-    return CPropertyPage::OnNotify(wParam, lParam, pResult);
-}
 
 BOOL CConfigPartyPage::OnCommand(WPARAM wParam, LPARAM lParam)
 {
-   
+
     int Notifyid = HIWORD(wParam);
-    if(Notifyid == EN_CHANGE) {
+    if(Notifyid == EN_CHANGE ||
+            Notifyid == BM_SETCHECK)
+    {
         SetModified();
     }
-
 
     return CPropertyPage::OnCommand(wParam, lParam);
 }

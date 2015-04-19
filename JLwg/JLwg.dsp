@@ -119,10 +119,6 @@ SOURCE=.\ConfigQhPage.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\ConfigSheet.cpp
-# End Source File
-# Begin Source File
-
 SOURCE=.\DataDlg.cpp
 # End Source File
 # Begin Source File
@@ -217,10 +213,6 @@ SOURCE=.\ConfigPartyPage.h
 # Begin Source File
 
 SOURCE=.\ConfigQhPage.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\ConfigSheet.h
 # End Source File
 # Begin Source File
 

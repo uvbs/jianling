@@ -21,13 +21,8 @@ Gamecall::Gamecall()
 
 Gamecall::~Gamecall()
 {
-    UnInit();
 }
 
-void Gamecall::UnInit()
-{
-
-}
 
 
 void Gamecall::DunDi(DWORD cityid)
@@ -1719,7 +1714,8 @@ BOOL Gamecall::GetObjectPos_0xb(DWORD pObjAddress, sPosition* spos)
 */
 wchar_t* Gamecall::GetObjectNameByIndex(DWORD index)
 {
-    return (wchar_t*)sendcall(id_msg_GetObjectNameByIndex, (LPVOID)index);
+    //return (wchar_t*)sendcall(id_msg_GetObjectNameByIndex, (LPVOID)index);
+    return _GetObjectNameByIndex(index);
 }
 
 /*
@@ -4909,17 +4905,29 @@ MoreTimes:
             }
 
             if(leave >= 50)
+            {
                 itemName = nBig50;
+            }
             else if(leave >= 45)
+            {
                 itemName = nBig45;
+            }
             else if(leave >= 36)
+            {
                 itemName = nBig36;
+            }
             else if(leave >= 29)
+            {
                 itemName = nBig29;
+            }
             else if(leave >= 10)
+            {
                 itemName = nBig10;
+            }
             else if(leave < 10 && leave >= 0)
+            {
                 itemName = nLess10;
+            }
             else
             {
                 LOGER(_T("没有找到所有能喝的药"));
@@ -5309,11 +5317,12 @@ void Gamecall::_GetRangeObjectToVector(ObjectNode* pNote, DWORD range, std::vect
 //比如遍历任务物品的那个过滤
 void Gamecall::GetRangeObjectToVector(ObjectNode* pNode, DWORD range, std::vector<ObjectNode*>& RangeObject)
 {
-    PARAM_GETUIADDRBYNAME temp;
-    temp.argv1 = (DWORD)pNode;
-    temp.argv2 = range;
-    temp.argv3 = (DWORD)&RangeObject;
-    sendcall(id_msg_GetRangeObjectToVector, &temp);
+//     PARAM_GETUIADDRBYNAME temp;
+//     temp.argv1 = (DWORD)pNode;
+//     temp.argv2 = range;
+//     temp.argv3 = (DWORD)&RangeObject;
+//     sendcall(id_msg_GetRangeObjectToVector, &temp);
+    _GetRangeObjectToVector(pNode, range, RangeObject);
 }
 
 //遍历距离范围内掉落的战利品对象到容器中

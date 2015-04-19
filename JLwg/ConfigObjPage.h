@@ -30,10 +30,11 @@ public:
 // Overrides
     // ClassWizard generated virtual function overrides
     //{{AFX_VIRTUAL(CConfigObjPage)
-protected:
+	protected:
     virtual BOOL OnApply();
     virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
-    //}}AFX_VIRTUAL
+	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam);
+	//}}AFX_VIRTUAL
 
 // Implementation
 protected:
@@ -46,9 +47,6 @@ protected:
     afx_msg void OnConfigFirst();
     afx_msg void OnConfigDontkill();
     afx_msg void OnDblclkListObjectfilter(NMHDR* pNMHDR, LRESULT* pResult);
-    afx_msg void OnItemchangedListObjectfilter(NMHDR* pNMHDR, LRESULT* pResult);
-    afx_msg void OnDeleteitemListObjectfilter(NMHDR* pNMHDR, LRESULT* pResult);
-    afx_msg void OnInsertitemListObjectfilter(NMHDR* pNMHDR, LRESULT* pResult);
     afx_msg void OnConfigAlwayskill();
     //}}AFX_MSG
     DECLARE_MESSAGE_MAP()

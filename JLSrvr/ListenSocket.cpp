@@ -64,6 +64,10 @@ void CListenSocket::OnAccept(int nErrorCode)
         pNewSock->SetSink(pDoc);
         pDoc->AddClient(pNewSock);
     }
+    else
+    {
+        SafeDelete(pNewSock);
+    }
 
 
 }

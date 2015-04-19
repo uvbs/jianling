@@ -9,6 +9,7 @@
     #pragma once
 #endif // _MSC_VER > 1000
 
+#include "DbMngr.h"
 #include "ListenSocket.h"
 #include "../JLkit/JLkitSocket.h"
 
@@ -40,6 +41,8 @@ public:
     //客户端列表
 private:
     std::list<CJLkitSocket*> _client;
+    std::map<CJLkitSocket*, LOGIN_BUF> _userdata;
+
 
 // Operations
 public:
@@ -59,6 +62,8 @@ public:
     bool ProcessKey(CJLkitSocket* pSocket, const Tcp_Head& stTcpHead, void* pData, WORD wDataSize);
     bool ProcessHelp(CJLkitSocket* pSocket, const Tcp_Head& stTcpHead, void* pData, WORD wDataSize);
 
+private:
+    CDbMngr m_db;
 
     //{{AFX_VIRTUAL(CJLSrvrDoc)
 public:
@@ -79,7 +84,8 @@ public:
 protected:
     //{{AFX_MSG(CJLSrvrDoc)
     afx_msg void OnFileRestart();
-    //}}AFX_MSG
+	afx_msg void OnUpdateConnects(CCmdUI* pCmdUI);
+	//}}AFX_MSG
     DECLARE_MESSAGE_MAP()
 };
 

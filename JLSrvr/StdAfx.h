@@ -29,6 +29,8 @@
 #include <afxsock.h>
 #include <afxdb.h>
 #include <afxmt.h>
+#include <atlconv.h>
+
 
 #include <string>
 #include <list>

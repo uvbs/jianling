@@ -95,11 +95,25 @@ BOOL CJLkitApp::InitInstance()
     GetModuleFileName(NULL, m_szIniPath, MAX_PATH);
     PathRemoveExtension(m_szIniPath);
     _tcscat(m_szIniPath, _T(".ini"));
+    if(!PathFileExists(m_szIniPath))
+    {
+        FILE* fp = _tfopen(m_szIniPath, _T("w+"));
+        if(fp == NULL)
+        {
+            AfxMessageBox(_T("无法创建配置文件"));
+            return FALSE;
+        }
 
+        fclose(fp);
+    }
 
     //加载配置
     CConfigMgr* pConfig = CConfigMgr::GetInstance();
-    pConfig->LoadConfig(m_szIniPath);
+    if(!pConfig->LoadConfig(m_szIniPath))
+    {
+        AfxMessageBox(_T("加载配置文件失败"));
+        return FALSE;
+    }
 
 
 
@@ -114,7 +128,7 @@ BOOL CJLkitApp::InitInstance()
     GdiplusStartupInput gdiplusStartupInput;
     GdiplusStartup(&m_gdiplusToken, &gdiplusStartupInput, NULL);
 
-    
+
     m_nCmdShow = SW_HIDE;
     OnFileNew();
 

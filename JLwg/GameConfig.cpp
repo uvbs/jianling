@@ -52,6 +52,7 @@ IMPLEMENT_SINGLETON(GameConfig)
 //构造函数
 GameConfig::GameConfig()
 {
+    ClearConfig();
 }
 
 GameConfig::~GameConfig()
@@ -72,8 +73,8 @@ BOOL GameConfig::LoadConfig()
         _tmkdir(szExe);
     }
 
-    CJLwgApp* pApp = (CJLwgApp*)AfxGetApp();
-    PIPEDATA& data = pApp->m_stData;
+
+    PIPEDATA& data = theApp.m_stData;
     PathAppend(szExe, data.szConfig);
 
 
@@ -90,7 +91,7 @@ BOOL GameConfig::LoadConfig()
 
     //喝药百分比
     m_HealthPercent = GetLongValue(strCombat, strYaoPecent, 60);
-
+    m_szQHColor = GetValue(strCombat, strQhColor, _T("绿色"));
 
     //组队
     m_bInvite_Auto = GetLongValue(strTeam, strInvite_Auto, 0);
@@ -126,7 +127,7 @@ void GameConfig::SaveConfig()
 
     //喝药百分比
     SetLongValue(strCombat, strYaoPecent, m_HealthPercent);
-    SetValue(strQhColor, strQhColor, m_szQHColor);
+    SetValue(strQhColor, strQhColor, m_szQHColor.c_str());
 
     //组队
     SetLongValue(strTeam, strInvite_Auto, m_bInvite_Auto);
@@ -142,13 +143,13 @@ void GameConfig::SaveConfig()
     SetLongValue(strTeam, strAcpt_RangeValue, m_nAccept_Range);
 
     SetMultiKey();
+    GOTODATA(TradeItem, ItemName);
     GOTODATA(BankItem, ItemName);
     GOTODATA(DelItem, ItemName);
     GOTODATA(SellItem, ItemName);
     GOTODATA(DisenchantItem, ItemName);
     GOTODATA(QHAccessories, ItemName);
     GOTODATA(QHWeapons, ItemName);
-    GOTODATA(QHAccessories, ItemName);
 
     GOTODATA2(Combat, FirstKill);
     GOTODATA2(Combat, DontKill);
@@ -164,8 +165,10 @@ void GameConfig::SaveConfig()
         _tmkdir(szExe);
     }
 
-    CJLwgApp* pApp = (CJLwgApp*)AfxGetApp();
-    PIPEDATA& data = pApp->m_stData;
+
+    PIPEDATA& data = theApp.m_stData;
+
+    _ASSERTE(data.szConfig[0] != _T('\0'));
     PathAppend(szExe, data.szConfig);
 
     SaveFile(szExe);
@@ -186,7 +189,7 @@ void GameConfig::ClearConfig()
     m_QHWeapons.clear();
 
     m_HealthPercent = 60;
-    _tcscpy(m_szQHColor, _T("绿色"));
+    m_szQHColor = _T("绿色");
 
     m_bInvite_Auto = 0;
     m_bInvite_ALL = 0;

@@ -154,14 +154,14 @@ int Webpost::Login()
 
 
         //直接对行匹配正则
-        regex gpvlu("[a-zA-Z0-9]{20,}");
-        cmatch matches;
+        tregex gpvlu(_T("[a-zA-Z0-9]{20,}"));
+        tsmatch matches;
 
-        CHAR szBuf[BUFSIZ] = {0};
-        while(ReadStringA(szBuf, BUFSIZ))
+        std::basic_string<TCHAR> strLine;
+        while(ReadLine(strLine))
         {
             //判断是否返回 gpvlu
-            if(regex_search(szBuf, matches, gpvlu))
+            if(regex_search(strLine, matches, gpvlu))
             {
                 //保存到成员变量中
                 m_gpvlu = matches.str().c_str();
@@ -169,22 +169,22 @@ int Webpost::Login()
                 break;
             }
 
-            regex blocking("LoginBlocking");
-            if(regex_search(szBuf, matches, blocking))
+            tregex blocking(_T("LoginBlocking"));
+            if(regex_search(strLine, matches, blocking))
             {
                 bRet = RESULT_FAIL_IPBLOCK;
                 break;
             }
 
-            regex captcha("captcha.jpg");
-            if(regex_search(szBuf, matches, captcha))
+            tregex captcha(_T("captcha.jpg"));
+            if(regex_search(strLine, matches, captcha))
             {
                 bRet = RESULT_FAIL_CAPTCHA;
                 break;
             }
 
-            regex pwerror("h1_type2");
-            if(regex_search(szBuf, matches, pwerror))
+            tregex pwerror(_T("h1_type2"));
+            if(regex_search(strLine, matches, pwerror))
             {
                 bRet = RESULT_FAIL_PWERROR;
                 break;

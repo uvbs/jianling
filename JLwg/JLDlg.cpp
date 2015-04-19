@@ -83,6 +83,10 @@ void CJLDlg::OnGotask()
 
 BOOL CJLDlg::OnInitDialog()
 {
+
+    PIPEDATA &data = theApp.m_stData;
+    SetWindowText(data.szAccount);
+
     return CDialog::OnInitDialog();
 }
 
@@ -112,12 +116,5 @@ void CJLDlg::OnClose()
 void CJLDlg::OnUnloadwg()
 {
     OnStopTask();
-    DestroyWindow();
-}
-
-
-void CJLDlg::PostNcDestroy()
-{
-    PostQuitMessage(0);
-    delete this;
+    EndDialog(IDOK);
 }

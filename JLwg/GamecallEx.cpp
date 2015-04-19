@@ -12,11 +12,24 @@ GamecallEx::GamecallEx()
 {
     m_bStopThread = FALSE;
     m_bCanAoe = FALSE;
+
+
+
+
     sock.SetSink(this);
 }
 
 GamecallEx::~GamecallEx()
 {
+    //等待所有线程退出
+    for(int i = 0; i < sizeof(m_hThreads) ; i++)
+    {
+        if(m_hThreads[i] != INVALID_HANDLE_VALUE)
+        {
+            WaitForSingleObject(m_hThreads[i], INFINITE);
+            CloseHandle(m_hThreads[i]);
+        }
+    }
 }
 
 
@@ -200,15 +213,15 @@ BOOL GamecallEx::HeChengWuQi(EQUITMENT_POS pos)
 
 
     //根据颜色取得游戏内对应的数据
-    if(wcscmp(strGreen, pConfig->m_szQHColor) == 0)
+    if(strGreen == pConfig->m_szQHColor)
     {
         qhColor = 3;
     }
-    else if(wcscmp(strBlue, pConfig->m_szQHColor) == 0)
+    else if(strBlue == pConfig->m_szQHColor)
     {
         qhColor = 4;
     }
-    else if(wcscmp(strPurple, pConfig->m_szQHColor) == 0)
+    else if(strPurple == pConfig->m_szQHColor)
     {
         qhColor = 5;
     }
@@ -708,7 +721,7 @@ startKiLL:
         }
         if(mode & modePickupOnce)
         {
-            log.info(_T("执行modePickupOnce"));
+            TRACE(_T("执行modePickupOnce"));
             kill_PickupOnce();
         }
 
@@ -716,7 +729,7 @@ startKiLL:
         //判断任务步骤
         if(mode & modeTask)
         {
-            log.info(_T("执行modeTask"));
+            TRACE(_T("执行modeTask"));
             if(kill_Task(MyQuestID, MyQuestStep))
             {
                 goto exitfun;
@@ -749,18 +762,18 @@ exitfun:
     if(mode & modePickup)
     {
         Sleep(500);
-        log.info(_T("执行modePickup"));
+        TRACE(_T("执行modePickup"));
         //杀完捡起掉落, 此时的范围为了更可靠写改成x2
         Pickup(0, range);
     }
 
     if(mode & modeGoback)
     {
-        log.info(_T("执行modeGoback"));
+        TRACE(_T("执行modeGoback"));
         Gamecall::Stepto(fmypos, 10, CAN_OPERATOR, range * 2);
     }
 
-    log.info(_T("%s done!"), FUNCNAME);
+    TRACE(_T("%s done!"), FUNCNAME);
     return RESULT_KILL_OK;
 }
 
@@ -2996,7 +3009,7 @@ BOOL GamecallEx::Init()
 {
 
     //等待进入游戏
-    if(WaitPlans(120))
+    if(WaitPlans(60))
     {
         LOGER(_T("进入游戏完成"));
     }
@@ -3009,10 +3022,10 @@ BOOL GamecallEx::Init()
 
 
     //创建辅助线程
-    hThreads[0] = (HANDLE)_beginthreadex(0, 0, KeepAliveThread, this, 0, 0);
-    hThreads[1] = (HANDLE)_beginthreadex(0, 0, AttackHelperThread, this, 0, 0);
-    SetThreadPriority(hThreads[0], THREAD_PRIORITY_LOWEST);
-    SetThreadPriority(hThreads[1], THREAD_PRIORITY_LOWEST);
+    m_hThreads[0] = (HANDLE)_beginthreadex(0, 0, KeepAliveThread, this, 0, 0);
+    m_hThreads[1] = (HANDLE)_beginthreadex(0, 0, AttackHelperThread, this, 0, 0);
+    SetThreadPriority(m_hThreads[0], THREAD_PRIORITY_LOWEST);
+    SetThreadPriority(m_hThreads[1], THREAD_PRIORITY_LOWEST);
 
     if(!Gamecall::Init())
     {
@@ -3020,14 +3033,4 @@ BOOL GamecallEx::Init()
     }
 
     return TRUE;
-}
-
-void GamecallEx::UnInit()
-{
-    //等待所有线程退出
-    WaitForMultipleObjects(sizeof(hThreads), (HANDLE*)&hThreads, TRUE, INFINITE);
-    for(int i = 0; i < sizeof(hThreads); i++)
-    {
-        CloseHandle(hThreads[i]);
-    }
 }

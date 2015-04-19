@@ -96,6 +96,16 @@ void CDlgLogin::OnBtnModifybind()
 void CDlgLogin::OnOK()
 {
     ShowWindow(SW_HIDE);
+    UpdateData();
+
+    CConfigMgr* pConfig = CConfigMgr::GetInstance();
+    if(m_bRemPw)
+    {
+        pConfig->m_szAccountName = m_strName;
+        pConfig->m_szAccountPw = m_strPw;
+        pConfig->m_KeepPw = m_bRemPw;
+    }
+
 
     CMainFrame* pFrame = (CMainFrame*)AfxGetMainWnd();
     CJLkitDoc* pDoc = (CJLkitDoc*)pFrame->GetActiveDocument();

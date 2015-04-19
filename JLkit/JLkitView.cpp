@@ -85,7 +85,6 @@ CJLkitView::~CJLkitView()
         m_bWorking = false;
         m_pWorkThread->PostThreadMessage(WM_QUIT, 0, 0);
         WaitForSingleObject(m_pWorkThread->m_hThread, INFINITE);
-
     }
 
     SafeDelete(m_lpVpnFile);
@@ -389,33 +388,16 @@ void CJLkitView::SerializeText(CArchive& ar)
 
         TCHAR szConfig[MAX_PATH];
         TCHAR szScript[MAX_PATH];
-        if(cbScript.GetLBText(cbScript.GetCurSel(), szScript) &&
-                cbConfig.GetLBText(cbConfig.GetCurSel(), szConfig))
-        {
-            strConfig = szConfig;
-            strScript = szScript;
-        }
-        else
-        {
-            if(pConfig->m_szGameConfig[0] != _T('\0'))
-            {
-                strConfig = pConfig->m_szGameConfig;
-            }
-            else
-            {
-                strConfig = _T("default.ini");
-            }
+        cbScript.GetLBText(cbScript.GetCurSel(), szScript);
+        cbConfig.GetLBText(cbConfig.GetCurSel(), szConfig);
 
-            if(pConfig->m_szGameScript[0] != _T('\0'))
-            {
-                strScript = pConfig->m_szGameScript;
-            }
-            else
-            {
-                strScript = _T("default.ini");
-            }
+        _ASSERTE(szConfig[0] != _T('\0'));
+        _ASSERTE(szScript[0] != _T('\0'));
 
-        }
+
+        strConfig = szConfig;
+        strScript = szScript;
+
 
 
         while(ReadLine(strLine, pFile))
@@ -443,8 +425,15 @@ UINT AFX_CDECL CJLkitView::IPCThread(LPVOID lpParam)
 
     PIPEDATA stPipeData = *(PPIPEDATA)lpParam;
 
+    CMainFrame* pFrame = (CMainFrame*)AfxGetApp()->m_pMainWnd;
+    CJLkitView* pView = (CJLkitView*)pFrame->GetActiveView();
+    CListCtrl& list = pView->GetListCtrl();
+
+    int inItem = stPipeData.dwItem;
     HANDLE hPipe = INVALID_HANDLE_VALUE;
-    HANDLE hEvent = NULL;
+    DWORD dwBytesRead;
+    BOOL bRetCode;
+
     __try
     {
 
@@ -452,42 +441,35 @@ UINT AFX_CDECL CJLkitView::IPCThread(LPVOID lpParam)
         TCHAR szPipi[MAX_PATH];
         wsprintf(szPipi, _T("\\\\.\\Pipe\\JLwg_%d"), stPipeData.dwPid);
 
-        hPipe = CreateNamedPipe(szPipi, PIPE_ACCESS_DUPLEX | FILE_FLAG_OVERLAPPED, PIPE_TYPE_MESSAGE, 1, BUFSIZ, BUFSIZ, PIPE_TIMEOUT, NULL);
-
+        hPipe = CreateNamedPipe(szPipi, PIPE_ACCESS_DUPLEX, PIPE_TYPE_MESSAGE | PIPE_WAIT, 1, BUFSIZ, BUFSIZ, PIPE_TIMEOUT, NULL);
         if(hPipe == INVALID_HANDLE_VALUE) __leave;
 
-        hEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
-        if(hEvent == NULL)  __leave;
-
-        OVERLAPPED ovlp;
-        ZeroMemory(&ovlp, sizeof(OVERLAPPED));
-        ovlp.hEvent = hEvent;
-
-        if(!ConnectNamedPipe(hPipe, &ovlp))
+        if(!ConnectNamedPipe(hPipe, NULL))
         {
-            if(ERROR_IO_PENDING != GetLastError()) __leave;
+            if(ERROR_PIPE_CONNECTED != GetLastError()) __leave;
         }
 
-        WaitForSingleObject(hEvent, 15 * 1000);
 
         //写入一次数据
         DWORD dwBytesWrited = 0;
-        WriteFile(hPipe, &stPipeData, sizeof(PIPEDATA), &dwBytesWrited, NULL);
+        if(!WriteFile(hPipe, &stPipeData, sizeof(PIPEDATA), &dwBytesWrited, NULL)) __leave;
 
 
         //之后用事件等待
-//         while(1)
-//         {
-//             DWORD dwRetCode = WaitForSingleObject(hEvent, 6000);
-//             if(dwRetCode == WAIT_OBJECT_0)
-//             {
-//                 TRACE(_T("WAIT_OBJECT_0"));
-//             }
-//             else
-//             {
-//
-//             }
-//         }
+        PIPESTATUS status;
+        while(1)
+        {
+
+            // Read client requests from the pipe.
+            bRetCode = ReadFile(hPipe, &status, sizeof(PIPESTATUS),  &dwBytesRead, NULL);
+            if(!bRetCode || (dwBytesRead == 0))
+            {
+                list.SetItemText(inItem, COLUMN_TEXT_STATUS, _T("进程退出了"));
+                break;
+            }
+
+            list.SetItemText(inItem, COLUMN_TEXT_STATUS, status.szStatus);
+        }
 
 
     }
@@ -496,11 +478,6 @@ UINT AFX_CDECL CJLkitView::IPCThread(LPVOID lpParam)
         if(hPipe != INVALID_HANDLE_VALUE)
         {
             CloseHandle(hPipe);
-        }
-
-        if(hEvent != NULL)
-        {
-            CloseHandle(hEvent);
         }
     }
 
@@ -561,7 +538,7 @@ int CJLkitView::CreateGameProcess(int inItem)
     //启动游戏
     TCHAR szCmdLine[MAX_PATH];
     wsprintf(szCmdLine, _T("%s /LaunchByLauncher /SessKey:\"%s\" /CompanyID:\"0\" /ChannelGroupIndex:\"-1\""),
-             pConfig->m_szGamePath, strkey.c_str());
+             pConfig->m_szGamePath.c_str(), strkey.c_str());
 
     GetListCtrl().SetItemText(inItem, COLUMN_TEXT_STATUS, _T("创建进程.."));
     if(!CreateProcess(NULL, szCmdLine, NULL, NULL, FALSE, CREATE_SUSPENDED, NULL, NULL, &si, &pi))
@@ -575,9 +552,9 @@ int CJLkitView::CreateGameProcess(int inItem)
 
         PIPEDATA stData;
         stData.dwPid = pi.dwProcessId;
+        stData.dwItem = inItem;
         _tcscpy(stData.szConfig, strConfig.c_str());
         _tcscpy(stData.szScript, strScript.c_str());
-        _tcscpy(stData.szPassWord, strPw.c_str());
         _tcscpy(stData.szAccount, strName.c_str());
 
         //创建新线程和外挂通信

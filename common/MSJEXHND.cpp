@@ -4,8 +4,6 @@
 // FILE: MSJEXHND.CPP
 //==========================================
 #include "stdafx.h"
-#include <windows.h>
-#include <tchar.h>
 #include "msjexhnd.h"
 
 
@@ -49,7 +47,7 @@ MSJExceptionHandler::MSJExceptionHandler()
     {
         pszDot++;   // Advance past the '.'
         if(_tcslen(pszDot) >= 3)
-            _tcscpy(pszDot, _T("RPT"));     // "RPT" -> "Report"
+            _tcscpy(pszDot, _T("log"));     // "RPT" -> "Report"
     }
 }
 //============

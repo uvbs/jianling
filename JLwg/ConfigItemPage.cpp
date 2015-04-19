@@ -45,9 +45,6 @@ BEGIN_MESSAGE_MAP(CConfigItemPage, CDialog)
     ON_COMMAND(ID_CONFIG_QHWQ, OnConfigQhwq)
     ON_COMMAND(ID_CONFIG_SELL, OnConfigSell)
     ON_NOTIFY(NM_DBLCLK, IDC_LIST_BAGSFILTER, OnDblclkListBagsfilter)
-    ON_NOTIFY(LVN_ITEMCHANGED, IDC_LIST_BAGSFILTER, OnItemchangedListBagsfilter)
-    ON_NOTIFY(LVN_INSERTITEM, IDC_LIST_BAGSFILTER, OnInsertitemListBagsfilter)
-    ON_NOTIFY(LVN_DELETEITEM, IDC_LIST_BAGSFILTER, OnDeleteitemListBagsfilter)
     //}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
@@ -95,7 +92,8 @@ BOOL CConfigItemPage::OnInitDialog()
     ItemVector& DisenchantItem = pConfig->m_DisenchantItem;
     ItemVector& TradeItem = pConfig->m_TradeItem;
     ItemVector& DelItem = pConfig->m_DelItem;
-
+    ItemVector& QHAccessories = pConfig->m_QHAccessories;    //强化饰品
+    ItemVector& QHWeapons = pConfig->m_QHWeapons;    //强化武器
 
     //出售
     for(i = 0; i < SellItem.size(); i++)
@@ -127,6 +125,20 @@ BOOL CConfigItemPage::OnInitDialog()
     {
         m_FilterList.InsertItem(i, DelItem[i].c_str());
         m_FilterList.SetItemText(i, 1, strDelItem);
+    }
+
+    //摧毁
+    for(i = 0; i < QHAccessories.size(); i++)
+    {
+        m_FilterList.InsertItem(i, QHAccessories[i].c_str());
+        m_FilterList.SetItemText(i, 1, strQHAccessories);
+    }
+
+    //摧毁
+    for(i = 0; i < QHWeapons.size(); i++)
+    {
+        m_FilterList.InsertItem(i, QHWeapons[i].c_str());
+        m_FilterList.SetItemText(i, 1, strQHWeapons);
     }
 
     return TRUE;  // return TRUE unless you set the focus to a control
@@ -203,32 +215,11 @@ void CConfigItemPage::OnDblclkListBagsfilter(NMHDR* pNMHDR, LRESULT* pResult)
     *pResult = 0;
 }
 
-void CConfigItemPage::OnItemchangedListBagsfilter(NMHDR* pNMHDR, LRESULT* pResult)
-{
-    NM_LISTVIEW* pNMListView = (NM_LISTVIEW*)pNMHDR;
-    // TODO: Add your control notification handler code here
-
-    *pResult = 0;
-}
-
-void CConfigItemPage::OnInsertitemListBagsfilter(NMHDR* pNMHDR, LRESULT* pResult)
-{
-    NM_LISTVIEW* pNMListView = (NM_LISTVIEW*)pNMHDR;
-    // TODO: Add your control notification handler code here
-    SetModified();
-    *pResult = 0;
-}
-
-void CConfigItemPage::OnDeleteitemListBagsfilter(NMHDR* pNMHDR, LRESULT* pResult)
-{
-    NM_LISTVIEW* pNMListView = (NM_LISTVIEW*)pNMHDR;
-    // TODO: Add your control notification handler code here
-    SetModified();
-    *pResult = 0;
-}
 
 BOOL CConfigItemPage::OnApply()
 {
+    UpdateData();
+
     GameConfig* pConfig = GameConfig::GetInstance();
 
     ItemVector& sell = pConfig-> m_SellItem;    //出售
@@ -276,7 +267,17 @@ BOOL CConfigItemPage::OnApply()
 
     }
 
-    pConfig->SaveConfig();
 
     return TRUE;
+}
+
+BOOL CConfigItemPage::OnCommand(WPARAM wParam, LPARAM lParam)
+{
+
+    int Notifyid = HIWORD(wParam);
+    if(Notifyid == NM_DBLCLK)
+    {
+        SetModified();
+    }
+    return CDialog::OnCommand(wParam, lParam);
 }
