@@ -16,6 +16,8 @@ IMPLEMENT_SINGLETON(CConfigMgr)
 //构造函数
 CConfigMgr::CConfigMgr()
 {
+    m_KeepPw = 0; //记住密码
+    m_Update = 0;
 }
 
 CConfigMgr::~CConfigMgr()

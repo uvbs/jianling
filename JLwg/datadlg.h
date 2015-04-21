@@ -7,12 +7,13 @@
 // DataDlg1.h : header file
 //
 
+#include "GameHook.h"
 #include "GamecallEx.h"
 
 /////////////////////////////////////////////////////////////////////////////
 // CDataDlg dialog
-class GameHook;
-class CDataDlg : public CDialog
+
+class CDataDlg : public CDialog, public IHookRetSink
 {
 // Construction
 public:
@@ -38,6 +39,10 @@ public:
 
     //卸载所有
     void CheckHook();
+
+    //钩子回调
+    void ShowHook(TCHAR *pszFormat, ...);
+
 
 // Overrides
     // ClassWizard generated virtual function overrides
@@ -65,7 +70,6 @@ public:
     void PrintfRangeMonster(BOOL bApplyConfig = FALSE);
     void PrintfRangeObject();
     void AddInfo(TCHAR szFormat[], ...);
-    void AddInfo2(TCHAR szText[]);
 
 
 
@@ -95,7 +99,8 @@ protected:
     afx_msg void OnHookstrike();
     afx_msg void OnHookCombat();
     afx_msg void OnAddtoparty();
-    //}}AFX_MSG
+	afx_msg void OnBossBombat();
+	//}}AFX_MSG
     DECLARE_MESSAGE_MAP()
 };
 

@@ -57,7 +57,7 @@ void CJLkitSocket::OnReceive(int nErrorCode)
         //缓冲区所有等待处理字节
         int nBufSize = m_nRecvWriterPointer + nRecvSize;
         int nProcSize = 0;  //处理过的长度
-        int nLeftSize;      //剩余长度
+        int nLeftSize = 0;      //剩余长度
         while(1)
         {
 

@@ -113,14 +113,6 @@ TCHAR* cli_Loots[] =
 
 
 
-
-void ShowHookRet(LPVOID lpParam, TCHAR szText[])
-{
-    CDataDlg* pDlg = (CDataDlg*)lpParam;
-    pDlg->AddInfo2(szText);
-}
-
-
 /////////////////////////////////////////////////////////////////////////////
 // CDataDlg dialog
 
@@ -181,7 +173,8 @@ BEGIN_MESSAGE_MAP(CDataDlg, CDialog)
     ON_COMMAND(ID_HOOKSTRIKE, OnHookstrike)
     ON_BN_CLICKED(IDC_HOOK_COMBAT, OnHookCombat)
     ON_BN_CLICKED(IDC_ADDTOPARTY, OnAddtoparty)
-    //}}AFX_MSG_MAP
+	ON_BN_CLICKED(IDC_BOSSCOMBAT, OnBossBombat)
+	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
 
@@ -211,16 +204,6 @@ void CDataDlg::CheckHook()
 
     if(m_bHook_step)
         GameHook::GetInstance()->stepHook.unhook();
-
-}
-
-
-void CDataDlg::AddInfo2(TCHAR szText[])
-{
-
-    int len = m_hEdit.GetWindowTextLength();
-    m_hEdit.SetSel(len, -1);
-    m_hEdit.ReplaceSel(szText);
 
 }
 
@@ -267,9 +250,7 @@ BOOL CDataDlg::OnInitDialog()
     CheckHook();
 
     //³õÊ¼»¯¹³×Ó
-    GameHook* pGameHook = GameHook::GetInstance();
-    pGameHook->m_lpParam = this;
-    pGameHook->m_showHookRet = ShowHookRet;
+    GameHook::GetInstance()->SetSink(this);
 
 
     return TRUE;  // return TRUE unless you set the focus to a control
@@ -1251,4 +1232,29 @@ void CDataDlg::OnAddtoparty()
     GamecallEx& gcall = *GamecallEx::GetInstance();
 
     gcall.AddToPary();
+}
+
+void CDataDlg::ShowHook(TCHAR *pszFormat, ...)
+{
+    TCHAR buffer[BUFSIZ] = {0};
+    
+    va_list argptr;
+    va_start(argptr, pszFormat);
+    wvsprintf(buffer, pszFormat, argptr);
+    va_end(argptr);
+    
+    _tcscat(buffer, _T("\r\n"));
+    
+    int len = m_hEdit.GetWindowTextLength();
+    m_hEdit.SetSel(len, -1);
+    m_hEdit.ReplaceSel(buffer);
+
+}
+
+void CDataDlg::OnBossBombat() 
+{
+    GamecallEx::GetInstance()->KillBoss();
+
+
+
 }

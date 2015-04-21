@@ -660,9 +660,8 @@ int GamecallEx::ClearCustom()
 
 void GamecallEx::KillBoss()
 {
-
-    //hook怪物技能
-
+    //hook怪物技能, 设置回调
+    GameHook::GetInstance()->SetCombatSink(this);
 }
 
 //杀怪
@@ -3041,4 +3040,9 @@ BOOL GamecallEx::Init()
     }
 
     return TRUE;
+}
+
+void GamecallEx::NotifyMonsterAttack( MONSTERATAACK *pAttack )
+{
+        TRACE(_T("%d, %d"), pAttack->dwObj, pAttack->dwStrikeId);
 }

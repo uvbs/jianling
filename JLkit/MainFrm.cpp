@@ -218,6 +218,17 @@ void CMainFrame::OnClose()
     m_cbScript.GetLBText(inSel, szStr);
     CConfigMgr::GetInstance()->m_szGameScript = szStr;
 
+
+    TCHAR szIni[MAX_PATH];
+    GetModuleFileName(NULL, szIni, MAX_PATH);
+    PathRemoveExtension(szIni);
+    _tcscat(szIni, _T(".ini"));
+    
+    //±£´æÅäÖÃ
+    CConfigMgr* pConfig =  CConfigMgr::GetInstance();
+    pConfig->SaveConfig(szIni);
+
+
     CFrameWnd::OnClose();
 }
 

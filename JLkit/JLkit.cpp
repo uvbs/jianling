@@ -24,7 +24,6 @@ CJLkitApp   theApp;
 BEGIN_MESSAGE_MAP(CJLkitApp, CWinApp)
 //{{AFX_MSG_MAP(CJLkitApp)
     ON_COMMAND(ID_APP_EXIT, OnAppExit)
-    ON_COMMAND(ID_FILE_NEW, OnFileNew)
     ON_COMMAND(ID_FILE_OPEN, OnFileOpen)
 //}}AFX_MSG_MAP
 END_MESSAGE_MAP()
@@ -106,36 +105,5 @@ BOOL CJLkitApp::InitInstance()
 
 int CJLkitApp::ExitInstance()
 {
-
-    TCHAR szIni[MAX_PATH];
-    GetModuleFileName(NULL, szIni, MAX_PATH);
-    PathRemoveExtension(szIni);
-    _tcscat(szIni, _T(".ini"));
-
-    //±£´æÅäÖÃ
-    CConfigMgr* pConfig =  CConfigMgr::GetInstance();
-    pConfig->SaveConfig(szIni);
-
     return CWinApp::ExitInstance();
-}
-
-BOOL CJLkitApp::PreTranslateMessage(MSG* pMsg)
-{
-    if(pMsg->message == WM_CLOSE || pMsg->message == WM_DESTROY)
-    {
-        TRACE(_T("sdfsdf"));
-    }
-    return CWinApp::PreTranslateMessage(pMsg);
-}
-
-BOOL CALLBACK CJLkitApp::EnumChildProc(HWND hWnd, LPARAM lParam)
-{
-
-    TCHAR temp1[256], temp2[256];
-    ::GetWindowText(hWnd, temp1, 255);
-
-    wsprintf(temp2, _T("hwnd:%x text: %s"), hWnd, temp1);
-    MessageBox(NULL, temp2, _T("cwnd"), MB_OK);
-
-    return TRUE;
 }

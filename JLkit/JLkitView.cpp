@@ -117,87 +117,87 @@ void CJLkitView::SetResult(int nReslt, int i)
 {
     switch(nReslt)
     {
-        case RESULT_FAIL_INJECT:
+    case RESULT_FAIL_INJECT:
         {
             GetListCtrl().SetItemText(i, COLUMN_TEXT_STATUS, _T("注入失败"));
             break;
         }
-        case  RESULT_SUCCESS:
+    case  RESULT_SUCCESS:
         {
             GetListCtrl().SetItemText(i, COLUMN_TEXT_STATUS, _T("完成"));
             GetListCtrl().SetCheck(i);
             SetItemColor(i, RGB(255, 255, 255));
             break;
         }
-        case  RESULT_FAIL_CAPTCHA:
+    case  RESULT_FAIL_CAPTCHA:
         {
             GetListCtrl().SetItemText(i, COLUMN_TEXT_STATUS, _T("需要验证码"));
             break;
         }
-        case  RESULT_FAIL_IPBLOCK:
+    case  RESULT_FAIL_IPBLOCK:
         {
             GetListCtrl().SetItemText(i, COLUMN_TEXT_STATUS, _T("此IP被封锁, 使用代理重试"));
             SetItemColor(i, RGB(255, 0, 0));
             break;
         }
-        case  RESULT_FAIL_EXCEPTION:
+    case  RESULT_FAIL_EXCEPTION:
         {
             GetListCtrl().SetItemText(i, COLUMN_TEXT_STATUS, _T("异常, 请重试一次"));
             break;
         }
-        case  RESULT_FAIL_GETUKEY:
+    case  RESULT_FAIL_GETUKEY:
         {
             GetListCtrl().SetItemText(i, COLUMN_TEXT_STATUS, _T("无法获取UKEY"));
             break;
         }
-        case  RESULT_NOKEY:
+    case  RESULT_NOKEY:
         {
             GetListCtrl().SetItemText(i, COLUMN_TEXT_STATUS, _T("没有有效KEY"));
             break;
         }
-        case  RESULT_ALREADY_RUNNING:
+    case  RESULT_ALREADY_RUNNING:
         {
             GetListCtrl().SetItemText(i, COLUMN_TEXT_STATUS, _T("已经在运行.."));
             break;
         }
-        case  RESULT_GET_ALEADY:
+    case  RESULT_GET_ALEADY:
         {
             GetListCtrl().SetItemText(i, COLUMN_TEXT_STATUS, _T("已经领取过"));
             break;
         }
-        case  RESULT_GET_ERROR:
+    case  RESULT_GET_ERROR:
         {
             GetListCtrl().SetItemText(i, COLUMN_TEXT_STATUS, _T("领取失败"));
             break;
         }
-        case  RESULT_FAIL_TIMEOUT:
+    case  RESULT_FAIL_TIMEOUT:
         {
             GetListCtrl().SetItemText(i, COLUMN_TEXT_STATUS, _T("超时"));
             break;
         }
-        case  RESULT_FAIL_NOACTIVEITEMS:
+    case  RESULT_FAIL_NOACTIVEITEMS:
         {
             GetListCtrl().SetItemText(i, COLUMN_TEXT_STATUS, _T("无需激活"));
             break;
         }
-        case  RESULT_FAIL_PWERROR:
+    case  RESULT_FAIL_PWERROR:
         {
             GetListCtrl().SetItemText(i, COLUMN_TEXT_STATUS, _T("密码错误"));
             SetItemColor(i, RGB(255, 0, 0));
             break;
         }
-        case  RESULT_FAIL_CREATEGAMEPROCESS:
+    case  RESULT_FAIL_CREATEGAMEPROCESS:
         {
             GetListCtrl().SetItemText(i, COLUMN_TEXT_STATUS, _T("创建进程错误"));
             break;
         }
-        case  RESULT_FAIL_AUTH:
+    case  RESULT_FAIL_AUTH:
         {
             GetListCtrl().SetItemText(i, COLUMN_TEXT_STATUS, _T("验证失败, 请重试一次"));
             SetItemColor(i, RGB(255, 0, 0));
             break;
         }
-        case RESULT_LOGIN_SUCCESS:
+    case RESULT_LOGIN_SUCCESS:
         {
             GetListCtrl().SetItemText(i, COLUMN_TEXT_STATUS, _T("运行中.."));
             break;
@@ -261,7 +261,7 @@ void CJLkitView::OnRclick(NMHDR* pNMHDR, LRESULT* pResult)
 {
     switch(pNMHDR->code)
     {
-        case NM_RCLICK:
+    case NM_RCLICK:
         {
             POINT point;
             GetCursorPos(&point);
@@ -434,52 +434,47 @@ UINT AFX_CDECL CJLkitView::IPCThread(LPVOID lpParam)
     HANDLE hPipe = INVALID_HANDLE_VALUE;
     DWORD dwBytesRead;
     BOOL bRetCode;
+    DWORD dwBytesWrited = 0;
 
-    __try
+    TCHAR szPipi[MAX_PATH];
+    wsprintf(szPipi, _T("\\\\.\\Pipe\\JLwg_%d"), stPipeData.dwPid);
+
+    hPipe = CreateNamedPipe(szPipi, PIPE_ACCESS_DUPLEX, PIPE_TYPE_MESSAGE | PIPE_WAIT, 1, BUFSIZ, BUFSIZ, PIPE_TIMEOUT, NULL);
+    if(hPipe == INVALID_HANDLE_VALUE)
+        goto fun_exit;
+
+    if(!ConnectNamedPipe(hPipe, NULL))
     {
-
-
-        TCHAR szPipi[MAX_PATH];
-        wsprintf(szPipi, _T("\\\\.\\Pipe\\JLwg_%d"), stPipeData.dwPid);
-
-        hPipe = CreateNamedPipe(szPipi, PIPE_ACCESS_DUPLEX, PIPE_TYPE_MESSAGE | PIPE_WAIT, 1, BUFSIZ, BUFSIZ, PIPE_TIMEOUT, NULL);
-        if(hPipe == INVALID_HANDLE_VALUE) __leave;
-
-        if(!ConnectNamedPipe(hPipe, NULL))
-        {
-            if(ERROR_PIPE_CONNECTED != GetLastError()) __leave;
-        }
-
-
-        //写入一次数据
-        DWORD dwBytesWrited = 0;
-        if(!WriteFile(hPipe, &stPipeData, sizeof(PIPEDATA), &dwBytesWrited, NULL)) __leave;
-
-
-        //之后用事件等待
-        PIPESTATUS status;
-        while(1)
-        {
-
-            // Read client requests from the pipe.
-            bRetCode = ReadFile(hPipe, &status, sizeof(PIPESTATUS),  &dwBytesRead, NULL);
-            if(!bRetCode || (dwBytesRead == 0))
-            {
-                list.SetItemText(inItem, COLUMN_TEXT_STATUS, _T("进程退出了"));
-                break;
-            }
-
-            list.SetItemText(inItem, COLUMN_TEXT_STATUS, status.szStatus);
-        }
-
-
+        if(ERROR_PIPE_CONNECTED != GetLastError())
+            goto fun_exit;
     }
-    __finally
+
+
+    //写入一次数据
+    if(!WriteFile(hPipe, &stPipeData, sizeof(PIPEDATA), &dwBytesWrited, NULL))
+        goto fun_exit;
+
+
+    //之后用事件等待
+    PIPESTATUS status;
+    while(1)
     {
-        if(hPipe != INVALID_HANDLE_VALUE)
+
+        // Read client requests from the pipe.
+        bRetCode = ReadFile(hPipe, &status, sizeof(PIPESTATUS),  &dwBytesRead, NULL);
+        if(!bRetCode || (dwBytesRead == 0))
         {
-            CloseHandle(hPipe);
+            list.SetItemText(inItem, COLUMN_TEXT_STATUS, _T("进程退出了"));
+            break;
         }
+
+        list.SetItemText(inItem, COLUMN_TEXT_STATUS, status.szStatus);
+    }
+
+fun_exit:
+    if(hPipe != INVALID_HANDLE_VALUE)
+    {
+        CloseHandle(hPipe);
     }
 
     return 0;
@@ -491,7 +486,7 @@ UINT AFX_CDECL CJLkitView::IPCThread(LPVOID lpParam)
 int CJLkitView::CreateGameProcess(int inItem, bool bInject)
 {
     int RetCode;
-
+    CWinThread *pNewThread;
     CJLkitDoc* pDoc = (CJLkitDoc*)GetDocument();
 
 
@@ -559,7 +554,7 @@ int CJLkitView::CreateGameProcess(int inItem, bool bInject)
         _tcscpy(stData.szAccount, strName.c_str());
 
         //创建新线程和外挂通信
-        AfxBeginThread(IPCThread, &stData);
+        pNewThread = AfxBeginThread(IPCThread, &stData);
 
 
         //注入
@@ -573,14 +568,21 @@ int CJLkitView::CreateGameProcess(int inItem, bool bInject)
         _tcscpy(_tcsrchr(szLibFile, TEXT('\\')) + 1, TEXT("JLwg.dll"));
         CInject wgdll(szLibFile);
 #endif
+
         _tcscpy(_tcsrchr(szLibFile, TEXT('\\')) + 1, TEXT("speedhack-i386.dll"));
         CInject spdll(szLibFile);
 
         if(wgdll.InjectTo(pi.dwProcessId) && spdll.InjectTo(pi.dwProcessId))
         {
 
-            ResumeThread(pi.hThread);
-            RetCode = RESULT_LOGIN_SUCCESS;
+            if(ResumeThread(pi.hThread) == 0)
+            {
+                RetCode = RESULT_NOUSE;
+            }
+            else
+            {
+                RetCode = RESULT_LOGIN_SUCCESS;
+            }
 
         }
         else
@@ -590,6 +592,7 @@ int CJLkitView::CreateGameProcess(int inItem, bool bInject)
             return RetCode;
         }
     }
+
 
     return RetCode;
 }
@@ -619,11 +622,11 @@ UINT AFX_CDECL CJLkitView::WorkThread(LPVOID pVoid)
 
         switch(msg.message)
         {
-            case WM_QUIT:
-                return 1;
+        case WM_QUIT:
+            return 1;
 
-            //自定义消息1处理
-            case WM_WORKTHREAD_GET:
+        //自定义消息1处理
+        case WM_WORKTHREAD_GET:
             {
 
                 int count = listctr.GetItemCount();
@@ -641,8 +644,8 @@ UINT AFX_CDECL CJLkitView::WorkThread(LPVOID pVoid)
                 break;
             }
 
-            //自定义消息2处理
-            case WM_WORKTHREAD_ACTIVE:
+        //自定义消息2处理
+        case WM_WORKTHREAD_ACTIVE:
             {
                 int count = listctr.GetItemCount();
                 for(int i = 0; i < count; i++)
@@ -660,7 +663,7 @@ UINT AFX_CDECL CJLkitView::WorkThread(LPVOID pVoid)
             }
 
 
-            case WM_WORKTHREAD_GETANDACTIVE:
+        case WM_WORKTHREAD_GETANDACTIVE:
             {
 
                 CVpnFile* lpVpnFile = pView->m_lpVpnFile;
@@ -774,7 +777,7 @@ _WriteError:
                 break;
             }
 
-            case WM_WORKTHREAD_RUN_ALL_GAME:
+        case WM_WORKTHREAD_RUN_ALL_GAME:
             {
 
                 //当前选中的条目
@@ -792,7 +795,7 @@ _WriteError:
             }
 
 
-            case WM_WORKTHREAD_RUN_SINGLE_GAME:
+        case WM_WORKTHREAD_RUN_SINGLE_GAME:
             {
 
                 //当前选中的条目
@@ -809,8 +812,8 @@ _WriteError:
                 break;
             }
 
-            default:
-                break;
+        default:
+            break;
 
         }
 
@@ -833,12 +836,12 @@ void CJLkitView::OnNMCustomdraw(NMHDR* pNMHDR, LRESULT* pResult)
     NMCUSTOMDRAW& nmcd = lplvdr->nmcd;
     switch(lplvdr->nmcd.dwDrawStage)   //判断状态
     {
-        case CDDS_PREPAINT:
+    case CDDS_PREPAINT:
         {
             *pResult = CDRF_NOTIFYITEMDRAW;
             break;
         }
-        case CDDS_ITEMPREPAINT:   //如果为画ITEM之前就要进行颜色的改变
+    case CDDS_ITEMPREPAINT:   //如果为画ITEM之前就要进行颜色的改变
         {
             COLORREF ItemColor;
             if(MapItemColor.Lookup(nmcd.dwItemSpec, ItemColor))

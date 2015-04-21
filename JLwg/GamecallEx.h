@@ -1,8 +1,9 @@
 #pragma once
 #include "gamecall.h"
+#include "GameHook.h"
 #include "..\JLkit\JLkitSocket.h"
 
-class GamecallEx: public Gamecall, public ITCPSocketSink
+class GamecallEx: public Gamecall, public ITCPSocketSink, public ICombatHookSink
 {
 protected:
     GamecallEx();
@@ -20,6 +21,10 @@ private:
     virtual bool OnEventTCPSocketRead(CJLkitSocket* pSocket, const Tcp_Head& stTcpHead, void* pData, WORD wDataSize);
 
     CJLkitSocket sock;
+
+
+    //Õ½¶·»Øµ÷
+    virtual void NotifyMonsterAttack(MONSTERATAACK *pAttack); 
 
 public:
     DWORD GetRangeLootCount(DWORD range);

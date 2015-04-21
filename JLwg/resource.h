@@ -24,6 +24,7 @@
 #define IDC_SPEEDX                      1056
 #define IDC_ADDTOPARTY                  1057
 #define IDC_UNLOADWG                    1058
+#define IDC_BOSSCOMBAT                  1058
 #define IDC_HOOK_ACCEPTQUEST            1059
 #define IDC_HOOK_DUNDI                  1061
 #define IDC_HOOK_YICIJIANWU             1062

@@ -32,7 +32,7 @@ CJLwgApp::~CJLwgApp()
 //钩游戏的消息窗口
 LRESULT CALLBACK CJLwgApp::GameMsgProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-    if(CJLwgApp::m_pWgDlg == NULL)
+    if(!CJLwgApp::m_pWgDlg)
     {
         return CallWindowProc(wpOrigGameProc, hwnd, uMsg, wParam, lParam);
     }
@@ -42,7 +42,7 @@ LRESULT CALLBACK CJLwgApp::GameMsgProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPAR
     switch(uMsg)
     {
 
-        case WM_KEYDOWN:
+    case WM_KEYDOWN:
         {
 
             if(wParam == VK_INSERT)
@@ -78,9 +78,7 @@ LRESULT CALLBACK CJLwgApp::GameMsgProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPAR
             break;
         }
 
-
-
-        case WM_CUSTOM_GCALL:
+    case WM_CUSTOM_GCALL:
         {
             //获取游戏外挂功能
             GamecallEx* pcall = GamecallEx::GetInstance();
@@ -119,8 +117,7 @@ DWORD CALLBACK CJLwgApp::WgThread(LPVOID pParam)
 
 
     LOGER(_T("初始化加速"));
-    GameSpend* pGameSpender = GameSpend::GetInstance();
-    if(!pGameSpender->Init())
+    if(!GameSpend::GetInstance()->Init())
     {
         ExitProcess(0);
         return FALSE;
@@ -128,30 +125,31 @@ DWORD CALLBACK CJLwgApp::WgThread(LPVOID pParam)
 
 
     LOGER(_T("加载配置"));
-    GameConfig* pConfig = GameConfig::GetInstance();
-    pConfig->LoadConfig();
+    if(!GameConfig::GetInstance()->LoadConfig())
+    {
+        LOGER(_T("加载配置文件失败"));
+        SENDLOG(_T("加载配置文件失败"));
+        ExitProcess(0);
+        return FALSE;
+    }
 
 
-    //初始化
-    GamecallEx* pCall = GamecallEx::GetInstance();
-
-//     LOGER(_T("初始化外挂功能"));
-//     if(!pCall->Init())
-//     {
-//         ExitProcess(0);
-//         return FALSE;
-//     }
+    LOGER(_T("初始化外挂功能"));
+    if(!GamecallEx::GetInstance()->Init())
+    {
+        ExitProcess(0);
+        return FALSE;
+    }
 
 
-    //改游戏窗口处理过程
+    //钩游戏窗口处理
     wpOrigGameProc = (WNDPROC)::SetWindowLong(m_hGameWnd, GWL_WNDPROC, (LONG)GameMsgProc);
 
     //通信数据
-    PIPEDATA& data = theApp.m_stData;
-    ::SetWindowText(m_hGameWnd, data.szAccount);
+    ::SetWindowText(m_hGameWnd, theApp.m_stData.szAccount);
 
-
-    SENDLOG(_T("对话框启动了"));
+    LOGER(_T("外挂启动完成"));
+    SENDLOG(_T("外挂启动完成"));
 
     //创建外挂对话框
     m_pWgDlg = new CJLDlg;
@@ -163,41 +161,35 @@ DWORD CALLBACK CJLwgApp::WgThread(LPVOID pParam)
 
 
 
-//判断游戏窗口是否创建
-HWND CJLwgApp::isGameWndCreated(DWORD dwPid)
-{
-    HWND hGameWnd = FindWindowEx(NULL, NULL, _T("LaunchUnrealUWindowsClient"), NULL);
-
-    if(hGameWnd == NULL) return NULL;
-
-    //判断游戏窗口创建完成
-    for(;;)
-    {
-        DWORD dwWndOfPid;
-        GetWindowThreadProcessId(hGameWnd, &dwWndOfPid);
-
-        //找到
-        if(dwPid == dwWndOfPid)
-        {
-            m_hGameWnd = hGameWnd;
-            return hGameWnd;
-        }
-
-        hGameWnd = FindWindowEx(NULL, hGameWnd, _T("LaunchUnrealUWindowsClient"), NULL);
-        if(hGameWnd == NULL) return NULL;
-    }
-}
-
-
-
+//等待游戏窗口创建
 BOOL CJLwgApp::WaitGameCreate(int inMaxTime)
 {
 
-    //判断当前游戏的窗口是否创建
+    DWORD dwWndOfPid;
+    DWORD dwMyid = GetCurrentProcessId();
+
     for(int i = 0; i < inMaxTime; i++)
     {
-        if(isGameWndCreated(GetCurrentProcessId()) != NULL) return TRUE;
         Sleep(1000);
+
+        HWND hGameWnd = FindWindowEx(NULL, NULL, _T("LaunchUnrealUWindowsClient"), NULL);
+        if(hGameWnd == NULL) continue;
+        for(;;)
+        {
+
+            GetWindowThreadProcessId(hGameWnd, &dwWndOfPid);
+
+            //找到
+            if(dwMyid == dwWndOfPid)
+            {
+                m_hGameWnd = hGameWnd;
+                return TRUE;
+            }
+
+            hGameWnd = FindWindowEx(NULL, hGameWnd, _T("LaunchUnrealUWindowsClient"), NULL);
+            if(hGameWnd == NULL) break;
+        }
+
     }
 
     return FALSE;
@@ -280,7 +272,7 @@ BOOL CJLwgApp::InitInstance()
     return TRUE;
 }
 
-
+//向控制台通信
 void CJLwgApp::SendStatus(TCHAR szText[])
 {
     PIPESTATUS status;

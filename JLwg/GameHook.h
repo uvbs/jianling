@@ -14,6 +14,22 @@
 typedef void (*SHOWHOOKRESULT)(LPVOID lpParam, TCHAR szFormat[]);
 
 
+typedef struct _MONSTERATAACK
+{
+    DWORD dwObj;
+    DWORD dwStrikeId;
+} MONSTERATAACK, *PMONSTERATAACK;
+
+interface IHookRetSink
+{
+    virtual void ShowHook(TCHAR * pszFormat, ...) = 0;
+};
+
+interface ICombatHookSink
+{
+    virtual void NotifyMonsterAttack(MONSTERATAACK *pAttack) = 0;
+};
+
 //¸ºÔðHook
 class GameHook
 {
@@ -24,11 +40,22 @@ protected:
     DECLARE_SINGLETON(GameHook)
 
 
-public:
-    static LPVOID m_lpParam;
-    static SHOWHOOKRESULT m_showHookRet;
+private:
+    IHookRetSink *m_sink;
+    ICombatHookSink *m_pCombatSink;
 
-    static void showHookRet(LPTSTR lpText, ...);
+public:
+    void SetSink(IHookRetSink* pSink)
+    {
+        m_sink = pSink;
+    }
+
+
+    void SetCombatSink(ICombatHookSink* pSink)
+    {
+        m_pCombatSink = pSink;
+    }
+
 
     static DWORD* backupSendStep;
     static DWORD* backupWearEquipment;

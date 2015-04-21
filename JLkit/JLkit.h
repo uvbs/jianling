@@ -15,18 +15,12 @@ public:
     CJLkitApp();
     ~CJLkitApp();
 
-    //³ÌÐòÎ¨Ò»
-    BOOL MutexWnd();
-    static BOOL CALLBACK EnumChildProc(HWND hWnd,LPARAM lParam);
-
-
 // Overrides
     // ClassWizard generated virtual function overrides
     //{{AFX_VIRTUAL(CJLkitApp)
 	public:
     virtual BOOL InitInstance();
     virtual int ExitInstance();
-	virtual BOOL PreTranslateMessage(MSG* pMsg);
 	//}}AFX_VIRTUAL
 // Implementation
 

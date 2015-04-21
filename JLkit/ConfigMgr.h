@@ -27,7 +27,6 @@ public:
     std::basic_string<TCHAR> m_szGamePath; //ÓÎÏ·Â·¾¶
     std::basic_string<TCHAR> m_szAccountName; //ÕËºÅÃû³Æ
     std::basic_string<TCHAR> m_szAccountPw; //ÕËºÅÃÜÂë
-    std::basic_string<TCHAR> m_szWindowPos;
     std::basic_string<TCHAR> m_szGameScript;
     std::basic_string<TCHAR> m_szGameConfig;
 
