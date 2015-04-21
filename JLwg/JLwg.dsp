@@ -167,6 +167,10 @@ SOURCE=..\common\logger.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=..\common\MSJEXHND.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\StdAfx.cpp
 # ADD CPP /Yc"stdafx.h"
 # End Source File
@@ -273,6 +277,10 @@ SOURCE=..\common\LDasm.h
 # Begin Source File
 
 SOURCE=..\common\logger.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\common\MSJEXHND.h
 # End Source File
 # Begin Source File
 

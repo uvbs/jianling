@@ -8,7 +8,6 @@
 #include "JLkitView.h"
 #include "JLkitDoc.h"
 #include "JLkitSocket.h"
-#include "BugRepDlg.h"
 #include "CVpnFile.h"
 #include "ConfigMgr.h"
 
@@ -60,11 +59,11 @@ BEGIN_MESSAGE_MAP(CJLkitView, CListView)
     ON_UPDATE_COMMAND_UI(ID_UC_START, OnUpdateUcStart)
     ON_COMMAND(ID_UC_LOG, OnUcLog)
     ON_COMMAND(ID_STOPOP, OnStopOp)
+    ON_UPDATE_COMMAND_UI(ID_STOPOP, OnUpdateStopOp)
     ON_WM_RBUTTONUP()
     ON_UPDATE_COMMAND_UI(ID_ACTIVE, OnUpdateStart)
     ON_UPDATE_COMMAND_UI(ID_START, OnUpdateStart)
     ON_UPDATE_COMMAND_UI(ID_GETANDACTIVE, OnUpdateStart)
-    ON_UPDATE_COMMAND_UI(ID_STOPOP, OnUpdateStopOp)
     //}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
@@ -336,12 +335,25 @@ bool CJLkitView::ReadLine(std::basic_string<TCHAR>& strLine, CFile* pFile)
         for(;;)
         {
             if(pFile->Read(&cbChar, sizeof(cbChar)) == 0)
-                return false;
+            {
+                if(strLine.empty())
+                {
+                    return false;
+                }
+                else
+                {
+                    return true;
+                }
+            }
 
 
             if(cbChar == 0x0d || cbChar == 0x0a)
             {
-                if(cbChar == 0x0a) break;
+                if(cbChar == 0x0a) 
+                {
+                    break;
+                }
+
                 continue;
             }
 
@@ -369,8 +381,6 @@ void CJLkitView::SerializeText(CArchive& ar)
     }
     else
     {
-        //准备对象
-        CConfigMgr* pConfig = CConfigMgr::GetInstance();
 
         //获取框架
         CMainFrame* pFrame = (CMainFrame*)AfxGetMainWnd();
@@ -383,8 +393,6 @@ void CJLkitView::SerializeText(CArchive& ar)
         std::basic_string<TCHAR> strLine;
         std::basic_string<TCHAR> strName;
         std::basic_string<TCHAR> strPw;
-        std::basic_string<TCHAR> strConfig;
-        std::basic_string<TCHAR> strScript;
 
         TCHAR szConfig[MAX_PATH];
         TCHAR szScript[MAX_PATH];
@@ -393,11 +401,6 @@ void CJLkitView::SerializeText(CArchive& ar)
 
         _ASSERTE(szConfig[0] != _T('\0'));
         _ASSERTE(szScript[0] != _T('\0'));
-
-
-        strConfig = szConfig;
-        strScript = szScript;
-
 
 
         while(ReadLine(strLine, pFile))
@@ -410,7 +413,7 @@ void CJLkitView::SerializeText(CArchive& ar)
                 strName = matches.str(1);
                 strPw = matches.str(2);
 
-                InsertLine(m_LineNums++, strName.c_str(), strPw.c_str(), strConfig.c_str(), strScript.c_str());
+                InsertLine(m_LineNums++, strName.c_str(), strPw.c_str(), szConfig, szScript);
             }
 
         }
@@ -487,7 +490,7 @@ UINT AFX_CDECL CJLkitView::IPCThread(LPVOID lpParam)
 
 
 //创建游戏进程
-int CJLkitView::CreateGameProcess(int inItem)
+int CJLkitView::CreateGameProcess(int inItem, bool bInject)
 {
     int RetCode;
 
@@ -588,7 +591,6 @@ int CJLkitView::CreateGameProcess(int inItem)
             TerminateProcess(pi.hProcess, 0);
             return RetCode;
         }
-
     }
 
     return RetCode;
@@ -806,6 +808,9 @@ _WriteError:
 
                 break;
             }
+
+            default:
+                break;
 
         }
 

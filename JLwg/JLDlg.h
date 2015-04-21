@@ -2,7 +2,7 @@
 #define AFX_JLDLG_H__9B29DC05_CA02_4C53_B0F2_D4D00809E70B__INCLUDED_
 
 #if _MSC_VER > 1000
-#pragma once
+    #pragma once
 #endif // _MSC_VER > 1000
 
 // JLDlg.h : header file
@@ -16,7 +16,7 @@ class CJLDlg : public CDialog
 {
 // Construction
 public:
-    CJLDlg(CWnd* pParent = NULL);						// standard constructor
+    CJLDlg(CWnd* pParent = NULL);                       // standard constructor
 
     // Dialog Data
     //{{AFX_DATA(CJLDlg)
@@ -31,8 +31,8 @@ public:
     // ClassWizard generated virtual function overrides
     //{{AFX_VIRTUAL(CJLDlg)
 protected:
-    virtual void	DoDataExchange(CDataExchange* pDX); // DDX/DDV support
-    virtual BOOL	OnInitDialog();
+    virtual void    DoDataExchange(CDataExchange* pDX); // DDX/DDV support
+    virtual BOOL    OnInitDialog();
     //}}AFX_VIRTUAL
 
 
@@ -40,11 +40,12 @@ protected:
 public:
     // Generated message map functions
     //{{AFX_MSG(CJLDlg)
-    afx_msg void	OnGotask();
-    afx_msg void	OnWgdata();
-    afx_msg void	OnStopTask();
-    afx_msg void	OnClose();
-    afx_msg void	OnUnloadwg();
+    afx_msg void    OnGotask();
+    afx_msg void    OnWgdata();
+    afx_msg void    OnClose();
+    afx_msg void    OnUnloadwg();
+    afx_msg void OnPaint();
+    afx_msg void OnStopTask();
     //}}AFX_MSG
     DECLARE_MESSAGE_MAP()
 };

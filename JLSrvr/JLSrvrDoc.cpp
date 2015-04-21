@@ -4,9 +4,7 @@
 #include "stdafx.h"
 #include "JLSrvr.h"
 #include "JLSrvrDoc.h"
-#include "DbMngr.h"
-#include "ListenSocket.h"
-
+#include "DlgAddKey.h"
 
 
 
@@ -22,6 +20,7 @@ BEGIN_MESSAGE_MAP(CJLSrvrDoc, CDocument)
     //{{AFX_MSG_MAP(CJLSrvrDoc)
     ON_COMMAND(ID_FILE_RESTART, OnFileRestart)
     ON_UPDATE_COMMAND_UI(ID_INDICATOR_CONNECTS, OnUpdateConnects)
+    ON_COMMAND(ID_KEY_ADD, OnKeyAdd)
     //}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
@@ -50,15 +49,13 @@ BOOL CJLSrvrDoc::OnNewDocument()
 {
     if(!CDocument::OnNewDocument()) return FALSE;
 
-
-
     //初始化数据库
     if(!m_db.Init())
         return FALSE;
 
     SetTitle(NULL);
-
     BOOL bRet = StartListening();
+
     return bRet;
 }
 
@@ -195,13 +192,15 @@ bool CJLSrvrDoc::OnEventTCPSocketLink(CJLkitSocket* pSocket, INT nErrorCode)
 
 bool CJLSrvrDoc::OnEventTCPSocketShut(CJLkitSocket* pSocket, BYTE cbShutReason)
 {
-    //删除这个客户
     DeleteClient(pSocket);
     return false;
 }
 
 bool CJLSrvrDoc::OnEventTCPSocketRead(CJLkitSocket* pSocket, const Tcp_Head& stTcpHead, void* pData, WORD wDataSize)
 {
+
+    _heart[pSocket] = time(NULL);
+
     switch(stTcpHead.wMainCmdID)
     {
         case M_LOGIN:
@@ -234,7 +233,7 @@ bool CJLSrvrDoc::ProcessLogin(CJLkitSocket* pSocket, const Tcp_Head& stTcpHead, 
     {
         case fun_login:
         {
-            PROCESS_DESCRIBE LoginBuf;
+            PROCESS_DESCRIBE des;
             LOGIN_BUF* pLogin = (LOGIN_BUF*)pData;
 
 
@@ -242,26 +241,51 @@ bool CJLSrvrDoc::ProcessLogin(CJLkitSocket* pSocket, const Tcp_Head& stTcpHead, 
             _userdata[pSocket] = *pLogin;
 
 
-            int inResult;
             int inDbRet = m_db.CheckUser(pLogin->name, pLogin->pw);
             if(inDbRet == 0)
             {
-                inResult = fun_login_ok;
-                _tcscpy(LoginBuf.szDescribe, _T("北京欢迎你."));
+                _tcscpy(des.szDescribe, _T("远端错误"));
+            }
+            else if(inDbRet == 1)
+            {
+                _tcscpy(des.szDescribe, _T("登陆完成"));
+            }
+            else if(inDbRet == 3)
+            {
+                _tcscpy(des.szDescribe, _T("没有这用户"));
             }
             else if(inDbRet == 2)
             {
-                inResult = fun_login_fail;
-                _tcscpy(LoginBuf.szDescribe, _T("已经登陆"));
+                _tcscpy(des.szDescribe, _T("已经登陆"));
+            }
+            else if(inDbRet == 4)
+            {
+                _tcscpy(des.szDescribe, _T("密码错误"));
+            }
+            else if(inDbRet == 5)
+            {
+                _tcscpy(des.szDescribe, _T("登陆IP和绑定IP不同"));
+            }
+            else if(inDbRet == 6)
+            {
+                _tcscpy(des.szDescribe, _T("登陆特征与绑定时的特征不同"));
+            }
+            else
+            {
+                _ASSERTE(FALSE);
+            }
+
+            int inResult;
+            if(inDbRet == 1)
+            {
+                inResult = fun_login_ok;
             }
             else
             {
                 inResult = fun_login_fail;
-                _tcscpy(LoginBuf.szDescribe, _T("密码错误"));
             }
 
-
-            pSocket->Send(M_LOGIN, inResult, &LoginBuf, sizeof(PROCESS_DESCRIBE));
+            pSocket->Send(M_LOGIN, inResult, &des, sizeof(PROCESS_DESCRIBE));
 
             break;
         }
@@ -270,16 +294,27 @@ bool CJLSrvrDoc::ProcessLogin(CJLkitSocket* pSocket, const Tcp_Head& stTcpHead, 
         //注册
         case fun_regist:
         {
+            PROCESS_DESCRIBE des;
+            REGIST_BUF* pReg = (REGIST_BUF*)pData;
+
+
+            int inRet;
+            if(m_db.NewRegist(pReg->name, pReg->pw))
+            {
+                inRet = fun_regist_ok;
+                _tcscpy(des.szDescribe, _T("注册完成"));
+            }
+            else
+            {
+                inRet = fun_regist_fail;
+                _tcscpy(des.szDescribe, _T("注册失败"));
+            }
+
+            TRACE(_T("发送注册结果"));
+            pSocket->Send(M_LOGIN, inRet, &des, sizeof(PROCESS_DESCRIBE));
+
             break;
         }
-
-
-        //修改绑定
-        case fun_mbind:
-        {
-            break;
-        }
-
 
         default:
             break;
@@ -299,11 +334,12 @@ bool CJLSrvrDoc::ProcessKey(CJLkitSocket* pSocket, const Tcp_Head& stTcpHead, vo
 
             std::vector<QUERYKEY_SUCCESS> KeyVec;
             BOOL bDbRet = m_db.Querykey(KeyVec, _userdata[pSocket].name, _userdata[pSocket].pw);
+
             if(KeyVec.size())
             {
                 for(std::vector<QUERYKEY_SUCCESS>::iterator it = KeyVec.begin(); it != KeyVec.end(); it++)
                 {
-                    pSocket->Send(M_KEY, fun_querykey_ok, &it, sizeof(QUERYKEY_SUCCESS));
+                    pSocket->Send(M_KEY, fun_querykey_ok, it, sizeof(QUERYKEY_SUCCESS));
                 }
             }
             else
@@ -318,22 +354,41 @@ bool CJLSrvrDoc::ProcessKey(CJLkitSocket* pSocket, const Tcp_Head& stTcpHead, vo
         }
 
         case fun_bindkey:
+        {
+            BINDKEY_BUF* pBuf = (BINDKEY_BUF*)pData;
+            PROCESS_DESCRIBE des;
+            int inResult;
+            int inDbRet = m_db.Bindkey(_userdata[pSocket].name, pBuf->key, _T(""));
+            if(inDbRet == 1)
             {
-                BINDKEY_BUF *pBuf = (BINDKEY_BUF *)pData;
-                if(m_db.Bindkey(_userdata[pSocket].name, pBuf->key, _T("")))
-                {
-                    pSocket->Send(M_KEY, fun_bindkey_ok, NULL, 0);
-                }
-                else
-                {
-                    PROCESS_DESCRIBE des;
-                    _tcscpy(des.szDescribe, _T("绑定失败"));
-                    pSocket->Send(M_KEY, fun_bindkey_fail, &des, sizeof(PROCESS_DESCRIBE));
-                }
-                break;
+                inResult = fun_bindkey_ok;
+                _tcscpy(des.szDescribe, _T("绑定完成"));
+            }
+            else if(inDbRet == 2)
+            {
+                inResult = fun_bindkey_fail;
+                _tcscpy(des.szDescribe, _T("卡号无效"));
+            }
+            else if(inDbRet == 3)
+            {
+                inResult = fun_bindkey_fail;
+                _tcscpy(des.szDescribe, _T("卡号已用过"));
+            }
+            else if(inDbRet == 0)
+            {
+                inResult = fun_bindkey_fail;
+                _tcscpy(des.szDescribe, _T("远端错误"));
+            }
+            else
+            {
+                _ASSERTE(FALSE);
             }
 
-   
+            pSocket->Send(M_KEY, inResult, &des, sizeof(PROCESS_DESCRIBE));
+            break;
+        }
+
+
         default:
             break;
     }
@@ -348,6 +403,7 @@ bool CJLSrvrDoc::ProcessHelp(CJLkitSocket* pSocket, const Tcp_Head& stTcpHead, v
 
 bool CJLSrvrDoc::AddClient(CJLkitSocket* pSocket)
 {
+    _heart[pSocket] = time(NULL);
     _client.push_back(pSocket);
     return true;
 }
@@ -355,7 +411,13 @@ bool CJLSrvrDoc::AddClient(CJLkitSocket* pSocket)
 bool CJLSrvrDoc::DeleteClient(CJLkitSocket* pSocket)
 {
     _client.remove(pSocket);
-    _userdata.erase(pSocket);
+    _heart.erase(pSocket);
+    m_db.UserExit(_userdata[pSocket].name);
+
+    TRACE(_T("_heart: %d"), _heart.size());
+    TRACE(_T("_client: %d"), _client.size());
+
+    pSocket->Close();
     SafeDelete(pSocket);
 
     return true;
@@ -366,4 +428,27 @@ void CJLSrvrDoc::OnUpdateConnects(CCmdUI* pCmdUI)
     CString strTemp;
     strTemp.Format(_T("连接数: %d"), _client.size());
     pCmdUI->SetText(strTemp);
+}
+
+void CJLSrvrDoc::OnKeyAdd()
+{
+    CDlgAddKey dlg;
+    dlg.DoModal();
+}
+
+void CJLSrvrDoc::DeadSocketClear()
+{
+
+    if(_heart.empty()) return;
+
+    std::map<CJLkitSocket*, time_t>::iterator it;
+    std::map<CJLkitSocket*, time_t>::iterator it2;
+    for(it = _heart.begin(); it != _heart.end();)
+    {
+        it2 = it++;
+        if((time(NULL) - it2->second) > 20)
+        {
+            DeleteClient(it2->first);
+        }
+    }
 }

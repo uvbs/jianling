@@ -1,25 +1,20 @@
-//==========================================
-// Matt Pietrek
-// Microsoft Systems Journal, April 1997
-// FILE: MSJEXHND.CPP
-//==========================================
 #include "stdafx.h"
 #include "msjexhnd.h"
 
+#include <DbgHelp.h>
+#include <afxconv.h>
+#pragma comment(lib, "dbghelp")
 
-//============================== Global Variables =============================
-//
-// Declare the static variables of the MSJExceptionHandler class
-//
+//静态变量
 TCHAR MSJExceptionHandler::m_szLogFileName[MAX_PATH];
 LPTOP_LEVEL_EXCEPTION_FILTER MSJExceptionHandler::m_previousFilter;
 HANDLE MSJExceptionHandler::m_hReportFile;
 
+
 MSJExceptionHandler g_MSJExceptionHandler;  // Declare global instance of class
-//============================== Class Methods =============================
-//=============
-// Constructor
-//=============
+
+
+//构造函数
 MSJExceptionHandler::MSJExceptionHandler()
 {
 
@@ -30,18 +25,15 @@ MSJExceptionHandler::MSJExceptionHandler()
                   | SYMOPT_DEFERRED_LOADS
                   | SYMOPT_OMAP_FIND_NEAREST);
 
-    bRet = SymInitialize(GetCurrentProcess(),
-                         NULL,
-                         TRUE);
+    bRet = SymInitialize(GetCurrentProcess(), NULL, TRUE);
 
-    // Install the unhandled exception filter function
+    //安装异常处理
     m_previousFilter = SetUnhandledExceptionFilter(MSJUnhandledExceptionFilter);
 
-    // Figure out what the report file will be named, and store it away
+    //获取模块路径
     GetModuleFileName(0, m_szLogFileName, MAX_PATH);
 
-    // Look for the '.' before the "EXE" extension.  Replace the extension
-    // with "RPT"
+    //改成报告文件名
     PTSTR pszDot = _tcsrchr(m_szLogFileName, _T('.'));
     if(pszDot)
     {
@@ -50,9 +42,8 @@ MSJExceptionHandler::MSJExceptionHandler()
             _tcscpy(pszDot, _T("log"));     // "RPT" -> "Report"
     }
 }
-//============
-// Destructor
-//============
+
+//析构
 MSJExceptionHandler::~MSJExceptionHandler()
 {
 
@@ -61,18 +52,18 @@ MSJExceptionHandler::~MSJExceptionHandler()
 
     SetUnhandledExceptionFilter(m_previousFilter);
 }
-//==============================================================
-// Lets user change the name of the report file to be generated
-//==============================================================
+
+
+
+//更改生成的报告文件名
 void MSJExceptionHandler::SetLogFileName(PTSTR pszLogFileName)
 {
     _tcscpy(m_szLogFileName, pszLogFileName);
 }
-//===========================================================
-// Entry point where control comes on an unhandled exception
-//===========================================================
-LONG WINAPI MSJExceptionHandler::MSJUnhandledExceptionFilter(
-    PEXCEPTION_POINTERS pExceptionInfo)
+
+
+//异常处理
+LONG WINAPI MSJExceptionHandler::MSJUnhandledExceptionFilter(PEXCEPTION_POINTERS pExceptionInfo)
 {
     m_hReportFile = CreateFile(m_szLogFileName,
                                GENERIC_WRITE,
@@ -97,19 +88,18 @@ LONG WINAPI MSJExceptionHandler::MSJUnhandledExceptionFilter(
     else
         return EXCEPTION_CONTINUE_SEARCH;
 }
-//===========================================================================
-// Open the report file, and write the desired information to it.  Called by
-// MSJUnhandledExceptionFilter
-//===========================================================================
-void MSJExceptionHandler::GenerateExceptionReport(
-    PEXCEPTION_POINTERS pExceptionInfo)
+
+
+
+//打开文件, 写入崩溃信息
+void MSJExceptionHandler::GenerateExceptionReport(PEXCEPTION_POINTERS pExceptionInfo)
 {
-    // Start out with a banner
+    //开始
     _tprintf(_T("//=====================================================\n"));
 
     PEXCEPTION_RECORD pExceptionRecord = pExceptionInfo->ExceptionRecord;
 
-    // First print information about the type of fault
+    //先输出崩溃类型
     _tprintf(_T("Exception code: %08X %s\n"),
              pExceptionRecord->ExceptionCode,
              GetExceptionString(pExceptionRecord->ExceptionCode));
@@ -149,10 +139,9 @@ void MSJExceptionHandler::GenerateExceptionReport(
 
     _tprintf(_T("\n"));
 }
-//======================================================================
-// Given an exception code, returns a pointer to a static string with a
-// description of the exception
-//======================================================================
+
+
+//根据一个异常代码获取描述
 LPTSTR MSJExceptionHandler::GetExceptionString(DWORD dwCode)
 {
 #define EXCEPTION( x ) case EXCEPTION_##x: return _T(#x);
@@ -193,6 +182,8 @@ LPTSTR MSJExceptionHandler::GetExceptionString(DWORD dwCode)
 
     return szBuffer;
 }
+
+
 //==============================================================================
 // Given a linear address, locates the module, section, and offset containing
 // that address.
@@ -248,6 +239,8 @@ BOOL MSJExceptionHandler::GetLogicalAddress(
     return FALSE;   // Should never get here!
 }
 
+
+
 void MSJExceptionHandler::ShowFrame(STACKFRAME64* pFrame)
 {
     const int FRAME_MSG_SIZE = MAX_PATH * 2;
@@ -267,14 +260,15 @@ void MSJExceptionHandler::ShowFrame(STACKFRAME64* pFrame)
     if(!SymGetModuleInfo64(GetCurrentProcess(), pFrame->AddrPC.Offset, &module))
         strcpy(module.ModuleName, "Unknown");
 
-    // find symbols
-    PSYMBOL_INFO pSymbol = (PSYMBOL_INFO)szSym;
-    ZeroMemory(pSymbol , sizeof(SYMBOL_INFO));
-    pSymbol->MaxNameLen = MAX_SYM_SIZE - sizeof(SYMBOL_INFO) / sizeof(TCHAR);
+
+    PIMAGEHLP_SYMBOL64  pSymbol = (PIMAGEHLP_SYMBOL64)szSym;
+    ZeroMemory(pSymbol , sizeof(IMAGEHLP_SYMBOL64));
+    pSymbol->MaxNameLength = MAX_SYM_SIZE - sizeof(IMAGEHLP_SYMBOL64) / sizeof(TCHAR);
     pSymbol->Address = pFrame->AddrPC.Offset;
 
-    if(SymFromAddr(GetCurrentProcess(), pFrame->AddrPC.Offset, &dwOffsetFromSmybol, pSymbol))
+    if(SymGetSymFromAddr64(GetCurrentProcess(), pFrame->AddrPC.Offset, &dwOffsetFromSmybol, pSymbol))
     {
+
         LPCTSTR lpModuleName;
         LPCTSTR lpSymbolName;
 #ifdef UNICODE
@@ -286,7 +280,7 @@ void MSJExceptionHandler::ShowFrame(STACKFRAME64* pFrame)
         lpSymbolName = pSymbol->Name;
 #endif
 
-        _stprintf(szFrame, _T("%s!%s"), lpModuleName, lpSymbolName);
+        _stprintf(szFrame, _T("%s!%s\n"), lpModuleName, lpSymbolName);
         _tprintf(szFrame);
     }
 
@@ -305,9 +299,6 @@ void MSJExceptionHandler::ShowFrame(STACKFRAME64* pFrame)
 void MSJExceptionHandler::IntelStackWalk(PCONTEXT pContext)
 {
     _tprintf(_T("\nCall stack:\n"));
-
-    _tprintf(_T("Address   Frame     Logical addr  Module\n"));
-
 
     //栈回溯
     STACKFRAME64 frame;
@@ -351,10 +342,10 @@ void MSJExceptionHandler::IntelStackWalk(PCONTEXT pContext)
     }
 
 }
-//============================================================================
-// Helper function that writes to the report file, and allows the user to use
-// printf style formating
-//============================================================================
+
+
+
+//辅助函数, 写入文件, printf风格
 int __cdecl MSJExceptionHandler::_tprintf(const TCHAR* format, ...)
 {
     TCHAR szBuff[1024];

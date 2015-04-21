@@ -126,20 +126,21 @@ void CJLkitSocket::OnReceive(int nErrorCode)
 
 BOOL CJLkitSocket::ConnectSrv(LPCTSTR pSrv, long port)
 {
-
-    //效验参数
-    ASSERT(m_hSocket == INVALID_SOCKET);
-
+    _ASSERTE(m_hSocket == INVALID_SOCKET);
 
     try
     {
-        if(Create() == FALSE) return FALSE;
+        if(!Create()) return FALSE;
 
 
         int iErrorCode = Connect(pSrv, PORT_SRV);
         if(iErrorCode == 0)
         {
-            if(WSAGetLastError() != WSAEWOULDBLOCK) FALSE;
+            if(WSAGetLastError() != WSAEWOULDBLOCK)
+            {
+                Close();
+                return FALSE;
+            }
         }
 
 
@@ -166,7 +167,7 @@ int CJLkitSocket::Send(const void* lpBuf, int nBufLen, int nFlags /* = 0 */)
         do
         {
             int iErrorCode = CAsyncSocket::Send((char*)lpBuf + wSended, nBufLen - wSended, nFlags);
-            if(iErrorCode == SOCKET_ERROR)
+            if(iErrorCode == SOCKET_ERROR || iErrorCode == 0)
             {
                 if(WSAGetLastError() == WSAEWOULDBLOCK)
                 {
@@ -175,7 +176,7 @@ int CJLkitSocket::Send(const void* lpBuf, int nBufLen, int nFlags /* = 0 */)
                 }
                 else
                 {
-                    throw;
+                    return SOCKET_ERROR;
                 }
             }
 

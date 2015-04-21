@@ -8,7 +8,6 @@
 #include "MainFrm.h"
 #include "Logindlg.h"
 #include "Registdlg.h"
-#include "Modifybind.h"
 #include "ConfigMgr.h"
 
 
@@ -22,7 +21,7 @@
 
 
 CDlgLogin::CDlgLogin(CWnd* pParent)
-    : CDialog(CDlgLogin::IDD, pParent)
+    : CPropertyPage(CDlgLogin::IDD)
 {
     //{{AFX_DATA_INIT(LoginDlg)
     m_strName = _T("");
@@ -45,8 +44,6 @@ void CDlgLogin::DoDataExchange(CDataExchange* pDX)
 
 BEGIN_MESSAGE_MAP(CDlgLogin, CDialog)
     //{{AFX_MSG_MAP(CDlgLogin)
-    ON_BN_CLICKED(IDC_BUTTONREGISTER, OnBtnRegister)
-    ON_BN_CLICKED(IDC_BTNMODIFYBIND, OnBtnModifybind)
     ON_WM_CREATE()
     ON_WM_CLOSE()
     //}}AFX_MSG_MAP
@@ -55,61 +52,59 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // LoginDlg message handlers
 
-void CDlgLogin::OnBtnRegister()
-{
-    CMainFrame* pFrame = (CMainFrame*)AfxGetMainWnd();
-    CJLkitDoc* pDoc = (CJLkitDoc*)pFrame->GetActiveDocument();
-    pDoc->ShowRegister();
-}
-
-
 BOOL CDlgLogin::OnInitDialog()
 {
     CDialog::OnInitDialog();
 
 
-    //加载图标
-    SetIcon(AfxGetApp()->LoadIcon(IDR_MAINFRAME), FALSE);
+    //初始化登陆对话框
+    m_bRemPw = CConfigMgr::GetInstance()->m_KeepPw;
+    if(m_bRemPw)
+    {
+        m_strPw = CConfigMgr::GetInstance()->m_szAccountPw.c_str();
+        m_strName = CConfigMgr::GetInstance()->m_szAccountName.c_str();
+        UpdateData(FALSE);
+    }
+
 
     //焦点
-    if(m_strName.IsEmpty())
-    {
-        GetDlgItem(IDC_EDITNAME)->SetFocus();
-    }
-    else
-    {
-        GetDlgItem(IDOK)->SetFocus();
-    }
+    GetDlgItem(IDC_EDITNAME)->SetFocus();
 
-
-    return FALSE;  // return TRUE unless you set the focus to a control
-    // EXCEPTION: OCX Property Pages should return FALSE
-}
-
-void CDlgLogin::OnBtnModifybind()
-{
-    CMainFrame* pFrame = (CMainFrame*)AfxGetMainWnd();
-    CJLkitDoc* pDoc = (CJLkitDoc*)pFrame->GetActiveDocument();
-    pDoc->ShowModiBind();
+    return FALSE;
 }
 
 void CDlgLogin::OnOK()
 {
-    ShowWindow(SW_HIDE);
-    UpdateData();
+    CMainFrame* pFrame = (CMainFrame*)AfxGetMainWnd();
+    CJLkitDoc* pDoc = (CJLkitDoc*)pFrame->GetActiveDocument();
 
-    CConfigMgr* pConfig = CConfigMgr::GetInstance();
+    UpdateData();
     if(m_bRemPw)
     {
-        pConfig->m_szAccountName = m_strName;
-        pConfig->m_szAccountPw = m_strPw;
-        pConfig->m_KeepPw = m_bRemPw;
+        CConfigMgr::GetInstance()->m_szAccountName = m_strName;
+        CConfigMgr::GetInstance()->m_szAccountPw = m_strPw;
+        CConfigMgr::GetInstance()->m_KeepPw = m_bRemPw;
     }
 
 
-    CMainFrame* pFrame = (CMainFrame*)AfxGetMainWnd();
-    CJLkitDoc* pDoc = (CJLkitDoc*)pFrame->GetActiveDocument();
-    pDoc->PerformLogonMission();
+    if(m_strName.GetLength() > 10 || m_strPw.GetLength() > 10)
+    {
+        AfxMessageBox(_T("用户名和密码最长十个字符"));
+        return;
+    }
+
+    if(m_strName.IsEmpty() || m_strPw.IsEmpty())
+    {
+        AfxMessageBox(_T("用户名和密码不能空"));
+        return;
+    }
+    else
+    {
+        pDoc->m_bRegister = false;
+        pDoc->m_LoginSheet.ShowWindow(SW_HIDE);
+        pDoc->PerformLogonMission();
+
+    }
 }
 
 
@@ -127,10 +122,4 @@ WORD CDlgLogin::ConstructLoginPacket(BYTE cbBuffer[], WORD wBufferSize)
 
 
     return sizeof(LOGIN_BUF);
-}
-
-void CDlgLogin::OnClose()
-{
-    AfxGetMainWnd()->DestroyWindow();
-    CDialog::OnClose();
 }

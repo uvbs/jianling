@@ -33,6 +33,7 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
     ON_WM_DROPFILES()
     ON_WM_ACTIVATE()
     ON_WM_PAINT()
+    ON_WM_TIMER()
     //}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
@@ -75,8 +76,8 @@ void CMainFrame::InitComBox()
     PathRemoveFileSpec(szExe);
 
     std::basic_string<TCHAR> strCurPath = szExe;
-    strCurPath += _T("脚本");
-    strCurPath += _T("*.ini");
+    strCurPath += _T("\\脚本\\*.ini");
+
 
     WIN32_FIND_DATA FindData;
     HANDLE hFinder = FindFirstFile(strCurPath.c_str(), &FindData);
@@ -94,8 +95,7 @@ void CMainFrame::InitComBox()
     }
 
     strCurPath = szExe;
-    strCurPath += _T("配置");
-    strCurPath += _T("*.ini");
+    strCurPath += _T("\\配置\\*.ini");
     hFinder = FindFirstFile(strCurPath.c_str(), &FindData);
     if(hFinder != INVALID_HANDLE_VALUE)
     {
@@ -112,8 +112,37 @@ void CMainFrame::InitComBox()
 
 
     //选中配置
-    m_cbConfig.SelectString(-1, pConfig->m_szGameConfig.c_str());
-    m_cbScript.SelectString(-1, pConfig->m_szGameScript.c_str());
+    if(pConfig->m_szGameConfig.empty())
+    {
+        if(m_cbConfig.SelectString(-1, _T("default.ini")) == CB_ERR)
+        {
+            m_cbConfig.SetCurSel(0);
+        }
+    }
+    else
+    {
+        if(m_cbConfig.SelectString(-1, pConfig->m_szGameConfig.c_str()) == CB_ERR)
+        {
+            m_cbConfig.SetCurSel(0);
+        }
+    }
+
+    if(pConfig->m_szGameScript.empty())
+    {
+        if(CB_ERR == m_cbScript.SelectString(-1, _T("default.ini")))
+        {
+            m_cbScript.SetCurSel(0);
+        }
+    }
+    else
+    {
+        if(CB_ERR == m_cbScript.SelectString(-1, pConfig->m_szGameScript.c_str()))
+        {
+            m_cbScript.SetCurSel(0);
+        }
+    }
+
+
 
 }
 
@@ -168,7 +197,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
     //列表框
     InitComBox();
-
+    CenterWindow();
     return 0;
 }
 
@@ -179,17 +208,15 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 void CMainFrame::OnClose()
 {
 
-    //获取配置对象
-    CConfigMgr* pConfig = CConfigMgr::GetInstance();
     TCHAR szStr[MAX_PATH];
 
     int inSel = m_cbConfig.GetCurSel();
     m_cbConfig.GetLBText(inSel, szStr);
-    pConfig->m_szGameConfig = szStr;
+    CConfigMgr::GetInstance()->m_szGameConfig = szStr;
 
     inSel = m_cbScript.GetCurSel();
     m_cbScript.GetLBText(inSel, szStr);
-    pConfig->m_szGameScript = szStr;
+    CConfigMgr::GetInstance()->m_szGameScript = szStr;
 
     CFrameWnd::OnClose();
 }
@@ -212,7 +239,22 @@ BOOL CMainFrame::PreCreateWindow(CREATESTRUCT& cs)
         cs.lpszClass = szClassName;
     }
 
-    cs.cx=600;
-    cs.cy=400;
+    cs.cx = 600;
+    cs.cy = 400;
     return TRUE;
+}
+
+void CMainFrame::OnTimer(UINT nIDEvent)
+{
+    if(nIDEvent == IDT_HEART)
+    {
+        CJLkitDoc* pDoc = (CJLkitDoc*)GetActiveDocument();
+        if(pDoc->m_socket.Send(M_HELP, fun_heart, NULL, 0) == SOCKET_ERROR)
+        {
+            KillTimer(IDT_HEART);
+        }
+    }
+
+
+    CFrameWnd::OnTimer(nIDEvent);
 }

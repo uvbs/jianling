@@ -3,24 +3,15 @@
 // Used by JLSrvr.rc
 //
 #define IDD_ABOUTBOX                    100
-#define HINT_ACEEPT                     102
-#define HINT_TEST                       103
-#define HINT_OFFLINE                    104
-#define HINT_REQUEST                    105
 #define IDT_TIMERCALCTIME               106
+#define IDT_CLEAR                       107
 #define IDR_MAINFRAME                   128
 #define IDR_JLSRVRTYPE                  129
-#define IDD_DLG_LOGIN                   130
 #define IDD_DLG_ADDKEY                  131
 #define IDR_MENU1                       132
 #define IDD_DIALOG1key                  133
 #define IDD_DIALOG2base                 135
 #define IDD_DIALOG3log                  136
-#define IDC_IP                          1000
-#define IDC_DBNAME                      1001
-#define IDC_USERNAME                    1002
-#define IDC_PASSW                       1003
-#define IDC_COMBO1                      1004
 #define IDC_EDIT_TIME                   1006
 #define IDC_EDIT1name                   1008
 #define IDC_EDIT2                       1009
@@ -30,6 +21,7 @@
 #define IDC_EDIT4ac                     1011
 #define IDC_EDIT2nums                   1012
 #define IDC_EDIT5rgtime                 1012
+#define IDC_EDIT_COUNTS                 1012
 #define IDC_EDIT_KEY                    1013
 #define IDC_STATIC_SOCKET               1015
 #define IDC_EDIT7mb                     1016
@@ -43,7 +35,6 @@
 #define ID_MENUITEM32774                32774
 #define ID_MENUITEM32775                32775
 #define ID_MENUITEM32776                32776
-#define ID_SOCKETINFO                   32777
 #define ID_INDICATOR_UPTIME             59143
 #define COLUMN_ACCOUNT                  61207
 #define COLUMN_PASSWORD                 61208
@@ -71,6 +62,6 @@
 #define _APS_NEXT_RESOURCE_VALUE        138
 #define _APS_NEXT_COMMAND_VALUE         32778
 #define _APS_NEXT_CONTROL_VALUE         1016
-#define _APS_NEXT_SYMED_VALUE           107
+#define _APS_NEXT_SYMED_VALUE           108
 #endif
 #endif

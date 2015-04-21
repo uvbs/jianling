@@ -1,22 +1,18 @@
 #if !defined(AFX_JLKITDOC_H__9C9AD6C5_69D3_45CF_A1E2_27114BFE567F__INCLUDED_)
 #define AFX_JLKITDOC_H__9C9AD6C5_69D3_45CF_A1E2_27114BFE567F__INCLUDED_
 
-#if _MSC_VER > 1000
-    #pragma once
-#endif // _MSC_VER > 1000
-
-
 
 #include "Logindlg.h"
 #include "Registdlg.h"
-#include "Modifybind.h"
+#include "LoginSheet.h"
 #include "Keyviewdlg.h"
 #include "JLkitSocket.h"
 #include "BindKeyDlg.h"
 #include "MsgBox.h"
 #include "StatusBox.h"
 
-
+//KEY
+typedef std::vector<QUERYKEY_SUCCESS> KeyVec;
 
 class CJLkitDoc : public CDocument, public ITCPSocketSink
 {
@@ -38,8 +34,6 @@ public:
 
     //登陆部分
     void ShowLogin();
-    void ShowRegister();
-    void ShowModiBind();
     bool PerformLogonMission();
 
     void ShowStatus(TCHAR szText[]);
@@ -47,20 +41,18 @@ public:
 
 
     //对话框
-    CDlgKeyView* m_pKeyDlg;
+    CLoginSheet m_LoginSheet;
+
     CDlgLogin* m_pLoginDlg;
     CDlgRegist* m_pRegisterDlg;
-    CDlgModifyBind* m_pModiBind;
-    CDlgBindKey* m_pBindDlg;
+    CDlgKeyView* m_pKeyDlg;
 
-    CMsgBox* m_pMsgBox;
+
     CStatusBox* m_pStatusBox;
 
     //网络套接字
     CJLkitSocket m_socket;
 
-
-    bool m_bModiBind;
     bool m_bRegister;
 
     //网络回调
@@ -74,6 +66,12 @@ public:
     void ProcessLogin(CJLkitSocket* pSocket, const Tcp_Head& stTcpHead, void* pData, WORD wDataSize);
     void ProcessKey(CJLkitSocket* pSocket, const Tcp_Head& stTcpHead, void* pData, WORD wDataSize);
     void ProcessHelp(CJLkitSocket* pSocket, const Tcp_Head& stTcpHead, void* pData, WORD wDataSize);
+
+    //用户数据
+    //当前卡号
+    KeyVec m_KeyVec;
+
+
 
 
     // ClassWizard generated virtual function overrides

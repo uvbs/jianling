@@ -38,26 +38,36 @@ BOOL CConfigMgr::LoadConfig(const TCHAR szConfigPath[])
     try
     {
         //加载值
+        m_Update = GetLongValue(_T("设置"), _T("更新"), true);
         m_KeepPw = GetLongValue(_T("设置"), _T("记住密码"), 0);
         m_szFileName = GetValue(_T("设置"), _T("帐号文件"), _T(""));
         m_szAccountName =  GetValue(_T("设置"),  _T("用户名"), _T(""));
         m_szAccountPw = GetValue(_T("设置"), _T("密码"), _T(""));
+        m_szGameConfig = GetValue(_T("设置"), _T("游戏配置"), _T(""));
+        m_szGameScript = GetValue(_T("设置"), _T("游戏脚本"), _T(""));
 
         //取得游戏路径
-        CRegKey reg; TCHAR szValue[MAX_PATH];
-        if(reg.Open(HKEY_LOCAL_MACHINE, _T("SOFTWARE\\Wow6432Node\\plaync\\BNS_KOR")) == ERROR_SUCCESS)
+        CRegKey reg;
+        TCHAR szValue[MAX_PATH];
+
+#ifdef JLTW
+        TCHAR temp1[] = _T("SOFTWARE\\Wow6432Node\\NCTaiwan");
+        TCHAR temp2[] = _T("TWBNS22");
+#else
+        TCHAR temp1[] = _T("SOFTWARE\\Wow6432Node\\plaync\\BNS_KOR");
+        TCHAR temp2[] = _T("BaseDir");
+#endif
+
+        if(reg.Open(HKEY_LOCAL_MACHINE, temp1) == ERROR_SUCCESS)
         {
             DWORD sizeValue = MAX_PATH;
-            if(reg.QueryValue(szValue, _T("BaseDir"), &sizeValue) == ERROR_SUCCESS)
+            if(reg.QueryValue(szValue, temp2, &sizeValue) == ERROR_SUCCESS)
             {
                 _tcscat(szValue, _T("\\bin\\Client.exe"));
             }
         }
 
-        //
         const TCHAR* pszGamePathValue = GetValue(_T("设置"), _T("游戏路径"), szValue);
-
-
         if(pszGamePathValue[0] == '\0')
         {
             m_szGamePath = szValue;
@@ -65,18 +75,6 @@ BOOL CConfigMgr::LoadConfig(const TCHAR szConfigPath[])
         else
         {
             m_szGamePath = pszGamePathValue;
-        }
-
-        m_szGameConfig = GetValue(_T("设置"), _T("游戏配置"), _T("default.ini"));
-        if(m_szGameConfig.empty())
-        {
-            m_szGameConfig = _T("default.ini");
-        }
-
-        m_szGameScript = GetValue(_T("设置"), _T("游戏脚本"), _T("default.ini"));
-        if(m_szGameScript.empty())
-        {
-            m_szGameScript = _T("default.ini");
         }
 
     }
@@ -94,6 +92,7 @@ void CConfigMgr::SaveConfig(const TCHAR szConfigPath[])
 {
     //保存设置
     SetLongValue(_T("设置"), _T("记住密码"), m_KeepPw);
+    SetLongValue(_T("设置"), _T("更新"), m_Update);
     SetValue(_T("设置"), _T("帐号文件"), m_szFileName.c_str());
     SetValue(_T("设置"), _T("用户名"), m_szAccountName.c_str());
     SetValue(_T("设置"), _T("密码"), m_szAccountPw.c_str());

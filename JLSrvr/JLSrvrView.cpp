@@ -21,10 +21,7 @@ IMPLEMENT_DYNCREATE(CJLSrvrView, CListView)
 BEGIN_MESSAGE_MAP(CJLSrvrView, CListView)
     //{{AFX_MSG_MAP(CJLSrvrView)
     ON_WM_TIMER()
-    ON_COMMAND(ID_KEY_ADD, OnKeyAdd)
     ON_NOTIFY_REFLECT(NM_RCLICK, OnRclick)
-    ON_COMMAND(ID_MENUITEM32774, OnMenuitem32774)
-    ON_COMMAND(ID_MENUITEM32775, OnMenuitem32775)
     //}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
@@ -122,10 +119,6 @@ void CJLSrvrView::OnTimer(UINT nIDEvent)
     CListView::OnTimer(nIDEvent);
 }
 
-void CJLSrvrView::OnKeyAdd()
-{
-}
-
 void CJLSrvrView::DoPopupMenu(int type)
 {
     POINT point;
@@ -159,19 +152,4 @@ void CJLSrvrView::OnRclick(NMHDR* pNMHDR, LRESULT* pResult)
 
     }
     *pResult = 0;
-}
-
-
-//’ ∫≈œÍœ∏–≈œ¢
-void CJLSrvrView::OnMenuitem32774()
-{
-
-}
-
-
-//À¢–¬
-void CJLSrvrView::OnMenuitem32775()
-{
-
-
 }

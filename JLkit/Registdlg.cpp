@@ -3,10 +3,12 @@
 
 #include "stdafx.h"
 #include "Jlkit.h"
+#include "JLkitDoc.h"
 #include "JLkitSocket.h"
 #include "RegistDlg.h"
+#include "MainFrm.h"
 
-#include "..\common\protocol.h"
+
 
 #ifdef _DEBUG
     #define new DEBUG_NEW
@@ -15,7 +17,7 @@
 
 
 CDlgRegist::CDlgRegist(CWnd* pParent /*=NULL*/)
-    : CDialog(CDlgRegist::IDD, pParent)
+    : CPropertyPage(CDlgRegist::IDD)
 {
     //{{AFX_DATA_INIT(CDlgRegist)
     // NOTE: the ClassWizard will add member initialization here
@@ -30,7 +32,6 @@ void CDlgRegist::DoDataExchange(CDataExchange* pDX)
     //{{AFX_DATA_MAP(CDlgRegist)
     DDX_Text(pDX, IDC_EDITPASSWORD, m_strPw);
     DDX_Text(pDX, IDC_EDITUSERNAME, m_strName);
-    DDX_Text(pDX, IDC_IPADDRESS, m_strIp);
     //}}AFX_DATA_MAP
 }
 
@@ -47,31 +48,31 @@ END_MESSAGE_MAP()
 
 void CDlgRegist::OnOK()
 {
-    // TODO: Add your specialized code here and/or call the base class
-    UpdateData();
+    CMainFrame* pFrame = (CMainFrame*)AfxGetMainWnd();
+    CJLkitDoc* pDoc = (CJLkitDoc*)pFrame->GetActiveDocument();
 
+    UpdateData();
     if(m_strName.GetLength() > 10 || m_strPw.GetLength() > 10)
     {
-        AfxMessageBox(_T("最长10个字符"));
-        UpdateData(0);
+        AfxMessageBox(_T("用户名和密码最长十个字符"));
         return;
     }
 
-    if(m_strIp == _T("0.0.0.0") || m_strName.IsEmpty() || m_strPw.IsEmpty())
+    if(m_strName.IsEmpty() || m_strPw.IsEmpty())
     {
-        AfxMessageBox(_T("不能为空"));
+        AfxMessageBox(_T("用户名和密码不能空"));
     }
     else
     {
-//        CJLkitSocket::GetInstance()->Register(m_strName, m_strPw, m_strIp);
+        pDoc->m_bRegister = true;
+        pDoc->PerformLogonMission();
     }
-
-
 }
 
 
 WORD CDlgRegist::ConstructRegisterPacket(BYTE cbBuffer[], WORD wBufferSize)
 {
+    UpdateData();
 
     REGIST_BUF* pBuffer = (REGIST_BUF*)cbBuffer;
     _tcsncpy(pBuffer->name, (LPCTSTR)m_strName, MAXLEN);

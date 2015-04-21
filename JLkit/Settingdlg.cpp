@@ -15,7 +15,10 @@
 CDlgSetting::CDlgSetting(CWnd* pParent /*=NULL*/)
     : CDialog(CDlgSetting::IDD, pParent)
 {
+    //{{AFX_DATA_INIT(CDlgSetting)
     m_strGamePath = _T("");
+	m_bChkUpdate = TRUE;
+	//}}AFX_DATA_INIT
 }
 
 void CDlgSetting::DoDataExchange(CDataExchange* pDX)
@@ -24,7 +27,8 @@ void CDlgSetting::DoDataExchange(CDataExchange* pDX)
 
     //{{AFX_DATA_MAP(CDlgSetting)
     DDX_Text(pDX, IDC_GAMEPATH, m_strGamePath);
-    //}}AFX_DATA_MAP
+	DDX_Check(pDX, IDC_CHECK_CHKUPDATE, m_bChkUpdate);
+	//}}AFX_DATA_MAP
 }
 
 BEGIN_MESSAGE_MAP(CDlgSetting, CDialog)

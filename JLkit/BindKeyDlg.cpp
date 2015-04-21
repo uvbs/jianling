@@ -44,6 +44,8 @@ END_MESSAGE_MAP()
 
 void CDlgBindKey::OnOK() 
 {
+    UpdateData();
+
     CMainFrame* pFrame =  (CMainFrame*)AfxGetMainWnd();
     CJLkitDoc* pDoc = (CJLkitDoc*)pFrame->GetActiveDocument();
     CJLkitSocket& sock = pDoc->m_socket;

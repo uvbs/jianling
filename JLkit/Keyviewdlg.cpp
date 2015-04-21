@@ -7,8 +7,6 @@
 #include "MainFrm.h"
 #include "JLkitSocket.h"
 #include "Keyviewdlg.h"
-#include "BindkeyDlg.h"
-#include "GlobalUserInfo.h"
 
 
 #ifdef _DEBUG
@@ -19,14 +17,15 @@
 // CDlgKeyView dialog
 
 IMPLEMENT_DYNAMIC(CDlgKeyView, CDialog)
-CDlgKeyView::CDlgKeyView()
-    : CDialog(CDlgKeyView::IDD, NULL)
+CDlgKeyView::CDlgKeyView(CWnd* pParent)
+    : CDialog(CDlgKeyView::IDD, pParent)
 {
+    m_pBindDlg = NULL;
 }
 
 CDlgKeyView::~CDlgKeyView()
 {
-
+    SafeDelete(m_pBindDlg);
 }
 
 
@@ -43,10 +42,10 @@ void CDlgKeyView::DoDataExchange(CDataExchange* pDX)
 
 BEGIN_MESSAGE_MAP(CDlgKeyView, CDialog)
     //{{AFX_MSG_MAP(CDlgKeyView)
-    ON_COMMAND(ID_QUERY, OnQuerykey)
     ON_COMMAND(ID_BINDKEY, OnBinkey)
     ON_COMMAND(ID_UNBIND, OnUnbindkey)
     ON_NOTIFY(NM_RCLICK, IDC_LISTKEY, OnNMRClickListkey)
+    ON_COMMAND(ID_QUERY, OnQuery)
     //}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
@@ -59,11 +58,9 @@ BOOL CDlgKeyView::OnInitDialog()
 
 
     m_ListCtrl.InsertColumn(0, _T("卡号"));
-    m_ListCtrl.InsertColumn(1, _T("充值时间"));
-    m_ListCtrl.InsertColumn(2, _T("充值卡类型"));
-    m_ListCtrl.InsertColumn(3, _T("剩余时间"));
+    m_ListCtrl.InsertColumn(1, _T("剩余时间"));
 
-    for(int i = 0; i < 4; i++)
+    for(int i = 0; i < 2; i++)
     {
         m_ListCtrl.SetColumnWidth(i, LVSCW_AUTOSIZE_USEHEADER);
     }
@@ -76,7 +73,9 @@ BOOL CDlgKeyView::OnInitDialog()
 
     m_ListCtrl.MoveWindow(&rect, FALSE);
 
-    OnQuerykey();
+
+
+    Querykey();
 
     return TRUE;  // return TRUE unless you set the focus to a control
     // EXCEPTION: OCX Property Pages should return FALSE
@@ -97,44 +96,39 @@ void CDlgKeyView::OnNMRClickListkey(NMHDR* pNMHDR, LRESULT* pResult)
 
 void CDlgKeyView::OnBinkey()
 {
-    CMainFrame* pFrame =  (CMainFrame*)AfxGetMainWnd();
-    CJLkitDoc* pDoc = (CJLkitDoc*)pFrame->GetActiveDocument();
-    CDlgBindKey* pBindDlg = pDoc->m_pBindDlg;
 
-    if(pBindDlg == NULL)
-        pBindDlg = new CDlgBindKey;
+    if(m_pBindDlg == NULL)
+        m_pBindDlg = new CDlgBindKey;
 
-    pBindDlg->DoModal();
+    m_pBindDlg->DoModal();
 }
 
-void CDlgKeyView::OnQuerykey()
+void CDlgKeyView::Querykey()
 {
-
-    //获取用户KEY
-    CGlobalUserInfo* pUserInfo = CGlobalUserInfo::GetInstance();
-    KeyVec& key =  pUserInfo->m_KeyVec;;
-
-    CMainFrame* pFrame =  (CMainFrame*)AfxGetMainWnd();
+    CMainFrame* pFrame = (CMainFrame*)AfxGetMainWnd();
     CJLkitDoc* pDoc = (CJLkitDoc*)pFrame->GetActiveDocument();
-    CJLkitSocket& sock = pDoc->m_socket;
 
     m_ListCtrl.DeleteAllItems();
-    for(int i = 0; i < key.size(); i++)
+    for(int i = 0; i < pDoc->m_KeyVec.size(); i++)
     {
-        m_ListCtrl.InsertItem(i, key[i].type);
-        m_ListCtrl.SetItemText(i, 1, key[i].key);
-        // listctr.SetItemText(i, 2, pKey->remaintime);
-        // listctr.SetItemText(i, 3, pKey->buildtime);
+        m_ListCtrl.InsertItem(i, pDoc->m_KeyVec[i].key);
+        CString strLeft;
+        strLeft.Format(_T("%d小时"), pDoc->m_KeyVec[i].remaintime);
+        m_ListCtrl.SetItemText(i, 1, strLeft);
     }
-
-    sock.Send(M_KEY, fun_querykey, NULL, 0);
+    
+    for(int t = 0;;)
+    {
+        if(!m_ListCtrl.SetColumnWidth(t++, LVSCW_AUTOSIZE_USEHEADER))
+            break;
+    }
 }
 
 
 void CDlgKeyView::OnUnbindkey()
 {
 
-    CMainFrame* pFrame =  (CMainFrame*)AfxGetMainWnd();
+    CMainFrame* pFrame = (CMainFrame*)AfxGetMainWnd();
     CJLkitDoc* pDoc = (CJLkitDoc*)pFrame->GetActiveDocument();
     CJLkitSocket& sock = pDoc->m_socket;
 
@@ -153,3 +147,17 @@ void CDlgKeyView::OnUnbindkey()
     }
 }
 
+
+void CDlgKeyView::OnQuery()
+{
+
+    Querykey();
+
+    CMainFrame* pFrame = (CMainFrame*)AfxGetMainWnd();
+    CJLkitDoc* pDoc = (CJLkitDoc*)pFrame->GetActiveDocument();
+
+    pDoc->m_KeyVec.clear();
+    pDoc->m_socket.Send(M_KEY, fun_querykey, NULL, 0);
+
+
+}

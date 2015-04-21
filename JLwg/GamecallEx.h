@@ -138,7 +138,7 @@ public:
 
     //×é¶Ó
     void AddToPary();
-
+    void KillBoss();
 
 
 

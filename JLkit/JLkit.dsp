@@ -86,7 +86,7 @@ LINK32=link.exe
 # ADD BASE LINK32 /nologo /entry:"wWinMainCRTStartup" /subsystem:windows /debug /machine:I386 /out:"..\bin\JLkit.exe"
 # SUBTRACT BASE LINK32 /profile /map
 # ADD LINK32 /nologo /entry:"wWinMainCRTStartup" /subsystem:windows /pdb:"../bin/JLkit_tw.pdb" /debug /machine:I386 /out:"..\bin\JLkit_tw.exe"
-# SUBTRACT LINK32 /profile /map
+# SUBTRACT LINK32 /profile /pdb:none /map
 
 !ENDIF 
 
@@ -103,19 +103,11 @@ SOURCE=.\BindKeyDlg.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\BugRepDlg.cpp
-# End Source File
-# Begin Source File
-
 SOURCE=.\ConfigMgr.cpp
 # End Source File
 # Begin Source File
 
 SOURCE=.\CVPNFile.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\GlobalUserInfo.cpp
 # End Source File
 # Begin Source File
 
@@ -147,11 +139,11 @@ SOURCE=.\Keyviewdlg.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=..\common\logger.cpp
+SOURCE=.\logindlg.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\logindlg.cpp
+SOURCE=.\LoginSheet.cpp
 # End Source File
 # Begin Source File
 
@@ -159,11 +151,11 @@ SOURCE=.\MainFrm.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\Modifybind.cpp
+SOURCE=.\MsgBox.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\MsgBox.cpp
+SOURCE=..\common\MSJEXHND.cpp
 # End Source File
 # Begin Source File
 
@@ -204,19 +196,11 @@ SOURCE=.\BindKeyDlg.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\BugRepDlg.h
-# End Source File
-# Begin Source File
-
 SOURCE=.\ConfigMgr.h
 # End Source File
 # Begin Source File
 
 SOURCE=.\CVPNFile.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\GlobalUserInfo.h
 # End Source File
 # Begin Source File
 
@@ -244,15 +228,11 @@ SOURCE=.\Keyviewdlg.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\common\Lock.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\common\logger.h
-# End Source File
-# Begin Source File
-
 SOURCE=.\logindlg.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\LoginSheet.h
 # End Source File
 # Begin Source File
 
@@ -260,11 +240,11 @@ SOURCE=.\MainFrm.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\Modifybind.h
+SOURCE=.\MsgBox.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\MsgBox.h
+SOURCE=..\common\MSJEXHND.h
 # End Source File
 # Begin Source File
 

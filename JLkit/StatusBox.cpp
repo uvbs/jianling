@@ -38,9 +38,17 @@ void CStatusBox::SetMsg(TCHAR szMsg[])
 
 BEGIN_MESSAGE_MAP(CStatusBox, CDialog)
 	//{{AFX_MSG_MAP(CStatusBox)
-		// NOTE: the ClassWizard will add message map macros here
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
 // CStatusBox message handlers
+
+BOOL CStatusBox::OnInitDialog() 
+{
+	CDialog::OnInitDialog();
+
+    CenterWindow();
+	return TRUE;  // return TRUE unless you set the focus to a control
+	              // EXCEPTION: OCX Property Pages should return FALSE
+}

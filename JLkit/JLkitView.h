@@ -58,7 +58,7 @@ public:
 
 
     //工作线程
-    int CreateGameProcess(int inItem);
+    int CreateGameProcess(int inItem, bool bInject = true);
     static UINT AFX_CDECL IPCThread(LPVOID lpParam);
 
 
@@ -96,13 +96,13 @@ public:
     afx_msg void OnUcStart();
     afx_msg void OnGet();
     afx_msg void OnActive();
-    afx_msg void OnUpdateStart(CCmdUI* pCmdUI);
     afx_msg void OnGetAndActive();
+    afx_msg void OnUcLog();
+    afx_msg void OnStopOp();
+    afx_msg void OnUpdateStart(CCmdUI* pCmdUI);
     afx_msg void OnUpdateUcStart(CCmdUI* pCmdUI);
-	afx_msg void OnUcLog();
-	afx_msg void OnStopOp();
-	afx_msg void OnUpdateStopOp(CCmdUI* pCmdUI);
-	//}}AFX_MSG
+    afx_msg void OnUpdateStopOp(CCmdUI* pCmdUI);
+    //}}AFX_MSG
     DECLARE_MESSAGE_MAP()
 };
 

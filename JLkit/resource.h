@@ -5,6 +5,8 @@
 #define IDT_REDRAWITEMS                 112
 #define IDT_TIMER_CLOSE                 113
 #define ID_TESTSOCKET                   114
+#define IDT_CLEAR                       115
+#define IDT_HEART                       116
 #define IDR_MAINFRAME                   128
 #define IDD_LOGIN                       130
 #define IDD_REGISTER                    131
@@ -39,6 +41,7 @@
 #define IDC_SETTING_BROWSE              1029
 #define IDC_EDIT1                       1032
 #define IDC_CHECK1                      1039
+#define IDC_CHECK_CHKUPDATE             1039
 #define IDC_LEFTTIMES                   1044
 #define IDC_TEXT                        1045
 #define ID_SETTING                      32771
@@ -88,8 +91,8 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_3D_CONTROLS                     1
 #define _APS_NEXT_RESOURCE_VALUE        181
-#define _APS_NEXT_COMMAND_VALUE         32842
+#define _APS_NEXT_COMMAND_VALUE         32843
 #define _APS_NEXT_CONTROL_VALUE         1046
-#define _APS_NEXT_SYMED_VALUE           115
+#define _APS_NEXT_SYMED_VALUE           117
 #endif
 #endif

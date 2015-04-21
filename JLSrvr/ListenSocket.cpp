@@ -47,7 +47,6 @@ CListenSocket::~CListenSocket()
 
 void CListenSocket::OnAccept(int nErrorCode)
 {
-    TRACE(_T("OnAccept: %d"), nErrorCode);
 
     //ÎÄµµ
     CMainFrame* pFrame =  (CMainFrame*)AfxGetMainWnd();

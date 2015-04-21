@@ -23,11 +23,11 @@ public:
     int CheckUser(TCHAR szUsername[], TCHAR szPassw[]);
     BOOL ModifyBind(TCHAR szUserName[], TCHAR szPassword[], TCHAR szOldBind[], TCHAR szNewBind[]);
     int Unbindkey(TCHAR* pszName, TCHAR* pszKey, sockaddr_in* pSocketAddr);
-    BOOL NewRegist(TCHAR szUserName[], TCHAR szPassword[], TCHAR szBindIP[], TCHAR szMac[], TCHAR szClientIp[]);
+    BOOL NewRegist(TCHAR szName[], TCHAR szPw[]);
     BOOL Querykey(std::vector<QUERYKEY_SUCCESS>& vecKeyInfo, TCHAR szUserName[], TCHAR szPassWord[]);
     BOOL Bindkey(TCHAR* pszName, TCHAR* pszKey, const TCHAR szIp[]);
     BOOL AddKey(CString& strKey, UINT nTimes, int type);
-
+    void UserExit(TCHAR szName[]);
 };
 
 #endif // !defined(AFX_DBMNGR_H__D4825D1E_CB90_4703_8099_4269409660BC__INCLUDED_)

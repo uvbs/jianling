@@ -22,6 +22,7 @@ public:
     //用户配置
 public:
     BOOL m_KeepPw; //记住密码
+    BOOL m_Update;
     std::basic_string<TCHAR> m_szFileName; //最后加载的文件名
     std::basic_string<TCHAR> m_szGamePath; //游戏路径
     std::basic_string<TCHAR> m_szAccountName; //账号名称

@@ -4,12 +4,10 @@
 #include "JLkitView.h"
 #include "MainFrm.h"
 #include "Settingdlg.h"
-#include "BugRepDlg.h"
 #include "ConfigMgr.h"
 #include "MsgBox.h"
-#include "GlobalUserInfo.h"
 #include "WorkThread.h"
-
+#include "LoginSheet.h"
 
 
 #ifdef _DEBUG
@@ -21,23 +19,16 @@
 // CJLkitDoc
 IMPLEMENT_DYNCREATE(CJLkitDoc, CDocument)
 
-CJLkitDoc::CJLkitDoc()
+CJLkitDoc::CJLkitDoc():
+    m_LoginSheet(AfxGetApp()->m_pszAppName)
 {
 
-    m_pModiBind = NULL;
     m_pRegisterDlg = NULL;
     m_pLoginDlg = NULL;
     m_pKeyDlg = NULL;
-    m_pBindDlg = NULL;
 
-    m_pMsgBox = NULL;
     m_pStatusBox = NULL;
 
-    //设置回调
-    m_socket.SetSink(this);
-
-
-    m_bModiBind = false;
     m_bRegister = false;
 }
 
@@ -96,15 +87,12 @@ void CJLkitDoc::Serialize(CArchive& ar)
 
 void CJLkitDoc::OnUpdateValidKey(CCmdUI* pCmdUI)
 {
-    CGlobalUserInfo* pGlobalUserInfo = CGlobalUserInfo::GetInstance();
-    KeyVec& key = pGlobalUserInfo->m_KeyVec;
-
 
     CString strInfo;
     if(strInfo.LoadString(IDS_VALIDKEY))
     {
         CString strTemp;
-        strTemp.Format(IDS_VALIDKEY, key.size());
+        strTemp.Format(IDS_VALIDKEY, m_KeyVec.size());
         pCmdUI->SetText(strTemp);
     }
 }
@@ -121,12 +109,12 @@ void CJLkitDoc::OnUpdateAllNums(CCmdUI* pCmdUI)
 void CJLkitDoc::OnSetting()
 {
     CDlgSetting dlg;
-    CConfigMgr* pConfig =  CConfigMgr::GetInstance();
-    dlg.m_strGamePath = pConfig->m_szGamePath.c_str();
+
+    dlg.m_strGamePath = CConfigMgr::GetInstance()->m_szGamePath.c_str();
     if(dlg.DoModal() == IDOK)
     {
         //保存配置信息
-        pConfig->m_szGamePath = (LPCTSTR)dlg.m_strGamePath;
+        CConfigMgr::GetInstance()->m_szGamePath = dlg.m_strGamePath;
     }
 }
 
@@ -135,8 +123,7 @@ void CJLkitDoc::OnSetting()
 //这里是一个KEY对应一个游戏进程
 BOOL CJLkitDoc::IsHaveValidKey()
 {
-    CGlobalUserInfo* pGlobalUserInfo = CGlobalUserInfo::GetInstance();
-    KeyVec& key = pGlobalUserInfo->m_KeyVec;
+
     return TRUE;
 }
 
@@ -178,9 +165,7 @@ BOOL CJLkitDoc::OnOpenDocument(LPCTSTR lpszPathName)
 {
     if(!CDocument::OnOpenDocument(lpszPathName)) return FALSE;
 
-    CConfigMgr* pConfig = CConfigMgr::GetInstance();
-    pConfig->m_szFileName = lpszPathName;
-
+    CConfigMgr::GetInstance()->m_szFileName = lpszPathName;
     return TRUE;
 }
 
@@ -188,11 +173,8 @@ void CJLkitDoc::OnCloseDocument()
 {
 
     SafeDelete(m_pStatusBox);
-    SafeDelete(m_pMsgBox);
-    SafeDelete(m_pBindDlg);
     SafeDelete(m_pRegisterDlg);
     SafeDelete(m_pLoginDlg);
-    SafeDelete(m_pModiBind);
 
     CDocument::OnCloseDocument();
 }
@@ -207,68 +189,44 @@ void CJLkitDoc::ShowLogin()
         m_pLoginDlg = new CDlgLogin();
     }
 
-
-    m_bRegister = false;
-
-
-    //获得配置
-    CConfigMgr* pConfigMgr = CConfigMgr::GetInstance();
-
-    //初始化登陆对话框
-    m_pLoginDlg->m_bRemPw = pConfigMgr->m_KeepPw;
-    if(m_pLoginDlg->m_bRemPw)
-    {
-        m_pLoginDlg->m_strPw = pConfigMgr->m_szAccountPw.c_str();
-        m_pLoginDlg->m_strName = pConfigMgr->m_szAccountName.c_str();
-    }
-
-    if(m_pLoginDlg->m_hWnd == NULL)
-    {
-        //登陆对话框
-        m_pLoginDlg->Create(CDlgLogin::IDD, AfxGetMainWnd());
-    }
-
-    m_pLoginDlg->ShowWindow(SW_SHOW);
-}
-
-void CJLkitDoc::ShowRegister()
-{
     if(!m_pRegisterDlg)
     {
         m_pRegisterDlg = new CDlgRegist();
     }
 
-    m_bRegister = true;
-    m_pRegisterDlg->DoModal();
-}
+    m_bRegister = false;
 
-
-void CJLkitDoc::ShowModiBind()
-{
-    if(!m_pModiBind)
+    if(m_LoginSheet.m_hWnd == NULL)
     {
-        m_pModiBind = new CDlgModifyBind();
+        m_LoginSheet.AddPage(m_pLoginDlg);
+        m_LoginSheet.AddPage(m_pRegisterDlg);
+        m_LoginSheet.Create(NULL, WS_OVERLAPPED | WS_SYSMENU);
     }
 
-    m_bModiBind = true;
-    m_pModiBind->DoModal();
+    m_LoginSheet.ShowWindow(SW_SHOW);
 }
 
 bool CJLkitDoc::PerformLogonMission()
 {
 
-    ShowStatus(_T("连接服务器中..."));
+    ShowStatus(_T("正在连接服务器.."));
 
     CString strSrvIp;
     _ASSERTE(strSrvIp.LoadString(IDS_CONNECT_SERVER) == TRUE);
 
+    //设置回调
+    m_socket.SetSink(this);
+
     if(!m_socket.ConnectSrv(strSrvIp, PORT_SRV))
     {
         ShowMsg(_T("连接服务器失败"));
+        ShowLogin();
         return false;
     }
 
-    Sleep(100);
+
+    AfxGetMainWnd()->SetTimer(IDT_HEART, 15000, NULL);
+
     return true;
 }
 
@@ -280,6 +238,7 @@ bool CJLkitDoc::OnEventTCPSocketLink(CJLkitSocket* pSocket, INT nErrorCode)
     if(nErrorCode != 0)
     {
         ShowMsg(_T("连接服务器失败"));
+        m_socket.Close();
         ShowLogin();
     }
     else
@@ -290,12 +249,8 @@ bool CJLkitDoc::OnEventTCPSocketLink(CJLkitSocket* pSocket, INT nErrorCode)
         BYTE cbBuffer[SOCKET_TCP_PACKET];
         WORD wPacketSize;
         int funid;
-        if(m_bModiBind)
-        {
-            wPacketSize = m_pModiBind->ConstructModifyBindPacket(cbBuffer, sizeof(cbBuffer));
-            funid = fun_bindkey;
-        }
-        else if(m_bRegister)
+
+        if(m_bRegister)
         {
             wPacketSize = m_pRegisterDlg->ConstructRegisterPacket(cbBuffer, sizeof(cbBuffer));
             funid = fun_regist;
@@ -317,7 +272,7 @@ bool CJLkitDoc::OnEventTCPSocketLink(CJLkitSocket* pSocket, INT nErrorCode)
 bool CJLkitDoc::OnEventTCPSocketShut(CJLkitSocket* pSocket, BYTE cbShutReason)
 {
 
-
+    pSocket->Close();
     return true;
 }
 
@@ -328,45 +283,45 @@ void CJLkitDoc::ProcessLogin(CJLkitSocket* pSocket, const Tcp_Head& stTcpHead, v
 
         case fun_login_fail:
         {
-            PROCESS_DESCRIBE* pLoginFail = (PROCESS_DESCRIBE*)pData;
-
-            AfxMessageBox(pLoginFail->szDescribe);
-
-            if(m_bRegister == false)
-            {
-                ShowLogin();
-            }
-            else if(m_bModiBind == true)
-            {
-                ShowModiBind();
-            }
-            else
-            {
-                ShowRegister();
-            }
-
+            PROCESS_DESCRIBE* pDes = (PROCESS_DESCRIBE*)pData;
+            m_socket.Close();
+            ShowLogin();
+            AfxMessageBox(pDes->szDescribe);
             break;
         }
 
         case fun_login_ok:
         {
+            
+            //自动加载上次打开的文件
+            if(CConfigMgr::GetInstance()->m_szFileName[0] != _T('\0'))
+            {
+                AfxGetApp()->m_nCmdShow = SW_HIDE;
+                AfxGetApp()->OpenDocumentFile(CConfigMgr::GetInstance()->m_szFileName.c_str());
+            }
+            
+            //显示主窗口
+            ((CMainFrame*)AfxGetMainWnd())->ActivateFrame();
+            
             PROCESS_DESCRIBE* pLoginSucess = (PROCESS_DESCRIBE*)pData;
             m_socket.Send(M_KEY, fun_querykey, NULL, 0);
 
-            //自动加载上次打开的文件
-            CConfigMgr* pConfig = CConfigMgr::GetInstance();
-
-            if(pConfig->m_szFileName[0] != _T('\0'))
-            {
-                AfxGetApp()->m_nCmdShow = SW_HIDE;
-                AfxGetApp()->OpenDocumentFile(pConfig->m_szFileName.c_str());
-            }
-
-            //显示主窗口
-            ((CMainFrame*)AfxGetMainWnd())->ActivateFrame();
             break;
         }
 
+
+        case fun_regist_ok:
+        case fun_regist_fail:
+        {
+            PROCESS_DESCRIBE* pDes = (PROCESS_DESCRIBE*)pData;
+            AfxMessageBox(pDes->szDescribe);
+            m_socket.Close();
+            break;
+        }
+
+
+        default:
+            break;
     }
 }
 
@@ -375,19 +330,10 @@ void CJLkitDoc::ProcessKey(CJLkitSocket* pSocket, const Tcp_Head& stTcpHead, voi
     switch(stTcpHead.wSubCmdID)
     {
         case fun_bindkey_fail:
+        case fun_bindkey_ok:
         {
             PROCESS_DESCRIBE* pDesc = (PROCESS_DESCRIBE*)pData;
             AfxMessageBox(pDesc->szDescribe);
-            break;
-        }
-
-        case fun_bindkey_ok:
-        {
-            if(m_pBindDlg)
-            {
-                m_pBindDlg->EndDialog(IDOK);
-            }
-
             break;
         }
 
@@ -410,15 +356,11 @@ void CJLkitDoc::ProcessKey(CJLkitSocket* pSocket, const Tcp_Head& stTcpHead, voi
 
         case fun_querykey_ok:
         {
-
-            //获取用户KEY
-            CGlobalUserInfo* pUserInfo = CGlobalUserInfo::GetInstance();
-            KeyVec& key =  pUserInfo->m_KeyVec;;
-
+            
             QUERYKEY_SUCCESS* pKey = (QUERYKEY_SUCCESS*)pData;
 
             //放到用户全局数据中
-            key.push_back(*pKey);
+            m_KeyVec.push_back(*pKey);
             break;
         }
 
@@ -488,11 +430,9 @@ void CJLkitDoc::OnLookkey()
 {
 
     if(m_pKeyDlg == NULL)
-        m_pKeyDlg = new CDlgKeyView();
-
+        m_pKeyDlg = new CDlgKeyView(AfxGetMainWnd());
 
     m_pKeyDlg->DoModal();
-
     SafeDelete(m_pKeyDlg);
 }
 
@@ -523,9 +463,7 @@ void CJLkitDoc::ShowMsg(TCHAR szText[])
     //隐藏状态提示
     m_pStatusBox->ShowWindow(SW_HIDE);
 
-    if(m_pMsgBox == NULL)
-        m_pMsgBox = new CMsgBox;
-
-    m_pMsgBox->SetMsg(szText);
-    m_pMsgBox->DoModal();
+    CMsgBox dlg;
+    dlg.SetMsg(szText);
+    dlg.DoModal();
 }

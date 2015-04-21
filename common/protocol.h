@@ -120,7 +120,8 @@ enum CMD_SUB_HELP
 {
     fun_bugrep,          //报告bug
     fun_bugrep_ok,
-    fun_bugrep_fail
+    fun_bugrep_fail,
+    fun_heart
 };
 
 
@@ -135,7 +136,6 @@ struct LOGIN_BUF
 //注册
 struct REGIST_BUF
 {
-    DWORD ip;
     TCHAR name[MAXLEN];
     TCHAR pw[MAXLEN];
 };
@@ -171,8 +171,6 @@ struct PROCESS_DESCRIBE
 struct QUERYKEY_SUCCESS
 {
     TCHAR key[KEYLEN];
-    TCHAR type[DESLEN];
-    DWORD buildtime;  //生成时间
     DWORD remaintime;  //剩余时间
 };
 

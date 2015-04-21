@@ -3,7 +3,7 @@
 
 
 
-class CDlgLogin : public CDialog
+class CDlgLogin : public CPropertyPage
 {
 // Construction
 public:
@@ -36,9 +36,6 @@ protected:
 
     // Generated message map functions
     //{{AFX_MSG(CDlgLogin)
-    afx_msg void OnBtnRegister();
-    afx_msg void OnBtnModifybind();
-	afx_msg void OnClose();
 	//}}AFX_MSG
     DECLARE_MESSAGE_MAP()
 

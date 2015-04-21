@@ -38,10 +38,13 @@ public:
     //删除一个客户端
     bool DeleteClient(CJLkitSocket* pSocket);
 
+    void DeadSocketClear();
+
     //客户端列表
 private:
     std::list<CJLkitSocket*> _client;
     std::map<CJLkitSocket*, LOGIN_BUF> _userdata;
+    std::map<CJLkitSocket*, time_t> _heart;
 
 
 // Operations
@@ -62,7 +65,8 @@ public:
     bool ProcessKey(CJLkitSocket* pSocket, const Tcp_Head& stTcpHead, void* pData, WORD wDataSize);
     bool ProcessHelp(CJLkitSocket* pSocket, const Tcp_Head& stTcpHead, void* pData, WORD wDataSize);
 
-private:
+
+    //数据库
     CDbMngr m_db;
 
     //{{AFX_VIRTUAL(CJLSrvrDoc)
@@ -84,8 +88,9 @@ public:
 protected:
     //{{AFX_MSG(CJLSrvrDoc)
     afx_msg void OnFileRestart();
-	afx_msg void OnUpdateConnects(CCmdUI* pCmdUI);
-	//}}AFX_MSG
+    afx_msg void OnUpdateConnects(CCmdUI* pCmdUI);
+    afx_msg void OnKeyAdd();
+    //}}AFX_MSG
     DECLARE_MESSAGE_MAP()
 };
 

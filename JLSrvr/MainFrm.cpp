@@ -3,6 +3,7 @@
 
 #include "stdafx.h"
 #include "JLSrvr.h"
+#include "JLSrvrDoc.h"
 #include "MainFrm.h"
 #include "JLSrvrView.h"
 
@@ -21,8 +22,9 @@ IMPLEMENT_DYNCREATE(CMainFrame, CFrameWnd)
 BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
     //{{AFX_MSG_MAP(CMainFrame)
     ON_WM_CREATE()
-    ON_WM_CLOSE()
-    //}}AFX_MSG_MAP
+    ON_WM_TIMER()
+	ON_WM_CLOSE()
+	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
 static UINT indicators[] =
@@ -74,6 +76,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
         return -1;      // fail to create
     }
 
+    SetTimer(IDT_CLEAR, 20000, NULL);
     return 0;
 }
 
@@ -96,3 +99,20 @@ void CMainFrame::Dump(CDumpContext& dc) const
 /////////////////////////////////////////////////////////////////////////////
 // CMainFrame message handlers
 
+
+void CMainFrame::OnTimer(UINT nIDEvent)
+{
+    if(nIDEvent == IDT_CLEAR)
+    {
+        CJLSrvrDoc* pDoc = (CJLSrvrDoc*)GetActiveDocument();
+        pDoc->DeadSocketClear();
+    }
+
+    CFrameWnd::OnTimer(nIDEvent);
+}
+
+void CMainFrame::OnClose() 
+{
+	KillTimer(IDT_CLEAR);
+	CFrameWnd::OnClose();
+}

@@ -52,10 +52,7 @@ protected:
 protected:
     //{{AFX_MSG(CJLSrvrView)
     afx_msg void OnTimer(UINT nIDEvent);
-    afx_msg void OnKeyAdd();
     afx_msg void OnRclick(NMHDR* pNMHDR, LRESULT* pResult);
-    afx_msg void OnMenuitem32774();
-    afx_msg void OnMenuitem32775();
     //}}AFX_MSG
     DECLARE_MESSAGE_MAP()
 

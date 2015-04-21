@@ -44,23 +44,24 @@ BEGIN_MESSAGE_MAP(CJLDlg, CDialog)
     ON_BN_CLICKED(IDC_GOTASK, OnGotask)
     ON_BN_CLICKED(IDC_WGDATA, OnWgdata)
     ON_WM_CLOSE()
-    ON_WM_SHOWWINDOW()
     ON_BN_CLICKED(IDC_UNLOADWG, OnUnloadwg)
+    ON_WM_SHOWWINDOW()
+    ON_WM_PAINT()
     //}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
 
 static UINT TaskThread(LPVOID pParam)
 {
-	try
-	{
-		TaskScript task;
-		task.BeginTask();
-	}
-	catch (...)
-	{
-		TRACE(_T("任务报错"));
-	}
+    try
+    {
+        TaskScript task;
+        task.BeginTask();
+    }
+    catch(...)
+    {
+        TRACE(_T("任务报错"));
+    }
     return 0;
 }
 
@@ -70,11 +71,13 @@ static UINT TaskThread(LPVOID pParam)
 void CJLDlg::OnGotask()
 {
     //创建任务线程
-    if(m_pTaskThread == NULL) {
+    if(m_pTaskThread == NULL)
+    {
         m_pTaskThread = AfxBeginThread(TaskThread, 0);
         SetDlgItemText(IDC_GOTASK, _T("终止任务"));
     }
-    else {
+    else
+    {
         OnStopTask();
         m_pTaskThread = NULL;
         SetDlgItemText(IDC_GOTASK, _T("开始任务"));
@@ -84,23 +87,29 @@ void CJLDlg::OnGotask()
 BOOL CJLDlg::OnInitDialog()
 {
 
-    PIPEDATA &data = theApp.m_stData;
-    SetWindowText(data.szAccount);
+    SetWindowText(theApp.m_stData.szAccount);
 
+    ::SetParent(m_hWnd, theApp.m_hGameWnd);
+    SetWindowPos(&wndTopMost, 0, 0, 200, 300, SWP_NOSIZE);
+
+    
     return CDialog::OnInitDialog();
 }
 
 void CJLDlg::OnWgdata()
 {
     ShowWindow(SW_HIDE);
+
     CDataDlg dlg;
     dlg.DoModal();
+
     ShowWindow(SW_SHOW);
 }
 
 void CJLDlg::OnStopTask()
 {
-    if(m_pTaskThread != NULL) {
+    if(m_pTaskThread != NULL)
+    {
         ::TerminateThread(m_pTaskThread->m_hThread, 0);
         m_pTaskThread->Delete();
         m_pTaskThread = NULL;
@@ -117,4 +126,13 @@ void CJLDlg::OnUnloadwg()
 {
     OnStopTask();
     EndDialog(IDOK);
+}
+
+void CJLDlg::OnPaint()
+{
+    CPaintDC dc(this); // device context for painting
+
+    // TODO: Add your message handler code here
+
+    // Do not call CDialog::OnPaint() for painting messages
 }

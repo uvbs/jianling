@@ -3,7 +3,7 @@
 
 
 
-class CDlgRegist : public CDialog
+class CDlgRegist : public CPropertyPage
 {
 // Construction
 public:
@@ -14,7 +14,6 @@ public:
     enum { IDD = IDD_REGISTER };
     CString m_strName;
     CString m_strPw;
-    CString m_strIp;
     //}}AFX_DATA
 
     WORD ConstructRegisterPacket(BYTE cbBuffer[], WORD wBufferSize);

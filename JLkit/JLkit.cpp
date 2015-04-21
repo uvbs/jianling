@@ -33,7 +33,6 @@ END_MESSAGE_MAP()
 
 CJLkitApp::CJLkitApp()
 {
-    m_szIniPath[0] = 0;
 }
 
 
@@ -41,41 +40,14 @@ CJLkitApp::~CJLkitApp()
 {
 }
 
-BOOL CJLkitApp::MutexWnd()
-{
-    CWnd* PrevCWnd, *ChildCWnd;
-
-    PrevCWnd = CWnd::FindWindow(JLKITCLASSNAME, NULL);
-    if(PrevCWnd != NULL)
-    {
-
-        ChildCWnd = PrevCWnd->GetLastActivePopup();
-        PrevCWnd->BringWindowToTop();
-
-        if(PrevCWnd->IsIconic())
-            PrevCWnd->ShowWindow(SW_RESTORE);
-
-        if(PrevCWnd != ChildCWnd)
-            ChildCWnd->BringWindowToTop();
-
-        return FALSE;
-    }
-    else
-    {
-        return TRUE;
-    }
-
-}
 
 BOOL CJLkitApp::InitInstance()
 {
-    //保证唯一实例
-    if(!MutexWnd()) return FALSE;
 
-#ifndef JLTW
-    if(!LoadLibrary(_T("JLnp.dll")))
-#else
+#ifdef JLTW
     if(!LoadLibrary(_T("JLnp_tw.dll")))
+#else
+    if(!LoadLibrary(_T("JLnp.dll")))
 #endif
     {
         AfxMessageBox(_T("加载NP失败"));
@@ -92,12 +64,13 @@ BOOL CJLkitApp::InitInstance()
 
 
     //加载配置文件
-    GetModuleFileName(NULL, m_szIniPath, MAX_PATH);
-    PathRemoveExtension(m_szIniPath);
-    _tcscat(m_szIniPath, _T(".ini"));
-    if(!PathFileExists(m_szIniPath))
+    TCHAR szIni[MAX_PATH];
+    GetModuleFileName(NULL, szIni, MAX_PATH);
+    PathRemoveExtension(szIni);
+    _tcscat(szIni, _T(".ini"));
+    if(!PathFileExists(szIni))
     {
-        FILE* fp = _tfopen(m_szIniPath, _T("w+"));
+        FILE* fp = _tfopen(szIni, _T("w+"));
         if(fp == NULL)
         {
             AfxMessageBox(_T("无法创建配置文件"));
@@ -108,8 +81,7 @@ BOOL CJLkitApp::InitInstance()
     }
 
     //加载配置
-    CConfigMgr* pConfig = CConfigMgr::GetInstance();
-    if(!pConfig->LoadConfig(m_szIniPath))
+    if(!CConfigMgr::GetInstance()->LoadConfig(szIni))
     {
         AfxMessageBox(_T("加载配置文件失败"));
         return FALSE;
@@ -120,14 +92,11 @@ BOOL CJLkitApp::InitInstance()
     //创建窗口框架
     CSingleDocTemplate* pDocTemplate;
     pDocTemplate = new CSingleDocTemplate(
-        IDR_MAINFRAME, RUNTIME_CLASS(CJLkitDoc),
-        RUNTIME_CLASS(CMainFrame), RUNTIME_CLASS(CJLkitView));
+        IDR_MAINFRAME, 
+        RUNTIME_CLASS(CJLkitDoc),
+        RUNTIME_CLASS(CMainFrame), 
+        RUNTIME_CLASS(CJLkitView));
     AddDocTemplate(pDocTemplate);
-
-    //窗口风格
-    GdiplusStartupInput gdiplusStartupInput;
-    GdiplusStartup(&m_gdiplusToken, &gdiplusStartupInput, NULL);
-
 
     m_nCmdShow = SW_HIDE;
     OnFileNew();
@@ -138,10 +107,35 @@ BOOL CJLkitApp::InitInstance()
 int CJLkitApp::ExitInstance()
 {
 
+    TCHAR szIni[MAX_PATH];
+    GetModuleFileName(NULL, szIni, MAX_PATH);
+    PathRemoveExtension(szIni);
+    _tcscat(szIni, _T(".ini"));
+
     //保存配置
     CConfigMgr* pConfig =  CConfigMgr::GetInstance();
-    pConfig->SaveConfig(m_szIniPath);
+    pConfig->SaveConfig(szIni);
 
-    GdiplusShutdown(m_gdiplusToken);
     return CWinApp::ExitInstance();
+}
+
+BOOL CJLkitApp::PreTranslateMessage(MSG* pMsg)
+{
+    if(pMsg->message == WM_CLOSE || pMsg->message == WM_DESTROY)
+    {
+        TRACE(_T("sdfsdf"));
+    }
+    return CWinApp::PreTranslateMessage(pMsg);
+}
+
+BOOL CALLBACK CJLkitApp::EnumChildProc(HWND hWnd, LPARAM lParam)
+{
+
+    TCHAR temp1[256], temp2[256];
+    ::GetWindowText(hWnd, temp1, 255);
+
+    wsprintf(temp2, _T("hwnd:%x text: %s"), hWnd, temp1);
+    MessageBox(NULL, temp2, _T("cwnd"), MB_OK);
+
+    return TRUE;
 }

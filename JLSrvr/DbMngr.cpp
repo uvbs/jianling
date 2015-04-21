@@ -56,11 +56,11 @@ int CDbMngr::Unbindkey(TCHAR* pszName, TCHAR* pszKey, sockaddr_in* pSocketAddr)
 }
 
 
-BOOL CDbMngr::NewRegist(TCHAR szUserName[], TCHAR szPassword[], TCHAR szBindIP[], TCHAR szMac[], TCHAR szClientIp[])
+BOOL CDbMngr::NewRegist(TCHAR szName[], TCHAR szPw[])
 {
 
     CString strSql;
-    strSql.Format(db_sql_register, szUserName, szPassword, szClientIp, szMac);
+    strSql.Format(db_sql_register, szName, szPw, _T(""), _T(""), _T(""), _T(""), _T(""), _T(""), _T(""));
 
     try
     {
@@ -80,7 +80,7 @@ BOOL CDbMngr::NewRegist(TCHAR szUserName[], TCHAR szPassword[], TCHAR szBindIP[]
 //查询充值卡是否可用
 //返回值 0 = 可以使用
 //1=已使用 jk_key_type=1代表该充值卡只能充值韩服剑灵
-int CDbMngr::Bindkey(TCHAR *pszName, TCHAR *pszKey, const TCHAR szIp[])
+int CDbMngr::Bindkey(TCHAR* pszName, TCHAR* pszKey, const TCHAR szIp[])
 {
 
     CDBVariant ret;
@@ -98,15 +98,14 @@ int CDbMngr::Bindkey(TCHAR *pszName, TCHAR *pszKey, const TCHAR szIp[])
         CString strRet;
         record.GetFieldValue(_T("返回值"), ret);
 
-        return ret.m_iVal;
-
     }
     catch(CDBException* pEx)
     {
+        AfxMessageBox(pEx->m_strError);
         pEx->Delete();
     }
 
-    return 0;
+    return ret.m_iVal;
 }
 
 
@@ -122,32 +121,36 @@ BOOL CDbMngr::Querykey(std::vector<QUERYKEY_SUCCESS>& vecKeyInfo, TCHAR szUserNa
     {
 
         CRecordset record(this);
-        if(record.Open(AFX_DB_USE_DEFAULT_TYPE, (LPCTSTR)strSql) == FALSE)
+        if(!record.Open(AFX_DB_USE_DEFAULT_TYPE, (LPCTSTR)strSql))
         {
-            THROW(_T("没能打开记录集"));
+            TRACE(_T("没能打开记录集"));
+            return FALSE;
         }
 
         CString strKey;
-        CString strBuildTime;
-        CString strKeyType;
-        CString strRemainTime;
+        CDBVariant leftt;
 
 
-        while(record.IsEOF() == FALSE)
+
+        if(record.IsBOF())
         {
+            TRACE(_T("无可用卡号"));
+            return FALSE;
+        }
+
+
+        while(!record.IsEOF())
+        {
+
             QUERYKEY_SUCCESS QueryRetInfo;
             ZeroMemory(&QueryRetInfo, sizeof(QUERYKEY_SUCCESS));
 
             record.GetFieldValue(_T("卡号"), strKey);
-            record.GetFieldValue(_T("充值时间"), strBuildTime);
-            record.GetFieldValue(_T("充值卡类型"), strKeyType);
-            record.GetFieldValue(_T("剩余时间"), strRemainTime);
+            record.GetFieldValue(_T("剩余时间"), leftt);
 
-            _tcsncpy(QueryRetInfo.type, (LPCTSTR)strKeyType, strKeyType.GetLength());
-            QueryRetInfo.remaintime = _ttoi((LPCTSTR)strRemainTime);
+            QueryRetInfo.remaintime = leftt.m_lVal;
 
-            QueryRetInfo.buildtime = 22;
-            _tcsncpy(QueryRetInfo.key, (LPCTSTR)strKey, strKey.GetLength());
+            _tcscpy(QueryRetInfo.key, (LPCTSTR)strKey);
 
             vecKeyInfo.push_back(QueryRetInfo);
 
@@ -164,11 +167,27 @@ BOOL CDbMngr::Querykey(std::vector<QUERYKEY_SUCCESS>& vecKeyInfo, TCHAR szUserNa
     return bRet;
 }
 
+void CDbMngr::UserExit(TCHAR szName[])
+{
+    CString strSql;
+    strSql.Format(db_sql_userexit, szName);
+    try
+    {
+        ExecuteSQL((LPCTSTR)strSql);
+    }
+    catch(CDBException* pEx)
+    {
+        pEx->Delete();
+    }
+}
+
 int CDbMngr::CheckUser(TCHAR szUsername[], TCHAR szPassw[])
 {
     CString strSql;
-    strSql.Format(db_sql_checkuser, szUsername,
-                  _T(""), _T(""), _T(""), _T(""), _T(""), _T(""), _T(""), _T(""), _T(""), _T(""));
+    strSql.Format(
+        db_sql_checkuser, szUsername, szPassw,
+        _T("1"), _T("1"), _T("1"), _T("1"),
+        _T("1"), _T("1"), _T("1"), _T("韩服剑灵"), _T("1"));
 
 
     CDBVariant varValue;
@@ -229,18 +248,16 @@ BOOL CDbMngr::AddKey(CString& strKey, UINT nTimes, int type)
     strSql.Format(db_sql_addkey, szKey, nTimes, type);
 
 
-    TRY
+    try
     {
         ExecuteSQL(strSql);
         strKey = szKey;
     }
-    CATCH(CDBException, e)
+    catch(CDBException* pEx)
     {
-        // The error code is in e->m_nRetCode
+        pEx->Delete();
         return FALSE;
     }
-    END_CATCH
-
 
     return TRUE;
 }

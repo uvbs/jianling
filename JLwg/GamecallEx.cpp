@@ -657,6 +657,14 @@ int GamecallEx::ClearCustom()
 }
 
 
+
+void GamecallEx::KillBoss()
+{
+
+    //hook怪物技能
+
+}
+
 //杀怪
 //参数1: 坐标
 //参数2: 以参数1计算的范围

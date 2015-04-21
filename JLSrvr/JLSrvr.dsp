@@ -63,6 +63,10 @@ SOURCE=.\DbMngr.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\DlgAddKey.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=..\JLkit\JLkitSocket.cpp
 # End Source File
 # Begin Source File
@@ -113,6 +117,10 @@ SOURCE=.\db_sql.h
 # Begin Source File
 
 SOURCE=.\DbMngr.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\DlgAddKey.h
 # End Source File
 # Begin Source File
 

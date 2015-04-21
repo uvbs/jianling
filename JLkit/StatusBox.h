@@ -35,8 +35,8 @@ protected:
 
     // Generated message map functions
     //{{AFX_MSG(CStatusBox)
-    // NOTE: the ClassWizard will add member functions here
-    //}}AFX_MSG
+	virtual BOOL OnInitDialog();
+	//}}AFX_MSG
     DECLARE_MESSAGE_MAP()
 };
 

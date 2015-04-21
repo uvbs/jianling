@@ -60,10 +60,7 @@ BOOL CMsgBox::OnInitDialog()
 {
     CDialog::OnInitDialog();
 
-
     SetWindowText(_T("ÌבÊ¾"));
-
-
     SetTimer(IDT_TIMER_CLOSE, 1000, NULL);
 
     return TRUE;  // return TRUE unless you set the focus to a control
@@ -77,6 +74,7 @@ void CMsgBox::OnTimer(UINT nIDEvent)
         if(m_closeCount <= 1)
         {
             KillTimer(IDT_TIMER_CLOSE);
+            m_closeCount = 10;
             OnCancel();
         }
 

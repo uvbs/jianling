@@ -2,6 +2,8 @@
 #define _KEYVIEWDLG_H_
 
 
+#include "BindKeyDlg.h"
+
 // CDlgKeyView dialog
 class CDlgKeyView : public CDialog
 {
@@ -9,13 +11,15 @@ class CDlgKeyView : public CDialog
     DECLARE_MESSAGE_MAP()
 
 public:
-    CDlgKeyView();   // standard constructor
+    CDlgKeyView(CWnd* pParent = NULL);   // standard constructor
     virtual ~CDlgKeyView();
-    
+
+
+    void Querykey();
 
 public:
     CListCtrl m_ListCtrl;
-
+    CDlgBindKey* m_pBindDlg;
 
 // Dialog Data
     //{{AFX_DATA(CDlgKeyView)
@@ -30,10 +34,10 @@ protected:
 
 public:
     //{{AFX_MSG(CDlgKeyView)
-    afx_msg void OnQuerykey();
     afx_msg void OnBinkey();
     afx_msg void OnUnbindkey();
     afx_msg void OnNMRClickListkey(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnQuery();
 	//}}AFX_MSG
 };
 
