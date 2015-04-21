@@ -120,6 +120,11 @@ void CJLkitView::SetResult(int nReslt, int i)
 {
     switch(nReslt)
     {
+        case RESULT_FAIL_INJECT:
+        {
+            GetListCtrl().SetItemText(i, COLUMN_TEXT_STATUS, _T("注入失败"));
+            break;
+        }
         case  RESULT_SUCCESS:
         {
             GetListCtrl().SetItemText(i, COLUMN_TEXT_STATUS, _T("完成"));
@@ -197,7 +202,7 @@ void CJLkitView::SetResult(int nReslt, int i)
         }
         case RESULT_LOGIN_SUCCESS:
         {
-            GetListCtrl().SetItemText(i, COLUMN_TEXT_STATUS, _T("完成运行"));
+            GetListCtrl().SetItemText(i, COLUMN_TEXT_STATUS, _T("运行中.."));
             break;
         }
     }
@@ -349,7 +354,7 @@ bool CJLkitView::ReadLine(std::basic_string<TCHAR>& strLine, CFile* pFile)
 
             if(cbChar == 0x0d || cbChar == 0x0a)
             {
-                if(cbChar == 0x0a) 
+                if(cbChar == 0x0a)
                 {
                     break;
                 }
