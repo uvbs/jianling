@@ -73,7 +73,6 @@ CJLkitView::CJLkitView()
     m_dwDefaultStyle |= LVS_REPORT;
     m_LineNums = 0;
     m_lpVpnFile = NULL;
-    m_pErrFile = NULL;
 }
 
 CJLkitView::~CJLkitView()
@@ -87,8 +86,6 @@ CJLkitView::~CJLkitView()
     }
 
     SafeDelete(m_lpVpnFile);
-    SafeDelete(m_pErrFile);
-
 }
 
 
@@ -304,17 +301,6 @@ void CJLkitView::OnInitialUpdate()
         m_lpVpnFile = new CVpnFile;
     }
 
-    if(!m_pErrFile)
-    {
-        m_pErrFile = new CStdioFile;
-    }
-
-    //设置列宽
-    for(int i = 0; i < COLUMN_TEXT_NUMS; i++)
-    {
-        GetListCtrl().SetColumnWidth(i, LVSCW_AUTOSIZE_USEHEADER);
-    }
-
     CListView::OnInitialUpdate();
 }
 
@@ -421,6 +407,13 @@ void CJLkitView::SerializeText(CArchive& ar)
                 InsertLine(m_LineNums++, strName.c_str(), strPw.c_str(), szConfig, szScript);
             }
 
+        }
+
+
+        //设置列宽
+        for(int i = 0; i < COLUMN_TEXT_NUMS; i++)
+        {
+            GetListCtrl().SetColumnWidth(i, LVSCW_AUTOSIZE_USEHEADER);
         }
     }
 }
@@ -671,7 +664,8 @@ UINT AFX_CDECL CJLkitView::WorkThread(LPVOID pVoid)
             {
 
                 CVpnFile* lpVpnFile = pView->m_lpVpnFile;
-                CStdioFile& ErrFile = *pView->m_pErrFile;
+                std::basic_fstream<TCHAR>& err = pView->m_errfile;
+
 
                 //获取vpn文本
                 TCHAR szPathName[MAX_PATH];
@@ -679,7 +673,6 @@ UINT AFX_CDECL CJLkitView::WorkThread(LPVOID pVoid)
                 PathRemoveFileSpec(szPathName);
 
                 //工作目录
-                SetCurrentDirectory(szPathName);
                 PathAppend(szPathName, _T("VPN.txt"));
 
                 //打开文本
@@ -690,16 +683,19 @@ UINT AFX_CDECL CJLkitView::WorkThread(LPVOID pVoid)
                 }
 
                 //取得当前模块路径
-                TCHAR szPath[MAX_PATH] = {0};
-                GetModuleFileName(NULL, szPath, MAX_PATH);
+                ZeroMemory(szPathName, sizeof(szPathName));
+                GetModuleFileName(NULL, szPathName, MAX_PATH);
+                PathRemoveFileSpec(szPathName);
 
                 CTime time = CTime::GetCurrentTime();
-                CString strTime = time.Format("%d日%H时%M分");
-                CreateDirectory(strTime, NULL);
-                PathAppend(szPath, strTime);
-                SetCurrentDirectory(szPath);
+                PathAppend(szPathName, (LPCTSTR)time.Format("%d日%H时%M分"));
+                if(!PathFileExists(szPathName))
+                {
+                    _tmkdir(szPathName);
+                }
 
-                ErrFile.Open(_T("错误帐号.txt"), CFile::modeReadWrite | CFile::modeCreate);
+                USES_CONVERSION;
+                err.open(T2A((LPCTSTR)szPathName));
 
 
                 //开始
@@ -769,11 +765,10 @@ _Again:
 _WriteError:
                     if(bError)
                     {
-                        ErrFile.WriteString(strLine);
+                        err << (LPCTSTR)strLine;
                     }
                 }
 
-                ErrFile.Close();
                 lpVpnFile->Close();
 
                 break;

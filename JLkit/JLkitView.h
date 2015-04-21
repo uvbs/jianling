@@ -8,7 +8,7 @@
     #pragma once
 #endif // _MSC_VER > 1000
 
-
+#include <fstream>
 #include "CVPNFile.h"
 
 enum
@@ -68,7 +68,7 @@ public:
 
 
     //¼ÇÂ¼´íÎó
-    CStdioFile* m_pErrFile;
+    std::basic_fstream<TCHAR> m_errfile;
     CVpnFile* m_lpVpnFile;
 
 private:
