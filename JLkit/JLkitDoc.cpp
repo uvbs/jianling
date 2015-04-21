@@ -296,8 +296,7 @@ void CJLkitDoc::ProcessLogin(CJLkitSocket* pSocket, const Tcp_Head& stTcpHead, v
             //自动加载上次打开的文件
             if(CConfigMgr::GetInstance()->m_szFileName[0] != _T('\0'))
             {
-                AfxGetApp()->m_nCmdShow = SW_HIDE;
-                AfxGetApp()->OpenDocumentFile(CConfigMgr::GetInstance()->m_szFileName.c_str());
+                OnOpenDocument(CConfigMgr::GetInstance()->m_szFileName.c_str());
             }
             
             //显示主窗口
