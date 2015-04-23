@@ -103,6 +103,10 @@ SOURCE=..\common\CHook.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\CombatBoss.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\ConfigItemPage.cpp
 # End Source File
 # Begin Source File
@@ -140,6 +144,10 @@ SOURCE=.\GameHook.cpp
 # Begin Source File
 
 SOURCE=.\GameLog.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\GameObj.cpp
 # End Source File
 # Begin Source File
 
@@ -200,6 +208,10 @@ SOURCE=..\common\CHook.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\CombatBoss.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\common\common.h
 # End Source File
 # Begin Source File
@@ -245,6 +257,10 @@ SOURCE=.\GameHook.h
 # Begin Source File
 
 SOURCE=.\GameLog.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\GameObj.h
 # End Source File
 # Begin Source File
 

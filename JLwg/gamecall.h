@@ -96,6 +96,9 @@ public:
     DWORD GetExperienceNameID(DWORD ID); //获取经验名字ID
     wchar_t* GetExperienceName(DWORD ID); //获取经验名字
     BOOL GetPlayerFightingStatus();//获得战斗状态
+
+
+
     void _LinQuJiangLi();
 
 

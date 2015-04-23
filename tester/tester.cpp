@@ -12,6 +12,34 @@ using namespace std;
 
 #include "Test.h"
 
+
+void thread1()
+{
+    static int i = 0;
+    printf("thread1: %d\r\n", i++);
+}
+
+void thread2()
+{
+    static int i = 0;
+    printf("thread2: %d\r\n", i++);
+}
+
+void threadmgr()
+{
+    //轮流调度
+    static bool b = true;
+    if(b)
+    {
+        thread2();
+    }
+    else 
+    {
+        thread1();
+    }
+
+    b = !b;
+}
 int _tmain(int argc, TCHAR* argv[], TCHAR* envp[])
 {
 
@@ -23,16 +51,11 @@ int _tmain(int argc, TCHAR* argv[], TCHAR* envp[])
         return 1;
     }
 
-
-    if(!AfxSocketInit())
+    for(int i = 0; i < 20; i++)
     {
-        cerr << _T("套接字初始化失败") << endl;
-        return 1;
+        threadmgr();
+        Sleep(100);
     }
-
-    
-    Test dlg;
-    dlg.DoModal();
         
     return 0;
 }

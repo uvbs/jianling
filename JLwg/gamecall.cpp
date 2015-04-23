@@ -43,7 +43,7 @@ void Gamecall::DunDi(DWORD cityid)
     }
     __except(1)
     {
-        LOGER(_T("传送  error"));
+        TRACE(_T("传送  error"));
     }
 }
 
@@ -55,7 +55,7 @@ void Gamecall::Fuhuo(DWORD uiAddr)
 
     __try
     {
-        LOGER(_T("进入复活call uiAddr:%d"), uiAddr);
+        TRACE(_T("进入复活call uiAddr:%d"), uiAddr);
         __asm
         {
             mov eax, uiAddr;
@@ -67,7 +67,7 @@ void Gamecall::Fuhuo(DWORD uiAddr)
     }
     __except(1)
     {
-        OutputDebugString(_T("复活失败"));
+        TRACE(_T("复活失败"));
     }
 }
 
@@ -559,7 +559,7 @@ void Gamecall::HeChengWuQi(_BAGSTU& zhu, _BAGSTU& fu)
 
 
 
-    LOGER(_T("%s: %08x, %08x"), FUNCNAME, zhu, fu);
+    TRACE(_T("%s: %08x, %08x"), FUNCNAME, zhu, fu);
     __try
     {
         _asm
@@ -583,7 +583,7 @@ void Gamecall::HeChengWuQi(_BAGSTU& zhu, _BAGSTU& fu)
     }
     __except(1)
     {
-        OutputDebugString(_T("合成武器出错"));
+        TRACE(_T("合成武器出错"));
     }
 }
 
@@ -830,13 +830,13 @@ BOOL Gamecall::Init()
         m_hModuleBsEngine = GetModuleHandle(_T("bsengine_Shipping"));
         if(m_hModuleBsEngine == NULL)
         {
-            LOGER(_T("获取BsEngine模块失败"));
+            TRACE(_T("获取BsEngine模块失败"));
             return FALSE;
         }
     }
     catch(...)
     {
-        LOGER(_T("%s Error!"), FUNCNAME);
+        TRACE(_T("%s Error!"), FUNCNAME);
     }
 
     return TRUE;
@@ -890,7 +890,7 @@ void Gamecall::CunCangku(_BAGSTU& goods)
     }
     __except(1)
     {
-        OutputDebugString(FUNCNAME);
+        TRACE(FUNCNAME);
     }
 
 }
@@ -908,7 +908,7 @@ void Gamecall::HeChengWuQi_Po10(_BAGSTU& zhu, _BAGSTU& fu, DWORD adress)
     fu_value += package;
 
 
-    LOGER(_T("%s: %08x, %08x,%08x"), FUNCNAME, zhu_value, fu_value, adress);
+    TRACE(_T("%s: %08x, %08x,%08x"), FUNCNAME, zhu_value, fu_value, adress);
 
 
     YouJianLeiXing LeiXing;
@@ -965,7 +965,7 @@ void Gamecall::HeChengWuQi_Po5(_BAGSTU& zhu, _BAGSTU& fu) //合成武器破5
 
 
 
-    //LOGER(_T("%s: %08x, %08x"), FUNCNAME, zhu, fu);
+    //TRACE(_T("%s: %08x, %08x"), FUNCNAME, zhu, fu);
 
 
     __try
@@ -991,7 +991,7 @@ void Gamecall::HeChengWuQi_Po5(_BAGSTU& zhu, _BAGSTU& fu) //合成武器破5
     }
     __except(1)
     {
-        OutputDebugString(_T("合成武器破5出错"));
+        TRACE(_T("合成武器破5出错"));
     }
 }
 
@@ -1055,7 +1055,7 @@ ObjectNode* Gamecall::GetObjectBinTreeBaseAddr()
     }
     __except(1)
     {
-        OutputDebugString(FUNCNAME);
+        TRACE(FUNCNAME);
     }
 
     /*取得了, 遍历到*/
@@ -1081,7 +1081,7 @@ wchar_t* Gamecall::GetPlayerName()
     }
     __except(1)
     {
-        OutputDebugString(FUNCNAME);
+        TRACE(FUNCNAME);
     }
     return PlayerName;
 }
@@ -1105,7 +1105,7 @@ DWORD Gamecall::GetPlayerID()
     }
     __except(1)
     {
-        OutputDebugString(FUNCNAME);
+        TRACE(FUNCNAME);
     }
     return PlayerID;
 }
@@ -1129,7 +1129,7 @@ DWORD Gamecall::GetPlayerDataAddr()
     }
     __except(1)
     {
-        OutputDebugString(FUNCNAME);
+        TRACE(FUNCNAME);
     }
 
     return PlayerInfo;
@@ -1168,7 +1168,7 @@ BOOL Gamecall::GetPlayerPos(fPosition* PlayerPosition)
     }
     __except(1)
     {
-        OutputDebugString(FUNCNAME);
+        TRACE(FUNCNAME);
     }
 
 
@@ -1204,7 +1204,7 @@ BOOL Gamecall::GetPlayerPos2(sPosition* PlayerPosition)
     }
     __except(1)
     {
-        OutputDebugString(FUNCNAME);
+        TRACE(FUNCNAME);
     }
 
     return FALSE;
@@ -1231,7 +1231,7 @@ float Gamecall::GetPlayerMaxVit()
     }
     __except(1)
     {
-        OutputDebugString(FUNCNAME);
+        TRACE(FUNCNAME);
     }
     return PlayerVit;
 }
@@ -1255,7 +1255,7 @@ float Gamecall::GetPlayerVit()
     }
     __except(1)
     {
-        OutputDebugString(FUNCNAME);
+        TRACE(FUNCNAME);
     }
     return PlayerVit;
 }
@@ -1279,7 +1279,7 @@ UCHAR Gamecall::GetPlayerMana()
     }
     __except(1)
     {
-        OutputDebugString(FUNCNAME);
+        TRACE(FUNCNAME);
     }
 
     return Vit;
@@ -1308,7 +1308,7 @@ int Gamecall::GetPlayerVitStatus()
     }
     __except(1)
     {
-        OutputDebugString(FUNCNAME);
+        TRACE(FUNCNAME);
     }
     return status;
 }
@@ -1334,7 +1334,7 @@ DWORD Gamecall::GetPlayerMaxHealth()
     }
     __except(1)
     {
-        OutputDebugString(FUNCNAME);
+        TRACE(FUNCNAME);
     }
 
     return wMaxBlood;
@@ -1361,7 +1361,7 @@ DWORD Gamecall::GetPlayerHealth()
     }
     __except(1)
     {
-        OutputDebugString(FUNCNAME);
+        TRACE(FUNCNAME);
     }
 
     return Health;
@@ -1387,7 +1387,7 @@ void* Gamecall::GetStepCallAddr()
     }
     __except(1)
     {
-        OutputDebugString(FUNCNAME);
+        TRACE(FUNCNAME);
     }
 
     return pCall;
@@ -1410,7 +1410,7 @@ void Gamecall::Step(float x, float y, float z)
     }
     __except(1)
     {
-        OutputDebugString(FUNCNAME);
+        TRACE(FUNCNAME);
     }
 
 }
@@ -1433,7 +1433,7 @@ void Gamecall::Step3x(float x, float y, float z)
     }
     __except(1)
     {
-        OutputDebugString(FUNCNAME);
+        TRACE(FUNCNAME);
     }
 
 }
@@ -1465,7 +1465,7 @@ void Gamecall::Turn(int angle)
     }
     __except(1)
     {
-        OutputDebugString(FUNCNAME);
+        TRACE(FUNCNAME);
 		//TRACE1("bs=%d",m_hModuleBsEngine);
     }
 }
@@ -1494,8 +1494,8 @@ BYTE Gamecall::GetObjectType(DWORD pObjAddress)
     }
     __except(1)
     {
-        //LOGER(_T("GetObjectType-error:%d"),pObjAddress);
-        OutputDebugString(FUNCNAME);
+        //TRACE(_T("GetObjectType-error:%d"),pObjAddress);
+        TRACE(FUNCNAME);
         return 0;
     }
 
@@ -1904,7 +1904,7 @@ void Gamecall::Attack(int id)  //技能攻击  传入的是技能ID
     }
     __except(1)
     {
-        OutputDebugString(FUNCNAME);
+        TRACE(FUNCNAME);
     }
 }
 
@@ -1930,7 +1930,7 @@ Tree* Gamecall::GetUIBinTreeBaseAddr()
     }
     __except(1)
     {
-        OutputDebugString(FUNCNAME);
+        TRACE(FUNCNAME);
     }
 
     return Addr;
@@ -1948,7 +1948,7 @@ BOOL Gamecall::isHaveXianlu(int index)
 
     if(uiAddr == 0)
     {
-        LOGER(_T("isHaveXianlu 获取ui地址失败"));
+        TRACE(_T("isHaveXianlu 获取ui地址失败"));
         return FALSE;
     }
 
@@ -1966,7 +1966,7 @@ BOOL Gamecall::isHaveXianlu(int index)
     }
     __except(1)
     {
-        OutputDebugString(FUNCNAME);
+        TRACE(FUNCNAME);
     }
 
     return (result != -1);
@@ -2011,7 +2011,7 @@ void Gamecall::GuanBiDuiHuaKuangChuanKou(DWORD adress, DWORD adress1)
     }
     __except(1)
     {
-        OutputDebugString(FUNCNAME);
+        TRACE(FUNCNAME);
     }
 }
 
@@ -2045,7 +2045,7 @@ wchar_t* Gamecall::GetUIName(DWORD pBarAddr)
 {
     if(pBarAddr == NULL)
     {
-        LOGER(_T("GetUIName: 参数 = NULL"));
+        TRACE(_T("GetUIName: 参数 = NULL"));
         return NULL;
     }
 
@@ -2089,7 +2089,7 @@ BOOL Gamecall::isPlayerSteping()
     }
     __except(1)
     {
-        OutputDebugString(FUNCNAME);
+        TRACE(FUNCNAME);
     }
 
     return (state == 1);
@@ -2113,7 +2113,7 @@ UCHAR Gamecall::GetPlayerXianlu()
     }
     __except(1)
     {
-        OutputDebugString(FUNCNAME);
+        TRACE(FUNCNAME);
     }
 
     return result;
@@ -2146,7 +2146,7 @@ BOOL Gamecall::OpenShangDian(wchar_t* name, DWORD* pUiAddr)
             ObjectNode* pNode = GetObjectByName(name);
             if(pNode == NULL)
             {
-                LOGER(_T("%s: 没有找到这个NPC"), name);
+                TRACE(_T("%s: 没有找到这个NPC"), name);
                 return FALSE;
             }
 
@@ -2189,7 +2189,7 @@ void Gamecall::CloseShangDian()
         Sleep(2000);
     }
     else
-        LOGER(_T("%s: 获取商店UI地址失败"), FUNCNAME);
+        TRACE(_T("%s: 获取商店UI地址失败"), FUNCNAME);
 
     return;
 }
@@ -2272,7 +2272,7 @@ BOOL Gamecall::ClickUI(UIOperator uiOp)
     }
     __except(1)
     {
-        OutputDebugString(FUNCNAME);
+        TRACE(FUNCNAME);
     }
 
     return bRet;
@@ -2354,7 +2354,7 @@ void Gamecall::GetStrikeName(DWORD ID, DWORD IDD, STRIKENAME* pName)
     }
     __except(1)
     {
-        OutputDebugString(FUNCNAME);
+        TRACE(FUNCNAME);
     }
 }
 
@@ -2380,7 +2380,7 @@ DWORD Gamecall::GetStrikeCD(int index, DWORD pAddr)
     }
     __except(1)
     {
-        OutputDebugString(FUNCNAME);
+        TRACE(FUNCNAME);
     }
     return value;
 }
@@ -2405,7 +2405,7 @@ DWORD Gamecall::isStrikeLocked(int index, DWORD pAddr)
     }
     __except(1)
     {
-        OutputDebugString(FUNCNAME);
+        TRACE(FUNCNAME);
     }
     return value;
 }
@@ -2432,7 +2432,7 @@ DWORD Gamecall::isStrikeCanUse(int index, DWORD pAddr)
     }
     __except(1)
     {
-        OutputDebugString(FUNCNAME);
+        TRACE(FUNCNAME);
     }
     return value;
 }
@@ -2468,7 +2468,7 @@ DWORD Gamecall::GetStrikeStartAddr()
 
     __except(1)
     {
-        OutputDebugString(FUNCNAME);
+        TRACE(FUNCNAME);
     }
 
     return StartAddr;
@@ -2497,7 +2497,7 @@ DWORD Gamecall::GetStrikeId1(int index, DWORD pStrikeStartAddr)
     }
     __except(1)
     {
-        OutputDebugString(FUNCNAME);
+        TRACE(FUNCNAME);
     }
 
     return id;
@@ -2526,7 +2526,7 @@ DWORD Gamecall::GetStrikeId2(int index, DWORD pStrikeStartAddr)  //取技能ID2
     }
     __except(1)
     {
-        OutputDebugString(FUNCNAME);
+        TRACE(FUNCNAME);
     }
 
     return id;
@@ -2585,7 +2585,7 @@ DWORD Gamecall::GetBagbodyInfoBase()
     }
     __except(1)
     {
-        OutputDebugString(FUNCNAME);
+        TRACE(FUNCNAME);
     }
     return addr;
 }
@@ -2722,7 +2722,7 @@ DWORD Gamecall::GetBodyInfoBase(DWORD pBase)
     }
     __except(1)
     {
-        OutputDebugString(FUNCNAME);
+        TRACE(FUNCNAME);
     }
 
     return addr;
@@ -2748,7 +2748,7 @@ DWORD Gamecall::GetBagInfoBase(DWORD pBase)  //获取背包遍历Base
     }
     __except(1)
     {
-        OutputDebugString(FUNCNAME);
+        TRACE(FUNCNAME);
     }
 
     return addr;
@@ -2820,7 +2820,7 @@ DWORD Gamecall::GetBagGridNumber()
     }
     __except(1)
     {
-        OutputDebugString(FUNCNAME);
+        TRACE(FUNCNAME);
     }
 
     return nums;
@@ -2845,7 +2845,7 @@ DWORD Gamecall::GetGoodsBase(DWORD pAddr, int index)  //获取物品的首地址
     }
     __except(1)
     {
-        OutputDebugString(FUNCNAME);
+        TRACE(FUNCNAME);
     }
 
     return addr;
@@ -2891,7 +2891,7 @@ DWORD Gamecall::GetGoodsNameID(DWORD pAddr)  //获取物品的名字ID
     }
     __except(1)
     {
-        OutputDebugString(FUNCNAME);
+        TRACE(FUNCNAME);
     }
 
     return id;
@@ -2922,7 +2922,7 @@ wchar_t* Gamecall::GatBagGoodrName(DWORD ID)
     }
     __except(1)
     {
-        OutputDebugString(FUNCNAME);
+        TRACE(FUNCNAME);
     }
 
     return name;
@@ -2944,7 +2944,7 @@ DWORD Gamecall::GetGoodsType(DWORD pAddr)  //获取物品的类型
     }
     __except(1)
     {
-        OutputDebugString(FUNCNAME);
+        TRACE(FUNCNAME);
     }
 
     return goodstype;
@@ -2971,7 +2971,7 @@ DWORD Gamecall::GetGoodsInfo(DWORD pAddr)
     {
         TCHAR szBuf[MAX_PATH];
         wsprintf(szBuf, _T("%S: %d"), __FILE__, __LINE__);
-        LOGER(szBuf);
+        TRACE(szBuf);
     }
     return nums;
 }
@@ -2995,7 +2995,7 @@ DWORD Gamecall::GetGoodsNum(DWORD pAddr)
     }
     __except(1)
     {
-        OutputDebugString(FUNCNAME);
+        TRACE(FUNCNAME);
     }
     return nums;
 }
@@ -3019,7 +3019,7 @@ DWORD Gamecall::GetGoodsLasting(DWORD pAddr)  //获取物品的持久
     {
         TCHAR szBuf[MAX_PATH];
         wsprintf(szBuf, _T("%S: %d"), __FILE__, __LINE__);
-        LOGER(szBuf);
+        TRACE(szBuf);
         naijiu = UINT_MAX;
     }
 
@@ -3043,7 +3043,7 @@ DWORD Gamecall::GetGoodsLLV(DWORD pAddr)  //获取物品的等级
     }
     __except(1)
     {
-        OutputDebugString(FUNCNAME);
+        TRACE(FUNCNAME);
         lv = UINT_MAX;
     }
 
@@ -3066,7 +3066,7 @@ DWORD Gamecall::GetCanshu_a(DWORD pAddr)  //吃药和穿装备需要的一个参数
     }
     __except(1)
     {
-        OutputDebugString(FUNCNAME);
+        TRACE(FUNCNAME);
     }
     return Adress;
 }
@@ -3088,7 +3088,7 @@ DWORD Gamecall::Getcanshu1(DWORD pAddr)  //参数1
     }
     __except(1)
     {
-        OutputDebugString(FUNCNAME);
+        TRACE(FUNCNAME);
     }
     return Adress;
 }
@@ -3110,7 +3110,7 @@ DWORD Gamecall::Getcanshu2(DWORD pAddr)  //参数2
     }
     __except(1)
     {
-        OutputDebugString(FUNCNAME);
+        TRACE(FUNCNAME);
     }
     return Adress;
 }
@@ -3133,7 +3133,7 @@ DWORD Gamecall::Getcanshu3(DWORD pAddr)  //参数3
     }
     __except(1)
     {
-        OutputDebugString(FUNCNAME);
+        TRACE(FUNCNAME);
     }
     return Adress;
 }
@@ -3155,7 +3155,7 @@ DWORD Gamecall::Getcanshu4(DWORD pAddr)  //参数4
     }
     __except(1)
     {
-        OutputDebugString(FUNCNAME);
+        TRACE(FUNCNAME);
     }
 
     return Adress;
@@ -3197,7 +3197,7 @@ DWORD Gamecall::GetObjectSY(DWORD pObjAddress)  // 环境对象的索引1
     }
     __except(1)
     {
-        OutputDebugString(FUNCNAME);
+        TRACE(FUNCNAME);
     }
     return Adress;
 }
@@ -3249,7 +3249,7 @@ DWORD Gamecall::GetObjectSY12(DWORD pAddr)  // 环境对象的索引12
     }
     __except(1)
     {
-        OutputDebugString(FUNCNAME);
+        TRACE(FUNCNAME);
         Adress = UINT_MAX;
     }
 
@@ -3277,7 +3277,7 @@ DWORD Gamecall::GetTaskStartAddr()
     }
     __except(1)
     {
-        OutputDebugString(FUNCNAME);
+        TRACE(FUNCNAME);
         value = NULL;
     }
 
@@ -3304,7 +3304,7 @@ DWORD Gamecall::GetTaskID(int i, DWORD pAddr)
     }
     __except(1)
     {
-        LOGER(_T("%s"), FUNCNAME);
+        TRACE(_T("%s"), FUNCNAME);
     }
 
     return id;
@@ -3331,7 +3331,7 @@ DWORD Gamecall::GetTaskNameID(int i, DWORD pAddr)
     }
     __except(1)
     {
-        LOGER(_T("%s"), FUNCNAME);
+        TRACE(_T("%s"), FUNCNAME);
     }
 
     return id;
@@ -3356,7 +3356,7 @@ DWORD Gamecall::GetTaskPresentAddr(int i, DWORD pAddr)
     }
     __except(1)
     {
-        OutputDebugString(FUNCNAME);
+        TRACE(FUNCNAME);
         value = NULL;
     }
     return value;
@@ -3383,7 +3383,7 @@ DWORD Gamecall::GetPresentTaskIndexes(int i, DWORD pAddr)
     }
     __except(1)
     {
-        OutputDebugString(FUNCNAME);
+        TRACE(FUNCNAME);
         value = UINT_MAX;
     }
 
@@ -3411,7 +3411,7 @@ DWORD Gamecall::GetPresentTaskEndFlag(int i, DWORD pAddr, DWORD info)
     }
     __except(1)
     {
-        OutputDebugString(FUNCNAME);
+        TRACE(FUNCNAME);
         value = UINT_MAX;
     }
     return value;
@@ -3439,7 +3439,7 @@ DWORD Gamecall::GetPresentTaskNum(int i, DWORD pAddr, DWORD info)
     }
     __except(1)
     {
-        LOGER(_T("%s"), FUNCNAME);
+        TRACE(_T("%s"), FUNCNAME);
     }
     return value;
 }
@@ -3467,7 +3467,7 @@ wchar_t* Gamecall::GatTaskName(DWORD ID)
     }
     __except(1)
     {
-        LOGER(_T("%s"), FUNCNAME);
+        TRACE(_T("%s"), FUNCNAME);
     }
 
     return name;
@@ -3520,7 +3520,7 @@ void Gamecall::OpenQuestItem(DWORD ID, DWORD ID2)
     }
     __except(1)
     {
-        LOGER(_T("%s"), FUNCNAME);
+        TRACE(_T("%s"), FUNCNAME);
     }
 }
 
@@ -3597,7 +3597,7 @@ void Gamecall::Pickup2(ObjectNode* pObj)
     }
     __except(1)
     {
-        LOGER(_T("%s"), FUNCNAME);
+        TRACE(_T("%s"), FUNCNAME);
     }
 }
 
@@ -3660,7 +3660,7 @@ pickup_one:
     }
     __except(1)
     {
-        LOGER(_T("%s"), FUNCNAME);
+        TRACE(_T("%s"), FUNCNAME);
     }
 
 
@@ -3698,7 +3698,7 @@ BOOL Gamecall::isLoots(DWORD pAddr)  //TODO
         bRet2 = -1;
         bRet3 = -1;
 
-        LOGER(_T("%s"), FUNCNAME);
+        TRACE(_T("%s"), FUNCNAME);
 
     }
 
@@ -3763,7 +3763,7 @@ void Gamecall::HuanXian(int xianlu)
     }
     __except(1)
     {
-        LOGER(_T("%s"), FUNCNAME);
+        TRACE(_T("%s"), FUNCNAME);
     }
 }
 
@@ -3772,7 +3772,7 @@ void Gamecall::HuanXian(int xianlu)
 //交任务
 void Gamecall::DeliverQuests(DWORD id, DWORD step, DWORD questtype, DWORD ff, DWORD npcid1, DWORD npcid2, DWORD unknow, DWORD mianban)
 {
-    LOGER(_T("id:%d,step:%d,questtype:%d,ff:%d,npcid1:%d,npcid2:%d,unknow:%d"), id, step, questtype, ff, npcid1, npcid2, unknow);
+    TRACE(_T("id:%d,step:%d,questtype:%d,ff:%d,npcid1:%d,npcid2:%d,unknow:%d"), id, step, questtype, ff, npcid1, npcid2, unknow);
     //TRACE(_T("DeliverQuests执行"));
     __try
     {
@@ -3810,7 +3810,7 @@ void Gamecall::DeliverQuests(DWORD id, DWORD step, DWORD questtype, DWORD ff, DW
     }
     __except(1)
     {
-        LOGER(_T("%s"), FUNCNAME);
+        TRACE(_T("%s"), FUNCNAME);
     }
 }
 
@@ -3822,7 +3822,7 @@ void Gamecall::KeyPress(WPARAM vk)
     }
     else
     {
-        LOGER(_T("外挂没有获取游戏窗口句柄"));
+        TRACE(_T("外挂没有获取游戏窗口句柄"));
     }
 }
 
@@ -3876,7 +3876,7 @@ void Gamecall::WearEquipment(_BAGSTU& bag)
     }
     __except(1)
     {
-        LOGER(_T("%s"), FUNCNAME);
+        TRACE(_T("%s"), FUNCNAME);
     }
 }
 
@@ -3996,7 +3996,7 @@ BOOL Gamecall::isPickupDeadBody()
     }
     __except(1)
     {
-        LOGER(_T("%s"), FUNCNAME);
+        TRACE(_T("%s"), FUNCNAME);
     }
 
     return (result != 0);
@@ -4010,7 +4010,7 @@ void Gamecall::_PickupTask(ObjectNode* pObj)
     int id2 = pObj->id2;
     int id1 = pObj->id;
 
-    LOGER(_T("%s: id: %d, id2: %d"), FUNCNAME, id1, id2);
+    TRACE(_T("%s: id: %d, id2: %d"), FUNCNAME, id1, id2);
     __try
     {
         __asm
@@ -4039,7 +4039,7 @@ void Gamecall::_PickupTask(ObjectNode* pObj)
     }
     __except(1)
     {
-        LOGER(_T("%s"), FUNCNAME);
+        TRACE(_T("%s"), FUNCNAME);
     }
 }
 
@@ -4065,7 +4065,7 @@ PCHARACTER Gamecall::GetCharacter(int index)
     }
     __except(1)
     {
-        LOGER(_T("%s"), FUNCNAME);
+        TRACE(_T("%s"), FUNCNAME);
     }
     return lpret;
 }
@@ -4093,7 +4093,7 @@ int Gamecall::isLoadingMap()
     }
     __except(1)
     {
-        LOGER(_T("%s"), FUNCNAME);
+        TRACE(_T("%s"), FUNCNAME);
     }
 
     return value;
@@ -4118,7 +4118,7 @@ BOOL Gamecall::isLoading()
     }
     __except(1)
     {
-        LOGER(_T("%s"), FUNCNAME);
+        TRACE(_T("%s"), FUNCNAME);
     }
 
     //这里应该是弄反了
@@ -4181,7 +4181,7 @@ void Gamecall::FaSonXianLuBao(DWORD adress1)
     }
     __except(1)
     {
-        LOGER(_T("%s"), FUNCNAME);
+        TRACE(_T("%s"), FUNCNAME);
     }
 }
 
@@ -4208,7 +4208,7 @@ void Gamecall::LoginGame(int index)
 
     if(bFind == FALSE)
     {
-        LOGER(_T("没能找到角色选择UI"));
+        TRACE(_T("没能找到角色选择UI"));
         return;
     }
 
@@ -4229,7 +4229,7 @@ void Gamecall::LoginGame(int index)
 
     if(bIn == FALSE)
     {
-        LOGER(_T("不再角色选择界面"));
+        TRACE(_T("不再角色选择界面"));
         return;
     }
 
@@ -4264,7 +4264,7 @@ void Gamecall::LoginGame(int index)
     }
     __except(1)
     {
-        LOGER(_T("%s"), FUNCNAME);
+        TRACE(_T("%s"), FUNCNAME);
     }
 }
 
@@ -4291,7 +4291,7 @@ BOOL Gamecall::isQuestItem(DWORD pAddr)
     }
     __except(1)
     {
-        OutputDebugString(FUNCNAME);
+        TRACE(FUNCNAME);
     }
 
     return false;
@@ -4318,7 +4318,7 @@ DWORD Gamecall::GetPlayerQuestUIStatus()
     }
     __except(1)
     {
-        LOGER(_T("%s"), FUNCNAME);
+        TRACE(_T("%s"), FUNCNAME);
     }
 
     return value;
@@ -4341,7 +4341,7 @@ DWORD Gamecall::GetIndexByType(DWORD pObjAddress)
     }
     __except(1)
     {
-        OutputDebugString(FUNCNAME);
+        TRACE(FUNCNAME);
     }
 
     return index;
@@ -4367,7 +4367,7 @@ DWORD Gamecall::m_Get2E4(DWORD m_Adress)
     }
     __except(1)
     {
-        OutputDebugString(FUNCNAME);
+        TRACE(FUNCNAME);
         return 0;
     }
 
@@ -4427,7 +4427,7 @@ BOOL Gamecall::isCityConveyLoadingMap()
     __except(1)
     {
 
-        OutputDebugString(FUNCNAME);
+        TRACE(FUNCNAME);
     }
 
     return (bLoading == 1);
@@ -4453,11 +4453,11 @@ BOOL Gamecall::isCityConveying()
 
         }
 
-        LOGER(_T("%d"), bLoading);
+        TRACE(_T("%d"), bLoading);
     }
     __except(1)
     {
-        OutputDebugString(FUNCNAME);
+        TRACE(FUNCNAME);
     }
 
     return (bLoading == 1);
@@ -4466,12 +4466,12 @@ BOOL Gamecall::isCityConveying()
 
 void Gamecall::FenJie(_BAGSTU& bag)
 {
-    //LOGER(_T("格子数:%d"),bag.m_Info);
+    //TRACE(_T("格子数:%d"),bag.m_Info);
     int value = bag.m_Info;
     value <<= 16;
     value += package;
 
-    //LOGER(_T("fenjie.value:%d"),value);
+    //TRACE(_T("fenjie.value:%d"),value);
     try
     {
         __asm
@@ -4501,7 +4501,7 @@ void Gamecall::FenJie(_BAGSTU& bag)
     }
     catch(...)
     {
-        OutputDebugString(FUNCNAME);
+        TRACE(FUNCNAME);
     }
 }
 
@@ -4546,7 +4546,7 @@ BOOL Gamecall::NewBag()
     }
     __except(1)
     {
-        OutputDebugString(FUNCNAME);
+        TRACE(FUNCNAME);
     }
 
     return result;
@@ -4562,7 +4562,7 @@ void Gamecall::ChiYao(const wchar_t* name)
     if(GetGoodsFromBagByName(name, &goods))
         sendcall(id_msg_ChiYao, &goods);
     else
-        LOGER(_T("%s: 没有在背包中找到这个物品: %s"), FUNCNAME, name);
+        TRACE(_T("%s: 没有在背包中找到这个物品: %s"), FUNCNAME, name);
 
     return;
 }
@@ -4598,7 +4598,7 @@ BOOL Gamecall::isFuhuoing()
     }
     __except(1)
     {
-        OutputDebugString(FUNCNAME);
+        TRACE(FUNCNAME);
 
     }
 
@@ -4639,7 +4639,7 @@ BOOL Gamecall::ConfirmAgreement()
 
     if(bUiok == FALSE)
     {
-        LOGER(_T("没有在设置的时间内找到登录协议的UI"));
+        TRACE(_T("没有在设置的时间内找到登录协议的UI"));
         return FALSE;
     }
 
@@ -4659,7 +4659,7 @@ BOOL Gamecall::ConfirmAgreement()
 
     if(uiValid == FALSE)
     {
-        LOGER(_T("登录协议UI不可用"));
+        TRACE(_T("登录协议UI不可用"));
         return FALSE;
     }
 
@@ -4682,7 +4682,7 @@ BOOL Gamecall::ConfirmAgreement()
     }
     __except(1)
     {
-        LOGER(_T("点击协议UI时异常"));
+        TRACE(_T("点击协议UI时异常"));
     }
 
 
@@ -4718,7 +4718,7 @@ BOOL Gamecall::CloseAttendance()
 
     if(buiFined == FALSE)
     {
-        LOGER(_T("没有设置的时间内等待到UI产生"));
+        TRACE(_T("没有设置的时间内等待到UI产生"));
         return FALSE;
     }
 
@@ -4739,7 +4739,7 @@ BOOL Gamecall::CloseAttendance()
 
     if(buiOpen == FALSE)
     {
-        LOGER(_T("没有在设置的时间内等待到摇奖UI显示"));
+        TRACE(_T("没有在设置的时间内等待到摇奖UI显示"));
         return FALSE;
     }
 
@@ -4777,7 +4777,7 @@ BOOL Gamecall::CloseAttendance()
     }
     __except(1)
     {
-        OutputDebugString(FUNCNAME);
+        TRACE(FUNCNAME);
     }
 
     return false;
@@ -4847,11 +4847,11 @@ BYTE Gamecall::GetPlayerDeadStatus()
             mov value, al;
 
         }
-        //LOGER(_T("死亡状态:%d"),value);
+        //TRACE(_T("死亡状态:%d"),value);
     }
     __except(1)
     {
-        OutputDebugString(FUNCNAME);
+        TRACE(FUNCNAME);
 
     }
 
@@ -4867,7 +4867,7 @@ int Gamecall::GetHealth(DWORD theValue)
 {
     if(theValue > 100 || theValue <= 0)
     {
-        LOGER(_T("参数不正确"));
+        TRACE(_T("参数不正确"));
         return 2;
     }
 
@@ -4930,7 +4930,7 @@ MoreTimes:
             }
             else
             {
-                LOGER(_T("没有找到所有能喝的药"));
+                TRACE(_T("没有找到所有能喝的药"));
                 return 3;
             }
 
@@ -4994,7 +4994,7 @@ UCHAR Gamecall::GetPlayerLevel() //获得角色等级
     }
     __except(1)
     {
-        OutputDebugString(FUNCNAME);
+        TRACE(FUNCNAME);
     }
 
     return LV;
@@ -5058,7 +5058,7 @@ void Gamecall::ChiYao(_BAGSTU& goods)  //吃药
     }
     __except(1)
     {
-        OutputDebugString(FUNCNAME);
+        TRACE(FUNCNAME);
     }
 }
 
@@ -5243,12 +5243,12 @@ void Gamecall::GetRangeMonsterToVector(DWORD range, std::vector<ObjectNode*>& Mo
         for(DWORD i = 0; i < RangeObject.size(); i++)
         {
             ObjectNode* pNode = RangeObject[i];
-            //LOGER(_T("执行GetObjectName"));
+            //TRACE(_T("执行GetObjectName"));
 
 
             fPosition fpos;
             //过滤掉距离远的和没距离的
-            //LOGER(_T("执行GetObjectPos"));
+            //TRACE(_T("执行GetObjectPos"));
             if(GetObjectPos(RangeObject[i], &fpos) == FALSE)
                 continue;
 
@@ -5260,14 +5260,14 @@ void Gamecall::GetRangeMonsterToVector(DWORD range, std::vector<ObjectNode*>& Mo
             wchar_t* objName = GetObjectName(pNode->ObjAddress);
             if(objName == NULL)
                 continue;
-            //LOGER(_T("执行isCanLook"));
+            //TRACE(_T("执行isCanLook"));
             if(isCanLook(pNode->ObjAddress) == FALSE)
                 continue;
 
             //上面几个过滤是强制的, 不管配置文件有没有
             //比如: 如果配置文件强制杀一个怪物, 但是这个怪物
             //是没有坐标的, 这肯定是无法杀的
-            //LOGER(_T("push_back"));
+            //TRACE(_T("push_back"));
             MonsterVec.push_back(pNode);
             //TRACE1("当前循环:%d",i);
         }
@@ -5307,7 +5307,7 @@ void Gamecall::_GetRangeObjectToVector(ObjectNode* pNote, DWORD range, std::vect
     }
     catch(...)
     {
-        OutputDebugString(FUNCNAME);
+        TRACE(FUNCNAME);
     }
 }
 //遍历距离范围内的所有对象到容器中
@@ -5342,8 +5342,9 @@ void Gamecall::GetRangeLootObjectToVector(DWORD range, std::vector<ObjectNode*>&
         {
             ObjectNode* pNode = RangeObject[i];
 
-            fPosition fpos;
+            
             //过滤掉距离远的和没距离的
+            fPosition fpos;
             if(GetObjectPos(RangeObject[i], &fpos) == FALSE)
                 continue;
 
@@ -5363,7 +5364,7 @@ void Gamecall::GetRangeLootObjectToVector(DWORD range, std::vector<ObjectNode*>&
     }
     catch(...)
     {
-        OutputDebugString(FUNCNAME);
+        TRACE(FUNCNAME);
     }
 }
 
@@ -5682,7 +5683,7 @@ DWORD Gamecall::GetGoodsYouJianType(DWORD m_BagLeiXing, DWORD m_Info)
     }
     __except(1)
     {
-        OutputDebugString(FUNCNAME);
+        TRACE(FUNCNAME);
     }
     return m_Adress;
 }
@@ -5936,10 +5937,10 @@ BOOL Gamecall::GetStrikeByName(const wchar_t* name, STRIKEINFO* pStrikeInfo)
     }
     catch(...)
     {
-        OutputDebugString(FUNCNAME);
+        TRACE(FUNCNAME);
     }
 
-    LOGER(_T("%s: 没有找到对应技能"), FUNCNAME);
+    TRACE(_T("%s: 没有找到对应技能"), FUNCNAME);
     return FALSE;
 }
 
@@ -5983,7 +5984,7 @@ void Gamecall::GetStrikeToVector(std::vector<STRIKEINFO>& RangeObject)
         }
         __except(1)
         {
-            OutputDebugString(FUNCNAME);
+            TRACE(FUNCNAME);
         }
     }
 
@@ -6007,7 +6008,7 @@ void Gamecall::GetStrikeToVector(std::vector<STRIKEINFO>& RangeObject)
         }
         __except(1)
         {
-            OutputDebugString(FUNCNAME);
+            TRACE(FUNCNAME);
         }
     }
 }
@@ -6032,7 +6033,7 @@ DWORD Gamecall::GetRJSkillCD(int i, DWORD m_adress)
     }
     __except(1)
     {
-        OutputDebugString(FUNCNAME);
+        TRACE(FUNCNAME);
     }
     return Adress;
 }
@@ -6059,7 +6060,7 @@ DWORD Gamecall::GetRJSkillIsJieSuo(int i, DWORD m_adress)
     }
     __except(1)
     {
-        OutputDebugString(FUNCNAME);
+        TRACE(FUNCNAME);
     }
     return Adress;
 }
@@ -6084,7 +6085,7 @@ DWORD Gamecall::GetRJSkillISShiYong(int i, DWORD m_adress)
     }
     __except(1)
     {
-        OutputDebugString(FUNCNAME);
+        TRACE(FUNCNAME);
     }
     return Adress;
 }
@@ -6108,7 +6109,7 @@ DWORD Gamecall::GetRJSkillIDDD2(int i, DWORD m_adress)  //取R键技能数组ID2
     }
     __except(1)
     {
-        OutputDebugString(FUNCNAME);
+        TRACE(FUNCNAME);
     }
     return Adress;
 }
@@ -6133,7 +6134,7 @@ DWORD Gamecall::GetRJianSkill(DWORD m_adress)
     }
     __except(1)
     {
-        OutputDebugString(FUNCNAME);
+        TRACE(FUNCNAME);
     }
     return Adress;
 }
@@ -6157,7 +6158,7 @@ DWORD Gamecall::GetRJSkillIDDD(int i, DWORD m_adress)
     }
     __except(1)
     {
-        OutputDebugString(FUNCNAME);
+        TRACE(FUNCNAME);
     }
     return Adress;
 }
@@ -6180,7 +6181,7 @@ BOOL Gamecall::isLoginInSelectPlayer()
     }
     __except(1)
     {
-        OutputDebugString(FUNCNAME);
+        TRACE(FUNCNAME);
     }
 
     return (value != 0xff);
@@ -6214,7 +6215,7 @@ void Gamecall::XieBaoShi(DWORD canshu1, DWORD canshu2, DWORD canshu3)
     }
     __except(1)
     {
-        OutputDebugString(FUNCNAME);
+        TRACE(FUNCNAME);
     }
 }
 
@@ -6250,7 +6251,7 @@ void Gamecall::JiaBaoShi(DWORD canshu1, DWORD canshu2, DWORD canshu3, DWORD cans
     }
     __except(1)
     {
-        OutputDebugString(FUNCNAME);
+        TRACE(FUNCNAME);
     }
 }
 
@@ -6285,7 +6286,7 @@ void Gamecall::Stepto3x()
     }
     __except(1)
     {
-        OutputDebugString(FUNCNAME);
+        TRACE(FUNCNAME);
     }
 }
 
@@ -6315,7 +6316,7 @@ void Gamecall::DaKaiDuiHuaKuang(DWORD ID, DWORD ID2)
     }
     __except(1)
     {
-        OutputDebugString(FUNCNAME);
+        TRACE(FUNCNAME);
     }
 }
 
@@ -6343,7 +6344,7 @@ void Gamecall::GouMaiWuPing(DWORD Num, DWORD Ind, DWORD Adress)
     }
     __except(1)
     {
-        OutputDebugString(FUNCNAME);
+        TRACE(FUNCNAME);
     }
 }
 
@@ -6411,7 +6412,7 @@ DWORD Gamecall::isYaoPingCD(_BAGSTU& goods)
     }
     __except(1)
     {
-        OutputDebugString(_T("药品CD_CALL出错"));
+        TRACE(_T("药品CD_CALL出错"));
         return -1;
     }
 
@@ -6431,7 +6432,7 @@ void Gamecall::TurnTo(fPosition& pos)
 	if(mypos.x == pos.x &&
 		mypos.y == pos.y)
 	{
-		LOGER(_T("转视角时, 目标和我是重叠的"));
+		TRACE(_T("转视角时, 目标和我是重叠的"));
 		//这里不解决重叠， 重叠让走路解决
 		//RandomStep(60);
 		//直接退
@@ -6540,7 +6541,7 @@ BOOL Gamecall::PickupDeadbody(DWORD range)
 
         if(pMaxNode == NULL)
         {
-            LOGER(_T("没有遍历到尸体"));
+            TRACE(_T("没有遍历到尸体"));
             return false;
         }
 
@@ -6914,7 +6915,7 @@ void Gamecall::JingDianMoShi(DWORD adress, DWORD c5)
 
     __except(1)
     {
-        OutputDebugString(FUNCNAME);
+        TRACE(FUNCNAME);
     }
 }
 
@@ -6961,7 +6962,7 @@ DWORD Gamecall::GetCityID()
     }
     __except(1)
     {
-        OutputDebugString(FUNCNAME);
+        TRACE(FUNCNAME);
     }
 
     return cityid;
@@ -7257,7 +7258,7 @@ BOOL Gamecall::GetPlayExperienceStatus()
 
 void Gamecall::GetUiAddrByName(KONGJIAN_JIEGOU& jiegou)
 {
-    LOGER(_T("add:%x,name:%s,fanhui:%x"), jiegou.adress, jiegou.name, jiegou.ID);
+    TRACE(_T("add:%x,name:%s,fanhui:%x"), jiegou.adress, jiegou.name, jiegou.ID);
     sendcall(id_msg__GetUiAddrByName, &jiegou);
 }
 
@@ -7281,7 +7282,7 @@ void Gamecall::_GetUiAddrByName(Tree* Addr, wchar_t* name, DWORD& reAddr)
         if(wcsstr(uiname, name) != NULL)
         {
             //TRACE(_T("找到需要的控件了"));
-            LOGER(_T("找到UI名:%s,找到控件地址:%d"),uiname,Addr->Adress);
+            TRACE(_T("找到UI名:%s,找到控件地址:%d"),uiname,Addr->Adress);
             reAddr = Addr->Adress;
             return ;
         }
@@ -7299,7 +7300,7 @@ wchar_t* Gamecall::GetUiNewName(DWORD pBarAddr)
     }
     __except(1)
     {
-        OutputDebugString(L"获取技能面板名字错误");
+        TRACE(L"获取技能面板名字错误");
     }
     return name;
 
@@ -7332,7 +7333,7 @@ void Gamecall::_LinQuJiangLi()
     }
     __except(1)
     {
-        OutputDebugString(FUNCNAME);
+        TRACE(FUNCNAME);
     }
 }
 
@@ -7369,7 +7370,7 @@ void Gamecall::_NPCJieRenWu(DWORD canshu1, DWORD canshu2, DWORD canshu3, DWORD c
     }
     __except(1)
     {
-        OutputDebugString(FUNCNAME);
+        TRACE(FUNCNAME);
     }
 }
 
@@ -7487,7 +7488,7 @@ DWORD Gamecall::GetPlayerQuestUIStatusts()
     }
     __except(1)
     {
-        LOGER(_T("%s"), FUNCNAME);
+        TRACE(_T("%s"), FUNCNAME);
     }
 
     return value;
@@ -7549,7 +7550,7 @@ BOOL Gamecall::isPlayPickupUiStatus()
     }
     __except(1)
     {
-        LOGER(_T("%s"), FUNCNAME);
+        TRACE(_T("%s"), FUNCNAME);
     }
 
     return FALSE;

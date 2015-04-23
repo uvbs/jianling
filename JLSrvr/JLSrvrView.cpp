@@ -20,9 +20,9 @@ IMPLEMENT_DYNCREATE(CJLSrvrView, CListView)
 
 BEGIN_MESSAGE_MAP(CJLSrvrView, CListView)
     //{{AFX_MSG_MAP(CJLSrvrView)
-    ON_WM_TIMER()
     ON_NOTIFY_REFLECT(NM_RCLICK, OnRclick)
-    //}}AFX_MSG_MAP
+	ON_WM_CREATE()
+	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -55,23 +55,6 @@ void CJLSrvrView::OnDraw(CDC* pDC)
     // TODO: add draw code for native data here
 }
 
-void CJLSrvrView::OnInitialUpdate()
-{
-    CListView::OnInitialUpdate();
-
-    //插入列
-    GetListCtrl().InsertColumn(0, _T("帐号"));
-    GetListCtrl().InsertColumn(1, _T("在线时长"));
-    GetListCtrl().InsertColumn(2, _T("请求数"));
-    GetListCtrl().InsertColumn(3, _T("地址"));
-
-    //自动列宽度
-    AutoColumnWidth();
-
-    //全行风格
-    GetListCtrl().SetExtendedStyle(LVS_EX_FULLROWSELECT);
-}
-
 /////////////////////////////////////////////////////////////////////////////
 // CJLSrvrView diagnostics
 
@@ -91,14 +74,6 @@ void CJLSrvrView::Dump(CDumpContext& dc) const
 /////////////////////////////////////////////////////////////////////////////
 // CJLSrvrView message handlers
 
-BOOL CJLSrvrView::Create(LPCTSTR lpszClassName, LPCTSTR lpszWindowName,
-                         DWORD dwStyle, const RECT& rect, CWnd* pParentWnd,
-                         UINT nID, CCreateContext* pContext)
-{
-
-    return CWnd::Create(lpszClassName, lpszWindowName, dwStyle, rect, pParentWnd, nID, pContext);
-}
-
 void CJLSrvrView::AutoColumnWidth()
 {
     for(int i = 0; i++;)
@@ -113,11 +88,6 @@ void CJLSrvrView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 
 }
 
-void CJLSrvrView::OnTimer(UINT nIDEvent)
-{
-
-    CListView::OnTimer(nIDEvent);
-}
 
 void CJLSrvrView::DoPopupMenu(int type)
 {
@@ -152,4 +122,25 @@ void CJLSrvrView::OnRclick(NMHDR* pNMHDR, LRESULT* pResult)
 
     }
     *pResult = 0;
+}
+
+int CJLSrvrView::OnCreate(LPCREATESTRUCT lpCreateStruct) 
+{
+	if (CListView::OnCreate(lpCreateStruct) == -1)
+		return -1;
+	
+    //插入列
+    GetListCtrl().InsertColumn(0, _T("帐号"));
+    GetListCtrl().InsertColumn(1, _T("在线时长"));
+    GetListCtrl().InsertColumn(2, _T("请求数"));
+    GetListCtrl().InsertColumn(3, _T("地址"));
+    
+    //全行风格
+    GetListCtrl().SetExtendedStyle(LVS_EX_FULLROWSELECT);
+    
+    //自动列宽度
+    AutoColumnWidth();
+
+
+	return 0;
 }

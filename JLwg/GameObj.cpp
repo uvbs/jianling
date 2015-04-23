@@ -1,0 +1,27 @@
+// GameObj.cpp: implementation of the GameObj class.
+//
+//////////////////////////////////////////////////////////////////////
+
+#include "stdafx.h"
+#include "jlwg.h"
+#include "GameObj.h"
+
+#ifdef _DEBUG
+#undef THIS_FILE
+static char THIS_FILE[]=__FILE__;
+#define new DEBUG_NEW
+#endif
+
+//////////////////////////////////////////////////////////////////////
+// Construction/Destruction
+//////////////////////////////////////////////////////////////////////
+
+GameObj::GameObj()
+{
+
+}
+
+GameObj::~GameObj()
+{
+
+}

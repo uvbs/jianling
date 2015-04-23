@@ -32,9 +32,7 @@ public:
 public:
     virtual void OnDraw(CDC* pDC);  // overridden to draw this view
     virtual BOOL PreCreateWindow(CREATESTRUCT& cs);
-    virtual BOOL Create(LPCTSTR lpszClassName, LPCTSTR lpszWindowName, DWORD dwStyle, const RECT& rect, CWnd* pParentWnd, UINT nID, CCreateContext* pContext = NULL);
 protected:
-    virtual void OnInitialUpdate(); // called first time after construct
     virtual void OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint);
     //}}AFX_VIRTUAL
 
@@ -51,9 +49,9 @@ protected:
 // Generated message map functions
 protected:
     //{{AFX_MSG(CJLSrvrView)
-    afx_msg void OnTimer(UINT nIDEvent);
     afx_msg void OnRclick(NMHDR* pNMHDR, LRESULT* pResult);
-    //}}AFX_MSG
+	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
+	//}}AFX_MSG
     DECLARE_MESSAGE_MAP()
 
 };

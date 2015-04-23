@@ -50,7 +50,7 @@ BOOL CConfigMgr::LoadConfig(const TCHAR szConfigPath[])
 
         //取得游戏路径
         CRegKey reg;
-        TCHAR szValue[MAX_PATH];
+        TCHAR szValue[MAX_PATH] = {0};
 
 #ifdef JLTW
         TCHAR temp1[] = _T("SOFTWARE\\Wow6432Node\\NCTaiwan");

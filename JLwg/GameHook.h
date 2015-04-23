@@ -50,6 +50,10 @@ public:
         m_sink = pSink;
     }
 
+    void DelCombatSink()
+    {
+        m_pCombatSink = NULL;
+    }
 
     void SetCombatSink(ICombatHookSink* pSink)
     {

@@ -1,9 +1,11 @@
 #pragma once
+
+
 #include "gamecall.h"
 #include "GameHook.h"
 #include "..\JLkit\JLkitSocket.h"
 
-class GamecallEx: public Gamecall, public ITCPSocketSink, public ICombatHookSink
+class GamecallEx: public Gamecall, public ITCPSocketSink
 {
 protected:
     GamecallEx();
@@ -22,9 +24,6 @@ private:
 
     CJLkitSocket sock;
 
-
-    //战斗回调
-    virtual void NotifyMonsterAttack(MONSTERATAACK *pAttack); 
 
 public:
     DWORD GetRangeLootCount(DWORD range);
@@ -149,7 +148,6 @@ public:
 
     //自定义的要杀的怪物名称
 private:
-    Logger log;
     HANDLE m_hThreads[2];
     BOOL m_bStopThread;
     BOOL m_bCanAoe;
