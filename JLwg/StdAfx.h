@@ -45,7 +45,7 @@
 #include <functional>
 #include <TlHelp32.h>
 #include <Shlwapi.h>
-#include <assert.h>
+
 
 #pragma comment(lib, "shlwapi")
 #pragma comment(lib, "dbghelp")

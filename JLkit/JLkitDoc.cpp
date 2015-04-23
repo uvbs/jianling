@@ -212,7 +212,7 @@ bool CJLkitDoc::PerformLogonMission()
     ShowStatus(_T("正在连接服务器.."));
 
     CString strSrvIp;
-    VERIFY(strSrvIp.LoadString(IDS_CONNECT_SERVER) == TRUE);
+    _ASSERTE(strSrvIp.LoadString(IDS_CONNECT_SERVER) == TRUE);
 
     //设置回调
     m_socket.SetSink(this);
