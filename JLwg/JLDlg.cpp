@@ -4,8 +4,13 @@
 #include "stdafx.h"
 #include "JLwg.h"
 #include "JLDlg.h"
-#include "TaskScript.h"
 #include "DataDlg.h"
+
+#ifdef JLTW
+#include "TaskScript_tw.h"
+#else
+#include "TaskScript.h"
+#endif
 
 
 
@@ -56,7 +61,11 @@ static UINT TaskThread(LPVOID pParam)
     try
     {
         TaskScript task;
-        task.BeginTask();
+        //task.BeginTask();
+		while (1)
+		{
+			task.Wuqi_Hudonglong();
+		}
     }
     catch(...)
     {
