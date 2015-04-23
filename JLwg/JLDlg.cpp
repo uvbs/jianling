@@ -4,8 +4,13 @@
 #include "stdafx.h"
 #include "JLwg.h"
 #include "JLDlg.h"
-#include "TaskScript.h"
 #include "DataDlg.h"
+
+#ifdef JLTW
+#include "TaskScript_tw.h"
+#else
+#include "TaskScript.h"
+#endif
 
 
 

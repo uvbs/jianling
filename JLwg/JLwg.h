@@ -21,7 +21,6 @@ public:
     static LRESULT CALLBACK GameMsgProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
     //等待游戏窗口创建
-    HWND isGameWndCreated(DWORD dwPid);
     BOOL WaitGameCreate(int inMaxTime);
 
 

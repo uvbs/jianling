@@ -398,6 +398,7 @@ void GamecallEx::Pickup(int pos, DWORD range)
         }
         else
         {
+			KeyPress(70);
             TRACE(_T("没有成功捡起来"));
         }
     }
