@@ -5498,10 +5498,11 @@ void Gamecall::_GetUItoVector(Tree* Base, std::vector<Tree*>& Allui)
 //取得所有ui对象到容器
 void Gamecall::GetUItoVector(Tree* Base, std::vector<Tree*>& Allui)
 {
-    PARAM_GUANSHANGDIAN temp;
-    temp.argv1 = (DWORD)Base;
-    temp.argv2 = (DWORD)&Allui;
-    sendcall(id_msg_GetUItoVector, &temp);
+    //PARAM_GUANSHANGDIAN temp;
+    //temp.argv1 = (DWORD)Base;
+    //temp.argv2 = (DWORD)&Allui;
+    //sendcall(id_msg_GetUItoVector, &temp);
+	_GetUItoVector(Base,Allui);
 }
 
 
@@ -7586,7 +7587,7 @@ void Gamecall::CloseXiaoDongHua()
 {
     DWORD dtzt;
     dtzt = (DWORD)ReadByte(ReadDWORD(ReadDWORD(ReadDWORD(move_status_base) + move_status_offset1) + move_status_offset2) + move_status_offset3 + move_status_offset31); //是否有小动画 0是有 1是没有
-    TRACE(_T("小动画状态:%d"), dtzt);
+    //TRACE("小动画状态:%d",dtzt);
     if(dtzt == 1)
     {
         //TRACE(_T("动画状态中"));
