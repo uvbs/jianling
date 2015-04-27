@@ -1940,7 +1940,10 @@ void GamecallEx::FixWuqi()
     else if(goods.m_LV <= 50)
     {
         ChiYao(fTo50);
-    }
+    }else
+	{
+		ChiYao(fToAll);
+	}
 
 
     //TODO: 看看能不能用
@@ -2352,13 +2355,11 @@ int GamecallEx::KillObject(DWORD range, ObjectNode* pNode, DWORD mode, DWORD can
                     }
                     {
                         //TRACE(_T("执行RT"));
-                        //TRACE(_T("执行RT"));
                         AttackNormal();
                     }
                 }
                 else
                 {
-                    //TRACE(_T("执行AOE外的RT"));
                     //TRACE(_T("执行AOE外的RT"));
                     AttackNormal();
                 }
@@ -2372,7 +2373,6 @@ int GamecallEx::KillObject(DWORD range, ObjectNode* pNode, DWORD mode, DWORD can
                 {
                     oriTime = GetTickCount();
                     tarHealth = GetType4HP(pNode->ObjAddress);
-
                 }
                 else
                 {
@@ -2802,13 +2802,15 @@ UINT GamecallEx::KeepAliveThread(LPVOID pParam)
 
 	DWORD rs = 0;
     GamecallEx* pCall = (GamecallEx*)pParam;
+	TRACE("%d",pCall->m_bStopThread);
     while(pCall->m_bStopThread == FALSE)
     {
-
+TRACE("檢測吃血1");
         if(pCall->isLoadingMap() == 3)
         {
             if(pCall->GetPlayerDeadStatus() == 0)
             {
+				TRACE("檢測吃血2");
                 rs = pCall->GetHealth(60);
 				if (rs == 4)
 				{
@@ -2820,7 +2822,7 @@ UINT GamecallEx::KeepAliveThread(LPVOID pParam)
             }
         }
         pCall->CloseXiaoDongHua();
-
+TRACE("檢測吃血3");
         Sleep(1000);
     }
 

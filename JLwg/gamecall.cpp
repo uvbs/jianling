@@ -7580,7 +7580,7 @@ void Gamecall::CloseXiaoDongHua()
 {
     DWORD dtzt;
     dtzt = (DWORD)ReadByte(ReadDWORD(ReadDWORD(ReadDWORD(move_status_base) + move_status_offset1) + move_status_offset2) + move_status_offset3 + move_status_offset31); //是否有小动画 0是有 1是没有
-    //TRACE1("小动画状态:%d",dtzt);
+    TRACE1("小动画状态:%d",dtzt);
     if(dtzt == 1)
     {
         //TRACE(_T("动画状态中"));
