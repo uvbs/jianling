@@ -615,7 +615,7 @@ BOOL Gamecall::GetGoodsByEquipPos(DWORD pos, _BAGSTU* goods)
 //根据名字取得物品信息
 BOOL Gamecall::GetGoodsFromBagByName(const wchar_t* name, std::vector<_BAGSTU>& GoodsVec)
 {
-    assert(name != NULL);
+    _ASSERTE(name != NULL);
 
     std::vector<_BAGSTU> AllGoods;
     GetAllGoodsToVector(AllGoods);
@@ -640,7 +640,7 @@ BOOL Gamecall::GetGoodsFromBagByName(const wchar_t* name, std::vector<_BAGSTU>& 
 BOOL Gamecall::GetGoodsByName_Hezi(wchar_t* name, std::vector<_BAGSTU>& GoodsVec)
 {
 
-    assert(name != NULL);
+    _ASSERTE(name != NULL);
 
 
     int len = wcslen(name);
@@ -699,7 +699,7 @@ BOOL Gamecall::GetGoodsByName_Hezi(wchar_t* name, std::vector<_BAGSTU>& GoodsVec
 BOOL Gamecall::GetGoodsFromEquipByName(wchar_t* name, _BAGSTU* goods)
 {
 
-    assert(name != NULL);
+    _ASSERTE(name != NULL);
 
 
 
@@ -724,7 +724,7 @@ BOOL Gamecall::GetGoodsFromEquipByName(wchar_t* name, _BAGSTU* goods)
 //根据名字取得物品信息
 BOOL Gamecall::GetGoodsFromBagByName(const wchar_t* name, _BAGSTU* goods, BOOL Blur)
 {
-    assert(name != NULL);
+    _ASSERTE(name != NULL);
 
     std::vector<_BAGSTU> GoodsVec;
     GetAllGoodsToVector(GoodsVec);
@@ -2448,7 +2448,7 @@ DWORD Gamecall::GetStrikeStartAddr()
         DWORD StrikeStartAddr = 0;
         GetStrikeBarBaseAddr(GetUIBinTreeBaseAddr(), &StrikeStartAddr);
 
-        //assert(StrikeStartAddr != 0);
+        //_ASSERTE(StrikeStartAddr != 0);
         if(StrikeStartAddr == NULL)
         {
             return 0;
@@ -4135,7 +4135,7 @@ void Gamecall::OpenXianluUI()
 {
     DWORD uiAddr = 0;
     GetUIAddrByName(L"AreaInfoPanel", &uiAddr);
-    assert(uiAddr != 0);
+    _ASSERTE(uiAddr != 0);
 
     UIOperator uiop;
     uiop.pAddr = (DWORD*)uiAddr;
@@ -4801,7 +4801,7 @@ void Gamecall::SetMouseMode()
     //{
     DWORD addr = 0;
     GetUIAddrByName(L"OptionPanel", &addr);
-    assert(addr != 0);
+    _ASSERTE(addr != 0);
 
     UIOperator uiop;
     uiop.c5 = *(DWORD*)(addr + mouse_mode_class_c5);
@@ -5507,7 +5507,7 @@ void Gamecall::GetUItoVector(Tree* Base, std::vector<Tree*>& Allui)
 //参数3, 传出ui的数据地址
 void Gamecall::GetUIAddrByName(wchar_t* name, DWORD* pUIAddr)
 {
-    assert(name != NULL);
+    _ASSERTE(name != NULL);
 
     std::vector<Tree*> AllUI;
     GetUItoVector(GetUIBinTreeBaseAddr(), AllUI);
@@ -5915,7 +5915,7 @@ void Gamecall::GetAllBodyEquipToVector(std::vector<_BAGSTU>& RangeObject)
 BOOL Gamecall::GetStrikeByName(const wchar_t* name, STRIKEINFO* pStrikeInfo)
 {
 
-    assert(name != NULL);
+    _ASSERTE(name != NULL);
 
     std::vector<STRIKEINFO> StrikeVec;
     GetStrikeToVector(StrikeVec);
