@@ -402,7 +402,7 @@ void GamecallEx::Pickup(int pos, DWORD range)
         }
         else
         {
-			KeyPress(70);
+            KeyPress(70);
             TRACE(_T("没有成功捡起来"));
         }
     }
@@ -3042,26 +3042,29 @@ BOOL GamecallEx::Init()
     return TRUE;
 }
 
-void GamecallEx::NotifyMonsterAttack( MONSTERATAACK *pAttack )
+void GamecallEx::NotifyMonsterAttack(MONSTERATAACK* pAttack)
 {
-    static MONSTERATAACK old;
-    ZeroMemory(&old, sizeof(MONSTERATAACK));
-    
-    if(pAttack->dwStrikeId != old.dwStrikeId)
+    static MONSTERATAACK old1;
+
+    static DWORD dwFirst;
+    DWORD dwSec = GetTickCount();
+
+    //先按时间过滤
+    if((dwSec - dwFirst) > 1000)
     {
-        
-        //这里写对应boss的技能
-        
-        
+        if(pAttack->dwStrikeId != old1.dwStrikeId)
+        {
 
+            //这里写对应boss的技能
+            
 
+            old1 = *pAttack;
+        }
 
-
-
-
-
-
-        old = *pAttack;
+        dwFirst = GetTickCount();
     }
+
+
+
 
 }
