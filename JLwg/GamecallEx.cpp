@@ -3044,7 +3044,6 @@ BOOL GamecallEx::Init()
     SetThreadPriority(m_hThreads[1], THREAD_PRIORITY_LOWEST);
 
     //¹³Õ½¶·ÐÅÏ¢
-    GameHook::GetInstance()->CombatHook.hook();
     GameHook::GetInstance()->SetCombatSink(this);
 
 
