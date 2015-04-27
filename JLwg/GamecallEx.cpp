@@ -3058,7 +3058,7 @@ void GamecallEx::NotifyMonsterAttack(MONSTERATAACK* pAttack)
     static DWORD dwFirst;
     DWORD dwSec = GetTickCount();
 
-	TRACE("技能ID:%x",pAttack->dwStrikeId);
+	TRACE(_T("技能ID:%x"), pAttack->dwStrikeId);
     //先按时间过滤
     if((dwSec - dwFirst) > 1000)
     {
