@@ -207,6 +207,19 @@ typedef struct _CUSTOMTYPE
 } CUSTOMKILL, *PCUSTOMKILL;
 
 
+#ifdef JLTW
+
+const wchar_t nBig50[] = L"\xd070\x0020\xbc31\xb144\xc0bc\x0020\xd68c\xbcf5\xc57d";
+const wchar_t nBig45[] = L"百年人參恢復藥";
+const wchar_t nBig36[] = L"水晶蘭恢復藥";
+const wchar_t nBig29[] = L"大容量灵芝恢复药";
+const wchar_t nBig10[] = L"靈芝恢復藥";
+const wchar_t nLess10[] = L"覆盆子恢復藥";
+const wchar_t nSpec1[] = L"恢復藥";
+const wchar_t nSpec2[] = L"百年人參秘藥";
+
+
+#else
 //药水, 变量名标识等级
 const wchar_t nBig50[] = L"\xd070\x0020\xbc31\xb144\xc0bc\x0020\xd68c\xbcf5\xc57d";
 const wchar_t nBig45[] = L"\xbc31\xb144\xc0bc\x0020\xd68c\xbcf5\xc57d";
@@ -217,12 +230,17 @@ const wchar_t nLess10[] = L"\xc57d\xc218\x0020\xd68c\xbcf5\xc57d";
 const wchar_t nSpec1[] = L"\xd68c\xbcf5\xc57d";
 const wchar_t nSpec2[] = L"\xd589\xc6b4\xc758\x0020\xbe44\xc57d";
 
+
+#endif
+
+
+
+
 //附魔
 const wchar_t fTo20[] = L"\xc81c\xb8e1\x0020\xc218\xb9ac\xb3c4\xad6c";
 const wchar_t fTo36[] = L"\xc0ac\xb9c9\x0020\xc218\xb9ac\xb3c4\xad6c";
 const wchar_t fTo45[] = L"\xc218\xc6d4\x0020\xc218\xb9ac\xb3c4\xad6c";
 const wchar_t fTo50[] = L"\xbc31\xccad\x0020\xc218\xb9ac\xb3c4\xad6c";
-
 
 //四个首饰的魂名字
 //1~36
@@ -240,10 +258,9 @@ const wchar_t hun2[] = L"\xbb34\xd63c";
 const wchar_t hun3[] = L"\xd589\xc6b4\xbb34\xd63c";
 const wchar_t hun4[] = L"\xd64d\xbb38\xbb34\xd63c";
 
-
-
 //千魂武器
 const wchar_t qianhun[] = L"\xcc9c\xb839\xb3c4\xb07c";
+
 
 
 

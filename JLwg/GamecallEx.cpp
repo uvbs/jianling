@@ -439,7 +439,7 @@ void GamecallEx::Pickdown()
 void GamecallEx::BuyItem(DWORD nums, DWORD index, wchar_t* npcname, BOOL bClose)
 {
 
-    assert(npcname != NULL);
+    _ASSERTE(npcname != NULL);
 
     DWORD dwUiAddr = 0;
     BOOL bOpen = OpenShangDian(npcname, &dwUiAddr);
@@ -938,7 +938,7 @@ void GamecallEx::PickupTask(DWORD range, DWORD taskid, DWORD taskstep)
             Gamecall::PickupTask(RangeObject[i]);
 
             DWORD curStep = GetTaskStepById(taskid);
-            assert(curStep != UINT_MAX);
+            _ASSERTE(curStep != UINT_MAX);
 
             if(curStep != taskstep)
             {
@@ -1765,8 +1765,8 @@ void GamecallEx::CunCangku(wchar_t* name, wchar_t* npcname)
 void GamecallEx::SellItem(wchar_t* name, wchar_t* npcName, BOOL bClose)
 {
 
-    assert(name != NULL);
-    assert(npcName != NULL);
+    _ASSERTE(name != NULL);
+    _ASSERTE(npcName != NULL);
 
 
     DWORD dwUiAddr = 0;
@@ -1832,7 +1832,7 @@ void GamecallEx::DeleteItem(wchar_t* name)
         }
     }
 
-    assert(bFind == true);
+    _ASSERTE(bFind == true);
 
     if(bFind == false)
     {
@@ -2800,6 +2800,7 @@ DWORD GamecallEx::GetRangeMonsterCount(DWORD range)
 UINT GamecallEx::KeepAliveThread(LPVOID pParam)
 {
 
+	DWORD rs = 0;
     GamecallEx* pCall = (GamecallEx*)pParam;
     while(pCall->m_bStopThread == FALSE)
     {
@@ -2808,7 +2809,14 @@ UINT GamecallEx::KeepAliveThread(LPVOID pParam)
         {
             if(pCall->GetPlayerDeadStatus() == 0)
             {
-                pCall->GetHealth(60);
+                rs = pCall->GetHealth(60);
+				if (rs == 4)
+				{
+					Sleep(1000);
+				}else
+				{
+					Sleep(10000);
+				}
             }
         }
         pCall->CloseXiaoDongHua();
@@ -3051,11 +3059,21 @@ void GamecallEx::NotifyMonsterAttack(MONSTERATAACK* pAttack)
     static DWORD dwFirst;
     DWORD dwSec = GetTickCount();
 
+	TRACE("技能ID:%x",pAttack->dwStrikeId);
     //先按时间过滤
     if((dwSec - dwFirst) > 1000)
     {
         if(pAttack->dwStrikeId != old1.dwStrikeId)
         {
+			if (pAttack->dwStrikeId == 0x5527005)
+			{
+				sendcall(id_msg_attack, (LPVOID)0x5dca);//tab
+			}else if (pAttack->dwStrikeId == 0x5527009)
+			{
+				//c-5E1B
+				sendcall(id_msg_attack, (LPVOID)0x5E1B);//tab
+
+			}
 
             //这里写对应boss的技能
             

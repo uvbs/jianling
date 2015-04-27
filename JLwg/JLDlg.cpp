@@ -61,7 +61,8 @@ static UINT TaskThread(LPVOID pParam)
     try
     {
         TaskScript task;
-        task.BeginTask();
+        //task.BeginTask();
+		task.Test_honglian();
     }
     catch(...)
     {
