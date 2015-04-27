@@ -163,6 +163,7 @@ DWORD CALLBACK CJLwgApp::WgThread(LPVOID pParam)
     m_pWgDlg = new CJLDlg;
     m_pWgDlg->DoModal();
 
+    TRACE(_T("CJLDlg DoModal ret"));
     theApp.UnLoad();
     FreeLibraryAndExitThread(theApp.m_hInstance, 0);
     return 0;
@@ -301,12 +302,14 @@ void CJLwgApp::UnLoad()
     if(m_hPipe != INVALID_HANDLE_VALUE)
     {
         CloseHandle(m_hPipe);
+        m_hPipe = INVALID_HANDLE_VALUE;
     }
 
 
     if(wpOrigGameProc)
     {
         ::SetWindowLong(m_hGameWnd, GWL_WNDPROC, (LONG)wpOrigGameProc);
+        wpOrigGameProc = NULL;
     }
 
     if(m_pWgDlg)
@@ -316,18 +319,14 @@ void CJLwgApp::UnLoad()
             m_pWgDlg->EndDialog(IDOK);
         }
 
-        delete m_pWgDlg;
+        SafeDelete(m_pWgDlg);
     }
 
-
-    //±£´æÅäÖÃ
-    GameConfig* pConfig = GameConfig::GetInstance();
-    pConfig->SaveConfig();
 }
 
 int CJLwgApp::ExitInstance()
 {
-
+    TRACE(_T("ExitInstance"));
     UnLoad();
 
     return CWinApp::ExitInstance();

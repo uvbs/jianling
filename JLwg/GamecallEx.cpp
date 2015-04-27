@@ -18,6 +18,8 @@ GamecallEx::GamecallEx()
 
 GamecallEx::~GamecallEx()
 {
+
+    TRACE(_T("~GamecallEx"));
     m_bStopThread = TRUE;
 
     //等待所有线程退出
