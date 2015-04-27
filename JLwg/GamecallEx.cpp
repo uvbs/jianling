@@ -2799,7 +2799,7 @@ DWORD GamecallEx::GetRangeMonsterCount(DWORD range)
 
 UINT GamecallEx::KeepAliveThread(LPVOID pParam)
 {
-
+TRACE("¼ÓÑª");
 	DWORD rs = 0;
     GamecallEx* pCall = (GamecallEx*)pParam;
     while(pCall->m_bStopThread == FALSE)
@@ -2809,6 +2809,7 @@ UINT GamecallEx::KeepAliveThread(LPVOID pParam)
         {
             if(pCall->GetPlayerDeadStatus() == 0)
             {
+				TRACE("¼ÓÑª1");
                 rs = pCall->GetHealth(60);
 				if (rs == 4)
 				{

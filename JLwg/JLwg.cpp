@@ -143,12 +143,12 @@ DWORD CALLBACK CJLwgApp::WgThread(LPVOID pParam)
 
 
     LOGER(_T("初始化外挂功能"));
-//     if(!GamecallEx::GetInstance()->Init())
-//     {
-//         LOGER(_T("外挂功能初始化失败"));
-//         ExitProcess(0);
-//         return FALSE;
-//     }
+     if(!GamecallEx::GetInstance()->Init())
+     {
+         LOGER(_T("外挂功能初始化失败"));
+         ExitProcess(0);
+         return FALSE;
+     }
 
 
     LOGER(_T("外挂启动完成"));
