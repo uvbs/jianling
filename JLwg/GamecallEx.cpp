@@ -2799,7 +2799,7 @@ DWORD GamecallEx::GetRangeMonsterCount(DWORD range)
 
 UINT GamecallEx::KeepAliveThread(LPVOID pParam)
 {
-
+TRACE("加血");
 	DWORD rs = 0;
     GamecallEx* pCall = (GamecallEx*)pParam;
     while(pCall->m_bStopThread == FALSE)
@@ -2809,6 +2809,7 @@ UINT GamecallEx::KeepAliveThread(LPVOID pParam)
         {
             if(pCall->GetPlayerDeadStatus() == 0)
             {
+				TRACE("加血1");
                 rs = pCall->GetHealth(60);
 				if (rs == 4)
 				{
@@ -3043,6 +3044,7 @@ BOOL GamecallEx::Init()
     SetThreadPriority(m_hThreads[1], THREAD_PRIORITY_LOWEST);
 
     //钩战斗信息
+    GameHook::GetInstance()->CombatHook.hook();
     GameHook::GetInstance()->SetCombatSink(this);
 
 
