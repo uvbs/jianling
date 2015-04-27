@@ -6,7 +6,7 @@
 #define AFX_GAMEDEF_H__240B533F_368F_42BD_90E6_7F364A93AF17__INCLUDED_
 
 #if _MSC_VER > 1000
-    #pragma once
+#pragma once
 #endif // _MSC_VER > 1000
 
 
@@ -15,14 +15,15 @@
 #define __L(x)  ___L(x)
 #define ___L(x) L##x
 
+
 #if _MSC_VER > 1200
-    #ifdef _UNICODE
-        #define FUNCNAME    __FUNCTIONW__
-    #else
-        #define FUNCNAME    __FUNCTION__
-    #endif
+#ifdef _UNICODE
+#define FUNCNAME    __FUNCTIONW__
 #else
-    #define FUNCNAME    __L(__FILE__)
+#define FUNCNAME    __FUNCTION__
+#endif
+#else
+#define FUNCNAME    __L(__FILE__)
 #endif
 
 
@@ -111,7 +112,8 @@
 #define strOrange       _T("橙色")
 
 //装备位置枚举
-enum EQUITMENT_POS {
+enum EQUITMENT_POS
+{
     WUQI = 1,
     YIFU = 2,
     YAODAI,
@@ -122,7 +124,8 @@ enum EQUITMENT_POS {
 
 
 //消息ID
-enum CUSTOMMSGID {
+enum CUSTOMMSGID
+{
     id_msg_step = 0,
     id_msg_step3x,
     id_msg_guanshangdian,
@@ -189,14 +192,16 @@ enum CUSTOMMSGID {
 };
 
 
-enum CUSTOMTYPE {
+enum CUSTOMTYPE
+{
     DONTKILL,   //不杀
     ALWAYSKILL, //总是
     KILLFIRST   //优先
 };
 
 
-typedef struct _CUSTOMTYPE {
+typedef struct _CUSTOMTYPE
+{
     wchar_t* name;
     int type;
 } CUSTOMKILL, *PCUSTOMKILL;

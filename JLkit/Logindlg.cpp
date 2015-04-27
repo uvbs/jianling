@@ -66,11 +66,7 @@ BOOL CDlgLogin::OnInitDialog()
         UpdateData(FALSE);
     }
 
-
-    //½¹µã
-    GetDlgItem(IDC_EDITNAME)->SetFocus();
-
-    return FALSE;
+    return TRUE;
 }
 
 void CDlgLogin::OnOK()

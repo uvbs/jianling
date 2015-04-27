@@ -5,7 +5,7 @@
 #include "GameHook.h"
 #include "..\JLkit\JLkitSocket.h"
 
-class GamecallEx: public Gamecall, public ITCPSocketSink
+class GamecallEx: public Gamecall, public ITCPSocketSink, public ICombatHookSink
 {
 protected:
     GamecallEx();
@@ -23,6 +23,9 @@ private:
     virtual bool OnEventTCPSocketRead(CJLkitSocket* pSocket, const Tcp_Head& stTcpHead, void* pData, WORD wDataSize);
 
     CJLkitSocket sock;
+
+private:
+    virtual void NotifyMonsterAttack(MONSTERATAACK *pAttack);
 
 
 public:
@@ -142,8 +145,6 @@ public:
 
     //组队
     void AddToPary();
-    void KillBoss();
-
 
 
     //自定义的要杀的怪物名称

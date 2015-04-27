@@ -43,6 +43,7 @@ END_MESSAGE_MAP()
 
 void CMsgBox::SetMsg(TCHAR szMsg[])
 {
+    _ASSERTE(szMsg[0] != _T('\0'));
     m_strText = szMsg;
 }
 

@@ -22,7 +22,7 @@ public:
 
     //等待游戏窗口创建
     BOOL WaitGameCreate(int inMaxTime);
-
+    void UnLoad();
 
     //通信
     PIPEDATA m_stData;

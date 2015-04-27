@@ -110,6 +110,10 @@ SOURCE=.\CombatBoss.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\combatEvent.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\ConfigItemPage.cpp
 # End Source File
 # Begin Source File
@@ -127,6 +131,10 @@ SOURCE=.\ConfigQhPage.cpp
 # Begin Source File
 
 SOURCE=.\DataDlg.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\EventDispatcher.cpp
 # End Source File
 # Begin Source File
 
@@ -215,6 +223,10 @@ SOURCE=.\CombatBoss.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\combatEvent.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\common\common.h
 # End Source File
 # Begin Source File
@@ -236,6 +248,10 @@ SOURCE=.\ConfigQhPage.h
 # Begin Source File
 
 SOURCE=.\DataDlg.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\EventDispatcher.h
 # End Source File
 # Begin Source File
 

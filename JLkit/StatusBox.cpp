@@ -32,6 +32,7 @@ void CStatusBox::DoDataExchange(CDataExchange* pDX)
 
 void CStatusBox::SetMsg(TCHAR szMsg[])
 {
+    _ASSERTE(szMsg[0] != _T('\0'));
     GetDlgItem(IDC_TEXT)->SetWindowText(szMsg);
 }
 

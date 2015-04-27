@@ -136,13 +136,13 @@ void CJLkitView::SetResult(int nReslt, int i)
         }
     case  RESULT_FAIL_IPBLOCK:
         {
-            GetListCtrl().SetItemText(i, COLUMN_TEXT_STATUS, _T("此IP被封锁, 使用代理重试"));
+            GetListCtrl().SetItemText(i, COLUMN_TEXT_STATUS, _T("IP被封锁, 使用代理重试"));
             SetItemColor(i, RGB(255, 0, 0));
             break;
         }
     case  RESULT_FAIL_EXCEPTION:
         {
-            GetListCtrl().SetItemText(i, COLUMN_TEXT_STATUS, _T("异常, 请重试一次"));
+            GetListCtrl().SetItemText(i, COLUMN_TEXT_STATUS, _T("异常, 重试"));
             break;
         }
     case  RESULT_FAIL_GETUKEY:
@@ -152,7 +152,7 @@ void CJLkitView::SetResult(int nReslt, int i)
         }
     case  RESULT_NOKEY:
         {
-            GetListCtrl().SetItemText(i, COLUMN_TEXT_STATUS, _T("没有有效KEY"));
+            GetListCtrl().SetItemText(i, COLUMN_TEXT_STATUS, _T("没有有效卡号"));
             break;
         }
     case  RESULT_ALREADY_RUNNING:
@@ -188,7 +188,10 @@ void CJLkitView::SetResult(int nReslt, int i)
         }
     case  RESULT_FAIL_CREATEGAMEPROCESS:
         {
-            GetListCtrl().SetItemText(i, COLUMN_TEXT_STATUS, _T("创建进程错误"));
+            DWORD dwLastErr = GetLastError();
+            TCHAR szBuf[BUFSIZ/2];
+            wsprintf(szBuf, _T("创建进程出错, %d"), dwLastErr);
+            GetListCtrl().SetItemText(i, COLUMN_TEXT_STATUS, szBuf);
             break;
         }
     case  RESULT_FAIL_AUTH:
@@ -441,21 +444,27 @@ UINT AFX_CDECL CJLkitView::IPCThread(LPVOID lpParam)
 
     hPipe = CreateNamedPipe(szPipi, PIPE_ACCESS_DUPLEX, PIPE_TYPE_MESSAGE | PIPE_WAIT, 1, BUFSIZ, BUFSIZ, PIPE_TIMEOUT, NULL);
     if(hPipe == INVALID_HANDLE_VALUE)
+    {
+        TRACE(_T("创建管道失败"));
         goto fun_exit;
+    }
 
     if(!ConnectNamedPipe(hPipe, NULL))
     {
         if(ERROR_PIPE_CONNECTED != GetLastError())
+        {
             goto fun_exit;
+        }
     }
 
 
     //写入一次数据
     if(!WriteFile(hPipe, &stPipeData, sizeof(PIPEDATA), &dwBytesWrited, NULL))
+    {
         goto fun_exit;
+    }
 
 
-    //之后用事件等待
     PIPESTATUS status;
     while(1)
     {
@@ -465,9 +474,12 @@ UINT AFX_CDECL CJLkitView::IPCThread(LPVOID lpParam)
         if(!bRetCode || (dwBytesRead == 0))
         {
             list.SetItemText(inItem, COLUMN_TEXT_STATUS, _T("进程退出了"));
+
+            DisconnectNamedPipe(hPipe);
             break;
         }
 
+        //设置状态
         list.SetItemText(inItem, COLUMN_TEXT_STATUS, status.szStatus);
     }
 
@@ -486,7 +498,7 @@ fun_exit:
 int CJLkitView::CreateGameProcess(int inItem, bool bInject)
 {
     int RetCode;
-    CWinThread *pNewThread;
+    CWinThread* pNewThread;
     CJLkitDoc* pDoc = (CJLkitDoc*)GetDocument();
 
 
@@ -539,6 +551,7 @@ int CJLkitView::CreateGameProcess(int inItem, bool bInject)
     GetListCtrl().SetItemText(inItem, COLUMN_TEXT_STATUS, _T("创建进程.."));
     if(!CreateProcess(NULL, szCmdLine, NULL, NULL, FALSE, CREATE_SUSPENDED, NULL, NULL, &si, &pi))
     {
+        TRACE(_T("LastErr: %d"), GetLastError());
         RetCode = RESULT_FAIL_CREATEGAMEPROCESS;
     }
     else

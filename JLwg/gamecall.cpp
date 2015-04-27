@@ -4812,16 +4812,12 @@ void Gamecall::SetMouseMode()
 //等待进入游戏
 bool Gamecall::WaitPlans(int inMaxTime)
 {
-
-    for(int i = 0; i < inMaxTime; i++)
+    DWORD dwCount = inMaxTime/3;
+    for(int i = 0; i < dwCount; i++)
     {
-        if(isLoadingMap() == 3) 
-        {
-            
-            return true;
-        }
+        if(isLoadingMap() == 3) return true;
 
-        Sleep(1000);
+        Sleep(3000);
     }
 
     return false;
@@ -4852,7 +4848,6 @@ BYTE Gamecall::GetPlayerDeadStatus()
     __except(1)
     {
         TRACE(FUNCNAME);
-
     }
 
     return value;

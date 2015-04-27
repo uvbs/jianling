@@ -51,9 +51,9 @@ CreateRemoteThreadLoadDll RemoteLoadDll;
 //这几个硬编码的地址
 #ifdef JLTW
 
-DWORD dwInitNP1 = 0x00B4C710;
-DWORD dwInitNP2 = 0x00B4C6D0;//-40
-DWORD CheckNP = 0x00B4C890;//1c0
+DWORD dwInitNP1 = 0x00B4c710;
+DWORD dwInitNP2 = 0x00B4C6D0;   //dwInitNP1-40
+DWORD CheckNP = 0x00B4C8D0;     //dwInitNP1+1c0
 
 #else
 
@@ -126,6 +126,7 @@ BOOL WINAPI MyCreateProcessInternalW(HANDLE hToken,
                                      LPPROCESS_INFORMATION lpProcessInformation,
                                      PHANDLE hNewToken)
 {
+
     //剥离NP失败
     if(lpApplicationName && wcslen(lpApplicationName) && wcsstr(lpApplicationName, L".des"))
     {
@@ -250,7 +251,7 @@ HANDLE WINAPI CreateFileW_Hook(
 
 
 //剥离操作的线程
-UINT CALLBACK nPthread(PVOID lpParam)
+DWORD WINAPI nPthread(PVOID lpParam)
 {
     for(;;)
     {
@@ -278,17 +279,17 @@ UINT CALLBACK nPthread(PVOID lpParam)
 }
 
 //清NP保护的线程
-VOID WINAPI ClearNP(HMODULE hModule)
+void ClearNP(HMODULE hModule)
 {
 
     GetModuleFileNameA(NULL, szProcess, MAXCHAR);
     GetModuleFileNameA(hModule, szModulePatch, MAXCHAR);
     _strupr(szProcess);
+
     if(strstr(szProcess, "CLIENT.EXE"))
     {
-
         //创建线程执行
-        CreateThread(0, 0, (LPTHREAD_START_ROUTINE)nPthread, 0, 0, 0);
+        CreateThread(0, 0, nPthread, 0, 0, 0);
 
         //处理调试器  多开不需要这些玩意
         hookx64.Initialization();
@@ -303,10 +304,18 @@ VOID WINAPI ClearNP(HMODULE hModule)
     }
     else
     {
-        DWORD dwCreateProcessInternalW = (DWORD)GetProcAddress(LoadLibraryA("kernel32.dll"), "CreateProcessInternalW");
-        InlineHook((VOID*)dwCreateProcessInternalW, (VOID*)MyCreateProcessInternalW, (VOID**)&Orig_CreateProcessInternalW);
 
+
+        HMODULE hKer32 = GetModuleHandle(_T("kernel32.dll"));
+        if(hKer32 == NULL) return;
+
+        DWORD dwCreateProcessInternalW = (DWORD)GetProcAddress(hKer32, "CreateProcessInternalW");
+        if(dwCreateProcessInternalW == NULL) return;
+
+        //硬编码
+        InlineHook((VOID*)dwCreateProcessInternalW, (VOID*)MyCreateProcessInternalW, (VOID**)&Orig_CreateProcessInternalW);
     }
+
 
 }
 
@@ -315,16 +324,16 @@ BOOL APIENTRY DllMain(HANDLE hModule, DWORD ul_reason_for_call, LPVOID lpReserve
 {
     switch(ul_reason_for_call)
     {
-        case DLL_PROCESS_ATTACH:
+    case DLL_PROCESS_ATTACH:
         {
             ClearNP((HMODULE)hModule);
             break;
         }
 
-        case DLL_PROCESS_DETACH:
-        case DLL_THREAD_ATTACH:
-        case DLL_THREAD_DETACH:
-            break;
+    case DLL_PROCESS_DETACH:
+    case DLL_THREAD_ATTACH:
+    case DLL_THREAD_DETACH:
+        break;
 
     }
     return TRUE;

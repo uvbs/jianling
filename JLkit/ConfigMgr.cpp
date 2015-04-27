@@ -92,6 +92,8 @@ BOOL CConfigMgr::LoadConfig(const TCHAR szConfigPath[])
 
 void CConfigMgr::SaveConfig(const TCHAR szConfigPath[])
 {
+    _ASSERTE(szConfigPath[0]!='\0');
+
     //保存设置
     SetLongValue(_T("设置"), _T("记住密码"), m_KeepPw);
     SetLongValue(_T("设置"), _T("更新"), m_Update);

@@ -42,6 +42,12 @@ LRESULT CALLBACK CJLwgApp::GameMsgProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPAR
     switch(uMsg)
     {
 
+    case WM_DESTROY:
+        {
+            OutputDebugString(_T("game destroy msg"));
+            theApp.UnLoad();
+            break;
+        }
     case WM_KEYDOWN:
         {
 
@@ -61,6 +67,12 @@ LRESULT CALLBACK CJLwgApp::GameMsgProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPAR
 
             else if(wParam == VK_END)
             {
+
+                if(::IsWindow(m_pWgDlg->m_hWnd) == FALSE)
+                {
+                    break;
+                }
+
                 int style = GetWindowLong(hwnd, GWL_STYLE);
                 ::SetWindowLong(hwnd, GWL_STYLE, style | WS_CLIPCHILDREN);
 
@@ -80,11 +92,8 @@ LRESULT CALLBACK CJLwgApp::GameMsgProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPAR
 
     case WM_CUSTOM_GCALL:
         {
-            //获取游戏外挂功能
-            GamecallEx* pcall = GamecallEx::GetInstance();
-
             //此处实现游戏call的调用
-            return pcall->call((DWORD)wParam, (LPVOID*)lParam);
+            return GamecallEx::GetInstance()->call((DWORD)wParam, (LPVOID*)lParam);
         }
 
     }
@@ -104,7 +113,7 @@ DWORD CALLBACK CJLwgApp::WgThread(LPVOID pParam)
         return FALSE;
     }
 
-    if(!theApp.WaitGameCreate(20))
+    if(!theApp.WaitGameCreate(30))
     {
         LOGER(_T("等待游戏窗口超时"));
         ExitProcess(0);
@@ -115,10 +124,10 @@ DWORD CALLBACK CJLwgApp::WgThread(LPVOID pParam)
         LOGER(_T("游戏窗口创建"));
     }
 
-
     LOGER(_T("初始化加速"));
     if(!GameSpend::GetInstance()->Init())
     {
+        LOGER(_T("初始化加速失败"));
         ExitProcess(0);
         return FALSE;
     }
@@ -128,33 +137,33 @@ DWORD CALLBACK CJLwgApp::WgThread(LPVOID pParam)
     if(!GameConfig::GetInstance()->LoadConfig())
     {
         LOGER(_T("加载配置文件失败"));
-        SENDLOG(_T("加载配置文件失败"));
         ExitProcess(0);
         return FALSE;
     }
 
 
     LOGER(_T("初始化外挂功能"));
-    if(!GamecallEx::GetInstance()->Init())
-    {
-        ExitProcess(0);
-        return FALSE;
-    }
+//     if(!GamecallEx::GetInstance()->Init())
+//     {
+//         LOGER(_T("外挂功能初始化失败"));
+//         ExitProcess(0);
+//         return FALSE;
+//     }
 
-
-    //钩游戏窗口处理
-    wpOrigGameProc = (WNDPROC)::SetWindowLong(m_hGameWnd, GWL_WNDPROC, (LONG)GameMsgProc);
-
-    //通信数据
-    ::SetWindowText(m_hGameWnd, theApp.m_stData.szAccount);
 
     LOGER(_T("外挂启动完成"));
     SENDLOG(_T("外挂启动完成"));
-
-    //创建外挂对话框
+    
+    //钩游戏窗口处理
+    wpOrigGameProc = (WNDPROC)::SetWindowLong(m_hGameWnd, GWL_WNDPROC, (LONG)GameMsgProc);
+    ::SetWindowText(m_hGameWnd, theApp.m_stData.szAccount);
+    
+    
+    //外挂主对话框
     m_pWgDlg = new CJLDlg;
     m_pWgDlg->DoModal();
 
+    theApp.UnLoad();
     FreeLibraryAndExitThread(theApp.m_hInstance, 0);
     return 0;
 }
@@ -284,8 +293,7 @@ void CJLwgApp::SendStatus(TCHAR szText[])
     WriteFile(m_hPipe, &status, sizeof(PIPESTATUS), &dwWriten, NULL);
 }
 
-
-int CJLwgApp::ExitInstance()
+void CJLwgApp::UnLoad()
 {
     LOGER(_T("外挂正常退出"));
     SENDLOG(_T("外挂被卸载了"));
@@ -315,7 +323,12 @@ int CJLwgApp::ExitInstance()
     //保存配置
     GameConfig* pConfig = GameConfig::GetInstance();
     pConfig->SaveConfig();
+}
 
+int CJLwgApp::ExitInstance()
+{
+
+    UnLoad();
 
     return CWinApp::ExitInstance();
 }

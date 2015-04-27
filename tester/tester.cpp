@@ -33,29 +33,39 @@ void threadmgr()
     {
         thread2();
     }
-    else 
+    else
     {
         thread1();
     }
 
     b = !b;
 }
+
+
 int _tmain(int argc, TCHAR* argv[], TCHAR* envp[])
 {
 
     // initialize MFC and print and error on failure
-    if (!AfxWinInit(::GetModuleHandle(NULL), NULL, ::GetCommandLine(), 0))
+    if(!AfxWinInit(::GetModuleHandle(NULL), NULL, ::GetCommandLine(), 0))
     {
         // TODO: change error code to suit your needs
         cerr << _T("Fatal Error: MFC initialization failed") << endl;
         return 1;
     }
 
-    for(int i = 0; i < 20; i++)
-    {
-        threadmgr();
-        Sleep(100);
-    }
-        
+
+
+//     for(int i = 0; i < 20; i++)
+//     {
+//         threadmgr();
+//         Sleep(100);
+//     }
+
+
+
+
+    getchar();
+
+
     return 0;
 }

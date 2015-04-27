@@ -3,6 +3,8 @@
 #include "GameConfig.h"
 #include "GameLog.h"
 #include "CombatBoss.h"
+#include "combatEvent.h"
+#include "EventDispatcher.h"
 
 IMPLEMENT_SINGLETON(GamecallEx)
 
@@ -16,6 +18,8 @@ GamecallEx::GamecallEx()
 
 GamecallEx::~GamecallEx()
 {
+    m_bStopThread = TRUE;
+
     //等待所有线程退出
     for(int i = 0; i < sizeof(m_hThreads) ; i++)
     {
@@ -652,25 +656,6 @@ int GamecallEx::ClearCustom()
     return 0;
 }
 
-
-
-void GamecallEx::KillBoss()
-{
-
-
-    while(1)
-    {
-                    
-
-        if(1)
-            break;
-    }
-
-
-    //卸载回调
-    GameHook::GetInstance()->DelCombatSink();
-
-}
 
 //杀怪
 //参数1: 坐标
@@ -3029,7 +3014,7 @@ BOOL GamecallEx::Init()
 {
 
     //等待进入游戏
-    if(WaitPlans(60))
+    if(WaitPlans(540))
     {
         LOGER(_T("进入游戏完成"));
     }
@@ -3047,10 +3032,36 @@ BOOL GamecallEx::Init()
     SetThreadPriority(m_hThreads[0], THREAD_PRIORITY_LOWEST);
     SetThreadPriority(m_hThreads[1], THREAD_PRIORITY_LOWEST);
 
-    if(!Gamecall::Init())
-    {
-        return FALSE;
-    }
+    //钩战斗信息
+    GameHook::GetInstance()->CombatHook.hook();
+    GameHook::GetInstance()->SetCombatSink(this);
+
+
+    if(!Gamecall::Init()) return FALSE;
 
     return TRUE;
+}
+
+void GamecallEx::NotifyMonsterAttack( MONSTERATAACK *pAttack )
+{
+    static MONSTERATAACK old;
+    ZeroMemory(&old, sizeof(MONSTERATAACK));
+    
+    if(pAttack->dwStrikeId != old.dwStrikeId)
+    {
+        
+        //这里写对应boss的技能
+        
+        
+
+
+
+
+
+
+
+
+        old = *pAttack;
+    }
+
 }

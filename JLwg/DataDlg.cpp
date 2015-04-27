@@ -1253,7 +1253,7 @@ void CDataDlg::ShowHook(TCHAR *pszFormat, ...)
 
 void CDataDlg::OnBossBombat() 
 {
-    GamecallEx::GetInstance()->KillBoss();
+//    GamecallEx::GetInstance()->KillBoss();
 
 
 

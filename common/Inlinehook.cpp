@@ -1,7 +1,7 @@
 #include "stdafx.h"
 
 #ifdef WIN32
-#define RING3
+    #define RING3
 #endif
 
 #include "inlinehook.h"
@@ -29,20 +29,20 @@ developer kit 就是开发工具的意思, 包括头文件, 库文件(lib文件).
 
 
 #ifdef RING3
-#define __malloc(_s)	VirtualAlloc(NULL, _s, MEM_COMMIT, PAGE_EXECUTE_READWRITE)
-#define __free(_p)		VirtualFree(_p, 0, MEM_RELEASE)
-#define JMP_SIZE		5
+    #define __malloc(_s)    VirtualAlloc(NULL, _s, MEM_COMMIT, PAGE_EXECUTE_READWRITE)
+    #define __free(_p)      VirtualFree(_p, 0, MEM_RELEASE)
+    #define JMP_SIZE        5
 #else
-#define __malloc(_s)	ExAllocatePool(NonPagedPool, _s)
-#define __free(_p)		ExFreePool(_p)
-#define JMP_SIZE		7
+    #define __malloc(_s)    ExAllocatePool(NonPagedPool, _s)
+    #define __free(_p)      ExFreePool(_p)
+    #define JMP_SIZE        7
 #endif
 
 #ifdef RING3
 
 
 
-BOOL WriteReadOnlyMemory(LPBYTE	lpDest, LPBYTE	lpSource, ULONG	Length)
+BOOL WriteReadOnlyMemory(LPBYTE lpDest, LPBYTE  lpSource, ULONG Length)
 {
     BOOL bRet;
     DWORD dwOldProtect;
@@ -57,16 +57,16 @@ BOOL WriteReadOnlyMemory(LPBYTE	lpDest, LPBYTE	lpSource, ULONG	Length)
 
     bRet = VirtualProtect(lpDest, Length, dwOldProtect, &dwOldProtect);
 
-    return	bRet;
+    return  bRet;
 }
 
 #else
 
 NTSTATUS
 WriteReadOnlyMemory(
-    LPBYTE	lpDest,
-    LPBYTE	lpSource,
-    ULONG	Length
+    LPBYTE  lpDest,
+    LPBYTE  lpSource,
+    ULONG   Length
 )
 {
     NTSTATUS status;
@@ -89,7 +89,7 @@ WriteReadOnlyMemory(
     lpWritableAddress = MmMapLockedPages(pMdlMemory, KernelMode);
     if(NULL != lpWritableAddress)
     {
-        oldIrql	= 0;
+        oldIrql = 0;
         KeInitializeSpinLock(&spinLock);
         KeAcquireSpinLock(&spinLock, &oldIrql);
 
@@ -164,27 +164,15 @@ BOOL InlineHook(void* OrgProc, void* NewProc, void** RealProc)
 
 
     //前置的参数检查, 参数不正确就返回了
-    if(!OrgProc || !NewProc || !RealProc)
-    {
-        return FALSE;
-    }
+    if(!OrgProc || !NewProc || !RealProc) return FALSE;
+    if(!GetPatchSize(OrgProc, JMP_SIZE, &dwPatchSize)) return FALSE;
 
-
-    //得到需要需要hook的函数开头的某些大小
-    //这个函数掉进去涉及到 Opcode, 意思就是取得函数头到某条指令的大小,
-    //毕竟汇编指令本身的长度不一样, 需要确定边界, 这个函数是这么个意思
-    //返回的 dwPatchSize 包含了长度
-
-    if(!GetPatchSize(OrgProc, JMP_SIZE, &dwPatchSize))
-    {
-        return FALSE;
-    }
 
     /*
-    0x00000800					0x00000800		sizeof(DWORD)	// dwPatchSize
-    JMP	/ FAR 0xAABBCCDD		E9 DDCCBBAA		JMP_SIZE
-    ...							...				dwPatchSize		// Backup instruction
-    JMP	/ FAR 0xAABBCCDD		E9 DDCCBBAA		JMP_SIZE
+    0x00000800                  0x00000800      sizeof(DWORD)   // dwPatchSize
+    JMP / FAR 0xAABBCCDD        E9 DDCCBBAA     JMP_SIZE
+    ...                         ...             dwPatchSize     // Backup instruction
+    JMP / FAR 0xAABBCCDD        E9 DDCCBBAA     JMP_SIZE
     */
 
     //获得总共需要的字节长度
@@ -213,9 +201,9 @@ BOOL InlineHook(void* OrgProc, void* NewProc, void** RealProc)
 
 
 #ifdef RING3
+
     //jmp到Hook
     *(BYTE*)lpHookFunc = 0xE9;
-
 
     //这个 NewProc 是此函数参数, 传进来的是目标指针, 就是要跳转到我们的代码的地址
     *(DWORD*)((DWORD)lpHookFunc + 1) = (DWORD)NewProc - (DWORD)lpHookFunc - JMP_SIZE;
