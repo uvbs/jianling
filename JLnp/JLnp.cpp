@@ -51,9 +51,15 @@ CreateRemoteThreadLoadDll RemoteLoadDll;
 //这几个硬编码的地址
 #ifdef JLTW
 
-DWORD dwInitNP1 = 0x00B4c710;
-DWORD dwInitNP2 = 0x00B4C6D0;   //dwInitNP1-40
-DWORD CheckNP = 0x00B4C8D0;     //dwInitNP1+1c0
+//4月27
+// DWORD dwInitNP1 = 0x00B4c710;
+// DWORD dwInitNP2 = 0x00B4C6D0;   //dwInitNP1-40
+// DWORD CheckNP = 0x00B4C8D0;     //dwInitNP1+1c0
+
+
+DWORD dwInitNP1 = 0x00b4c6e0;
+DWORD dwInitNP2 = 0x00b4c6a0;
+DWORD CheckNP = 0x00b4c8a0;
 
 #else
 

@@ -38,7 +38,7 @@ GameHook::GameHook():
     WearHook((void*)chuanzhuangbei_call, myWearEquipment),
     DundiHook((void*)dundi_call, myDunDi),
     Yicjw((void*)pickup1_call, myYiCiJianWu),
-    CombatHook((void*)0x0047B94B, myCombatFilter),
+    CombatHook((void*)0x0047d078, myCombatFilter),
     hookQietu((void*)hook_dont_leave_dungeons, ShunyiQietu)
 
 {
@@ -204,8 +204,12 @@ void __stdcall GameHook::myCombatFilter()
             ma.dwObj = objAddr;
             ma.dwStrikeId = id;
 
+            if(GameHook::GetInstance()->m_sink != NULL)
+            {
+                GameHook::GetInstance()->m_sink->ShowHook(_T("怪物: %08x, 技能: %d"), objAddr, id);
+            }
 
-            GameHook::GetInstance()->m_sink->ShowHook(_T("怪物: %08x, 技能: %d"), objAddr, id);
+
             if(GameHook::GetInstance()->m_pCombatSink != NULL)
             {
                 GameHook::GetInstance()->m_pCombatSink->NotifyMonsterAttack(&ma);

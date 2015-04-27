@@ -28,6 +28,11 @@ public:
     PIPEDATA m_stData;
     HANDLE m_hPipe;
     void SendStatus(TCHAR szText[]);
+
+    
+    //µ÷ÊÔÊ±¹Øµô
+    BOOL InitPipe();
+    BOOL InitLog();
     
 
     static HWND m_hGameWnd;

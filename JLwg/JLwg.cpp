@@ -119,12 +119,8 @@ DWORD CALLBACK CJLwgApp::WgThread(LPVOID pParam)
         ExitProcess(0);
         return FALSE;
     }
-    else
-    {
-        LOGER(_T("游戏窗口创建"));
-    }
 
-    LOGER(_T("初始化加速"));
+
     if(!GameSpend::GetInstance()->Init())
     {
         LOGER(_T("初始化加速失败"));
@@ -133,7 +129,6 @@ DWORD CALLBACK CJLwgApp::WgThread(LPVOID pParam)
     }
 
 
-    LOGER(_T("加载配置"));
     if(!GameConfig::GetInstance()->LoadConfig())
     {
         LOGER(_T("加载配置文件失败"));
@@ -142,28 +137,27 @@ DWORD CALLBACK CJLwgApp::WgThread(LPVOID pParam)
     }
 
 
-    LOGER(_T("初始化外挂功能"));
-//     if(!GamecallEx::GetInstance()->Init())
-//     {
-//         LOGER(_T("外挂功能初始化失败"));
-//         ExitProcess(0);
-//         return FALSE;
-//     }
+
+    if(!GamecallEx::GetInstance()->Init())
+    {
+        LOGER(_T("外挂功能初始化失败"));
+        ExitProcess(0);
+        return FALSE;
+    }
 
 
-    LOGER(_T("外挂启动完成"));
-    SENDLOG(_T("外挂启动完成"));
-    
+    LOGER(_T("启动完成"));
+
     //钩游戏窗口处理
     wpOrigGameProc = (WNDPROC)::SetWindowLong(m_hGameWnd, GWL_WNDPROC, (LONG)GameMsgProc);
     ::SetWindowText(m_hGameWnd, theApp.m_stData.szAccount);
-    
-    
+
+
     //外挂主对话框
     m_pWgDlg = new CJLDlg;
     m_pWgDlg->DoModal();
 
-    TRACE(_T("CJLDlg DoModal ret"));
+
     theApp.UnLoad();
     FreeLibraryAndExitThread(theApp.m_hInstance, 0);
     return 0;
@@ -205,12 +199,8 @@ BOOL CJLwgApp::WaitGameCreate(int inMaxTime)
     return FALSE;
 }
 
-BOOL CJLwgApp::InitInstance()
+BOOL CJLwgApp::InitPipe()
 {
-
-    //设置区域
-    setlocale(LC_ALL, "chs");
-
     //1, 获取通信数据
     TCHAR szPipe[MAX_PATH];
     wsprintf(szPipe, _T("\\\\.\\Pipe\\JLwg_%d"), GetCurrentProcessId());
@@ -242,7 +232,11 @@ BOOL CJLwgApp::InitInstance()
     DWORD dwMode = PIPE_NOWAIT | PIPE_READMODE_MESSAGE;
     SetNamedPipeHandleState(m_hPipe, &dwMode, NULL, NULL);
 
+    return TRUE;
+}
 
+BOOL CJLwgApp::InitLog()
+{
     //2, 初始化日志
     TCHAR szLogPath[MAX_PATH];
     GetModuleFileName(AfxGetInstanceHandle(), szLogPath, MAX_PATH);
@@ -266,6 +260,26 @@ BOOL CJLwgApp::InitInstance()
         return FALSE;
     }
 
+    return TRUE;
+}
+
+
+BOOL CJLwgApp::InitInstance()
+{
+
+    //设置区域
+    setlocale(LC_ALL, "chs");
+
+
+    if(!InitPipe())
+        return FALSE;
+
+
+    if(!InitLog())
+        return FALSE;
+
+
+
     //至此日志能
     LOGER(_T("#外挂启动"));
 
@@ -285,6 +299,9 @@ BOOL CJLwgApp::InitInstance()
 //向控制台通信
 void CJLwgApp::SendStatus(TCHAR szText[])
 {
+    _ASSERTE(_tcslen(szText) <= MAX_PATH);
+
+
     PIPESTATUS status;
     status.dwPid = m_stData.dwPid;
     status.dwItem = m_stData.dwItem;

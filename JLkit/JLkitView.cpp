@@ -498,7 +498,6 @@ fun_exit:
 int CJLkitView::CreateGameProcess(int inItem, bool bInject)
 {
     int RetCode;
-    CWinThread* pNewThread;
     CJLkitDoc* pDoc = (CJLkitDoc*)GetDocument();
 
 
@@ -567,7 +566,7 @@ int CJLkitView::CreateGameProcess(int inItem, bool bInject)
         _tcscpy(stData.szAccount, strName.c_str());
 
         //创建新线程和外挂通信
-        pNewThread = AfxBeginThread(IPCThread, &stData);
+        AfxBeginThread(IPCThread, &stData);
 
 
         //注入
