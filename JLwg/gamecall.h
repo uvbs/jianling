@@ -74,28 +74,28 @@ public:
 
     //玩家
     DWORD GetPlayerHealth();            //玩家血量
-    UCHAR GetPlayerLevel();         //玩家等级
-    DWORD GetPlayerMaxHealth();     //玩家最大血量
-    DWORD GetPlayerDataAddr();       //玩家数据基址
-    DWORD GetPlayerID();              //id
-    wchar_t* GetPlayerName();            //名
-    UCHAR GetPlayerMana();          //法力值
+    UCHAR GetPlayerLevel();             //玩家等级
+    DWORD GetPlayerMaxHealth();         //玩家最大血量
+    DWORD GetPlayerDataAddr();          //玩家数据基址
+    DWORD GetPlayerID();                //id
+    wchar_t* GetPlayerName();           //名
+    UCHAR GetPlayerMana();              //法力值
     float GetPlayerMaxVit();            //轻功
     float GetPlayerVit();               //当前轻工值
-    int GetPlayerVitStatus();       //轻功状态
+    int GetPlayerVitStatus();           //轻功状态
     BOOL GetPlayerPos(fPosition* PlayerPosition);                //float坐标
     BOOL GetPlayerPos2(sPosition* spos);            //short型坐标
-    float GetPlayerViewPoint();     //角色面向
-    DWORD GetPlayerQuestUIStatus(); //判断角色任务相关ui状态是否弹出
+    float GetPlayerViewPoint();         //角色面向
+    DWORD GetPlayerQuestUIStatus();     //判断角色任务相关ui状态是否弹出
     DWORD GetPlayerQuestUIStatusts();   //判断角色任务相关ui状态是否弹出
-    BYTE GetPlayerDeadStatus(); //死亡状态
+    BYTE GetPlayerDeadStatus();         //死亡状态
     DWORD GetCityID();
-    BOOL GetPlayExperienceStatus();//获得经验药状态
+    BOOL GetPlayExperienceStatus();     //获得经验药状态
     BOOL GetPlayExperienceStatusName(DWORD m_adressA, wchar_t* ExperienceName);  //获取经验名字  参数1是UI地址  参数2 是药品的名字
     DWORD GetExperienceNameID_SY(int i, DWORD m_adress); //获取经验药名字ID结构的索引
-    DWORD GetExperienceNameID(DWORD ID); //获取经验名字ID
-    wchar_t* GetExperienceName(DWORD ID); //获取经验名字
-    BOOL GetPlayerFightingStatus();//获得战斗状态
+    DWORD GetExperienceNameID(DWORD ID);        //获取经验名字ID
+    wchar_t* GetExperienceName(DWORD ID);       //获取经验名字
+    BOOL GetPlayerFightingStatus();             //获得战斗状态
 
 
 
@@ -112,23 +112,23 @@ public:
     void GetRangeLootObjectToVector(DWORD range, ObjectVector& LootVec);
     void GetRangeTaskItemToVectr(ObjectVector& TastItemVector, DWORD range);
     ObjectNode* GetObjectByName(wchar_t szName[], DWORD range = 500);
-    BYTE GetObjectType(DWORD pObjAddress);       //对象类型
-    BOOL _GetObjectPos(DWORD pObjAddress, fPosition* pos);       //取对象坐标
+    BYTE GetObjectType(DWORD pObjAddress);                          //对象类型
+    BOOL _GetObjectPos(DWORD pObjAddress, fPosition* pos);          //取对象坐标
     BOOL GetObjectPos(ObjectNode* pNode, fPosition* fpos);
     BOOL GetObjectPos_0xb(DWORD pObjAddress, sPosition* spos);      //对象short类型坐标
-    BOOL GetObjectPos2_0x20(DWORD pObjAddress, fPosition* fpos);//0x20对象使用这个取坐标
-    BOOL GetObjectPos2_0x90(DWORD pObjAddress, sPosition* spos);//0x90对象使用这个取坐标
-    wchar_t* GetObjectNameByIndex(DWORD index);                   //对象名
+    BOOL GetObjectPos2_0x20(DWORD pObjAddress, fPosition* fpos);    //0x20对象使用这个取坐标
+    BOOL GetObjectPos2_0x90(DWORD pObjAddress, sPosition* spos);    //0x90对象使用这个取坐标
+    wchar_t* GetObjectNameByIndex(DWORD index);                     //对象名
     wchar_t* _GetObjectNameByIndex(DWORD index);
     wchar_t* GetObjectName(DWORD pObjAddress);
-    DWORD GetType4HP(DWORD pObjAddress);         //获取类型为4的对象血量
+    DWORD GetType4HP(DWORD pObjAddress);            //获取类型为4的对象血量
     DWORD GetObject_0x14(DWORD pObjAddress);
-    DWORD GetObjectLevel(DWORD pObjAddress);     //取对象等级
+    DWORD GetObjectLevel(DWORD pObjAddress);        //取对象等级
     DWORD GetObjectSY12(DWORD pObjAddress);
     DWORD GetObjectSY(DWORD pObjAddress);
-    DWORD GetObjectSy_90(DWORD pObjAddress);//取90的索引
-    DWORD GetIndexByType(DWORD pObjAddress); //通过类型取得索引
-
+    DWORD GetObjectSy_90(DWORD pObjAddress);        //取90的索引
+    DWORD GetIndexByType(DWORD pObjAddress);        //通过类型取得索引
+    DWORD GetObjectView(DWORD pObjAddress);         //获取对象角度
 
 
     //判断
