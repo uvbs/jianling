@@ -6,9 +6,9 @@
 #endif
 
 #include "resource.h"       // main symbols
-#include "JLDlg.h"
 
 
+class CJLDlg;
 class CJLwgApp: public CWinApp
 {
 public:

@@ -5,7 +5,7 @@
 #include "GameHook.h"
 #include "..\JLkit\JLkitSocket.h"
 
-class GamecallEx: public Gamecall, public ITCPSocketSink, public ICombatHookSink
+class GamecallEx: public Gamecall, public ITCPSocketSink
 {
 protected:
     GamecallEx();
@@ -23,9 +23,6 @@ private:
     virtual bool OnEventTCPSocketRead(CJLkitSocket* pSocket, const Tcp_Head& stTcpHead, void* pData, WORD wDataSize);
 
     CJLkitSocket sock;
-
-private:
-    virtual void NotifyMonsterAttack(MONSTERATAACK* pAttack);
 
 
 public:
@@ -50,7 +47,7 @@ public:
     void GoodsQuests(DWORD id, DWORD step, wchar_t* name, DWORD questtype = 0, DWORD ff = 0xff, DWORD unknow = 0);
     void NPCJieRenWu(DWORD canshu1, DWORD canshu2, DWORD canshu3, DWORD canshu4, DWORD canshu5);
     void NPCJieRenWu(wchar_t* name, DWORD canshu3, DWORD canshu4, DWORD canshu5);
-    void Yaojiang(wchar_t* Zen_name, wchar_t* BaGuaname);
+    void Yaojiang(wchar_t* ZenName, wchar_t* BaGuaName);
 
 
 
@@ -80,7 +77,7 @@ public:
 
     //杀怪
     int KillObject(DWORD range, ObjectNode* pNode, DWORD mode, DWORD canKillRange = CAN_OPERATOR); //杀死这个对象
-    void AddCustomKill(WCHAR* name, DWORD type);
+    void AddCustomKill(wchar_t* name, CUSTOMTYPE type);
 
 
 
@@ -106,7 +103,7 @@ public:
     void BuyItem(DWORD nums, DWORD index, wchar_t* npcname, BOOL bClose = TRUE);  //购买物品
     void CunCangku(wchar_t* name, wchar_t* npcname);   //放仓库
     void CuncangkuByConfig(wchar_t* name);//配置文件存仓库
-    void DeleteItem(wchar_t* name);   //删除一个物品
+    void DeleteItem(std::wstring name);   //删除一个物品
     void DeleteItemByConfig();      //删除配置文件中所有物品
     void SellItem(wchar_t* name, wchar_t* npcName, BOOL bClose = TRUE);     //卖掉一个物品
     void SellItemByConfig(wchar_t* name);           //卖掉配置文件中所有物品
@@ -146,7 +143,7 @@ public:
 
     //组队
     void AddToPary();
-    BOOL IsObjectDead(ObjectNode* pNode);
+
 
     //自定义的要杀的怪物名称
 private:

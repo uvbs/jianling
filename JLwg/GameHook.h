@@ -5,13 +5,6 @@
 #if !defined(AFX_GAMEHOOK_H__E712D73C_7E44_4074_8CE5_C484C0DE297F__INCLUDED_)
 #define AFX_GAMEHOOK_H__E712D73C_7E44_4074_8CE5_C484C0DE297F__INCLUDED_
 
-#if _MSC_VER > 1000
-#pragma once
-#endif // _MSC_VER > 1000
-
-
-
-typedef void (*SHOWHOOKRESULT)(LPVOID lpParam, TCHAR szFormat[]);
 
 
 typedef struct _MONSTERATAACK

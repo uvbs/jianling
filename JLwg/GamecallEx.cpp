@@ -629,13 +629,13 @@ BOOL GamecallEx::kill_Task(int MyQuestID, int MyQuestStep)
 }
 
 //添加自定义杀怪规则
-void GamecallEx::AddCustomKill(WCHAR* name, DWORD type)
+void GamecallEx::AddCustomKill(wchar_t* name, CUSTOMTYPE type)
 {
 
     CUSTOMKILL cust;
 
     int len = wcslen(name);
-    WCHAR* lpName = new WCHAR[len];
+    WCHAR* lpName = new wchar_t[len];
     wcscpy(lpName, name);
 
     cust.name = lpName;
@@ -1155,39 +1155,33 @@ void GamecallEx::WearEquipment(wchar_t* name, int pos, BOOL Blur)
     std::vector<_BAGSTU> RangeObject;
     GetAllGoodsToVector(RangeObject);
 
-    try
+
+    DWORD i;
+    for(i = 0; i < RangeObject.size(); i++)
     {
-        DWORD i;
-        for(i = 0; i < RangeObject.size(); i++)
+        if(Blur == TRUE)
         {
-            if(Blur == TRUE)
+            int len = wcslen(name);
+            wchar_t* fixName = new wchar_t[len];
+            wcscpy(fixName, name);
+            fixName[len] = L'\0';
+            //MessageBox(NULL,fixName,NULL,NULL);
+            if(wcsstr(RangeObject[i].name, fixName) != NULL)
             {
-                int len = wcslen(name);
-                wchar_t* fixName = new wchar_t[len];
-                wcscpy(fixName, name);
-                fixName[len] = L'\0';
-                //MessageBox(NULL,fixName,NULL,NULL);
-                if(wcsstr(RangeObject[i].name, fixName) != NULL)
-                {
-                    RangeObject[i].m_ID = pos;
-                    sendcall(id_msg_WearEquipment, (LPVOID)&RangeObject[i]);
-                    return;
-                }
-            }
-            else
-            {
-                if(wcscmp(RangeObject[i].name, name) == 0)
-                {
-                    RangeObject[i].m_ID = pos;
-                    sendcall(id_msg_WearEquipment, (LPVOID)&RangeObject[i]);
-                    return;
-                }
+                RangeObject[i].m_ID = pos;
+                sendcall(id_msg_WearEquipment, (LPVOID)&RangeObject[i]);
+                return;
             }
         }
-    }
-    catch(...)
-    {
-        TRACE(_T("穿装备: error"));
+        else
+        {
+            if(wcscmp(RangeObject[i].name, name) == 0)
+            {
+                RangeObject[i].m_ID = pos;
+                sendcall(id_msg_WearEquipment, (LPVOID)&RangeObject[i]);
+                return;
+            }
+        }
     }
 
     TRACE(_T("穿装备: 没有找到匹配的名字"));
@@ -1792,24 +1786,15 @@ void GamecallEx::SellItem(wchar_t* name, wchar_t* npcName, BOOL bClose)
     }
 
 
-    __try
-    {
-        //这个数量数据目前测试武器八卦是0, 表示有一个
-        if(goods.m_Num == 0)
-        {
-            goods.m_Num = 1;
-        }
+    //这个数量数据目前测试武器八卦是0, 表示有一个
+    goods.m_Num = (goods.m_Num == 0 ? 1 : goods.m_Num);
 
-        PARAM_GUANSHANGDIAN temp;
-        temp.argv1 = (DWORD)&goods;
-        temp.argv2 = dwUiAddr;
-        sendcall(id_msg_SellItem, &temp);
 
-    }
-    __except(1)
-    {
-        OutputDebugString(FUNCNAME);
-    }
+    PARAM_GUANSHANGDIAN temp;
+    temp.argv1 = (DWORD)&goods;
+    temp.argv2 = dwUiAddr;
+    sendcall(id_msg_SellItem, &temp);
+
 
     if(bClose)
     {
@@ -1821,32 +1806,22 @@ void GamecallEx::SellItem(wchar_t* name, wchar_t* npcName, BOOL bClose)
 //丢弃物品
 //参数1: 物品名字
 //参数2: 数量
-void GamecallEx::DeleteItem(wchar_t* name)
+void GamecallEx::DeleteItem(std::wstring name)
 {
 
+    //像这种方式有点多余,
+    //相当于遍历了两次, 写个单独的更好
     DWORD i;
     std::vector<_BAGSTU> GoodsVec;
     GetAllGoodsToVector(GoodsVec);
-    bool bFind = false;
+
 
     for(i = 0; i < GoodsVec.size(); i++)
     {
-        if(wcscmp(GoodsVec[i].name, name) == 0)
-        {
-            bFind = true;
-            break;
-        }
-    }
-
-    _ASSERTE(bFind == true);
-
-    if(bFind == false)
-    {
-        return;
+        if(GoodsVec[i].name == name) break;
     }
 
     sendcall(id_msg_DeleteItem, &GoodsVec[i]);
-
 }
 
 
@@ -1874,6 +1849,8 @@ void GamecallEx::Yaojiang(wchar_t* Zen_name, wchar_t* BaGuaname)
     DWORD i = 0;
     _BAGSTU ZenGoods;
     ZeroMemory(&ZenGoods, sizeof(_BAGSTU));
+
+
     GetGoodsFromBagByName(Zen_name, &ZenGoods);
     TRACE(_T("精气数量:%d"), ZenGoods.m_Num);
     for(i = 0; i < ZenGoods.m_Num; i++)
@@ -1917,6 +1894,8 @@ _kaihezi_begin:
         }
 
     }
+
+
     std::vector<_BAGSTU> HeZiVecyz;
     GetGoodsByName_Hezi(BaGuaname, HeZiVecyz);
     if(HeZiVec.size() > 0)
@@ -2229,12 +2208,7 @@ void GamecallEx::AttackAOE()
 
 }
 
-BOOL GamecallEx::IsObjectDead(ObjectNode* pNode)
-{
-    _ASSERTE(FALSE);
 
-    return FALSE;
-}
 
 //杀死对象, 逻辑中带有走路
 //循环出口: 怪死, 超时, 角色死, 出范围
@@ -3056,45 +3030,8 @@ BOOL GamecallEx::Init()
     SetThreadPriority(m_hThreads[1], THREAD_PRIORITY_LOWEST);
 
 
-    //钩战斗信息
-    GameHook::GetInstance()->SetCombatSink(this);
-
-
     if(!Gamecall::Init()) return FALSE;
 
     return TRUE;
 }
 
-void GamecallEx::NotifyMonsterAttack(MONSTERATAACK* pAttack)
-{
-    static MONSTERATAACK old1;
-    static DWORD dwFirst = 0;
-    DWORD dwSec = GetTickCount();
-
-    TRACE(_T("技能ID:%x"), pAttack->dwStrikeId);
-    
-    
-    //先按时间过滤
-    if((dwSec - dwFirst) > 1000)
-    {
-        if(pAttack->dwStrikeId != old1.dwStrikeId)
-        {
-            if(pAttack->dwStrikeId == 0x5527005)
-            {
-                sendcall(id_msg_attack, (LPVOID)0x5dca);//tab
-            }
-            else if(pAttack->dwStrikeId == 0x5527009)
-            {
-                //c-5E1B
-                sendcall(id_msg_attack, (LPVOID)0x5E1B);//tab
-
-            }
-
-            //这里写对应boss的技能
-            old1 = *pAttack;
-        }
-
-        dwFirst = GetTickCount();
-    }
-
-}

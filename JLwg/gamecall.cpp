@@ -6,11 +6,21 @@
 #include "GameSpend.h"
 #include "gamehook.h"
 #include "GameLog.h"
+
+
+
+#ifdef _DEBUG
+#define new DEBUG_NEW
+#undef THIS_FILE
+static char THIS_FILE[] = __FILE__;
+#endif
+
+
 //全局变量
 const double M_PI = 3.14159265358979323846;
 
 
-
+//单件
 IMPLEMENT_SINGLETON(Gamecall)
 
 
@@ -722,35 +732,30 @@ BOOL Gamecall::GetGoodsFromEquipByName(wchar_t* name, _BAGSTU* goods)
 
 
 //根据名字取得物品信息
-BOOL Gamecall::GetGoodsFromBagByName(const wchar_t* name, _BAGSTU* goods, BOOL Blur)
+BOOL Gamecall::GetGoodsFromBagByName(std::wstring name, _BAGSTU* aGoods, BOOL Blur)
 {
-    _ASSERTE(name != NULL);
 
-    std::vector<_BAGSTU> GoodsVec;
-    GetAllGoodsToVector(GoodsVec);
-
-    //背包遍历
-    for(DWORD i = 0; i < GoodsVec.size(); i++)
+    DWORD BagbodyAdress = 0;
+    DWORD BagAdress = 0;
+    int GridNum = 0;
+    
+    BagbodyAdress = GetBagbodyInfoBase();                //获取背包身上装备仓库遍历Base
+    BagAdress = GetBagInfoBase(BagbodyAdress);           //获取背包遍历Base
+    GridNum = GetBagGridNumber();                        //当前背包的总的格子数
+    
+    for(int i = 0; i < GridNum; i++)
     {
-        if(Blur == TRUE)
+        ZeroMemory(aGoods, sizeof(_BAGSTU));
+        
+        aGoods->m_Base = GetGoodsBase(BagAdress, i);                 //获取物品的首地址
+        if(aGoods->m_Base != 0)
         {
-            int len = wcslen(name);
-            wchar_t* fixName = new wchar_t[len];
-            wcscpy(fixName, name);
-            fixName[len] = L'\0';
-            //MessageBox(NULL,fixName,NULL,NULL);
-            if(wcsstr(GoodsVec[i].name, fixName) != NULL)
+            if(FillGoods(*aGoods))
             {
-                *goods = GoodsVec[i];
-                return TRUE;
-            }
-        }
-        else
-        {
-            if(wcscmp(name, GoodsVec[i].name) == 0)
-            {
-                *goods = GoodsVec[i];
-                return TRUE;
+                //游戏里本来是0
+                aGoods->m_Num = (aGoods->m_Num == 0 ? 1 : aGoods->m_Num);
+                
+                if(aGoods->name == name) return TRUE;
             }
         }
     }
@@ -4557,16 +4562,16 @@ BOOL Gamecall::NewBag()
 //吃药
 void Gamecall::ChiYao(const wchar_t* name)
 {
-    std::vector<_BAGSTU> AllGoods;
-    GetAllGoodsToVector(AllGoods);
-
     _BAGSTU goods;
     if(GetGoodsFromBagByName(name, &goods))
+    {
         sendcall(id_msg_ChiYao, &goods);
+    }
     else
+    {
         TRACE(_T("%s: 没有在背包中找到这个物品: %s"), FUNCNAME, name);
+    }
 
-    return;
 }
 
 void Gamecall::TurnTo(float x, float y, float z)
@@ -5852,8 +5857,8 @@ void Gamecall::_GetAllGoodsToVector(std::vector<_BAGSTU>& RangeObject)
                 if(FillGoods(aGoods))
                 {
                     //游戏里本来是0
-                    if(aGoods.m_Num == 0)
-                        aGoods.m_Num = 1;
+                    aGoods.m_Num = (aGoods.m_Num == 0 ? 1 : aGoods.m_Num);
+
                     RangeObject.push_back(aGoods);
                 }
             }
@@ -5870,7 +5875,7 @@ void Gamecall::_GetAllGoodsToVector(std::vector<_BAGSTU>& RangeObject)
 //遍历背包数据到容器
 void Gamecall::GetAllGoodsToVector(std::vector<_BAGSTU>& RangeObject)
 {
-    sendcall(id_msg_GetAllGoodsToVector, &RangeObject);
+    _GetAllGoodsToVector(RangeObject);
 }
 
 

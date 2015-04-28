@@ -4,7 +4,7 @@
 #include "GamecallEx.h"
 #include "GameConfig.h"
 #include "GameLog.h"
-
+#include "JLDlg.h"
 
 
 //程序实例唯一
@@ -148,6 +148,7 @@ DWORD CALLBACK CJLwgApp::WgThread(LPVOID pParam)
 
     LOGER(_T("启动完成"));
 
+
     //钩游戏窗口处理
     wpOrigGameProc = (WNDPROC)::SetWindowLong(m_hGameWnd, GWL_WNDPROC, (LONG)GameMsgProc);
     ::SetWindowText(m_hGameWnd, theApp.m_stData.szAccount);
@@ -252,8 +253,8 @@ BOOL CJLwgApp::InitLog()
     _tcscat(szLogPath, _T(".txt"));
 
 
-    GameLog* pLog = GameLog::GetInstance();
-    if(!pLog->open(szLogPath))
+
+    if(!GameLog::GetInstance()->open(szLogPath))
     {
         TRACE(_T("can't open log file!"));
         ExitProcess(0);

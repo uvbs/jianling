@@ -158,10 +158,6 @@ SOURCE=.\GameLog.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\GameObj.cpp
-# End Source File
-# Begin Source File
-
 SOURCE=.\GameSpend.cpp
 # End Source File
 # Begin Source File
@@ -276,10 +272,6 @@ SOURCE=.\GameHook.h
 # Begin Source File
 
 SOURCE=.\GameLog.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\GameObj.h
 # End Source File
 # Begin Source File
 

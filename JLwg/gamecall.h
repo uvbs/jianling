@@ -3,9 +3,9 @@
 
 
 #ifdef JLTW
-    #include "gamedata-tw.h"
+#include "gamedata-tw.h"
 #else
-    #include "gamedata.h"
+#include "gamedata.h"
 #endif
 
 
@@ -245,8 +245,8 @@ public:
 
     //背包
     void        _GetAllGoodsToVector(std::vector<_BAGSTU>& RangeObject);
-    void GetAllGoodsToVector(std::vector<_BAGSTU>& RangeObject);                // 遍历背包
-    void GetAllBodyEquipToVector(std::vector<_BAGSTU>& RangeObject);
+    void        GetAllGoodsToVector(std::vector<_BAGSTU>& RangeObject);                // 遍历背包
+    void        GetAllBodyEquipToVector(std::vector<_BAGSTU>& RangeObject);
     void        _GetAllBodyEquipToVector(std::vector<_BAGSTU>& RangeObject);
 
     BOOL        GetAllBaGuaToVector(std::vector<_BAGSTU>& BaGuaVec);
@@ -272,10 +272,11 @@ public:
     DWORD       Getcanshu2(DWORD pAddr);        //参数2
     DWORD       Getcanshu1(DWORD pAddr);        //参数1
 
-    BOOL        GetGoodsFromBagByName(const wchar_t* name, _BAGSTU* goods, BOOL Blur = FALSE);     //根据名字取物品信息
+    BOOL        GetGoodsFromBagByName(std::wstring name, _BAGSTU* goods, BOOL Blur = FALSE);     //根据名字取物品信息
     BOOL        GetGoodsFromBagByName(const wchar_t* name, std::vector<_BAGSTU>& GoodsVec);
     BOOL        GetGoodsFromEquipByName(wchar_t* name, _BAGSTU* goods);
     BOOL        GetGoodsByEquipPos(DWORD pos, _BAGSTU* goods);      //根据位置取得物品信息
+
 
     BOOL        FillGoods(_BAGSTU& goods);
     int         GetGoodsYanSe(DWORD m_Adress);  //获取物品的颜色

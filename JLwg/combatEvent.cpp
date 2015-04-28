@@ -32,17 +32,27 @@ CombatEvent::~CombatEvent()
 
 void CombatEvent::NotifyMonsterAttack(MONSTERATAACK* pAttack)
 {
-    static MONSTERATAACK old = {0};
+    static MONSTERATAACK old1;
+    static DWORD dwFirst = 0;
+    DWORD dwSec = GetTickCount();
 
-    //这个信息钩出来是有多次重复的, 此处过滤!
-    if(pAttack->dwObj != old.dwObj)
+    TRACE(_T("技能ID:%x"), pAttack->dwStrikeId);
+
+
+    //先按时间过滤
+    if((dwSec - dwFirst) > 1000)
     {
-        TRACE(_T("怪物id: %d, 技能id: %d"), pAttack->dwObj, pAttack->dwStrikeId);
+        if(pAttack->dwStrikeId != old1.dwStrikeId)
+        {
 
-        //添加事件, 这个优先级 == 1
-        EventDispatcher::GetInstance()->AddEvent(new EventArg);
+            //添加事件, 这个优先级 == 1
+            EventDispatcher::GetInstance()->AddEvent(new EventArg);
 
-        old = *pAttack;
+            //这里写对应boss的技能
+            old1 = *pAttack;
+        }
+
+        dwFirst = GetTickCount();
     }
 
 }

@@ -5,9 +5,6 @@
 #if !defined(AFX_EVENTDISPATCHER_H__72FE6A91_6E0C_4B3E_94F0_121C2BF0FB98__INCLUDED_)
 #define AFX_EVENTDISPATCHER_H__72FE6A91_6E0C_4B3E_94F0_121C2BF0FB98__INCLUDED_
 
-#if _MSC_VER > 1000
-#pragma once
-#endif // _MSC_VER > 1000
 
 
 struct EventArg
@@ -79,9 +76,17 @@ protected:
 
 public:
 
+
+    //添加一个事件
     void AddEvent(EventArg* pNew);
+
+    //删除一个事件
     void DelAllEvent(EventArg* pEvent);
 
+
+
+
+    //添加解除监听者
     void AddListener(Listener* pNew);
     void DelListener(Listener* pName);
 

@@ -203,7 +203,7 @@ enum CUSTOMTYPE
 typedef struct _CUSTOMTYPE
 {
     wchar_t* name;
-    int type;
+    CUSTOMTYPE type;
 } CUSTOMKILL, *PCUSTOMKILL;
 
 

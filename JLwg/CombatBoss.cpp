@@ -100,7 +100,7 @@ void CombatBoss::run()
 
 
         //事件发送过快导致执行对应动作时为时已晚怎么办
-        Sleep(1000);
+        Sleep(250);
     }
 
 }
