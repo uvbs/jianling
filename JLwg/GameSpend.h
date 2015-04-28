@@ -6,7 +6,7 @@
 #define AFX_GAMESPEND_H__C21DB428_5D98_4535_817B_E6E7A67D8713__INCLUDED_
 
 #if _MSC_VER > 1000
-    #pragma once
+#pragma once
 #endif // _MSC_VER > 1000
 
 

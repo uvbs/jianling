@@ -1,12 +1,6 @@
 #if !defined(AFX_WORKTHREAD_H__6D674540_5009_461C_A473_A848E5AE5BE9__INCLUDED_)
 #define AFX_WORKTHREAD_H__6D674540_5009_461C_A473_A848E5AE5BE9__INCLUDED_
 
-#if _MSC_VER > 1000
-#pragma once
-#endif // _MSC_VER > 1000
-// WorkThread.h : header file
-//
-
 
 
 /////////////////////////////////////////////////////////////////////////////

@@ -2,7 +2,6 @@
 #define _CREGISTDLG_H_
 
 
-
 class CDlgRegist : public CPropertyPage
 {
 // Construction

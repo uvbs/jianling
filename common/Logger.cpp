@@ -1,27 +1,10 @@
 #include "stdafx.h"
-#include "Lock.h"
 #include "logger.h"
 
 
-
-
-Logger::Logger(TCHAR* pFileName, TCHAR *pMode)
-{
-//     InitValue();
-//     if(!open(pFileName, pMode))
-//     {
-//         throw runtime_error("File Open Error");
-//     }
-}
-
 Logger::Logger()
 {
-    InitValue();
-}
 
-void Logger::InitValue()
-{
-    m_lpMsgMut = NULL;
 }
 
 //Îö¹¹º¯Êý

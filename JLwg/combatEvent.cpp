@@ -8,20 +8,23 @@
 #include "EventDispatcher.h"
 
 #ifdef _DEBUG
-    #undef THIS_FILE
-    static char THIS_FILE[] = __FILE__;
-    #define new DEBUG_NEW
+#undef THIS_FILE
+static char THIS_FILE[] = __FILE__;
+#define new DEBUG_NEW
 #endif
 
-//////////////////////////////////////////////////////////////////////
-// Construction/Destruction
-//////////////////////////////////////////////////////////////////////
 
+
+
+IMPLEMENT_SINGLETON(CombatEvent)
+
+//构造函数
 CombatEvent::CombatEvent()
 {
 
 }
 
+//析构函数
 CombatEvent::~CombatEvent()
 {
 
@@ -42,4 +45,9 @@ void CombatEvent::NotifyMonsterAttack(MONSTERATAACK* pAttack)
         old = *pAttack;
     }
 
+}
+
+void CombatEvent::AddEvent(MONSTERATAACK* pAttack)
+{
+    _events.push_back(*pAttack);
 }

@@ -2,6 +2,26 @@
 #include "LDasm.h"
 
 
+
+#define OP_NONE           0x00
+#define OP_MODRM          0x01
+#define OP_DATA_I8        0x02
+#define OP_DATA_I16       0x04
+#define OP_DATA_I32       0x08
+#define OP_DATA_PRE66_67  0x10
+#define OP_WORD           0x20
+#define OP_REL32          0x40
+
+#define UCHAR unsigned char
+#define ULONG unsigned long
+#define PVOID void*
+#define PUCHAR unsigned char*
+#define BOOLEAN char
+#define FALSE 0
+#define TRUE  1
+
+
+
 static UCHAR OpcodeFlags[256] =
 {
     OP_MODRM,                      // 00

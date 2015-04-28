@@ -75,8 +75,9 @@ Webpost::Webpost(const TCHAR szName[], const TCHAR szPw[])
 {
     httpfile = NULL;
     httpconnect = NULL;
-    ac_name = szName;
-    ac_pw = szPw;
+    m_strName = szName;
+    m_strPw = szPw;
+
 }
 
 
@@ -248,7 +249,7 @@ int Webpost::Get()
 
 
         CString strQuery;
-        strQuery.Format(auth_query, m_gpvlu);
+        strQuery.Format(auth_query, m_strGpvlu.c_str());
 
 
 #ifdef _UNICODE
@@ -413,7 +414,7 @@ void Webpost::AddOtherHeader()
     httpfile->AddRequestHeaders(_T("Content-Type: application/x-www-form-urlencoded"));
 }
 
-CString Webpost::GetUniqueKey()
+std::basic_string<TCHAR> Webpost::GetUniqueKey()
 {
     CLSID clsid;
     if(CLSIDFromProgID(OLESTR("ncllm.ncllmCtrl"), &clsid) != S_OK)
@@ -561,7 +562,7 @@ bool Webpost::GetStartKey(std::basic_string<TCHAR>& strkey)
 #ifdef JLTW
 
         CString strQuery;
-        strQuery.Format(login_query, ac_name, ac_pw);
+        strQuery.Format(login_query, m_strName.c_str(), m_strPw.c_str());
         strQuery.Replace(_T("+"), _T("%2B"));
 
 #ifdef _UNICODE

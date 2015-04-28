@@ -280,10 +280,10 @@ BOOL CJLwgApp::InitInstance()
 
 
 
-    //至此日志能
-    LOGER(_T("#外挂启动"));
+    //至此日志能使用
+    LOGER(_T("###外挂启动"));
 
-    //外挂线程
+    //外挂主线程
     HANDLE hwgThread = ::CreateThread(NULL, 0, WgThread, this, 0, 0);
     if(hwgThread == NULL)
     {
@@ -313,8 +313,7 @@ void CJLwgApp::SendStatus(TCHAR szText[])
 
 void CJLwgApp::UnLoad()
 {
-    LOGER(_T("外挂正常退出"));
-    SENDLOG(_T("外挂被卸载了"));
+    LOGER(_T("已卸载"));
 
     if(m_hPipe != INVALID_HANDLE_VALUE)
     {
@@ -333,7 +332,7 @@ void CJLwgApp::UnLoad()
     {
         if(::IsWindow(m_pWgDlg->m_hWnd))
         {
-            m_pWgDlg->EndDialog(IDOK);
+            m_pWgDlg->EndDialog(IDCANCEL);
         }
 
         SafeDelete(m_pWgDlg);

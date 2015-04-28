@@ -4,10 +4,6 @@
 #if !defined(AFX_JLKITVIEW_H__2A3B3EDF_5BC0_49E0_8991_A0C7672EA797__INCLUDED_)
 #define AFX_JLKITVIEW_H__2A3B3EDF_5BC0_49E0_8991_A0C7672EA797__INCLUDED_
 
-#if _MSC_VER > 1000
-    #pragma once
-#endif // _MSC_VER > 1000
-
 #include <fstream>
 #include "CVPNFile.h"
 

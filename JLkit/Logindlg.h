@@ -2,7 +2,6 @@
 #define _LOGINDLG_H_
 
 
-
 class CDlgLogin : public CPropertyPage
 {
 // Construction

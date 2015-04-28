@@ -1,11 +1,6 @@
 #if !defined(AFX_STATUSBOX_H__F8E49461_D835_4A1B_8F8A_EF8803AFE3AB__INCLUDED_)
 #define AFX_STATUSBOX_H__F8E49461_D835_4A1B_8F8A_EF8803AFE3AB__INCLUDED_
 
-#if _MSC_VER > 1000
-    #pragma once
-#endif // _MSC_VER > 1000
-// StatusBox.h : header file
-//
 
 /////////////////////////////////////////////////////////////////////////////
 // CStatusBox dialog

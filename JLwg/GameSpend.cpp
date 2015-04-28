@@ -7,9 +7,9 @@
 #include "GameSpend.h"
 
 #ifdef _DEBUG
-    #undef THIS_FILE
-    static char THIS_FILE[] = __FILE__;
-    #define new DEBUG_NEW
+#undef THIS_FILE
+static char THIS_FILE[] = __FILE__;
+#define new DEBUG_NEW
 #endif
 
 
@@ -54,7 +54,8 @@ BOOL GameSpend::Init()
     ce_hookGetTickCount.Init((void*)GetTickCount_addr, ce_gettickcount, FALSE);
     ce_hookQueryPerformanceCounter.Init((void*)Query_addr, ce_querytime, FALSE);
 
-
+    
+    //¹»¹ýµÄÅÐ¶Ï
     if(*realGetTickCount == 0)
     {
         ce_hooktimeGetTime.hook();

@@ -825,20 +825,15 @@ void Gamecall::HookQietu(BOOL bEnable)
 //初始化函数
 BOOL Gamecall::Init()
 {
-    try
+
+    //获取加载的游戏dll的地址
+    m_hModuleBsEngine = GetModuleHandle(_T("bsengine_Shipping"));
+    if(m_hModuleBsEngine == NULL)
     {
-        //获取加载的游戏dll的地址
-        m_hModuleBsEngine = GetModuleHandle(_T("bsengine_Shipping"));
-        if(m_hModuleBsEngine == NULL)
-        {
-            TRACE(_T("获取BsEngine模块失败"));
-            return FALSE;
-        }
+        TRACE(_T("获取BsEngine模块失败"));
+        return FALSE;
     }
-    catch(...)
-    {
-        TRACE(_T("%s Error!"), FUNCNAME);
-    }
+
 
     return TRUE;
 }
@@ -1510,7 +1505,9 @@ BOOL Gamecall::GetObjectPos(ObjectNode* pNode, fPosition* fpos)
 
     DWORD type = (DWORD)GetObjectType(pNode->ObjAddress);
     if(type == 0x20)
+    {
         GetObjectPos2_0x20(pNode->ObjAddress, fpos);
+    }
     else if(type == 0xb0)
     {
         sPosition spos;
@@ -1518,7 +1515,9 @@ BOOL Gamecall::GetObjectPos(ObjectNode* pNode, fPosition* fpos)
         *fpos = ShortPosToFloatPos(spos);
     }
     else if(type == 0x4)
+    {
         _GetObjectPos(pNode->ObjAddress, fpos);
+    }
     else if(type == 0x90)
     {
         sPosition spos;
@@ -1526,7 +1525,9 @@ BOOL Gamecall::GetObjectPos(ObjectNode* pNode, fPosition* fpos)
         *fpos = ShortPosToFloatPos(spos);
     }
     else
+    {
         return FALSE;
+    }
 
     return TRUE;
 }
@@ -7580,7 +7581,7 @@ void Gamecall::CloseXiaoDongHua()
 {
     DWORD dtzt;
     dtzt = (DWORD)ReadByte(ReadDWORD(ReadDWORD(ReadDWORD(move_status_base) + move_status_offset1) + move_status_offset2) + move_status_offset3 + move_status_offset31); //是否有小动画 0是有 1是没有
-    TRACE("小动画状态:%d",dtzt);
+    TRACE(_T("小动画状态:%d"), dtzt);
     if(dtzt == 1)
     {
         //TRACE(_T("动画状态中"));

@@ -293,9 +293,9 @@ void MSJExceptionHandler::ShowFrame(STACKFRAME64* pFrame)
         _tprintf(szFrame);
     }
 }
-//============================================================
-// Walks the stack, and writes the results to the report file
-//============================================================
+
+
+//»ØËÝÕ»
 void MSJExceptionHandler::IntelStackWalk(PCONTEXT pContext)
 {
     _tprintf(_T("\nCall stack:\n"));

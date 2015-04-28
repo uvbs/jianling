@@ -25,7 +25,7 @@ private:
     CJLkitSocket sock;
 
 private:
-    virtual void NotifyMonsterAttack(MONSTERATAACK *pAttack);
+    virtual void NotifyMonsterAttack(MONSTERATAACK* pAttack);
 
 
 public:
@@ -56,6 +56,7 @@ public:
 
 
     //打怪
+    void KillBoss(int inRange);
     int FindThenKill(int pos, DWORD range, DWORD mode, DWORD MyQuestStep = 0, DWORD MyQuestID = 0, DWORD canKillRange = CAN_OPERATOR);    //找到杀掉
     void kill_PickupOnce();
     BOOL kill_PickupBody();
@@ -145,7 +146,7 @@ public:
 
     //组队
     void AddToPary();
-
+    BOOL IsObjectDead(ObjectNode* pNode);
 
     //自定义的要杀的怪物名称
 private:

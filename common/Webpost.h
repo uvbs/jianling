@@ -1,9 +1,6 @@
 #if !defined _WEBPOST_H_
 #define _WEBPOST_H_
 
-#if _MSC_VER > 1000
-    #pragma once
-#endif // _MSC_VER > 1000
 
 #include <string>
 
@@ -52,16 +49,15 @@ private:
     //通用的几个头信息
     void AddOtherHeader();
 
-    CString GetUniqueKey();
+    std::basic_string<TCHAR> GetUniqueKey();
 
     //读取一行
     bool ReadLine(std::basic_string<TCHAR>& strLine);
 
-    CString ac_name;
-    CString ac_pw;
-    CString m_gpvlu;
+    std::basic_string<TCHAR> m_strName;
+    std::basic_string<TCHAR> m_strPw;
+    std::basic_string<TCHAR> m_strGpvlu;
 
-    CString m_Cookie;
 
     CHttpFile* httpfile;
     CHttpConnection* httpconnect;

@@ -131,14 +131,5 @@ void CJLDlg::OnClose()
 void CJLDlg::OnUnloadwg()
 {
     OnStopTask();
-    EndDialog(IDOK);
-}
-
-void CJLDlg::OnPaint()
-{
-    CPaintDC dc(this); // device context for painting
-
-    // TODO: Add your message handler code here
-
-    // Do not call CDialog::OnPaint() for painting messages
+    theApp.UnLoad();
 }

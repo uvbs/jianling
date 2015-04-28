@@ -15,7 +15,7 @@
 
 #define SafeDelete(x) {try{if(x != NULL){delete x;}}catch(...){_ASSERTE(FALSE);}x = NULL;}
 
-//单件宏
+//单件宏, 内嵌类用来自动delete单件
 #define DECLARE_SINGLETON(x)\
 private:\
 static x* _inst;\

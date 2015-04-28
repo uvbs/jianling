@@ -40,11 +40,10 @@ protected:
 public:
     // Generated message map functions
     //{{AFX_MSG(CJLDlg)
-    afx_msg void    OnGotask();
-    afx_msg void    OnWgdata();
-    afx_msg void    OnClose();
-    afx_msg void    OnUnloadwg();
-    afx_msg void OnPaint();
+    afx_msg void OnGotask();
+    afx_msg void OnWgdata();
+    afx_msg void OnClose();
+    afx_msg void OnUnloadwg();
     afx_msg void OnStopTask();
     //}}AFX_MSG
     DECLARE_MESSAGE_MAP()

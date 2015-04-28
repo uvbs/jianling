@@ -780,6 +780,12 @@ exitfun:
     return RESULT_KILL_OK;
 }
 
+void GamecallEx::KillBoss(int inRange)
+{
+    CombatBoss combat;
+    combat.run();
+
+}
 
 //交任务, 最后参数默认0
 //参数1: 任务id
@@ -2223,6 +2229,13 @@ void GamecallEx::AttackAOE()
 
 }
 
+BOOL GamecallEx::IsObjectDead(ObjectNode* pNode)
+{
+    _ASSERTE(FALSE);
+
+    return FALSE;
+}
+
 //杀死对象, 逻辑中带有走路
 //循环出口: 怪死, 超时, 角色死, 出范围
 //参数1: 对象地址
@@ -2240,15 +2253,19 @@ int GamecallEx::KillObject(DWORD range, ObjectNode* pNode, DWORD mode, DWORD can
     for(;;)
     {
 
-        //TRACE(_T("判断人物死亡"));
+        ZeroMemory(&targetpos, sizeof(fPosition));
+        ZeroMemory(&mypos, sizeof(fPosition));        //TRACE(_T("判断人物死亡"));
+
+
         if(GetPlayerHealth() <= 0)
         {
             TRACE(_T("%s: 人物死亡了"), FUNCNAME);
             return RESULT_KILL_PLAYDEAD;
         }
 
-        //整个逻辑根据距离来作为输入数据来做判断
-        //TRACE(_T("执行血量判断"));
+
+
+
         if(GetType4HP(pNode->ObjAddress) == -1 || GetType4HP(pNode->ObjAddress) == 0)
         {
             TRACE(_T("%s: 血量判断怪死了"), FUNCNAME);
@@ -2256,41 +2273,27 @@ int GamecallEx::KillObject(DWORD range, ObjectNode* pNode, DWORD mode, DWORD can
         }
 
 
-        ZeroMemory(&mypos, sizeof(fPosition));
-        GetPlayerPos(&mypos);
-
-        //通过距离判断目标死亡
-        //TRACE(_T("执行类型判断"));
-        ZeroMemory(&targetpos, sizeof(fPosition));
-
         if(GetObjectType(pNode->ObjAddress) != 0x4)
         {
             TRACE(_T("%s: 类型判断怪死了"), FUNCNAME);
             return RESULT_KILL_OK;
         }
 
-        //TRACE(_T("执行坐标判断"));
+
         if(_GetObjectPos(pNode->ObjAddress, &targetpos) == FALSE)
         {
             TRACE(_T("%s: 坐标判断怪死了"), FUNCNAME);
             return RESULT_KILL_OK;
         }
+
+
+        GetPlayerPos(&mypos);
         DWORD dis = (DWORD)CalcC(targetpos, mypos);
-        //TRACE(_T("执行距离判断"));
         if(dis >= range)
         {
             TRACE(_T("%s: 距离判断怪死了"), FUNCNAME);
             return RESULT_KILL_OK;
         }
-
-
-
-        /*
-        不可用
-        if(GetObject_0x14(pNode->ObjAddress) == 0){
-        TRACE(_T("%s: 0x14判断怪死了"), FUNCNAME);
-        return RESULT_KILL_OK;
-        }*/
 
 
         //可继续走
@@ -2380,6 +2383,8 @@ int GamecallEx::KillObject(DWORD range, ObjectNode* pNode, DWORD mode, DWORD can
                     return RESULT_KILL_TIMEOUT;
                 }
             }
+
+
             Sleep(50);
         }//for
     }
@@ -2797,10 +2802,15 @@ DWORD GamecallEx::GetRangeMonsterCount(DWORD range)
 }
 
 
+//其实按照常理, 不能单独一个线程检测血量. 有点奢侈.
+//脚本应该要保证非战斗状态下都是满血的.
+//如果有掉血的情况, 应该有断言. 一定是脚本的问题.
+//这种解决方法只会隐藏问题. 加血的逻辑本身就应该放到
+//战斗逻辑中.
 UINT GamecallEx::KeepAliveThread(LPVOID pParam)
 {
-TRACE("加血");
-	DWORD rs = 0;
+    TRACE(_T("加血"));
+    DWORD rs = 0;
     GamecallEx* pCall = (GamecallEx*)pParam;
     while(pCall->m_bStopThread == FALSE)
     {
@@ -2809,15 +2819,16 @@ TRACE("加血");
         {
             if(pCall->GetPlayerDeadStatus() == 0)
             {
-				TRACE("加血1");
+                TRACE(_T("加血1"));
                 rs = pCall->GetHealth(60);
-				if (rs == 4)
-				{
-					Sleep(1000);
-				}else
-				{
-					Sleep(10000);
-				}
+                if(rs == 4)
+                {
+                    Sleep(1000);
+                }
+                else
+                {
+                    Sleep(10000);
+                }
             }
         }
         pCall->CloseXiaoDongHua();
@@ -2827,6 +2838,7 @@ TRACE("加血");
 
     return 0;
 }
+
 
 UINT GamecallEx::AttackHelperThread(LPVOID pParam)
 {
@@ -3043,6 +3055,7 @@ BOOL GamecallEx::Init()
     SetThreadPriority(m_hThreads[0], THREAD_PRIORITY_LOWEST);
     SetThreadPriority(m_hThreads[1], THREAD_PRIORITY_LOWEST);
 
+
     //钩战斗信息
     GameHook::GetInstance()->SetCombatSink(this);
 
@@ -3055,36 +3068,33 @@ BOOL GamecallEx::Init()
 void GamecallEx::NotifyMonsterAttack(MONSTERATAACK* pAttack)
 {
     static MONSTERATAACK old1;
-
-    static DWORD dwFirst;
+    static DWORD dwFirst = 0;
     DWORD dwSec = GetTickCount();
 
-	TRACE(_T("技能ID:%x"), pAttack->dwStrikeId);
+    TRACE(_T("技能ID:%x"), pAttack->dwStrikeId);
+    
+    
     //先按时间过滤
     if((dwSec - dwFirst) > 1000)
     {
         if(pAttack->dwStrikeId != old1.dwStrikeId)
         {
-			if (pAttack->dwStrikeId == 0x5527005)
-			{
-				sendcall(id_msg_attack, (LPVOID)0x5dca);//tab
-			}else if (pAttack->dwStrikeId == 0x5527009)
-			{
-				//c-5E1B
-				sendcall(id_msg_attack, (LPVOID)0x5E1B);//tab
+            if(pAttack->dwStrikeId == 0x5527005)
+            {
+                sendcall(id_msg_attack, (LPVOID)0x5dca);//tab
+            }
+            else if(pAttack->dwStrikeId == 0x5527009)
+            {
+                //c-5E1B
+                sendcall(id_msg_attack, (LPVOID)0x5E1B);//tab
 
-			}
+            }
 
             //这里写对应boss的技能
-            
-
             old1 = *pAttack;
         }
 
         dwFirst = GetTickCount();
     }
-
-
-
 
 }
