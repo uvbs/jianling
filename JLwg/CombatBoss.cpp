@@ -4,6 +4,7 @@
 
 #include "stdafx.h"
 #include "jlwg.h"
+#include "GamecallEx.h"
 #include "CombatBoss.h"
 
 
@@ -47,9 +48,8 @@ void CombatBoss::run()
     GamecallEx::GetInstance()->GetRangeMonsterToVector(200, RangeObject);
 
 
-
     //走过去
-
+    int inExit = 0; //测试
 
 
     //攻击循环
@@ -58,63 +58,82 @@ void CombatBoss::run()
 
         //退出条件
         //boss 死
-        
+        inExit++;
+        if(inExit >= 100) break;
 
 
 
-        //事件列表空表示当前可以普通攻击
+
+
+        //事件列表空?
         if(_event.size() > 0)
         {
+
+            MONSTERATAACK ma;
+
+
+            //这里需要同步
+            m_Mutex.Lock();
             std::list<MONSTERATAACK>::iterator it = _event.begin();
-            switch((*it).dwStrikeId)
+
+            ma = (*it);
+
+            //处理了这个事件, 从队列删掉
+            _event.erase(it);
+            m_Mutex.Unlock();
+
+
+
+            switch(ma.dwStrikeId)
             {
 
             //对应boss技能
-            case 3333:
+            case 111:
                 {
-
                     break;
                 }
 
             default:
                 {
                     //杀怪
-                    TRACE(_T("attack id:%d"), (*it).dwStrikeId);
+                    TRACE(_T("attack id: %d"), ma.dwStrikeId);
                     break;
                 }
 
             }
 
-            //处理了这个事件, 从队列删掉
-            _event.erase(it);
+
         }
         else
         {
-            //空闲时动作
-
-            //普通释放技能
+            //空闲时动作, 一般的释放技能
+            
 
 
 
         }
 
 
-        //事件发送过快导致执行对应动作时为时已晚怎么办
-        Sleep(250);
+        //事件发送过快导致执行对应动作时为时已晚怎么办, 这个暂时不考虑
+        //计算机没来得及处理人更不可能了
+        Sleep(100);
     }
 
+
+    //取消回调
+    GameHook::GetInstance()->SetCombatSink(NULL);
 }
 
+
+//这里回调不能阻塞的.
+//游戏hook那里回调过来的, 所以这里也不能执行耗时的操作.
+//也不能放技能. 这里只把boss攻击当作事件放到一个队列
 void CombatBoss::NotifyMonsterAttack(MONSTERATAACK* pAttack)
 {
 
     static MONSTERATAACK old1;
-
     static DWORD dwFirst;
     DWORD dwSec = GetTickCount();
-
-    TRACE(_T("技能ID:%x"), pAttack->dwStrikeId);
-
 
 
     //先按时间过滤
@@ -125,32 +144,19 @@ void CombatBoss::NotifyMonsterAttack(MONSTERATAACK* pAttack)
 
 
             //可以有个优先级, 放到队列前还是队列后
-            //现实优先处理还是顺序处理.
-            _event.push_back(*pAttack);
+            //现实优先处理还是顺序处理.需要同步
+            m_Mutex.Lock();
+            _event.push_front(*pAttack);
+            m_Mutex.Unlock();
 
-
-
-//             if(pAttack->dwStrikeId == 0x5527005)
-//             {
-//                 sendcall(id_msg_attack, (LPVOID)0x5dca);//tab
-//             }
-//             else if(pAttack->dwStrikeId == 0x5527009)
-//             {
-//                 //c-5E1B
-//                 sendcall(id_msg_attack, (LPVOID)0x5E1B);//tab
-//
-//             }
-
-            //这里写对应boss的技能
-
-
-
+            //这优先级没意义吧, 这个队列一般都是空的情况
+            //空表示事件被处理掉了, 如果还有队列的话, 只能说明事件已经在排队了.
+            //处理排了队的事件就没意义啦, 事件应该被及时处理
+            //比如一个灭团技能被排队处理了, 还排了1秒. 这时候再被处理已经没意义了.
 
             old1 = *pAttack;
         }
 
         dwFirst = GetTickCount();
     }
-
-
 }

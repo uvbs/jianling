@@ -56,8 +56,8 @@ BEGIN_MESSAGE_MAP(CJLDlg, CDialog)
 END_MESSAGE_MAP()
 
 
-static UINT TaskThread(LPVOID pParam)
-{
+UINT CJLDlg::TaskThread(LPVOID pParam)
+{   
     try
     {
         TaskScript task;
@@ -95,10 +95,7 @@ BOOL CJLDlg::OnInitDialog()
 
     SetWindowText(theApp.m_stData.szAccount);
 
-    ::SetParent(m_hWnd, theApp.m_hGameWnd);
-    SetWindowPos(&wndTopMost, 0, 0, 200, 300, SWP_NOSIZE);
 
-    
     return CDialog::OnInitDialog();
 }
 
@@ -132,4 +129,12 @@ void CJLDlg::OnUnloadwg()
 {
     OnStopTask();
     theApp.UnLoad();
+
+}
+
+BOOL CJLDlg::PreCreateWindow(CREATESTRUCT& cs) 
+{
+	// TODO: Add your specialized code here and/or call the base class
+
+	return CDialog::PreCreateWindow(cs);
 }

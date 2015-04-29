@@ -15,6 +15,8 @@ protected:
 
 public:
     BOOL Init();
+    void UnLoad();
+
 
     //ÍøÂç»Øµ÷
 private:

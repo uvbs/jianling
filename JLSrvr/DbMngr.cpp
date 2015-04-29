@@ -191,10 +191,11 @@ int CDbMngr::CheckUser(TCHAR szUsername[], TCHAR szPassw[])
 
 
     CDBVariant varValue;
+    
     try
     {
         CRecordset record(this);
-        if(record.Open(AFX_DB_USE_DEFAULT_TYPE, (LPCTSTR)strSql) == false)
+        if(!record.Open(AFX_DB_USE_DEFAULT_TYPE, (LPCTSTR)strSql))
         {
             return 0;
         }
@@ -207,6 +208,7 @@ int CDbMngr::CheckUser(TCHAR szUsername[], TCHAR szPassw[])
     catch(CDBException* pEx)
     {
         pEx->Delete();
+        TRACE(_T("CDBException: %s"), (LPCTSTR)pEx->m_strError);
     }
 
     return varValue.m_lVal;

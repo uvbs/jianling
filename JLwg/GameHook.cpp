@@ -103,7 +103,7 @@ void __stdcall GameHook::mySendStep(SENDSTEP* ftarpos)
     FILE* file = _tfopen(szExe, _T("a+b"));
     if(file == NULL)
     {
-        OutputDebugString(_T("打开文件失败"));
+        TRACE(_T("打开文件失败"));
     }
     else
     {
@@ -200,9 +200,6 @@ void __stdcall GameHook::myCombatFilter()
     {
         if(objAddr == m_ObjAddrVec[i])
         {
-            MONSTERATAACK ma;
-            ma.dwObj = objAddr;
-            ma.dwStrikeId = id;
 
             if(GameHook::GetInstance()->m_sink != NULL)
             {
@@ -212,6 +209,10 @@ void __stdcall GameHook::myCombatFilter()
 
             if(GameHook::GetInstance()->m_pCombatSink != NULL)
             {
+                MONSTERATAACK ma;
+                ma.dwObj = objAddr;
+                ma.dwStrikeId = id;
+
                 GameHook::GetInstance()->m_pCombatSink->NotifyMonsterAttack(&ma);
             }
         }

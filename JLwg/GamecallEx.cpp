@@ -3,8 +3,10 @@
 #include "GameConfig.h"
 #include "GameLog.h"
 #include "CombatBoss.h"
-#include "combatEvent.h"
 #include "EventDispatcher.h"
+
+
+
 
 IMPLEMENT_SINGLETON(GamecallEx)
 
@@ -18,19 +20,7 @@ GamecallEx::GamecallEx()
 
 GamecallEx::~GamecallEx()
 {
-
     TRACE(_T("~GamecallEx"));
-    m_bStopThread = TRUE;
-
-    //等待所有线程退出
-    for(int i = 0; i < sizeof(m_hThreads) ; i++)
-    {
-        if(m_hThreads[i] != INVALID_HANDLE_VALUE)
-        {
-            WaitForSingleObject(m_hThreads[i], INFINITE);
-            CloseHandle(m_hThreads[i]);
-        }
-    }
 }
 
 
@@ -553,7 +543,6 @@ void GamecallEx::Shunyi(TCHAR* szLujing)
 
     TRACE(_T("结束瞬移"));
     fclose(file);
-    TRACE(_T("关闭瞬移文件,退出瞬移"));
 }
 
 
@@ -782,8 +771,8 @@ exitfun:
 
 void GamecallEx::KillBoss(int inRange)
 {
-    CombatBoss combat;
-    combat.run();
+    CombatBoss Combat;
+    Combat.run();
 
 }
 
@@ -3035,3 +3024,15 @@ BOOL GamecallEx::Init()
     return TRUE;
 }
 
+void GamecallEx::UnLoad()
+{
+    //等待所有线程退出
+    for(int i = 0; i < sizeof(m_hThreads) ; i++)
+    {
+        if(m_hThreads[i] != INVALID_HANDLE_VALUE)
+        {
+            TerminateThread(m_hThreads[i], 0);
+            CloseHandle(m_hThreads[i]);
+        }
+    }
+}

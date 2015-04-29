@@ -1,11 +1,6 @@
 #if !defined(AFX_CONFIGPARTYPAGE_H__E79E57E9_E4F0_4946_B68B_BF4F1D678A8F__INCLUDED_)
 #define AFX_CONFIGPARTYPAGE_H__E79E57E9_E4F0_4946_B68B_BF4F1D678A8F__INCLUDED_
 
-#if _MSC_VER > 1000
-    #pragma once
-#endif // _MSC_VER > 1000
-// ConfigPartyPage.h : header file
-//
 
 /////////////////////////////////////////////////////////////////////////////
 // CConfigPartyPage dialog

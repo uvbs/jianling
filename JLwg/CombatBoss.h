@@ -5,11 +5,8 @@
 #if !defined(AFX_OMBATBOSS_H__4807637C_C4C2_4752_9D02_052934507027__INCLUDED_)
 #define AFX_OMBATBOSS_H__4807637C_C4C2_4752_9D02_052934507027__INCLUDED_
 
-#if _MSC_VER > 1000
-#pragma once
-#endif // _MSC_VER > 1000
 
-#include "gamecallEx.h"
+
 #include "GameHook.h"
 
 class CombatBoss: public ICombatHookSink
@@ -24,6 +21,7 @@ public:
     void run();
 
 private:
+    CMutex m_Mutex;
     std::list<MONSTERATAACK> _event;
 };
 

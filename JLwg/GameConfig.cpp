@@ -10,9 +10,9 @@
 
 
 #ifdef _DEBUG
-    #undef THIS_FILE
-    static char THIS_FILE[] = __FILE__;
-    #define new DEBUG_NEW
+#undef THIS_FILE
+static char THIS_FILE[] = __FILE__;
+#define new DEBUG_NEW
 #endif
 
 
@@ -74,8 +74,16 @@ BOOL GameConfig::LoadConfig()
     }
 
 
-    PIPEDATA& data = theApp.m_stData;
-    PathAppend(szExe, data.szConfig);
+    PathAppend(szExe, theApp.m_stData.szConfig);
+
+    //不存在, 新建
+    if(!PathFileExists(szExe))
+    {
+        FILE* newfile = _tfopen(szExe, _T("w"));
+        if(newfile == NULL) return FALSE;
+
+        fclose(newfile);
+    }
 
 
     //打开配置文件

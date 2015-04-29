@@ -1,9 +1,7 @@
 #if !defined(AFX_CONFIGQHPAGE_H__DF6BA6C9_4AF4_4190_BB09_A8D021D73DAF__INCLUDED_)
 #define AFX_CONFIGQHPAGE_H__DF6BA6C9_4AF4_4190_BB09_A8D021D73DAF__INCLUDED_
 
-#if _MSC_VER > 1000
-    #pragma once
-#endif
+
 
 class CConfigQhPage : public CPropertyPage
 {

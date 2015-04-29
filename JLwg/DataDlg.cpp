@@ -13,9 +13,9 @@
 
 
 #ifdef _DEBUG
-    #define new DEBUG_NEW
-    #undef THIS_FILE
-    static char THIS_FILE[] = __FILE__;
+#define new DEBUG_NEW
+#undef THIS_FILE
+static char THIS_FILE[] = __FILE__;
 #endif
 
 
@@ -173,8 +173,8 @@ BEGIN_MESSAGE_MAP(CDataDlg, CDialog)
     ON_COMMAND(ID_HOOKSTRIKE, OnHookstrike)
     ON_BN_CLICKED(IDC_HOOK_COMBAT, OnHookCombat)
     ON_BN_CLICKED(IDC_ADDTOPARTY, OnAddtoparty)
-	ON_BN_CLICKED(IDC_BOSSCOMBAT, OnBossBombat)
-	//}}AFX_MSG_MAP
+    ON_BN_CLICKED(IDC_BOSSCOMBAT, OnBossBombat)
+    //}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
 
@@ -264,7 +264,7 @@ BOOL CDataDlg::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult)
     NMHDR* pNMHdr = (NMHDR*)lParam;
     switch(pNMHdr->code)
     {
-        case NM_CLICK:
+    case NM_CLICK:
         {
             //显示点击的名字到编辑控件方便复制
             NMLISTVIEW* pItem = (NMLISTVIEW*)pNMHdr;
@@ -1234,27 +1234,35 @@ void CDataDlg::OnAddtoparty()
     gcall.AddToPary();
 }
 
-void CDataDlg::ShowHook(TCHAR *pszFormat, ...)
+void CDataDlg::ShowHook(TCHAR* pszFormat, ...)
 {
     TCHAR buffer[BUFSIZ] = {0};
-    
+
     va_list argptr;
     va_start(argptr, pszFormat);
     wvsprintf(buffer, pszFormat, argptr);
     va_end(argptr);
-    
+
     _tcscat(buffer, _T("\r\n"));
-    
+
     int len = m_hEdit.GetWindowTextLength();
     m_hEdit.SetSel(len, -1);
     m_hEdit.ReplaceSel(buffer);
 
 }
 
-void CDataDlg::OnBossBombat() 
+UINT CombatThread(LPVOID pParam)
 {
-//    GamecallEx::GetInstance()->KillBoss();
+
+    GamecallEx::GetInstance()->KillBoss(2000);
+
+    return 0;
+}
 
 
-
+void CDataDlg::OnBossBombat()
+{
+    //这里直接用KillBoss会导致一个死锁. 具体看钩子处理那里
+    //测试用另外一个单独线程可以
+    AfxBeginThread(CombatThread, this);
 }

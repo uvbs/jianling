@@ -1,15 +1,6 @@
 #if !defined(AFX_JLDLG_H__9B29DC05_CA02_4C53_B0F2_D4D00809E70B__INCLUDED_)
 #define AFX_JLDLG_H__9B29DC05_CA02_4C53_B0F2_D4D00809E70B__INCLUDED_
 
-#if _MSC_VER > 1000
-    #pragma once
-#endif // _MSC_VER > 1000
-
-// JLDlg.h : header file
-//
-
-
-/////////////////////////////////////////////////////////////////////////////
 
 // CJLDlg dialog
 class CJLDlg : public CDialog
@@ -25,7 +16,7 @@ public:
 
 
     CWinThread* m_pTaskThread;
-
+    static UINT TaskThread(LPVOID pParam);
 
     // Overrides
     // ClassWizard generated virtual function overrides
@@ -33,6 +24,7 @@ public:
 protected:
     virtual void    DoDataExchange(CDataExchange* pDX); // DDX/DDV support
     virtual BOOL    OnInitDialog();
+    virtual BOOL PreCreateWindow(CREATESTRUCT& cs);
     //}}AFX_VIRTUAL
 
 

@@ -5,9 +5,6 @@
 #if !defined(AFX_GAMECONFIG_H__F88A8AE2_C451_47B0_A88C_A933A4EAE5E1__INCLUDED_)
 #define AFX_GAMECONFIG_H__F88A8AE2_C451_47B0_A88C_A933A4EAE5E1__INCLUDED_
 
-#if _MSC_VER > 1000
-    #pragma once
-#endif // _MSC_VER > 1000
 
 typedef std::vector<std::wstring> ItemVector;
 typedef std::vector<std::wstring>::iterator ItemIterator;

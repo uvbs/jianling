@@ -9,7 +9,7 @@
 
 
 #ifdef _DEBUG
-    #define new DEBUG_NEW
+#define new DEBUG_NEW
 #endif
 
 //动态创建
@@ -203,13 +203,13 @@ bool CJLSrvrDoc::OnEventTCPSocketRead(CJLkitSocket* pSocket, const Tcp_Head& stT
 
     switch(stTcpHead.wMainCmdID)
     {
-        case M_LOGIN:
+    case M_LOGIN:
         {
             ProcessLogin(pSocket, stTcpHead, pData, wDataSize);
             break;
         }
 
-        case M_KEY:
+    case M_KEY:
         {
 
             ProcessKey(pSocket, stTcpHead, pData, wDataSize);
@@ -217,8 +217,8 @@ bool CJLSrvrDoc::OnEventTCPSocketRead(CJLkitSocket* pSocket, const Tcp_Head& stT
         }
 
 
-        default:
-            break;
+    default:
+        break;
     }
 
 
@@ -231,51 +231,65 @@ bool CJLSrvrDoc::ProcessLogin(CJLkitSocket* pSocket, const Tcp_Head& stTcpHead, 
 
     switch(stTcpHead.wSubCmdID)
     {
-        case fun_login:
+    case fun_login:
         {
             PROCESS_DESCRIBE des;
-            LOGIN_BUF* pLogin = (LOGIN_BUF*)pData;
-
+            int inResult;
+            int inDbRet;
 
             //保存用户登陆数据
+            LOGIN_BUF* pLogin = (LOGIN_BUF*)pData;
             _userdata[pSocket] = *pLogin;
 
 
-            int inDbRet = m_db.CheckUser(pLogin->name, pLogin->pw);
-            if(inDbRet == 0)
+            inDbRet = m_db.CheckUser(pLogin->name, pLogin->pw);
+            switch(inDbRet)
             {
-                _tcscpy(des.szDescribe, _T("远端错误"));
-            }
-            else if(inDbRet == 1)
-            {
-                _tcscpy(des.szDescribe, _T("登陆完成"));
-            }
-            else if(inDbRet == 3)
-            {
-                _tcscpy(des.szDescribe, _T("没有这用户"));
-            }
-            else if(inDbRet == 2)
-            {
-                _tcscpy(des.szDescribe, _T("已经登陆"));
-            }
-            else if(inDbRet == 4)
-            {
-                _tcscpy(des.szDescribe, _T("密码错误"));
-            }
-            else if(inDbRet == 5)
-            {
-                _tcscpy(des.szDescribe, _T("登陆IP和绑定IP不同"));
-            }
-            else if(inDbRet == 6)
-            {
-                _tcscpy(des.szDescribe, _T("登陆特征与绑定时的特征不同"));
-            }
-            else
-            {
-                _ASSERTE(FALSE);
+            case 0:
+                {
+                    _tcscpy(des.szDescribe, _T("远端错误"));
+                    break;
+                }
+            case 1:
+                {
+                    _tcscpy(des.szDescribe, _T("登陆完成"));
+                    break;
+                }
+            case 2:
+                {
+                    _tcscpy(des.szDescribe, _T("已经登陆"));
+                    break;
+                }
+            case 3:
+                {
+                    _tcscpy(des.szDescribe, _T("没有这用户"));
+                    break;
+                }
+            case 4:
+                {
+                    _tcscpy(des.szDescribe, _T("密码错误"));
+                    break;
+                }
+            case 5:
+                {
+                    _tcscpy(des.szDescribe, _T("登陆IP和绑定IP不同"));
+                    break;
+                }
+            case 6:
+                {
+                    _tcscpy(des.szDescribe, _T("登陆特征与绑定时的特征不同"));
+                    break;
+                }
+            default:
+                {
+                    //这里应该是不可能发生的情况
+                    TRACE(_T("inDbRet: %d"), inDbRet);
+                    _ASSERTE(FALSE);
+                }
             }
 
-            int inResult;
+
+
             if(inDbRet == 1)
             {
                 inResult = fun_login_ok;
@@ -291,8 +305,8 @@ bool CJLSrvrDoc::ProcessLogin(CJLkitSocket* pSocket, const Tcp_Head& stTcpHead, 
         }
 
 
-        //注册
-        case fun_regist:
+    //注册
+    case fun_regist:
         {
             PROCESS_DESCRIBE des;
             REGIST_BUF* pReg = (REGIST_BUF*)pData;
@@ -316,8 +330,8 @@ bool CJLSrvrDoc::ProcessLogin(CJLkitSocket* pSocket, const Tcp_Head& stTcpHead, 
             break;
         }
 
-        default:
-            break;
+    default:
+        break;
     }
 
 
@@ -329,7 +343,7 @@ bool CJLSrvrDoc::ProcessKey(CJLkitSocket* pSocket, const Tcp_Head& stTcpHead, vo
     switch(stTcpHead.wSubCmdID)
     {
 
-        case fun_querykey:
+    case fun_querykey:
         {
 
             std::vector<QUERYKEY_SUCCESS> KeyVec;
@@ -353,7 +367,7 @@ bool CJLSrvrDoc::ProcessKey(CJLkitSocket* pSocket, const Tcp_Head& stTcpHead, vo
             break;
         }
 
-        case fun_bindkey:
+    case fun_bindkey:
         {
             BINDKEY_BUF* pBuf = (BINDKEY_BUF*)pData;
             PROCESS_DESCRIBE des;
@@ -389,8 +403,8 @@ bool CJLSrvrDoc::ProcessKey(CJLkitSocket* pSocket, const Tcp_Head& stTcpHead, vo
         }
 
 
-        default:
-            break;
+    default:
+        break;
     }
     return true;
 }

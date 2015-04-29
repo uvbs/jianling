@@ -5,9 +5,6 @@
 #if !defined(AFX_GAMELOG_H__19788572_D147_4859_9C00_494F1D5A7832__INCLUDED_)
 #define AFX_GAMELOG_H__19788572_D147_4859_9C00_494F1D5A7832__INCLUDED_
 
-#if _MSC_VER > 1000
-    #pragma once
-#endif // _MSC_VER > 1000
 
 #include "..\COMMON\logger.h"
 

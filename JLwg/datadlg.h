@@ -1,11 +1,7 @@
 #if !defined(AFX_DATADLG1_H__2800A9AC_001C_43E1_8873_9016C0DF9B34__INCLUDED_)
 #define AFX_DATADLG1_H__2800A9AC_001C_43E1_8873_9016C0DF9B34__INCLUDED_
 
-#if _MSC_VER > 1000
-    #pragma once
-#endif // _MSC_VER > 1000
-// DataDlg1.h : header file
-//
+
 
 #include "GameHook.h"
 #include "GamecallEx.h"

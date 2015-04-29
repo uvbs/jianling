@@ -1,11 +1,7 @@
 #if !defined(AFX_CONFIGITEMPAGE_H__CAB5627F_935A_4483_8472_C1DB1260A37E__INCLUDED_)
 #define AFX_CONFIGITEMPAGE_H__CAB5627F_935A_4483_8472_C1DB1260A37E__INCLUDED_
 
-#if _MSC_VER > 1000
-    #pragma once
-#endif // _MSC_VER > 1000
-// ConfigItemPage.h : header file
-//
+
 
 /////////////////////////////////////////////////////////////////////////////
 // CConfigItemPage dialog

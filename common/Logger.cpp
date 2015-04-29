@@ -16,12 +16,6 @@ Logger::~Logger()
         fp_file = NULL;
     }
 
-    if(m_lpMsgMut != NULL)
-    {
-        delete m_lpMsgMut;
-        m_lpMsgMut = NULL;
-    }
-
 }
 
 
@@ -51,7 +45,7 @@ void Logger::logva(const TCHAR* pattern, va_list vp)
     GetLocalTime(&system);
 
     //ÁÙ½çÇø
-    m_lpMsgMut->lock();
+    m_MsgMut.Lock();
 
     if(NULL != fp_file)
     {
@@ -62,13 +56,11 @@ void Logger::logva(const TCHAR* pattern, va_list vp)
         fflush(fp_file);
     }
 
-    m_lpMsgMut->unlock();
+    m_MsgMut.Unlock();
 }
 
 BOOL Logger::open(const TCHAR* pFileName, TCHAR *pMode)
 {
-    if(m_lpMsgMut == NULL)
-        m_lpMsgMut = new CLock;
 
     fp_file = _tfopen(pFileName, pMode);
     return (fp_file != NULL);

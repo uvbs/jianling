@@ -32,22 +32,34 @@ CJLwgApp::~CJLwgApp()
 //钩游戏的消息窗口
 LRESULT CALLBACK CJLwgApp::GameMsgProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-    if(!CJLwgApp::m_pWgDlg)
+
+    if(!CJLwgApp::m_pWgDlg || !::IsWindow(CJLwgApp::m_pWgDlg->m_hWnd))
     {
         return CallWindowProc(wpOrigGameProc, hwnd, uMsg, wParam, lParam);
     }
-
 
     //调出外挂
     switch(uMsg)
     {
 
+    //因为程序保护的问题, 好像游戏进程退出时, 外挂模块并不会被通知到
     case WM_DESTROY:
         {
-            OutputDebugString(_T("game destroy msg"));
             theApp.UnLoad();
             break;
         }
+
+
+    case WM_MOVE:
+        {
+            RECT rect;
+
+
+            GetWindowRect(hwnd, &rect);
+            m_pWgDlg->SetWindowPos(NULL, rect.right, rect.top, 0, 0, SWP_NOSIZE | SWP_NOACTIVATE);
+            break;
+        }
+
     case WM_KEYDOWN:
         {
 
@@ -58,25 +70,13 @@ LRESULT CALLBACK CJLwgApp::GameMsgProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPAR
                 {
                     m_pWgDlg->OnGotask();
                 }
-
             }
             else if(wParam == VK_DELETE)
             {
                 m_pWgDlg->OnStopTask();
             }
-
             else if(wParam == VK_END)
             {
-
-                if(::IsWindow(m_pWgDlg->m_hWnd) == FALSE)
-                {
-                    break;
-                }
-
-                int style = GetWindowLong(hwnd, GWL_STYLE);
-                ::SetWindowLong(hwnd, GWL_STYLE, style | WS_CLIPCHILDREN);
-
-
                 if(m_pWgDlg->IsWindowVisible())
                 {
                     m_pWgDlg->ShowWindow(SW_HIDE);
@@ -97,6 +97,7 @@ LRESULT CALLBACK CJLwgApp::GameMsgProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPAR
         }
 
     }
+
 
     return CallWindowProc(wpOrigGameProc, hwnd, uMsg, wParam, lParam);
 }
@@ -159,7 +160,6 @@ DWORD CALLBACK CJLwgApp::WgThread(LPVOID pParam)
     m_pWgDlg->DoModal();
 
 
-    theApp.UnLoad();
     FreeLibraryAndExitThread(theApp.m_hInstance, 0);
     return 0;
 }
@@ -273,11 +273,15 @@ BOOL CJLwgApp::InitInstance()
 
 
     if(!InitPipe())
+    {
         return FALSE;
+    }
 
 
     if(!InitLog())
+    {
         return FALSE;
+    }
 
 
 
@@ -288,10 +292,12 @@ BOOL CJLwgApp::InitInstance()
     HANDLE hwgThread = ::CreateThread(NULL, 0, WgThread, this, 0, 0);
     if(hwgThread == NULL)
     {
+
         LOGER(_T("主线程创建失败"));
         ExitProcess(0);
         return FALSE;
     }
+
 
     CloseHandle(hwgThread);
     return TRUE;
@@ -315,6 +321,9 @@ void CJLwgApp::SendStatus(TCHAR szText[])
 void CJLwgApp::UnLoad()
 {
     LOGER(_T("已卸载"));
+
+    GamecallEx::GetInstance()->UnLoad();
+
 
     if(m_hPipe != INVALID_HANDLE_VALUE)
     {

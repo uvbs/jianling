@@ -1,11 +1,6 @@
 #if !defined(AFX_CONFIGOBJPAGE_H__2416A326_4E09_4F0C_A0C0_946A5B1FC4CD__INCLUDED_)
 #define AFX_CONFIGOBJPAGE_H__2416A326_4E09_4F0C_A0C0_946A5B1FC4CD__INCLUDED_
 
-#if _MSC_VER > 1000
-    #pragma once
-#endif // _MSC_VER > 1000
-// ConfigObjPage.h : header file
-//
 
 /////////////////////////////////////////////////////////////////////////////
 // CConfigObjPage dialog

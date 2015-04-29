@@ -110,10 +110,6 @@ SOURCE=.\CombatBoss.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\combatEvent.cpp
-# End Source File
-# Begin Source File
-
 SOURCE=.\ConfigItemPage.cpp
 # End Source File
 # Begin Source File
@@ -216,10 +212,6 @@ SOURCE=..\common\CHook.h
 # Begin Source File
 
 SOURCE=.\CombatBoss.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\combatEvent.h
 # End Source File
 # Begin Source File
 

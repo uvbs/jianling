@@ -30,6 +30,7 @@
 #include <afxcmn.h>
 #include <afxdlgs.h>
 #include <afxsock.h>
+#include <afxmt.h>
 
 #include <string>
 #include <sstream>
