@@ -2128,7 +2128,7 @@ void GamecallEx::TurnToNear(DWORD range)
     Kill_ApplyConfig(RangeObject);
     if(RangeObject.size() > 0)
     {
-        TRACE2("找到最近怪,面向它.ID:%d,ID2:%d", RangeObject[0]->id, RangeObject[0]->id2);
+        //TRACE2("找到最近怪,面向它.ID:%d,ID2:%d", RangeObject[0]->id, RangeObject[0]->id2);
         TurnTo(RangeObject[0]);
     }
 }
@@ -2773,7 +2773,6 @@ DWORD GamecallEx::GetRangeMonsterCount(DWORD range)
 //这是关掉就行了. 不可这样开个线程去轮询.
 UINT GamecallEx::KeepAliveThread(LPVOID pParam)
 {
-    TRACE(_T("加血"));
     DWORD rs = 0;
     GamecallEx* pCall = (GamecallEx*)pParam;
     while(1)
@@ -2783,7 +2782,6 @@ UINT GamecallEx::KeepAliveThread(LPVOID pParam)
         {
             if(pCall->GetPlayerDeadStatus() == 0)
             {
-                TRACE(_T("加血1"));
                 rs = pCall->GetHealth(60);
                 if(rs == 4)
                 {

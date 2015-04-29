@@ -58,7 +58,7 @@ void CombatBoss::run()
         //退出条件
         //boss 死
         inExit++;
-        if(inExit >= 100) break;
+        if(inExit >= 100000) break;
 
 
 
@@ -87,15 +87,63 @@ void CombatBoss::run()
             {
 
             //对应boss技能
-            case 111:
+            case 0x5455E1:
                 {
+					Sleep(800);
+					TRACE("0x5455E1");
+					//GamecallEx::GetInstance()->KeyPress(86);
+					if (GamecallEx::GetInstance()->isStrikeCd(0x5DFC))
+					{
+						GamecallEx::GetInstance()->sendcall(id_msg_attack, (LPVOID)0x5DFC);//v
+						//GamecallEx::GetInstance()->Attack(0x5DFC);
+						Sleep(3000);
+					}else
+					{
+						GamecallEx::GetInstance()->sendcall(id_msg_attack, (LPVOID)0x5dca);//tab
+						Sleep(1000);
+					}
+					
+					
+					
+					
                     break;
                 }
-
+			case 0x5455DD:
+				{
+					Sleep(800);
+					TRACE("0x5455DD");
+					//GamecallEx::GetInstance()->KeyPress(9);
+					GamecallEx::GetInstance()->sendcall(id_msg_attack, (LPVOID)0x5dca);//tab
+					//GamecallEx::GetInstance()->Attack(0x5dca);
+					Sleep(1000);
+					break;
+				}
+			case 0x5455DA:
+				{
+					Sleep(800);
+					TRACE("0x5455DA");
+					//GamecallEx::GetInstance()->KeyPress(82);
+					//GamecallEx::GetInstance()->sendcall(id_msg_attack, (LPVOID)0x5dc1);//r
+					//GamecallEx::GetInstance()->Attack(0x5dc1);
+					//Sleep(500);
+					//GamecallEx::GetInstance()->KeyPress(88);
+					if (GamecallEx::GetInstance()->isStrikeCd(0x5E24))
+					{
+						GamecallEx::GetInstance()->sendcall(id_msg_attack, (LPVOID)0x5E24);//x
+						//GamecallEx::GetInstance()->Attack(0x5E24);
+						Sleep(500);
+					}else
+					{
+						GamecallEx::GetInstance()->sendcall(id_msg_attack, (LPVOID)0x5dca);//tab
+						Sleep(1000);
+					}
+					break;
+				}
             default:
                 {
                     //杀怪
                     TRACE(_T("attack id: %d"), ma.dwStrikeId);
+
                     break;
                 }
 
@@ -105,11 +153,16 @@ void CombatBoss::run()
         }
         else
         {
+
             //空闲时动作, 一般的释放技能
-            
-
-
-
+			GamecallEx::GetInstance()->TurnToNear(300);
+			Sleep(100);
+			//GamecallEx::GetInstance()->KeyPress(82);
+			GamecallEx::GetInstance()->sendcall(id_msg_attack, (LPVOID)0x5dc1);//r
+			Sleep(100);
+			//GamecallEx::GetInstance()->KeyPress(84);
+			GamecallEx::GetInstance()->sendcall(id_msg_attack, (LPVOID)0x5dde);//t
+			Sleep(100);
         }
 
 
@@ -136,7 +189,7 @@ void CombatBoss::NotifyMonsterAttack(MONSTERATAACK* pAttack)
 
 
     //先按时间过滤
-    if((dwSec - dwFirst) > 1000)
+    if((dwSec - dwFirst) > 500)
     {
         if(pAttack->dwStrikeId != old1.dwStrikeId)
         {

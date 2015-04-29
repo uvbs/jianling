@@ -167,7 +167,7 @@ void CConfigObjPage::GetSelToFilterList(TCHAR szName[])
         while(pos)
         {
             int nItem = m_ObjList.GetNextSelectedItem(pos);
-            TRACE1("Item %d was selected!\n", nItem);
+            //TRACE1("Item %d was selected!\n", nItem);
             // you could do your own processing on nItem here
             CString strItem = m_ObjList.GetItemText(nItem, 0);
 

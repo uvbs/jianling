@@ -386,7 +386,7 @@
 #define     Experience_status_offset2             0x8EC        //
 #define     Experience_status_offset3             0xC0        //
 #define     Experience_status_offset4             0x1C        //
-#define     viewpoint_call                 0x6095F18        //viewpoint_call - bsengine  基础地址 = 差值
+#define     viewpoint_call                 0x65B5F18        //viewpoint_call - bsengine  基础地址 = 差值
 #define     viewpoint_offset1               0x3BC        //
 #define     viewpoint_offset3               0x40        //
 #define     viewpoint_offset4               0x214        //

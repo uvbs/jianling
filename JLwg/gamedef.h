@@ -67,7 +67,7 @@
 #define QUDINGYAOJIANG_JIEGOUTOU        0x0A7CD0A4      // 确定摇奖CALL的结构头  
 #define ShuaXinBeiBao_JIEGOUTOU         0x0A7BD0A4      // 刷新背包CALL的结构头  
 #define GUANBICHUANGKOUCALL_JIEGOUTOU   0x0AD2D0A4      // 关闭窗口CALL的结构头  
-#define SHENXINGBAIBIANCHAZHI           0x1EF26C8       //神行百变差值     面向的基址 - bsengine_Shipping.dll的base 
+#define SHENXINGBAIBIANCHAZHI           0x1F35F18       //神行百变差值     面向的基址 - bsengine_Shipping.dll的base 
 
 
 //这每个定义是一种配置文件中的节名
