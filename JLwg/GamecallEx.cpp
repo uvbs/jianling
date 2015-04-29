@@ -14,7 +14,6 @@ IMPLEMENT_SINGLETON(GamecallEx)
 //构造函数
 GamecallEx::GamecallEx()
 {
-    m_bStopThread = FALSE;
     m_bCanAoe = FALSE;
 }
 
@@ -2311,7 +2310,7 @@ int GamecallEx::KillObject(DWORD range, ObjectNode* pNode, DWORD mode, DWORD can
             {
                 if(mode & modeAoe)
                 {
-                    if(m_bCanAoe)
+                    if(GetRangeMonsterCount() > 2)
                     {
                         //TRACE(_T("执行AEO"));
                         AttackAOE();
@@ -2769,13 +2768,15 @@ DWORD GamecallEx::GetRangeMonsterCount(DWORD range)
 //脚本应该要保证非战斗状态下都是满血的.
 //如果有掉血的情况, 应该有断言. 一定是脚本的问题.
 //这种解决方法只会隐藏问题. 加血的逻辑本身就应该放到
-//战斗逻辑中.
+//战斗逻辑中. 关小动画也挺变态的. 其实应该找小动画出发
+//的call. 勾住那里. 也就是说, 有小动画时, 外挂能得到一个通知.
+//这是关掉就行了. 不可这样开个线程去轮询.
 UINT GamecallEx::KeepAliveThread(LPVOID pParam)
 {
     TRACE(_T("加血"));
     DWORD rs = 0;
     GamecallEx* pCall = (GamecallEx*)pParam;
-    while(pCall->m_bStopThread == FALSE)
+    while(1)
     {
 
         if(pCall->isLoadingMap() == 3)
@@ -2801,38 +2802,6 @@ UINT GamecallEx::KeepAliveThread(LPVOID pParam)
 
     return 0;
 }
-
-
-UINT GamecallEx::AttackHelperThread(LPVOID pParam)
-{
-    GamecallEx* pCall = (GamecallEx*)pParam;
-    while(pCall->m_bStopThread == FALSE)
-    {
-        if(pCall->isLoadingMap() == 3)
-        {
-            if(pCall->GetPlayerDeadStatus() == 0)
-            {
-                if(pCall->GetPlayerFightingStatus())
-                {
-                    if(pCall->GetRangeMonsterCount() >= 2)
-                    {
-                        pCall->m_bCanAoe = TRUE;
-                    }
-                    else
-                    {
-                        pCall->m_bCanAoe = FALSE;
-                    }
-                }
-            }
-        }
-        Sleep(1000);
-    }
-
-
-    return 0;
-}
-
-
 
 
 //应用配置文件的杀怪设置
@@ -3014,9 +2983,7 @@ BOOL GamecallEx::Init()
 
     //创建辅助线程
     m_hThreads[0] = (HANDLE)_beginthreadex(0, 0, KeepAliveThread, this, 0, 0);
-    m_hThreads[1] = (HANDLE)_beginthreadex(0, 0, AttackHelperThread, this, 0, 0);
     SetThreadPriority(m_hThreads[0], THREAD_PRIORITY_LOWEST);
-    SetThreadPriority(m_hThreads[1], THREAD_PRIORITY_LOWEST);
 
 
     if(!Gamecall::Init()) return FALSE;

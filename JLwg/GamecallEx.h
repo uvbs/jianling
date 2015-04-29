@@ -75,7 +75,6 @@ public:
 
     //辅助线程
     static UINT CALLBACK KeepAliveThread(LPVOID pParam);
-    static UINT CALLBACK AttackHelperThread(LPVOID pParam);
 
     //杀怪
     int KillObject(DWORD range, ObjectNode* pNode, DWORD mode, DWORD canKillRange = CAN_OPERATOR); //杀死这个对象
@@ -149,8 +148,7 @@ public:
 
     //自定义的要杀的怪物名称
 private:
-    HANDLE m_hThreads[2];
-    BOOL m_bStopThread;
+    HANDLE m_hThreads[1];
     BOOL m_bCanAoe;
     CustKillVector CustomName;
 };
