@@ -14,12 +14,10 @@ IMPLEMENT_SINGLETON(GamecallEx)
 //构造函数
 GamecallEx::GamecallEx()
 {
-    m_bCanAoe = FALSE;
 }
 
 GamecallEx::~GamecallEx()
 {
-    TRACE(_T("~GamecallEx"));
 }
 
 
@@ -36,8 +34,8 @@ BOOL GamecallEx::HeChengWuQi_Po5(EQUITMENT_POS pos, wchar_t* name)
 
 
     //先判断参数传的有没有, 没有算逑
-    _BAGSTU fu;
-    if(GetGoodsFromBagByName(name, &fu) == FALSE)
+    BagVector fu;
+    if(GetGoodsFromBagByName(name, fu) == FALSE)
     {
         TRACE(_T("背包里没有对应物品"));
         return FALSE;
@@ -67,7 +65,7 @@ BOOL GamecallEx::HeChengWuQi_Po5(EQUITMENT_POS pos, wchar_t* name)
 
         PARAM_GUANSHANGDIAN temp;
         temp.argv1 = (DWORD)&zhu;
-        temp.argv2 = (DWORD)&fu;
+        temp.argv2 = (DWORD)&fu[0];
         sendcall(id_msg_HeChengWuQi_Po5, &temp);
         Sleep(2000);
         //破5级后继续强化
@@ -95,14 +93,14 @@ BOOL GamecallEx::HeChengWuQiByHun(EQUITMENT_POS pos)
     GetGoodsByEquipPos(pos, &goods);
 
     BOOL bFind = FALSE;
-    _BAGSTU zhu;
+    BagVector zhu;
 
 
     if(pos == WUQI)
     {
         if(goods.m_LV <= 36)
         {
-            if(GetGoodsFromBagByName(hun1, &zhu))
+            if(GetGoodsFromBagByName(hun1, zhu))
             {
                 bFind = TRUE;
             }
@@ -111,11 +109,11 @@ BOOL GamecallEx::HeChengWuQiByHun(EQUITMENT_POS pos)
 
         if(bFind == FALSE)
         {
-            if(GetGoodsFromBagByName(hun2, &zhu) == FALSE)
+            if(GetGoodsFromBagByName(hun2, zhu) == FALSE)
             {
-                if(GetGoodsFromBagByName(hun3, &zhu) == FALSE)
+                if(GetGoodsFromBagByName(hun3, zhu) == FALSE)
                 {
-                    if(GetGoodsFromBagByName(hun4, &zhu) == FALSE)
+                    if(GetGoodsFromBagByName(hun4, zhu) == FALSE)
                     {
                         TRACE(_T("没有找到这个武魂材料"));
                         return FALSE;
@@ -129,7 +127,7 @@ BOOL GamecallEx::HeChengWuQiByHun(EQUITMENT_POS pos)
     {
         if(goods.m_LV <= 36)
         {
-            if(GetGoodsFromBagByName(sshun1, &zhu))
+            if(GetGoodsFromBagByName(sshun1, zhu))
             {
                 bFind = TRUE;
             }
@@ -138,11 +136,11 @@ BOOL GamecallEx::HeChengWuQiByHun(EQUITMENT_POS pos)
 
         if(bFind == FALSE)
         {
-            if(GetGoodsFromBagByName(sshun2, &zhu) == FALSE)
+            if(GetGoodsFromBagByName(sshun2, zhu) == FALSE)
             {
-                if(GetGoodsFromBagByName(sshun3, &zhu) == FALSE)
+                if(GetGoodsFromBagByName(sshun3, zhu) == FALSE)
                 {
-                    if(GetGoodsFromBagByName(sshun4, &zhu) == FALSE)
+                    if(GetGoodsFromBagByName(sshun4, zhu) == FALSE)
                     {
                         TRACE(_T("没有找到这个首饰武魂材料"));
                         return FALSE;
@@ -154,7 +152,7 @@ BOOL GamecallEx::HeChengWuQiByHun(EQUITMENT_POS pos)
     }
 
 
-    HeChengWuQi(pos, zhu.name);
+    HeChengWuQi(pos, zhu[0].name);
     return TRUE;
 }
 
@@ -165,17 +163,17 @@ BOOL GamecallEx::HeChengWuQi(EQUITMENT_POS pos, wchar_t* name)
 {
 
 
-    _BAGSTU fu;
+    BagVector fu;
     _BAGSTU zhu;
 
     //fix
-    if(GetGoodsFromBagByName(name, &fu) &&
+    if(GetGoodsFromBagByName(name, fu) &&
             GetGoodsByEquipPos(pos, &zhu))
     {
 
         PARAM_GUANSHANGDIAN temp;
         temp.argv1 = (DWORD)&zhu;
-        temp.argv2 = (DWORD)&fu;
+        temp.argv2 = (DWORD)&fu[0];
 
         sendcall(id_msg_HeChengWuQi, &temp);
 
@@ -768,9 +766,10 @@ exitfun:
     return RESULT_KILL_OK;
 }
 
-void GamecallEx::KillBoss(int inRange)
+void GamecallEx::KillBoss(const wchar_t* name)
 {
     CombatBoss Combat;
+    Combat.SetName(name);
     Combat.run();
 
 }
@@ -1312,6 +1311,15 @@ void GamecallEx::Stepto(wchar_t* name)
     }
 }
 
+void GamecallEx::Stepto(ObjectNode* pNode)
+{
+    fPosition fpos;
+    if(GetObjectPos(pNode, &fpos))
+    {
+        Stepto3x();
+        Gamecall::Stepto(fpos, 10, CAN_OPERATOR, 3000);
+    }
+}
 
 
 BOOL GamecallEx::_CityConvey(DWORD cityid)
@@ -1529,16 +1537,17 @@ BOOL GamecallEx::BuqiBaGua(wchar_t* name)
 //参数7是解封符的数量
 void GamecallEx::JieFengHezi(wchar_t* HeZiname, UCHAR keytype, wchar_t* Keyname, DWORD keyCount)
 {
-    _BAGSTU HeziGoods;
-    _BAGSTU KeyGoods;
-    if(GetGoodsFromBagByName(HeZiname, &HeziGoods) == FALSE ||
-            GetGoodsFromBagByName(Keyname, &KeyGoods) == FALSE)
+    BagVector HeziGoods;
+    BagVector KeyGoods;
+
+    if(GetGoodsFromBagByName(HeZiname, HeziGoods) == FALSE ||
+            GetGoodsFromBagByName(Keyname, KeyGoods) == FALSE)
     {
         TRACE(_T("%s: 没有找到这个盒子"), FUNCNAME);
         return;
     }
 
-    int value = HeziGoods.m_Info;
+    int value = HeziGoods[0].m_Info;
     value <<= 16;
     value += package;
 
@@ -1547,7 +1556,7 @@ void GamecallEx::JieFengHezi(wchar_t* HeZiname, UCHAR keytype, wchar_t* Keyname,
     temp.argv2 = 0;
     temp.argv3 = 1;
     temp.argv4 = keytype;
-    temp.argv5 = KeyGoods.m_ID;
+    temp.argv5 = KeyGoods[0].m_ID;
     temp.argv6 = 1;
     temp.argv7 = keyCount;
     sendcall(id_msg_JieFengZhuangBei, &temp);
@@ -1560,20 +1569,20 @@ void GamecallEx::JieFengHezi(wchar_t* HeZiname, UCHAR keytype, wchar_t* Keyname,
 //材料数量
 void GamecallEx::JieFengZhuangBei(wchar_t* name, wchar_t* cailiao_name, UINT count)
 {
-    _BAGSTU goods;
-    _BAGSTU cailiao;
-    if(GetGoodsFromBagByName(name, &goods) == FALSE ||
-            GetGoodsFromBagByName(cailiao_name, &cailiao) == FALSE)
+    BagVector goods;
+    BagVector cailiao;
+    if(GetGoodsFromBagByName(name, goods) == FALSE ||
+            GetGoodsFromBagByName(cailiao_name, cailiao) == FALSE)
     {
         TRACE(_T("%d: 没有这个物品"), FUNCNAME);
         return;
     }
 
-    int value = goods.m_Info;
+    int value = goods[0].m_Info;
     value <<= 16;
     value += package;
 
-    Gamecall::JieFengZhuangBei(value, cailiao.m_ID, count);
+    Gamecall::JieFengZhuangBei(value, cailiao[0].m_ID, count);
 
 }
 
@@ -1678,10 +1687,10 @@ void GamecallEx::JiaBaoShi(DWORD pos, wchar_t* name)
         return;
     }
 
-    _BAGSTU goods;
-    if(GetGoodsFromBagByName(name, &goods))
+    BagVector item;
+    if(GetGoodsFromBagByName(name, item))
     {
-        int value = goods.m_Info;
+        int value = item[0].m_Info;
         value <<= 16;
         value += package;
 
@@ -1766,8 +1775,8 @@ void GamecallEx::SellItem(wchar_t* name, wchar_t* npcName, BOOL bClose)
 
 
     //通过这个名字取其它信息
-    _BAGSTU goods;
-    if(GetGoodsFromBagByName(name, &goods) == FALSE)
+    BagVector item;
+    if(GetGoodsFromBagByName(name, item) == FALSE)
     {
         TRACE(_T("%s: 没找到这个物品"), FUNCNAME);
         return;
@@ -1775,11 +1784,11 @@ void GamecallEx::SellItem(wchar_t* name, wchar_t* npcName, BOOL bClose)
 
 
     //这个数量数据目前测试武器八卦是0, 表示有一个
-    goods.m_Num = (goods.m_Num == 0 ? 1 : goods.m_Num);
+    item[0].m_Num = (item[0].m_Num == 0 ? 1 : item[0].m_Num);
 
 
     PARAM_GUANSHANGDIAN temp;
-    temp.argv1 = (DWORD)&goods;
+    temp.argv1 = (DWORD)&item[0];
     temp.argv2 = dwUiAddr;
     sendcall(id_msg_SellItem, &temp);
 
@@ -1835,13 +1844,13 @@ void GamecallEx::Yaojiang(wchar_t* Zen_name, wchar_t* BaGuaname)
 
     //摇奖
     DWORD i = 0;
-    _BAGSTU ZenGoods;
-    ZeroMemory(&ZenGoods, sizeof(_BAGSTU));
+    BagVector zen;
 
 
-    GetGoodsFromBagByName(Zen_name, &ZenGoods);
-    TRACE(_T("精气数量:%d"), ZenGoods.m_Num);
-    for(i = 0; i < ZenGoods.m_Num; i++)
+    GetGoodsFromBagByName(Zen_name, zen);
+    TRACE(_T("精气数量:%d"), zen[0].m_Num);
+
+    for(i = 0; i < zen[0].m_Num; i++)
     {
         TRACE(_T("摇精气当前进度:%d"), i);
         PickupTask();
@@ -1851,8 +1860,9 @@ void GamecallEx::Yaojiang(wchar_t* Zen_name, wchar_t* BaGuaname)
 
 _kaihezi_begin:
     //完, 开盒子装八卦
-    std::vector<_BAGSTU> HeZiVec;
+    BagVector HeZiVec;
     GetGoodsByName_Hezi(BaGuaname, HeZiVec);
+
     TRACE(_T("盒子的数量:%d"), HeZiVec.size());
     for(i = 0; i < HeZiVec.size(); i++)
     {
@@ -2425,21 +2435,21 @@ void GamecallEx::CuncangkuByConfig(wchar_t* name)
 //[物品首地址 + 0x6C] == 0x78 adress
 BOOL GamecallEx::HeChengWuQi_Po10(wchar_t* zname, wchar_t* name)
 {
-    _BAGSTU zhu;
+    BagVector zhu;
     //if(GetGoodsByEquipPos(pos, &zhu) == FALSE)
     //{
     //    TRACE(_T("装备位置没有物品"));
     //    return FALSE;
     //}
-    if(GetGoodsFromBagByName(zname, &zhu) == FALSE)
+    if(GetGoodsFromBagByName(zname, zhu) == FALSE)
     {
         TRACE(_T("背包里没有对应的主武器"));
         return FALSE;
     }
 
     //先判断参数传的有没有, 没有算逑
-    _BAGSTU fu;
-    if(GetGoodsFromBagByName(name, &fu) == FALSE)
+    BagVector fu;
+    if(GetGoodsFromBagByName(name, fu) == FALSE)
     {
         TRACE(_T("背包里没有对应的辅武器"));
         return FALSE;
@@ -2460,14 +2470,15 @@ BOOL GamecallEx::HeChengWuQi_Po10(wchar_t* zname, wchar_t* name)
     //      isFull5_fu = TRUE;
     //  }
     //}
-    TRACE2("zhu:%x,fu:%x", zhu.m_Info, fu.m_Info);
+    TRACE2("zhu:%x,fu:%x", zhu[0].m_Info, fu[0].m_Info);
 
-    DWORD tempaddress = HuoQuWuQiPo10CanShu(zhu.m_Base);
+    DWORD tempaddress = HuoQuWuQiPo10CanShu(zhu[0].m_Base);
     if(tempaddress == -1)
     {
         TRACE(_T("没有找到address的参数地址"));
         return FALSE;
     }
+
     if(isFull5_fu)
     {
 
@@ -2497,32 +2508,29 @@ BOOL GamecallEx::HeChengWuQi_Po10(wchar_t* zname, wchar_t* name)
 
 void GamecallEx::GoodsQuests(DWORD id, DWORD step, wchar_t* name, DWORD questtype /*= 0*/, DWORD ff /*= 0xff*/, DWORD unknow /*= 0*/)
 {
-    _BAGSTU bag;
+    _ASSERTE(name != NULL);
+
+    BagVector item;
     int gezi;
     gezi = 0;
-    ZeroMemory(&bag, sizeof(_BAGSTU));
-    if(name == NULL)
+
+    if(GetGoodsFromBagByName(name, item) == FALSE)
     {
-        TRACE(_T("没有输入任务物品名称"));
+        TRACE(_T("没有获取到任务道具信息"));
         return;
     }
-    else
-    {
 
-        if(GetGoodsFromBagByName(name, &bag) == FALSE)
-        {
-            TRACE(_T("没有获取到任务道具信息"));
-            return;
-        }
-    }
-    if(bag.m_Info == NULL)
+    if(item[0].m_Info == NULL)
     {
         TRACE(_T("没有获取道具的格子数"));
         return;
     }
-    gezi = bag.m_Info;
+
+
+    gezi = item[0].m_Info;
     gezi <<= 16;
     gezi += package;
+
     //取任务面板地址, 测试不用这个地址
     //DWORD dwUIAddr;
     //GetUIAddrByName(GetUIBinTreeBaseAddr(), L"TalkProgressMissionPanel", &dwUIAddr);
@@ -2764,13 +2772,14 @@ DWORD GamecallEx::GetRangeMonsterCount(DWORD range)
 }
 
 
-//其实按照常理, 不能单独一个线程检测血量. 有点奢侈.
+//其实按照常理, 不能单独一个线程检测血量. 有点奢侈. 而且要
+//加入额外的退出线程的代码
 //脚本应该要保证非战斗状态下都是满血的.
 //如果有掉血的情况, 应该有断言. 一定是脚本的问题.
 //这种解决方法只会隐藏问题. 加血的逻辑本身就应该放到
-//战斗逻辑中. 关小动画也挺变态的. 其实应该找小动画出发
+//战斗逻辑中. 关小动画也挺变态的. 其实应该找小动画
 //的call. 勾住那里. 也就是说, 有小动画时, 外挂能得到一个通知.
-//这是关掉就行了. 不可这样开个线程去轮询.
+//这时关掉就行了. 不可这样开个线程去轮询.
 UINT GamecallEx::KeepAliveThread(LPVOID pParam)
 {
     DWORD rs = 0;
@@ -2806,6 +2815,7 @@ UINT GamecallEx::KeepAliveThread(LPVOID pParam)
 //一些是否怪物的判断放到这里是要让遍历范围怪物尽可能多的遍历出来, 然后
 //让配置文件去过滤, 不然就需要多写一个范围所有目标过滤. 因为有配置文件
 //中存在但是原本范围过滤中不存在的情况.
+//这个函数写的也挺蛋疼的, TODO一下, 有空改下逻辑
 BOOL GamecallEx::Kill_ApplyConfig(std::vector<ObjectNode*>& ObjectVec)
 {
     try

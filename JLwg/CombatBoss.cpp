@@ -39,26 +39,64 @@ void CombatBoss::run()
     //hook怪物技能, 设置回调
     GameHook::GetInstance()->SetCombatSink(this);
 
-
-    //遍历到boss的地址
-    //获得坐标
-
-    std::vector<ObjectNode*> RangeObject;
-    GamecallEx::GetInstance()->GetRangeMonsterToVector(200, RangeObject);
+    //获得call
+    GamecallEx* pCall = GamecallEx::GetInstance();
 
 
-    //走过去
-    int inExit = 0; //测试
+    fPosition mypos;
+    fPosition tarpos;
 
+    ObjectNode* pBossNode = pCall->GetObjectByName(m_name.c_str(), 0);
+    if(pBossNode == NULL)
+    {
+        TRACE(_T("没找到boss"));
+        return;
+    }
 
-    //攻击循环
+    pCall->Stepto(pBossNode);
+
+//攻击循环
     while(1)
     {
 
         //退出条件
         //boss 死
-        inExit++;
-        if(inExit >= 100000) break;
+
+        GamecallEx::GetInstance()->KeyPress('R');
+        //玩家死
+
+
+
+        if(pCall->GetType4HP(pBossNode->ObjAddress) == -1 || pCall->GetType4HP(pBossNode->ObjAddress) == 0)
+        {
+            TRACE(_T("%s: 血量判断怪死了"), FUNCNAME);
+            break;
+        }
+
+
+        if(pCall->GetObjectType(pBossNode->ObjAddress) != 0x4)
+        {
+            TRACE(_T("%s: 类型判断怪死了"), FUNCNAME);
+            break;
+        }
+
+
+        if(pCall->_GetObjectPos(pBossNode->ObjAddress, &tarpos) == FALSE)
+        {
+            TRACE(_T("%s: 坐标判断怪死了"), FUNCNAME);
+            break;
+        }
+
+
+        //这个距离判断不太通用, 假设怪物第血量会快速逃脱
+        //此时正好判断到距离, 判断成死了
+        pCall->GetPlayerPos(&mypos);
+        DWORD dis = (DWORD)pCall->CalcC(tarpos, mypos);
+        if(dis >= CAN_OPERATOR*2)
+        {
+            TRACE(_T("%s: 距离判断怪死了"), FUNCNAME);
+            break;
+        }
 
 
 
@@ -89,56 +127,58 @@ void CombatBoss::run()
             //对应boss技能
             case 0x5455E1:
                 {
-					Sleep(800);
-					TRACE("0x5455E1");
-					//GamecallEx::GetInstance()->KeyPress(86);
-					if (GamecallEx::GetInstance()->isStrikeCd(0x5DFC))
-					{
-						GamecallEx::GetInstance()->sendcall(id_msg_attack, (LPVOID)0x5DFC);//v
-						//GamecallEx::GetInstance()->Attack(0x5DFC);
-						Sleep(3000);
-					}else
-					{
-						GamecallEx::GetInstance()->sendcall(id_msg_attack, (LPVOID)0x5dca);//tab
-						Sleep(1000);
-					}
-					
-					
-					
-					
+                    Sleep(800);
+                    TRACE(_T("0x5455E1"));
+                    //GamecallEx::GetInstance()->KeyPress(86);
+                    if(GamecallEx::GetInstance()->isStrikeCd(0x5DFC))
+                    {
+                        GamecallEx::GetInstance()->sendcall(id_msg_attack, (LPVOID)0x5DFC);//v
+                        //GamecallEx::GetInstance()->Attack(0x5DFC);
+                        Sleep(3000);
+                    }
+                    else
+                    {
+                        GamecallEx::GetInstance()->sendcall(id_msg_attack, (LPVOID)0x5dca);//tab
+                        Sleep(1000);
+                    }
+
+
+
+
                     break;
                 }
-			case 0x5455DD:
-				{
-					Sleep(800);
-					TRACE("0x5455DD");
-					//GamecallEx::GetInstance()->KeyPress(9);
-					GamecallEx::GetInstance()->sendcall(id_msg_attack, (LPVOID)0x5dca);//tab
-					//GamecallEx::GetInstance()->Attack(0x5dca);
-					Sleep(1000);
-					break;
-				}
-			case 0x5455DA:
-				{
-					Sleep(800);
-					TRACE("0x5455DA");
-					//GamecallEx::GetInstance()->KeyPress(82);
-					//GamecallEx::GetInstance()->sendcall(id_msg_attack, (LPVOID)0x5dc1);//r
-					//GamecallEx::GetInstance()->Attack(0x5dc1);
-					//Sleep(500);
-					//GamecallEx::GetInstance()->KeyPress(88);
-					if (GamecallEx::GetInstance()->isStrikeCd(0x5E24))
-					{
-						GamecallEx::GetInstance()->sendcall(id_msg_attack, (LPVOID)0x5E24);//x
-						//GamecallEx::GetInstance()->Attack(0x5E24);
-						Sleep(500);
-					}else
-					{
-						GamecallEx::GetInstance()->sendcall(id_msg_attack, (LPVOID)0x5dca);//tab
-						Sleep(1000);
-					}
-					break;
-				}
+            case 0x5455DD:
+                {
+                    Sleep(800);
+                    TRACE(_T("0x5455DD"));
+                    //GamecallEx::GetInstance()->KeyPress(9);
+                    GamecallEx::GetInstance()->sendcall(id_msg_attack, (LPVOID)0x5dca);//tab
+                    //GamecallEx::GetInstance()->Attack(0x5dca);
+                    Sleep(1000);
+                    break;
+                }
+            case 0x5455DA:
+                {
+                    Sleep(800);
+                    TRACE(_T("0x5455DA"));
+                    //GamecallEx::GetInstance()->KeyPress(82);
+                    //GamecallEx::GetInstance()->sendcall(id_msg_attack, (LPVOID)0x5dc1);//r
+                    //GamecallEx::GetInstance()->Attack(0x5dc1);
+                    //Sleep(500);
+                    //GamecallEx::GetInstance()->KeyPress(88);
+                    if(GamecallEx::GetInstance()->isStrikeCd(0x5E24))
+                    {
+                        GamecallEx::GetInstance()->sendcall(id_msg_attack, (LPVOID)0x5E24);//x
+                        //GamecallEx::GetInstance()->Attack(0x5E24);
+                        Sleep(500);
+                    }
+                    else
+                    {
+                        GamecallEx::GetInstance()->sendcall(id_msg_attack, (LPVOID)0x5dca);//tab
+                        Sleep(1000);
+                    }
+                    break;
+                }
             default:
                 {
                     //杀怪
@@ -155,14 +195,14 @@ void CombatBoss::run()
         {
 
             //空闲时动作, 一般的释放技能
-			GamecallEx::GetInstance()->TurnToNear(300);
-			Sleep(100);
-			//GamecallEx::GetInstance()->KeyPress(82);
-			GamecallEx::GetInstance()->sendcall(id_msg_attack, (LPVOID)0x5dc1);//r
-			Sleep(100);
-			//GamecallEx::GetInstance()->KeyPress(84);
-			GamecallEx::GetInstance()->sendcall(id_msg_attack, (LPVOID)0x5dde);//t
-			Sleep(100);
+            pCall->TurnToNear(300);
+            Sleep(100);
+            //GamecallEx::GetInstance()->KeyPress(82);
+            //GamecallEx::GetInstance()->sendcall(id_msg_attack, (LPVOID)0x5dc1);//r
+            Sleep(100);
+            pCall->KeyPress('R');
+            //GamecallEx::GetInstance()->sendcall(id_msg_attack, (LPVOID)0x5dde);//t
+            Sleep(100);
         }
 
 
@@ -172,7 +212,7 @@ void CombatBoss::run()
     }
 
 
-    //取消回调
+//取消回调
     GameHook::GetInstance()->SetCombatSink(NULL);
 }
 
@@ -211,4 +251,9 @@ void CombatBoss::NotifyMonsterAttack(MONSTERATAACK* pAttack)
 
         dwFirst = GetTickCount();
     }
+}
+
+void CombatBoss::SetName(const wchar_t* name)
+{
+    m_name = name;
 }

@@ -146,6 +146,12 @@ DWORD CALLBACK CJLwgApp::WgThread(LPVOID pParam)
         return FALSE;
     }
 
+    if(!LuaScript::GetInstance()->Init())
+    {
+        LOGER(_T("LUA初始化失败"));
+        ExitProcess(0);
+        return FALSE;
+    }
 
     LOGER(_T("启动完成"));
 
@@ -357,3 +363,4 @@ int CJLwgApp::ExitInstance()
 
     return CWinApp::ExitInstance();
 }
+

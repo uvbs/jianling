@@ -15,6 +15,7 @@
 
 typedef std::vector<CUSTOMKILL> CustKillVector;
 typedef std::vector<ObjectNode*> ObjectVector;
+typedef std::vector<_BAGSTU> BagVector;
 
 
 class Gamecall
@@ -111,7 +112,7 @@ public:
     void GetRangeObjectToVector(ObjectNode* pNode, DWORD range, ObjectVector& RangeObject);
     void GetRangeLootObjectToVector(DWORD range, ObjectVector& LootVec);
     void GetRangeTaskItemToVectr(ObjectVector& TastItemVector, DWORD range);
-    ObjectNode* GetObjectByName(wchar_t szName[], DWORD range = 500);
+    ObjectNode* GetObjectByName(const wchar_t szName[], DWORD range = 500);
     BYTE GetObjectType(DWORD pObjAddress);                          //对象类型
     BOOL _GetObjectPos(DWORD pObjAddress, fPosition* pos);          //取对象坐标
     BOOL GetObjectPos(ObjectNode* pNode, fPosition* fpos);
@@ -145,7 +146,7 @@ public:
     BOOL        isPlayerChanneling();  //正在读条
     BOOL        isPlayerSteping();     //玩家正在走路
     BOOL        isLoginInSelectPlayer();   //判断是否进入了角色选择画面
-    int  isLoadingMap();     //过图状态
+    int         isLoadingMap();     //过图状态
     BOOL        isHaveXianlu(int index);
     BOOL        isCityConveyLoadingMap();
     BOOL        isCityConveying();
@@ -157,8 +158,8 @@ public:
     DWORD       isStrikeLocked(int index, DWORD pAddr);
     DWORD       isStrikeCanUse(int index, DWORD pAddr);
     BOOL        isBagFull();
-    BOOL isCanKill(ObjectNode* pNode);
-    BOOL isCanLook(DWORD pAddr);    //可以看到的
+    BOOL        isCanKill(ObjectNode* pNode);
+    BOOL        isCanLook(DWORD pAddr);    //可以看到的
 
 
     //任务
@@ -244,13 +245,13 @@ public:
     void        DeleteItem(_BAGSTU& bag);   //摧毁一个物品
 
     //背包
-    void        _GetAllGoodsToVector(std::vector<_BAGSTU>& RangeObject);
-    void        GetAllGoodsToVector(std::vector<_BAGSTU>& RangeObject);                // 遍历背包
-    void        GetAllBodyEquipToVector(std::vector<_BAGSTU>& RangeObject);
-    void        _GetAllBodyEquipToVector(std::vector<_BAGSTU>& RangeObject);
+    void        _GetAllGoodsToVector(BagVector& RangeObject);
+    void        GetAllGoodsToVector(BagVector& RangeObject);                // 遍历背包
+    void        GetAllBodyEquipToVector(BagVector& RangeObject);
+    void        _GetAllBodyEquipToVector(BagVector& RangeObject);
 
-    BOOL        GetAllBaGuaToVector(std::vector<_BAGSTU>& BaGuaVec);
-    BOOL        GetSpecBaGuaToVector(wchar_t* name, std::vector<_BAGSTU>& BaGuaVec);
+    BOOL        GetAllBaGuaToVector(BagVector& BaGuaVec);
+    BOOL        GetSpecBaGuaToVector(wchar_t* name, BagVector& BaGuaVec);
     DWORD       GetBagbodyInfoBase();               //获取背包身上装备仓库遍历Base
     DWORD       GetBagInfoBase(DWORD pAddr);    //获取背包遍历Base
     DWORD       GetBodyInfoBase(DWORD pBase);
@@ -272,8 +273,8 @@ public:
     DWORD       Getcanshu2(DWORD pAddr);        //参数2
     DWORD       Getcanshu1(DWORD pAddr);        //参数1
 
-    BOOL        GetGoodsFromBagByName(std::wstring name, _BAGSTU* goods, BOOL Blur = FALSE);     //根据名字取物品信息
-    BOOL        GetGoodsFromBagByName(const wchar_t* name, std::vector<_BAGSTU>& GoodsVec);
+
+    BOOL        GetGoodsFromBagByName(std::wstring name, BagVector& GoodsVec);
     BOOL        GetGoodsFromEquipByName(wchar_t* name, _BAGSTU* goods);
     BOOL        GetGoodsByEquipPos(DWORD pos, _BAGSTU* goods);      //根据位置取得物品信息
 
@@ -288,7 +289,7 @@ public:
     DWORD       GetGoodsBiDui(DWORD m_Adress);  //获取物品的比对
     DWORD       GetGoodsBiDui_A(DWORD m_Adress);  //获取物品的比对A
     DWORD       GetBaGuaGeZiShu(DWORD m_Adress);  //获取八卦格子数
-    BOOL        GetGoodsByName_Hezi(wchar_t* name, std::vector<_BAGSTU>& GoodsVec); //用来枚举盒子
+    BOOL        GetGoodsByName_Hezi(wchar_t* name, BagVector& GoodsVec); //用来枚举盒子
     void        KaiHeZi(_BAGSTU& bag);
     BOOL        SortBag();
     BOOL        NewBag();

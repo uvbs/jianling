@@ -32,6 +32,7 @@
 #include <afxsock.h>
 #include <afxmt.h>
 
+#include <stdarg.h> 
 #include <string>
 #include <sstream>
 

@@ -1253,8 +1253,24 @@ void CDataDlg::ShowHook(TCHAR* pszFormat, ...)
 
 UINT CombatThread(LPVOID pParam)
 {
+    CDataDlg* pDlg = (CDataDlg*)pParam;
 
-    GamecallEx::GetInstance()->KillBoss(2000);
+    if(pDlg->m_ListCtrl.GetSelectedCount() == 0)
+    {
+        AfxMessageBox(_T("选个对象测试"));
+        return 0;
+    }
+
+    POSITION rpos = pDlg->m_ListCtrl.GetFirstSelectedItemPosition();
+    if(rpos)
+    {
+        int inItem  = pDlg->m_ListCtrl.GetNextSelectedItem(rpos);
+        //获得名字
+        CString strName = pDlg->m_ListCtrl.GetItemText(inItem, 1);
+        GamecallEx::GetInstance()->KillBoss((LPCTSTR)strName);
+    }
+
+
 
     return 0;
 }

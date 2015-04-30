@@ -228,12 +228,12 @@ DWORD Gamecall::call(DWORD id, LPVOID pParam)
         break;
     case id_msg_GetAllBodyEquipToVector:
         {
-            _GetAllBodyEquipToVector(*(std::vector<_BAGSTU>*)pParam);
+            _GetAllBodyEquipToVector(*(BagVector*)pParam);
         }
         break;
     case id_msg_GetAllGoodsToVector:
         {
-            _GetAllGoodsToVector(*(std::vector<_BAGSTU>*)pParam);
+            _GetAllGoodsToVector(*(BagVector*)pParam);
 
         }
         break;
@@ -245,7 +245,7 @@ DWORD Gamecall::call(DWORD id, LPVOID pParam)
     case id_msg_GetRangeObjectToVector:
         {
             PARAM_GETUIADDRBYNAME* temp = (PARAM_GETUIADDRBYNAME*)pParam;
-            _GetRangeObjectToVector((ObjectNode*)temp->argv1, temp->argv2, *(std::vector<ObjectNode*>*)temp->argv3);
+            _GetRangeObjectToVector((ObjectNode*)temp->argv1, temp->argv2, *(ObjectVector*)temp->argv3);
         }
         break;
 
@@ -607,7 +607,7 @@ void Gamecall::HeChengWuQi(_BAGSTU& zhu, _BAGSTU& fu)
 //6 = 戒指
 BOOL Gamecall::GetGoodsByEquipPos(DWORD pos, _BAGSTU* goods)
 {
-    std::vector<_BAGSTU> EquiVec;
+    BagVector EquiVec;
     GetAllBodyEquipToVector(EquiVec);
 
     for(unsigned i = 0; i < EquiVec.size(); i++)
@@ -623,31 +623,45 @@ BOOL Gamecall::GetGoodsByEquipPos(DWORD pos, _BAGSTU* goods)
 }
 
 //根据名字取得物品信息
-BOOL Gamecall::GetGoodsFromBagByName(const wchar_t* name, std::vector<_BAGSTU>& GoodsVec)
+BOOL Gamecall::GetGoodsFromBagByName(std::wstring name, BagVector& GoodsVec)
 {
-    _ASSERTE(name != NULL);
+    DWORD BagbodyAdress = 0;
+    DWORD BagAdress = 0;
+    int GridNum = 0;
+    BOOL bFind = FALSE;
+    _BAGSTU bag;
 
-    std::vector<_BAGSTU> AllGoods;
-    GetAllGoodsToVector(AllGoods);
+    BagbodyAdress = GetBagbodyInfoBase();                //获取背包身上装备仓库遍历Base
+    BagAdress = GetBagInfoBase(BagbodyAdress);           //获取背包遍历Base
+    GridNum = GetBagGridNumber();                        //当前背包的总的格子数
 
-    BOOL isHave = FALSE;
-    for(unsigned i = 0; i < AllGoods.size(); i++)
+    for(int i = 0; i < GridNum; i++)
     {
-        if(wcscmp(name, AllGoods[i].name) == 0)
+        ZeroMemory(&bag, sizeof(_BAGSTU));
+        bag.m_Base = GetGoodsBase(BagAdress, i);                 //获取物品的首地址
+        if(bag.m_Base != 0)
         {
-            isHave = TRUE;
-            GoodsVec.push_back(AllGoods[i]);
+            if(FillGoods(bag))
+            {
+                //游戏里本来是0
+                bag.m_Num = (bag.m_Num == 0 ? 1 : bag.m_Num);
+
+                if(bag.name == name)
+                {
+                    GoodsVec.push_back(bag);
+                    bFind = TRUE;
+                }
+            }
         }
     }
 
-
-    return isHave;
+    return bFind;
 }
 
 //根据名字取得物品信息
 //这个函数是专门找盒子名字的
 //区别就是对名字的匹配上
-BOOL Gamecall::GetGoodsByName_Hezi(wchar_t* name, std::vector<_BAGSTU>& GoodsVec)
+BOOL Gamecall::GetGoodsByName_Hezi(wchar_t* name, BagVector& GoodsVec)
 {
 
     _ASSERTE(name != NULL);
@@ -660,7 +674,7 @@ BOOL Gamecall::GetGoodsByName_Hezi(wchar_t* name, std::vector<_BAGSTU>& GoodsVec
     fixName[len + 1] = L'\0';
 
 
-    std::vector<_BAGSTU> AllGoods;
+    BagVector AllGoods;
     GetAllGoodsToVector(AllGoods);
     BOOL isHave = FALSE;
     for(DWORD i = 0; i < AllGoods.size(); i++)
@@ -713,7 +727,7 @@ BOOL Gamecall::GetGoodsFromEquipByName(wchar_t* name, _BAGSTU* goods)
 
 
 
-    std::vector<_BAGSTU> EquiVec;
+    BagVector EquiVec;
     GetAllBodyEquipToVector(EquiVec);
 
     for(DWORD i = 0; i < EquiVec.size(); i++)
@@ -726,39 +740,6 @@ BOOL Gamecall::GetGoodsFromEquipByName(wchar_t* name, _BAGSTU* goods)
 
     }
 
-
-    return FALSE;
-}
-
-
-//根据名字取得物品信息
-BOOL Gamecall::GetGoodsFromBagByName(std::wstring name, _BAGSTU* aGoods, BOOL Blur)
-{
-
-    DWORD BagbodyAdress = 0;
-    DWORD BagAdress = 0;
-    int GridNum = 0;
-    
-    BagbodyAdress = GetBagbodyInfoBase();                //获取背包身上装备仓库遍历Base
-    BagAdress = GetBagInfoBase(BagbodyAdress);           //获取背包遍历Base
-    GridNum = GetBagGridNumber();                        //当前背包的总的格子数
-    
-    for(int i = 0; i < GridNum; i++)
-    {
-        ZeroMemory(aGoods, sizeof(_BAGSTU));
-        
-        aGoods->m_Base = GetGoodsBase(BagAdress, i);                 //获取物品的首地址
-        if(aGoods->m_Base != 0)
-        {
-            if(FillGoods(*aGoods))
-            {
-                //游戏里本来是0
-                aGoods->m_Num = (aGoods->m_Num == 0 ? 1 : aGoods->m_Num);
-                
-                if(aGoods->name == name) return TRUE;
-            }
-        }
-    }
 
     return FALSE;
 }
@@ -2762,9 +2743,9 @@ DWORD Gamecall::GetBagInfoBase(DWORD pBase)  //获取背包遍历Base
 }
 
 
-BOOL Gamecall::GetAllBaGuaToVector(std::vector<_BAGSTU>& BaGuaVec)
+BOOL Gamecall::GetAllBaGuaToVector(BagVector& BaGuaVec)
 {
-    std::vector<_BAGSTU> AllGoods;
+    BagVector AllGoods;
     GetAllGoodsToVector(AllGoods);
 
     for(DWORD i = 0; i < AllGoods.size(); i++)
@@ -2781,9 +2762,9 @@ BOOL Gamecall::GetAllBaGuaToVector(std::vector<_BAGSTU>& BaGuaVec)
 
 
 
-BOOL Gamecall::GetSpecBaGuaToVector(wchar_t* name, std::vector<_BAGSTU>& BaGuaVec)
+BOOL Gamecall::GetSpecBaGuaToVector(wchar_t* name, BagVector& BaGuaVec)
 {
-    std::vector<_BAGSTU> AllGoods;
+    BagVector AllGoods;
     GetAllGoodsToVector(AllGoods);
 
     for(DWORD i = 0; i < AllGoods.size(); i++)
@@ -2799,7 +2780,7 @@ BOOL Gamecall::GetSpecBaGuaToVector(wchar_t* name, std::vector<_BAGSTU>& BaGuaVe
 
 DWORD Gamecall::GetBagGridNumberLast()
 {
-    std::vector<_BAGSTU> AllGoods;
+    BagVector AllGoods;
     GetAllGoodsToVector(AllGoods);
 
     return (GetBagGridNumber() - AllGoods.size());
@@ -3613,7 +3594,7 @@ void Gamecall::Pickup2(ObjectNode* pObj)
 BOOL Gamecall::isBagFull()
 {
     //先判断背包有没有满
-    std::vector<_BAGSTU> GoodsVec;
+    BagVector GoodsVec;
     GetAllGoodsToVector(GoodsVec);
 
     if(GoodsVec.size() == GetBagGridNumber())
@@ -4562,10 +4543,11 @@ BOOL Gamecall::NewBag()
 //吃药
 void Gamecall::ChiYao(const wchar_t* name)
 {
-    _BAGSTU goods;
-    if(GetGoodsFromBagByName(name, &goods))
+    BagVector BagVector;
+
+    if(GetGoodsFromBagByName(name, BagVector))
     {
-        sendcall(id_msg_ChiYao, &goods);
+        sendcall(id_msg_ChiYao, &BagVector[0]);
     }
     else
     {
@@ -4937,13 +4919,13 @@ MoreTimes:
             }
 
 letsDrike:
-            _BAGSTU goods;
-            if(GetGoodsFromBagByName(itemName, &goods))
+            BagVector item;
+            if(GetGoodsFromBagByName(itemName, item))
             {
                 //喝
-                if(sendcall(id_msg_isYaoPingCD, &goods) == 1)
+                if(sendcall(id_msg_isYaoPingCD, &item[0]) == 1)
                 {
-                    sendcall(id_msg_ChiYao, &goods);
+                    sendcall(id_msg_ChiYao, &item[0]);
                     return 1;
                 }
                 else
@@ -5155,7 +5137,7 @@ float Gamecall::GetPlayerViewPoint()
 
 
 //遍历周围所有的对象到容器
-void Gamecall::GetAllObjectToVector(ObjectNode* pNote, std::vector<ObjectNode*>& RangeObject)
+void Gamecall::GetAllObjectToVector(ObjectNode* pNote, ObjectVector& RangeObject)
 {
     __try
     {
@@ -5173,10 +5155,10 @@ void Gamecall::GetAllObjectToVector(ObjectNode* pNote, std::vector<ObjectNode*>&
     }
 }
 
-void Gamecall::GetRangeTaskItemToVectr(std::vector<ObjectNode*>& TastItemVector, DWORD range)
+void Gamecall::GetRangeTaskItemToVectr(ObjectVector& TastItemVector, DWORD range)
 {
     //这个函数简写了,  直接从范围对象中遍历的过滤
-    std::vector<ObjectNode*> RangeObject;
+    ObjectVector RangeObject;
     GetRangeObjectToVector(GetObjectBinTreeBaseAddr(), range, RangeObject);
 
     fPosition fmypos;
@@ -5231,12 +5213,12 @@ BOOL Gamecall::isCanKill(ObjectNode* pNode)
 
 //遍历距离范围内的所有怪物到容器中
 //参数1: 范围, 单位: 游戏内的 米
-void Gamecall::GetRangeMonsterToVector(DWORD range, std::vector<ObjectNode*>& MonsterVec)
+void Gamecall::GetRangeMonsterToVector(DWORD range, ObjectVector& MonsterVec)
 {
     try
     {
         //这个函数简写了,  直接从范围对象中遍历的过滤
-        std::vector<ObjectNode*> RangeObject;
+        ObjectVector RangeObject;
         GetRangeObjectToVector(GetObjectBinTreeBaseAddr(), range, RangeObject);
 
         fPosition fmypos;
@@ -5282,7 +5264,7 @@ void Gamecall::GetRangeMonsterToVector(DWORD range, std::vector<ObjectNode*>& Mo
 }
 
 
-void Gamecall::_GetRangeObjectToVector(ObjectNode* pNote, DWORD range, std::vector<ObjectNode*>& RangeObject)
+void Gamecall::_GetRangeObjectToVector(ObjectNode* pNote, DWORD range, ObjectVector& RangeObject)
 {
     if(pNote->end == 1)
         return;
@@ -5317,7 +5299,7 @@ void Gamecall::_GetRangeObjectToVector(ObjectNode* pNote, DWORD range, std::vect
 //这个函数现在会将没有坐标和坐标是0的都遍历进去
 //保证都会遍历到, 更多的过滤在单独的函数里加
 //比如遍历任务物品的那个过滤
-void Gamecall::GetRangeObjectToVector(ObjectNode* pNode, DWORD range, std::vector<ObjectNode*>& RangeObject)
+void Gamecall::GetRangeObjectToVector(ObjectNode* pNode, DWORD range, ObjectVector& RangeObject)
 {
 //     PARAM_GETUIADDRBYNAME temp;
 //     temp.argv1 = (DWORD)pNode;
@@ -5329,13 +5311,13 @@ void Gamecall::GetRangeObjectToVector(ObjectNode* pNode, DWORD range, std::vecto
 
 //遍历距离范围内掉落的战利品对象到容器中
 //参数1: 范围, 单位: 游戏内的 米
-void Gamecall::GetRangeLootObjectToVector(DWORD range, std::vector<ObjectNode*>& LootVec)
+void Gamecall::GetRangeLootObjectToVector(DWORD range, ObjectVector& LootVec)
 {
 
     try
     {
         //这个函数简写了,  直接从范围对象中遍历的过滤
-        std::vector<ObjectNode*> RangeObject;
+        ObjectVector RangeObject;
         GetRangeObjectToVector(GetObjectBinTreeBaseAddr(), range, RangeObject);
 
         fPosition fmypos;
@@ -5400,11 +5382,11 @@ void Gamecall::OverShunyi(BOOL bEnable) //过图
 }
 
 
-ObjectNode* Gamecall::GetObjectByName(wchar_t szName[], DWORD range)
+ObjectNode* Gamecall::GetObjectByName(const wchar_t szName[], DWORD range)
 {
     try
     {
-        std::vector<ObjectNode*> RangeObject;
+        ObjectVector RangeObject;
         if(range == 0)
             GetAllObjectToVector(GetObjectBinTreeBaseAddr(), RangeObject);
         else
@@ -5502,7 +5484,7 @@ void Gamecall::GetUItoVector(Tree* Base, std::vector<Tree*>& Allui)
     //temp.argv1 = (DWORD)Base;
     //temp.argv2 = (DWORD)&Allui;
     //sendcall(id_msg_GetUItoVector, &temp);
-	_GetUItoVector(Base,Allui);
+    _GetUItoVector(Base, Allui);
 }
 
 
@@ -5834,7 +5816,7 @@ BOOL Gamecall::FillGoods(_BAGSTU& BagBuff)
     return TRUE;
 }
 
-void Gamecall::_GetAllGoodsToVector(std::vector<_BAGSTU>& RangeObject)
+void Gamecall::_GetAllGoodsToVector(BagVector& RangeObject)
 {
     DWORD BagbodyAdress = 0;
     DWORD BagAdress = 0;
@@ -5874,13 +5856,13 @@ void Gamecall::_GetAllGoodsToVector(std::vector<_BAGSTU>& RangeObject)
 
 
 //遍历背包数据到容器
-void Gamecall::GetAllGoodsToVector(std::vector<_BAGSTU>& RangeObject)
+void Gamecall::GetAllGoodsToVector(BagVector& RangeObject)
 {
     _GetAllGoodsToVector(RangeObject);
 }
 
 
-void Gamecall::_GetAllBodyEquipToVector(std::vector<_BAGSTU>& RangeObject)
+void Gamecall::_GetAllBodyEquipToVector(BagVector& RangeObject)
 {
     DWORD BagbodyAdress = 0;
     DWORD BagAdress = 0;
@@ -5913,7 +5895,7 @@ void Gamecall::_GetAllBodyEquipToVector(std::vector<_BAGSTU>& RangeObject)
 }
 
 //遍历装备数据到容器
-void Gamecall::GetAllBodyEquipToVector(std::vector<_BAGSTU>& RangeObject)
+void Gamecall::GetAllBodyEquipToVector(BagVector& RangeObject)
 {
     sendcall(id_msg_GetAllBodyEquipToVector, &RangeObject);
 }
@@ -6518,7 +6500,7 @@ void Gamecall::TurnTo(fPosition& pos)
 //范围默认500
 BOOL Gamecall::PickupDeadbody(DWORD range)
 {
-    std::vector<ObjectNode*> RangeObject;
+    ObjectVector RangeObject;
     GetRangeObjectToVector(GetObjectBinTreeBaseAddr(), range, RangeObject);
 
 

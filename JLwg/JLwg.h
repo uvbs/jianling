@@ -7,6 +7,7 @@
 
 #include "resource.h"       // main symbols
 
+#include "LuaScript.h"
 
 class CJLDlg;
 class CJLwgApp: public CWinApp
@@ -34,6 +35,8 @@ public:
     BOOL InitPipe();
     BOOL InitLog();
     
+    //½Å±¾
+    LuaScript m_lua;
 
     static HWND m_hGameWnd;
 

@@ -55,7 +55,7 @@ public:
 
 
     //打怪
-    void KillBoss(int inRange);
+    void KillBoss(const wchar_t* name);
     int FindThenKill(int pos, DWORD range, DWORD mode, DWORD MyQuestStep = 0, DWORD MyQuestID = 0, DWORD canKillRange = CAN_OPERATOR);    //找到杀掉
     void kill_PickupOnce();
     BOOL kill_PickupBody();
@@ -85,6 +85,7 @@ public:
     //控制
     BOOL Stepto(float y, float x, float z, double timeout = 10, DWORD OkRange = CAN_OPERATOR, DWORD toolong = 1000, BOOL sp3x = FALSE);
     void Stepto(wchar_t* name);
+    void Stepto(ObjectNode* pNode);
     void FollowNpc(wchar_t* name, DWORD range = 1000);
     void FuHuo();
     BOOL _CityConvey(DWORD cityid);     //传送
@@ -133,7 +134,7 @@ public:
     BOOL BuqiBaGua();
     BOOL TihuanBaGua(wchar_t* name);
 
-
+ 
     //天赋
     void AddTalent(DWORD id);   //添加一个技能点
     void DelAllTalent();    //删除所有技能点
@@ -149,6 +150,5 @@ public:
     //自定义的要杀的怪物名称
 private:
     HANDLE m_hThreads[1];
-    BOOL m_bCanAoe;
     CustKillVector CustomName;
 };

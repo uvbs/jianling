@@ -178,6 +178,10 @@ SOURCE=..\common\logger.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\LuaScript.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=..\common\MSJEXHND.cpp
 # End Source File
 # Begin Source File
@@ -291,11 +295,7 @@ SOURCE=.\JLwg.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\common\LDasm.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\common\logger.h
+SOURCE=.\LuaScript.h
 # End Source File
 # Begin Source File
 
@@ -329,6 +329,10 @@ SOURCE=.\res\default1.bin
 
 SOURCE=.\JLwg.rc
 # End Source File
+# End Group
+# Begin Group "lua"
+
+# PROP Default_Filter ""
 # End Group
 # Begin Source File
 
