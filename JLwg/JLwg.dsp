@@ -330,10 +330,6 @@ SOURCE=.\res\default1.bin
 SOURCE=.\JLwg.rc
 # End Source File
 # End Group
-# Begin Group "lua"
-
-# PROP Default_Filter ""
-# End Group
 # Begin Source File
 
 SOURCE=.\ReadMe.txt

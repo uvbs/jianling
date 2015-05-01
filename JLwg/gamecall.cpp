@@ -16,6 +16,7 @@ static char THIS_FILE[] = __FILE__;
 #endif
 
 
+
 //全局变量
 const double M_PI = 3.14159265358979323846;
 
@@ -3804,9 +3805,9 @@ void Gamecall::DeliverQuests(DWORD id, DWORD step, DWORD questtype, DWORD ff, DW
 
 void Gamecall::KeyPress(WPARAM vk)
 {
-    if(CJLwgApp::m_hGameWnd != NULL)
+    if(theApp.m_hGameWnd != NULL)
     {
-        PostMessage(CJLwgApp::m_hGameWnd, WM_KEYDOWN, vk, 0);
+        PostMessage(theApp.m_hGameWnd, WM_KEYDOWN, vk, 0);
     }
     else
     {
@@ -6243,7 +6244,7 @@ void Gamecall::JiaBaoShi(DWORD canshu1, DWORD canshu2, DWORD canshu3, DWORD cans
 
 DWORD Gamecall::sendcall(DWORD id, LPVOID pParam)
 {
-    return SendMessage(CJLwgApp::m_hGameWnd, WM_CUSTOM_GCALL, id, (LPARAM)pParam);
+    return SendMessage(theApp.m_hGameWnd, WM_CUSTOM_GCALL, id, (LPARAM)pParam);
 }
 
 
@@ -7917,4 +7918,3 @@ char* ReadStr(DWORD addr)
     }
     return 0;
 }
-

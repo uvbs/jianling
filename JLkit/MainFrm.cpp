@@ -91,7 +91,7 @@ void CMainFrame::InitComBox()
     }
     else
     {
-        m_cbScript.AddString(_T("default.ini"));
+        m_cbScript.AddString(_T("default.lua"));
     }
 
     strCurPath = szExe;
@@ -129,7 +129,7 @@ void CMainFrame::InitComBox()
 
     if(pConfig->m_szGameScript.empty())
     {
-        if(CB_ERR == m_cbScript.SelectString(-1, _T("default.ini")))
+        if(CB_ERR == m_cbScript.SelectString(-1, _T("default.lua")))
         {
             m_cbScript.SetCurSel(0);
         }

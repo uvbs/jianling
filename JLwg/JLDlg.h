@@ -21,11 +21,11 @@ public:
     // Overrides
     // ClassWizard generated virtual function overrides
     //{{AFX_VIRTUAL(CJLDlg)
-protected:
+	protected:
     virtual void    DoDataExchange(CDataExchange* pDX); // DDX/DDV support
     virtual BOOL    OnInitDialog();
-    virtual BOOL PreCreateWindow(CREATESTRUCT& cs);
-    //}}AFX_VIRTUAL
+	virtual void PostNcDestroy();
+	//}}AFX_VIRTUAL
 
 
 // Implementation

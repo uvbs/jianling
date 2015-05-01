@@ -15,9 +15,9 @@
 
 
 #ifdef _DEBUG
-    #define new DEBUG_NEW
-    #undef THIS_FILE
-    static char THIS_FILE[] = __FILE__;
+#define new DEBUG_NEW
+#undef THIS_FILE
+static char THIS_FILE[] = __FILE__;
 #endif
 
 
@@ -57,12 +57,12 @@ END_MESSAGE_MAP()
 
 
 UINT CJLDlg::TaskThread(LPVOID pParam)
-{   
+{
     try
     {
         TaskScript task;
         task.BeginTask();
-		//task.Test_honglian();
+        //task.Test_honglian();
     }
     catch(...)
     {
@@ -94,6 +94,7 @@ BOOL CJLDlg::OnInitDialog()
 {
 
     SetWindowText(theApp.m_stData.szAccount);
+
 
 
     return CDialog::OnInitDialog();
@@ -128,13 +129,10 @@ void CJLDlg::OnClose()
 void CJLDlg::OnUnloadwg()
 {
     OnStopTask();
-    theApp.UnLoad();
-
+    EndDialog(IDOK);
 }
 
-BOOL CJLDlg::PreCreateWindow(CREATESTRUCT& cs) 
+void CJLDlg::PostNcDestroy() 
 {
-	// TODO: Add your specialized code here and/or call the base class
-
-	return CDialog::PreCreateWindow(cs);
+	delete this;
 }

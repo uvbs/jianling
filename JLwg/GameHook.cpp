@@ -94,9 +94,6 @@ void __stdcall GameHook::mySendStep(SENDSTEP* ftarpos)
         _tmkdir(szExe);
     }
 
-
-    PIPEDATA& data = theApp.m_stData;
-
     PathAppend(szExe, _T("new.bin"));
 
     //×·¼Ó

@@ -5,23 +5,18 @@
 #include "GameConfig.h"
 #include "GameLog.h"
 #include "JLDlg.h"
-
+#include "GameSpend.h"
 
 //程序实例唯一
 CJLwgApp theApp;
 
 
-//静态变量
-WNDPROC CJLwgApp::wpOrigGameProc = NULL;
-CJLDlg* CJLwgApp::m_pWgDlg = NULL;
-HWND CJLwgApp::m_hGameWnd = NULL;
-
-
-
-
 CJLwgApp::CJLwgApp()
 {
     m_hPipe = INVALID_HANDLE_VALUE;
+    _tcscpy(m_stData.szAccount, _T("No Control"));
+    _tcscpy(m_stData.szConfig, _T("default.ini"));
+    _tcscpy(m_stData.szScript, _T("default.lua"));
 }
 
 CJLwgApp::~CJLwgApp()
@@ -30,12 +25,12 @@ CJLwgApp::~CJLwgApp()
 
 
 //钩游戏的消息窗口
-LRESULT CALLBACK CJLwgApp::GameMsgProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+LRESULT CALLBACK GameMsgProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 
-    if(!CJLwgApp::m_pWgDlg || !::IsWindow(CJLwgApp::m_pWgDlg->m_hWnd))
+    if(!theApp.m_pWgDlg || !theApp.m_pWgDlg->GetSafeHwnd())
     {
-        return CallWindowProc(wpOrigGameProc, hwnd, uMsg, wParam, lParam);
+        return CallWindowProc(theApp.wpOrigGameProc, hwnd, uMsg, wParam, lParam);
     }
 
     //调出外挂
@@ -45,7 +40,7 @@ LRESULT CALLBACK CJLwgApp::GameMsgProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPAR
     //因为程序保护的问题, 好像游戏进程退出时, 外挂模块并不会被通知到
     case WM_DESTROY:
         {
-            theApp.UnLoad();
+            theApp.m_pWgDlg->OnUnloadwg();
             break;
         }
 
@@ -53,10 +48,8 @@ LRESULT CALLBACK CJLwgApp::GameMsgProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPAR
     case WM_MOVE:
         {
             RECT rect;
-
-
             GetWindowRect(hwnd, &rect);
-            m_pWgDlg->SetWindowPos(NULL, rect.right, rect.top, 0, 0, SWP_NOSIZE | SWP_NOACTIVATE);
+            theApp.m_pWgDlg->SetWindowPos(NULL, rect.right, rect.top, 0, 0, SWP_NOSIZE | SWP_NOACTIVATE);
             break;
         }
 
@@ -68,22 +61,22 @@ LRESULT CALLBACK CJLwgApp::GameMsgProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPAR
                 int result = MessageBox(hwnd, _T("你按下了 VK_INSERT 按键.\n确认执行任务?"), NULL, MB_OKCANCEL);
                 if(result == IDOK)
                 {
-                    m_pWgDlg->OnGotask();
+                    theApp.m_pWgDlg->OnGotask();
                 }
             }
             else if(wParam == VK_DELETE)
             {
-                m_pWgDlg->OnStopTask();
+                theApp.m_pWgDlg->OnStopTask();
             }
             else if(wParam == VK_END)
             {
-                if(m_pWgDlg->IsWindowVisible())
+                if(theApp.m_pWgDlg->IsWindowVisible())
                 {
-                    m_pWgDlg->ShowWindow(SW_HIDE);
+                    theApp.m_pWgDlg->ShowWindow(SW_HIDE);
                 }
                 else
                 {
-                    m_pWgDlg->ShowWindow(SW_SHOWNA);
+                    theApp.m_pWgDlg->ShowWindow(SW_SHOWNA);
                 }
 
             }
@@ -99,11 +92,11 @@ LRESULT CALLBACK CJLwgApp::GameMsgProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPAR
     }
 
 
-    return CallWindowProc(wpOrigGameProc, hwnd, uMsg, wParam, lParam);
+    return CallWindowProc(theApp.wpOrigGameProc, hwnd, uMsg, wParam, lParam);
 }
 
 
-DWORD CALLBACK CJLwgApp::WgThread(LPVOID pParam)
+DWORD CALLBACK WgThread(LPVOID pParam)
 {
     AFX_MANAGE_STATE(AfxGetStaticModuleState())
 
@@ -157,15 +150,31 @@ DWORD CALLBACK CJLwgApp::WgThread(LPVOID pParam)
 
 
     //钩游戏窗口处理
-    wpOrigGameProc = (WNDPROC)::SetWindowLong(m_hGameWnd, GWL_WNDPROC, (LONG)GameMsgProc);
-    ::SetWindowText(m_hGameWnd, theApp.m_stData.szAccount);
+    theApp.wpOrigGameProc = (WNDPROC)::SetWindowLong(theApp.m_hGameWnd, GWL_WNDPROC, (LONG)GameMsgProc);
+    ::SetWindowText(theApp.m_hGameWnd, theApp.m_stData.szAccount);
 
 
     //外挂主对话框
-    m_pWgDlg = new CJLDlg;
-    m_pWgDlg->DoModal();
+    theApp.m_pWgDlg = new CJLDlg;
+    theApp.m_pWgDlg->DoModal();
 
 
+
+    GamecallEx::GetInstance()->UnLoad();
+
+
+    if(theApp.m_hPipe != INVALID_HANDLE_VALUE)
+    {
+        CloseHandle(theApp.m_hPipe);
+    }
+
+
+    if(theApp.wpOrigGameProc)
+    {
+        ::SetWindowLong(theApp.m_hGameWnd, GWL_WNDPROC, (LONG)theApp.wpOrigGameProc);
+    }
+
+    LOGER(_T("卸载"));
     FreeLibraryAndExitThread(theApp.m_hInstance, 0);
     return 0;
 }
@@ -214,7 +223,7 @@ BOOL CJLwgApp::InitPipe()
     if(!::WaitNamedPipe(szPipe, NMPWAIT_USE_DEFAULT_WAIT))
     {
         TRACE(_T("can't find pipe!"));
-        return FALSE;
+        return TRUE;
     }
 
     // 打开管道
@@ -295,17 +304,15 @@ BOOL CJLwgApp::InitInstance()
     LOGER(_T("###外挂启动"));
 
     //外挂主线程
-    HANDLE hwgThread = ::CreateThread(NULL, 0, WgThread, this, 0, 0);
-    if(hwgThread == NULL)
+    HANDLE hThread = ::CreateThread(NULL, 0, WgThread, this, 0, 0);
+    if(hThread == NULL)
     {
-
         LOGER(_T("主线程创建失败"));
         ExitProcess(0);
         return FALSE;
     }
 
-
-    CloseHandle(hwgThread);
+    CloseHandle(hThread);
     return TRUE;
 }
 
@@ -324,43 +331,9 @@ void CJLwgApp::SendStatus(TCHAR szText[])
     WriteFile(m_hPipe, &status, sizeof(PIPESTATUS), &dwWriten, NULL);
 }
 
-void CJLwgApp::UnLoad()
-{
-    LOGER(_T("已卸载"));
-
-    GamecallEx::GetInstance()->UnLoad();
-
-
-    if(m_hPipe != INVALID_HANDLE_VALUE)
-    {
-        CloseHandle(m_hPipe);
-        m_hPipe = INVALID_HANDLE_VALUE;
-    }
-
-
-    if(wpOrigGameProc)
-    {
-        ::SetWindowLong(m_hGameWnd, GWL_WNDPROC, (LONG)wpOrigGameProc);
-        wpOrigGameProc = NULL;
-    }
-
-    if(m_pWgDlg)
-    {
-        if(::IsWindow(m_pWgDlg->m_hWnd))
-        {
-            m_pWgDlg->EndDialog(IDCANCEL);
-        }
-
-        SafeDelete(m_pWgDlg);
-    }
-
-}
-
 int CJLwgApp::ExitInstance()
 {
-    TRACE(_T("ExitInstance"));
-    UnLoad();
-
+    TRACE(_T("ExitInstance()"));
     return CWinApp::ExitInstance();
 }
 

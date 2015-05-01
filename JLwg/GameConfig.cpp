@@ -76,6 +76,7 @@ BOOL GameConfig::LoadConfig()
 
     PathAppend(szExe, theApp.m_stData.szConfig);
 
+
     //不存在, 新建
     if(!PathFileExists(szExe))
     {
@@ -173,12 +174,7 @@ void GameConfig::SaveConfig()
         _tmkdir(szExe);
     }
 
-
-    PIPEDATA& data = theApp.m_stData;
-
-    _ASSERTE(data.szConfig[0] != _T('\0'));
-    PathAppend(szExe, data.szConfig);
-
+    PathAppend(szExe, theApp.m_stData.szConfig);
     SaveFile(szExe);
 }
 

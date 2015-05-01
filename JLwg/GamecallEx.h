@@ -149,6 +149,6 @@ public:
 
     //自定义的要杀的怪物名称
 private:
-    HANDLE m_hThreads[1];
+    HANDLE m_hTHelper;
     CustKillVector CustomName;
 };

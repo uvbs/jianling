@@ -2990,8 +2990,8 @@ BOOL GamecallEx::Init()
 
 
     //创建辅助线程
-    m_hThreads[0] = (HANDLE)_beginthreadex(0, 0, KeepAliveThread, this, 0, 0);
-    SetThreadPriority(m_hThreads[0], THREAD_PRIORITY_LOWEST);
+    m_hTHelper = (HANDLE)_beginthreadex(0, 0, KeepAliveThread, this, 0, 0);
+    SetThreadPriority(m_hTHelper, THREAD_PRIORITY_LOWEST);
 
 
     if(!Gamecall::Init()) return FALSE;
@@ -3002,12 +3002,9 @@ BOOL GamecallEx::Init()
 void GamecallEx::UnLoad()
 {
     //等待所有线程退出
-    for(int i = 0; i < sizeof(m_hThreads) ; i++)
+    if(m_hTHelper != INVALID_HANDLE_VALUE)
     {
-        if(m_hThreads[i] != INVALID_HANDLE_VALUE)
-        {
-            TerminateThread(m_hThreads[i], 0);
-            CloseHandle(m_hThreads[i]);
-        }
+        TerminateThread(m_hTHelper, 0);
+        CloseHandle(m_hTHelper);
     }
 }

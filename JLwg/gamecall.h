@@ -11,7 +11,7 @@
 
 #include "gamedef.h"
 #include "gamestruct.h"
-#include "gamespend.h"
+
 
 typedef std::vector<CUSTOMKILL> CustKillVector;
 typedef std::vector<ObjectNode*> ObjectVector;
@@ -381,5 +381,6 @@ DWORD ReadDWORD(DWORD addr);
 int ReadInt(DWORD addr);
 float ReadFloat(DWORD addr);
 char* ReadStr(DWORD addr);
+
 
 #endif

@@ -37,7 +37,11 @@ LuaScript::LuaScript()
 
 LuaScript::~LuaScript()
 {
-
+    if(m_pstate)
+    {
+        lua_close(m_pstate);
+        m_pstate = NULL;
+    }
 }
 
 

@@ -16,14 +16,8 @@ public:
     CJLwgApp();
     ~CJLwgApp();
 
-
-    //外挂线程
-    static DWORD CALLBACK WgThread(LPVOID pParam);
-    static LRESULT CALLBACK GameMsgProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
-
     //等待游戏窗口创建
     BOOL WaitGameCreate(int inMaxTime);
-    void UnLoad();
 
     //通信
     PIPEDATA m_stData;
@@ -38,12 +32,9 @@ public:
     //脚本
     LuaScript m_lua;
 
-    static HWND m_hGameWnd;
-
-private:
-    static WNDPROC wpOrigGameProc;
-    static CJLDlg* m_pWgDlg;
-
+    HWND m_hGameWnd;
+    WNDPROC wpOrigGameProc;
+    CJLDlg* m_pWgDlg;
 
 
 // Overrides
