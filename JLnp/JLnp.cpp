@@ -52,14 +52,15 @@ CreateRemoteThreadLoadDll RemoteLoadDll;
 #ifdef JLTW
 
 //4ÔÂ27
-// DWORD dwInitNP1 = 0x00B4c710;
-// DWORD dwInitNP2 = 0x00B4C6D0;   //dwInitNP1-40
-// DWORD CheckNP = 0x00B4C8D0;     //dwInitNP1+1c0
+ //DWORD dwInitNP1 = 0x00B4c710;
+ //DWORD dwInitNP2 = 0x00B4C6D0;   //dwInitNP1-40
+ //DWORD CheckNP = 0x00B4C8D0;     //dwInitNP1+1c0
 
+ //5ÔÂ6
+ DWORD dwInitNP1 = 0x00B4cA10;
+ DWORD dwInitNP2 = 0x00B4C9D0;   //dwInitNP1-40
+ DWORD CheckNP = 0x00B4CBD0;     //dwInitNP1+1c0
 
-// DWORD dwInitNP1 = 0x00b4c6e0;
-// DWORD dwInitNP2 = 0x00b4c6a0;
-// DWORD CheckNP = 0x00b4c8a0;
 
 DWORD dwInitNP1 = 0x00B4cA10;
 DWORD dwInitNP2 = 0x00B4C9D0;   //dwInitNP1-40

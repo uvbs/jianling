@@ -62,9 +62,13 @@ void CombatBoss::run()
         //退出条件
         //boss 死
 
-        GamecallEx::GetInstance()->KeyPress('R');
+        //pCall->KeyPress(82);
         //玩家死
-
+		if(pCall->GetPlayerHealth() <= 0)
+		{
+			TRACE(_T("%s: 人物死亡了"), FUNCNAME);
+			break;
+		}
 
 
         if(pCall->GetType4HP(pBossNode->ObjAddress) == -1 || pCall->GetType4HP(pBossNode->ObjAddress) == 0)
@@ -74,11 +78,11 @@ void CombatBoss::run()
         }
 
 
-        if(pCall->GetObjectType(pBossNode->ObjAddress) != 0x4)
-        {
-            TRACE(_T("%s: 类型判断怪死了"), FUNCNAME);
-            break;
-        }
+        //if(pCall->GetObjectType(pBossNode->ObjAddress) != 0x4)
+        //{
+        //    TRACE(_T("%s: 类型判断怪死了"), FUNCNAME);
+        //    break;
+        //}
 
 
         if(pCall->_GetObjectPos(pBossNode->ObjAddress, &tarpos) == FALSE)
@@ -92,10 +96,11 @@ void CombatBoss::run()
         //此时正好判断到距离, 判断成死了
         pCall->GetPlayerPos(&mypos);
         DWORD dis = (DWORD)pCall->CalcC(tarpos, mypos);
-        if(dis >= CAN_OPERATOR*2)
+        if(dis > CAN_OPERATOR)
         {
-            TRACE(_T("%s: 距离判断怪死了"), FUNCNAME);
-            break;
+			pCall->Stepto(tarpos.y,tarpos.x,tarpos.z,10,CAN_OPERATOR,3000,TRUE);
+            //TRACE(_T("%s: 距离判断怪死了"), FUNCNAME);
+            //break;
         }
 
 
@@ -106,18 +111,19 @@ void CombatBoss::run()
         if(_event.size() > 0)
         {
 
-            MONSTERATAACK ma;
+
+             MONSTERATAACK ma;
 
 
             //这里需要同步
             m_Mutex.Lock();
-            std::list<MONSTERATAACK>::iterator it = _event.begin();
+             std::list<MONSTERATAACK>::iterator it = _event.begin();
 
-            ma = (*it);
+             ma = (*it);
 
             //处理了这个事件, 从队列删掉
-            _event.erase(it);
-            m_Mutex.Unlock();
+             _event.erase(it);
+             m_Mutex.Unlock();
 
 
 
@@ -127,82 +133,240 @@ void CombatBoss::run()
             //对应boss技能
             case 0x5455E1:
                 {
-                    Sleep(800);
+                    pCall->TurnToNear(300);
+                    Sleep(600);
                     TRACE(_T("0x5455E1"));
-                    //GamecallEx::GetInstance()->KeyPress(86);
-                    if(GamecallEx::GetInstance()->isStrikeCd(0x5DFC))
+                    //pCall->KeyPress(86);
+                    if(pCall->isStrikeCd(0x5DFC))
                     {
-                        GamecallEx::GetInstance()->sendcall(id_msg_attack, (LPVOID)0x5DFC);//v
-                        //GamecallEx::GetInstance()->Attack(0x5DFC);
-                        Sleep(3000);
+                        pCall->sendcall(id_msg_attack, (LPVOID)0x5DFC);//v
+                        Sleep(600);
+                        pCall->sendcall(id_msg_attack, (LPVOID)0x5ECE);//v-r
+                        Sleep(400);
+                        pCall->sendcall(id_msg_attack, (LPVOID)0x5ECE);//v-r
+                        Sleep(400);
+                        pCall->sendcall(id_msg_attack, (LPVOID)0x5ECE);//v-r
+                        //pCall->Attack(0x5DFC);
                     }
                     else
                     {
-                        GamecallEx::GetInstance()->sendcall(id_msg_attack, (LPVOID)0x5dca);//tab
-                        Sleep(1000);
+						pCall->sendcall(id_msg_attack, (LPVOID)0x5E1A);//E
+                        //pCall->sendcall(id_msg_attack, (LPVOID)0x5dca);//tab
+                        //Sleep(500);
                     }
-
-
-
-
                     break;
                 }
-            case 0x5455DD:
-                {
-                    Sleep(800);
-                    TRACE(_T("0x5455DD"));
-                    //GamecallEx::GetInstance()->KeyPress(9);
-                    GamecallEx::GetInstance()->sendcall(id_msg_attack, (LPVOID)0x5dca);//tab
-                    //GamecallEx::GetInstance()->Attack(0x5dca);
-                    Sleep(1000);
-                    break;
-                }
+            //case 0x5455DD:
+            //    {
+            //        pCall->TurnToNear(300);
+            //        Sleep(500);
+            //        TRACE(_T("0x5455DD"));
+            //        //pCall->KeyPress(9);
+
+            //        pCall->sendcall(id_msg_attack, (LPVOID)0x5dc1);//r
+            //        Sleep(500);
+            //        pCall->sendcall(id_msg_attack, (LPVOID)0x5dca);//tab
+            //        //pCall->Attack(0x5dca);
+            //        Sleep(500);
+            //        break;
+            //    }
             case 0x5455DA:
                 {
-                    Sleep(800);
+                    pCall->TurnToNear(300);
+                    Sleep(600);
                     TRACE(_T("0x5455DA"));
-                    //GamecallEx::GetInstance()->KeyPress(82);
-                    //GamecallEx::GetInstance()->sendcall(id_msg_attack, (LPVOID)0x5dc1);//r
-                    //GamecallEx::GetInstance()->Attack(0x5dc1);
+                    //pCall->KeyPress(82);
+                    //pCall->sendcall(id_msg_attack, (LPVOID)0x5dc1);//r
+                    //pCall->Attack(0x5dc1);
                     //Sleep(500);
-                    //GamecallEx::GetInstance()->KeyPress(88);
-                    if(GamecallEx::GetInstance()->isStrikeCd(0x5E24))
+                    //pCall->KeyPress(88);
+                    if(pCall->isStrikeCd(0x5E24))
                     {
-                        GamecallEx::GetInstance()->sendcall(id_msg_attack, (LPVOID)0x5E24);//x
-                        //GamecallEx::GetInstance()->Attack(0x5E24);
-                        Sleep(500);
+                        pCall->sendcall(id_msg_attack, (LPVOID)0x5E24);//x
+                        //pCall->Attack(0x5E24);
+                        Sleep(800);
+						pCall->sendcall(id_msg_attack, (LPVOID)0x5dc1);//r
+						Sleep(500);
+						pCall->sendcall(id_msg_attack, (LPVOID)0x5dca);//tab
+						Sleep(1000);
+						pCall->sendcall(id_msg_attack, (LPVOID)0x5E1B);//C
+						Sleep(800);
+						pCall->Attack(0);
                     }
                     else
                     {
-                        GamecallEx::GetInstance()->sendcall(id_msg_attack, (LPVOID)0x5dca);//tab
+                        pCall->sendcall(id_msg_attack, (LPVOID)0x5dca);//tab
                         Sleep(1000);
+						pCall->sendcall(id_msg_attack, (LPVOID)0x5dc1);//r
+						Sleep(500);
+						pCall->sendcall(id_msg_attack, (LPVOID)0x5dc1);//r
+						Sleep(500);
+						pCall->sendcall(id_msg_attack, (LPVOID)0x5E1B);//C
+						Sleep(800);
                     }
                     break;
                 }
+			case 5190087:
+				{
+					pCall->TurnToNear(300);
+					Sleep(600);
+					TRACE(_T("5190087"));
+					//pCall->sendcall(id_msg_attack, (LPVOID)0x5dc1);//r
+					pCall->KeyPress(82);
+					Sleep(100);
+					pCall->Kill_Tab();
+					//pCall->sendcall(id_msg_attack, (LPVOID)0x5dca);//tab
+					//Sleep(1000);
+					//pCall->sendcall(id_msg_attack, (LPVOID)0x5dc1);//r
+					pCall->KeyPress(82);
+					Sleep(100);
+					pCall->Kill_Tab();
+					//pCall->sendcall(id_msg_attack, (LPVOID)0x5dca);//tab
+					//Sleep(1000);
+					//pCall->sendcall(id_msg_attack, (LPVOID)0x5dc1);//r
+					pCall->KeyPress(82);
+					Sleep(100);
+					pCall->Kill_Tab();
+					//pCall->sendcall(id_msg_attack, (LPVOID)0x5dca);//tab
+					//Sleep(1000);
+					//pCall->sendcall(id_msg_attack, (LPVOID)0x5e6a);//ss
+					//Sleep(2500);
+					break;
+				}
+			case 5190074:
+				{
+					pCall->TurnToNear(300);
+					Sleep(600);
+					TRACE(_T("5190074"));
+					//pCall->sendcall(id_msg_attack, (LPVOID)0x5dca);//tab
+					//Sleep(1000);
+					pCall->Kill_Tab();
+					//pCall->sendcall(id_msg_attack, (LPVOID)0x5dc1);//r
+					pCall->KeyPress(82);
+					break;
+				}
+			case 5190070:
+				{
+					pCall->TurnToNear(300);
+					Sleep(600);
+					TRACE(_T("5190074"));
+					//pCall->sendcall(id_msg_attack, (LPVOID)0x5dca);//tab
+					//Sleep(1000);
+					pCall->Kill_Tab();
+					//pCall->sendcall(id_msg_attack, (LPVOID)0x5dc1);//r
+					pCall->KeyPress(82);
+					break;
+				}
+			case 5190071:
+				{
+					pCall->TurnToNear(300);
+					Sleep(600);
+					TRACE(_T("5190071"));
+					//pCall->sendcall(id_msg_attack, (LPVOID)0x5dca);//tab
+					//Sleep(1000);
+					pCall->Kill_Tab();
+					//pCall->sendcall(id_msg_attack, (LPVOID)0x5dc1);//r
+					pCall->KeyPress(82);
+					break;
+				}
+			case 5190088:
+				{
+					pCall->TurnToNear(300);
+					Sleep(600);
+					TRACE(_T("5190088"));
+					//pCall->sendcall(id_msg_attack, (LPVOID)0x5dca);//tab
+					//Sleep(1000);
+					pCall->Kill_Tab();
+					//pCall->sendcall(id_msg_attack, (LPVOID)0x5dc1);//r
+					pCall->KeyPress(82);
+					break;
+				}
+			case 5190089 | 5190088:
+				{
+					pCall->TurnToNear(300);
+					Sleep(500);
+					TRACE(_T("5190089"));
+					//if (pCall->isStrikeCd(0x5e6a))
+					//{
+					//	pCall->sendcall(id_msg_attack, (LPVOID)0x5e6a);//ss
+					//	Sleep(2500);
+					//	pCall->sendcall(id_msg_attack, (LPVOID)0x5e74);//1
+					//}else 
+					if(pCall->isStrikeCd(0x5E1B))
+					{
+						Sleep(500);
+						//pCall->sendcall(id_msg_attack, (LPVOID)0x5E1B);//C
+						pCall->KeyPress(67);
+						Sleep(800);
+					}else if (pCall->isStrikeCd(0x5DF2))
+					{
+						Sleep(500);
+						//pCall->sendcall(id_msg_attack, (LPVOID)0x5DF2);//2
+						pCall->KeyPress(50);
+						Sleep(500);
+					}else if (pCall->isStrikeCd(0x5DFC))
+					{
+						pCall->sendcall(id_msg_attack, (LPVOID)0x5DFC);//v
+						Sleep(500);
+						//pCall->sendcall(id_msg_attack, (LPVOID)0x5ECE);//v-r
+						pCall->KeyPress(82);
+						Sleep(300);
+						//pCall->sendcall(id_msg_attack, (LPVOID)0x5ECE);//v-r
+						pCall->KeyPress(82);
+						Sleep(300);
+						//pCall->sendcall(id_msg_attack, (LPVOID)0x5ECE);//v-r
+						pCall->KeyPress(82);
+					}
+					break;
+				}
             default:
                 {
                     //杀怪
                     TRACE(_T("attack id: %d"), ma.dwStrikeId);
-
                     break;
                 }
-
             }
-
-
+            ZeroMemory(&_event, sizeof(MONSTERATAACK));
         }
         else
         {
-
             //空闲时动作, 一般的释放技能
+            if(pCall->isPlayerDaodi())
+            {
+                //5E60->5EA6->5EB0->5E9C
+                Sleep(500);
+                if(pCall->isStrikeCd(0x5e60) == TRUE)
+                {
+                    pCall->sendcall(id_msg_attack, (LPVOID)0x5e60);
+                    Sleep(1000);
+                }
+                else if(pCall->isStrikeCd(0x5EA6) == TRUE)
+                {
+                    pCall->sendcall(id_msg_attack, (LPVOID)0x5EA6);
+                }
+                else if(pCall->isStrikeCd(0x5E9C) == TRUE)
+                {
+                    pCall->sendcall(id_msg_attack, (LPVOID)0x5E9C);
+                }
+            }
             pCall->TurnToNear(300);
-            Sleep(100);
-            //GamecallEx::GetInstance()->KeyPress(82);
-            //GamecallEx::GetInstance()->sendcall(id_msg_attack, (LPVOID)0x5dc1);//r
-            Sleep(100);
-            pCall->KeyPress('R');
-            //GamecallEx::GetInstance()->sendcall(id_msg_attack, (LPVOID)0x5dde);//t
-            Sleep(100);
+            Sleep(50);
+            //pCall->KeyPress(82);
+			if (wcscmp(m_name.c_str() ,L"銀剛力士") == 0)
+			{
+				if(pCall->GetPlayerMana() >= 60)
+				{
+					pCall->Kill_Tab();
+				}
+				pCall->sendcall(id_msg_attack, (LPVOID)0x5dc1);//r
+			}else
+			{
+				if(pCall->GetPlayerMana() >= 60)
+				{
+					pCall->sendcall(id_msg_attack, (LPVOID)0x5dde);//t
+				}
+				pCall->sendcall(id_msg_attack, (LPVOID)0x5dc1);//r
+			}
         }
 
 
@@ -229,17 +393,20 @@ void CombatBoss::NotifyMonsterAttack(MONSTERATAACK* pAttack)
 
 
     //先按时间过滤
-    if((dwSec - dwFirst) > 500)
+    if(pAttack->dwStrikeId > 0xffff)
     {
         if(pAttack->dwStrikeId != old1.dwStrikeId)
         {
 
-
+            //if (_event.size() != 0)
+            //{
+            //  TRACE("_event.size()");
+            //}
             //可以有个优先级, 放到队列前还是队列后
             //现实优先处理还是顺序处理.需要同步
             m_Mutex.Lock();
-            _event.push_front(*pAttack);
-            m_Mutex.Unlock();
+             _event.push_front(*pAttack);
+             m_Mutex.Unlock();
 
             //这优先级没意义吧, 这个队列一般都是空的情况
             //空表示事件被处理掉了, 如果还有队列的话, 只能说明事件已经在排队了.
