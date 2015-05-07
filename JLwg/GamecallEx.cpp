@@ -1,7 +1,7 @@
 #include "stdafx.h"
+#include "JLwg.h"
 #include "GamecallEx.h"
 #include "GameConfig.h"
-#include "GameLog.h"
 #include "CombatBoss.h"
 
 

@@ -5,6 +5,12 @@
 
 
 
+//方便根据字符集设置输出相应的调试信息
+#define __L(x)  ___L(x)
+#define ___L(x) L#x
+
+#define _SRCLINE_ __FILE__ Line:__LINE__
+
 CWinApp theApp;
 
 using namespace std;
@@ -54,6 +60,7 @@ int _tmain(int argc, TCHAR* argv[], TCHAR* envp[])
     }
 
 
+  wcout << __L(_SRCLINE_) << endl;
 
 //     for(int i = 0; i < 20; i++)
 //     {

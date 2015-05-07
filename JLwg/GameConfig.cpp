@@ -6,7 +6,6 @@
 #include "jlwg.h"
 #include "GameConfig.h"
 #include "gamedef.h"
-#include "gamelog.h"
 
 
 #ifdef _DEBUG

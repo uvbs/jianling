@@ -110,27 +110,11 @@ SOURCE=.\CombatBoss.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\ConfigItemPage.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\ConfigObjPage.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\ConfigPartyPage.cpp
-# End Source File
-# Begin Source File
-
 SOURCE=.\ConfigQhPage.cpp
 # End Source File
 # Begin Source File
 
 SOURCE=.\DataDlg.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\DbgPage.cpp
 # End Source File
 # Begin Source File
 
@@ -147,10 +131,6 @@ SOURCE=.\GameConfig.cpp
 # Begin Source File
 
 SOURCE=.\GameHook.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\GameLog.cpp
 # End Source File
 # Begin Source File
 
@@ -227,27 +207,11 @@ SOURCE=..\common\common.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\ConfigItemPage.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\ConfigObjPage.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\ConfigPartyPage.h
-# End Source File
-# Begin Source File
-
 SOURCE=.\ConfigQhPage.h
 # End Source File
 # Begin Source File
 
 SOURCE=.\DataDlg.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\DbgPage.h
 # End Source File
 # Begin Source File
 
@@ -268,10 +232,6 @@ SOURCE=.\gamedef.h
 # Begin Source File
 
 SOURCE=.\GameHook.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\GameLog.h
 # End Source File
 # Begin Source File
 
@@ -325,10 +285,6 @@ SOURCE=.\TaskScript.h
 # Begin Group "Resource Files"
 
 # PROP Default_Filter "ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe"
-# Begin Source File
-
-SOURCE=.\default1.bin
-# End Source File
 # Begin Source File
 
 SOURCE=.\res\default1.bin

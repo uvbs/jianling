@@ -7,6 +7,8 @@
 
 #include "resource.h"       // main symbols
 
+#include "..\common\logger.h"
+
 
 class CJLDlg;
 class CJLwgApp: public CWinApp
@@ -41,6 +43,22 @@ public:
     //}}AFX_VIRTUAL
 
 };
+
+
+
+
+class GameLog : public Logger
+{
+public:
+    GameLog(){};
+    virtual ~GameLog(){};
+    
+    DECLARE_SINGLETON(GameLog)
+};
+
+
+#define LOGER   GameLog::GetInstance()->info
+
 
 extern CJLwgApp theApp;
 

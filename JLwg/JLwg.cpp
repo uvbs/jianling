@@ -3,10 +3,13 @@
 #include "TaskScript.h"
 #include "GamecallEx.h"
 #include "GameConfig.h"
-#include "GameLog.h"
 #include "JLDlg.h"
 #include "GameSpend.h"
 #include "LuaScript.h"
+
+
+
+IMPLEMENT_SINGLETON(GameLog)
 
 
 

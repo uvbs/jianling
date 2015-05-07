@@ -78,3 +78,30 @@ void CLuaPage::OnTestLua()
         lua_pop(pL, 1);
     }
 }
+
+
+
+//调试信息对话框
+CDbgPage::CDbgPage(CWnd* pParent /*=NULL*/)
+: CPropertyPage(CDbgPage::IDD)
+{
+    //{{AFX_DATA_INIT(CDbgPage)
+    m_strInfo = _T("");
+    //}}AFX_DATA_INIT
+}
+
+
+void CDbgPage::DoDataExchange(CDataExchange* pDX)
+{
+    CDialog::DoDataExchange(pDX);
+    //{{AFX_DATA_MAP(CDbgPage)
+    DDX_Text(pDX, IDC_EDITINFO, m_strInfo);
+    //}}AFX_DATA_MAP
+}
+
+
+BEGIN_MESSAGE_MAP(CDbgPage, CDialog)
+//{{AFX_MSG_MAP(CDbgPage)
+// NOTE: the ClassWizard will add message map macros here
+//}}AFX_MSG_MAP
+END_MESSAGE_MAP()

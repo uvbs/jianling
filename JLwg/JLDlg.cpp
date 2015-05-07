@@ -5,7 +5,6 @@
 #include "JLwg.h"
 #include "JLDlg.h"
 #include "DataDlg.h"
-#include "GameLog.h"
 #include "LuaScript.h"
 
 

@@ -40,6 +40,42 @@ protected:
 	DECLARE_MESSAGE_MAP()
 };
 
+
+/////////////////////////////////////////////////////////////////////////////
+// CDbgPage dialog
+
+class CDbgPage : public CPropertyPage
+{
+    // Construction
+public:
+    CDbgPage(CWnd* pParent = NULL);   // standard constructor
+    
+    // Dialog Data
+    //{{AFX_DATA(CDbgPage)
+    enum { IDD = IDD_DEBUG };
+    CString	m_strInfo;
+    //}}AFX_DATA
+    
+    
+    // Overrides
+    // ClassWizard generated virtual function overrides
+    //{{AFX_VIRTUAL(CDbgPage)
+protected:
+    virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+    //}}AFX_VIRTUAL
+    
+    // Implementation
+protected:
+    
+    // Generated message map functions
+    //{{AFX_MSG(CDbgPage)
+    // NOTE: the ClassWizard will add member functions here
+    //}}AFX_MSG
+    DECLARE_MESSAGE_MAP()
+};
+
+
+
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
 

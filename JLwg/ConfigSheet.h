@@ -2,10 +2,8 @@
 #define AFX_CONFIGSHEET_H__42253DC2_B620_4862_B5F9_A6B9042794BA__INCLUDED_
 
 
-#include "ConfigItemPage.h"
-#include "ConfigObjPage.h"
+
 #include "ConfigQhPage.h"
-#include "ConfigPartyPage.h"
 
 
 class CConfigSheet : public CPropertySheet

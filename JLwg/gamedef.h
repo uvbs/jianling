@@ -13,7 +13,8 @@
 
 //方便根据字符集设置输出相应的调试信息
 #define __L(x)  ___L(x)
-#define ___L(x) L##x
+#define ___L(x) L#x
+#define _SRCLINE_ __FILE__ Line:__LINE__
 
 
 #if _MSC_VER > 1200
@@ -22,8 +23,8 @@
 #else
 #define FUNCNAME    __FUNCTION__
 #endif
-#else
-#define FUNCNAME    __L(__FILE__)
+#else   //如果低平台 源码:行 的格式
+#define FUNCNAME    __L(_SRCLINE_)
 #endif
 
 

@@ -7,12 +7,9 @@
 #include "DataDlg.h"
 #include "GameHook.h"
 #include "GameConfig.h"
-#include "ConfigItemPage.h"
-#include "ConfigObjPage.h"
 #include "ConfigQhPage.h"
 #include "ConfigSheet.h"
 #include "LuaPage.h"
-#include "DbgPage.h"
 
 
 #ifdef _DEBUG

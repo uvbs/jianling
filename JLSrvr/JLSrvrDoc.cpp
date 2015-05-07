@@ -50,8 +50,7 @@ BOOL CJLSrvrDoc::OnNewDocument()
     if(!CDocument::OnNewDocument()) return FALSE;
 
     //初始化数据库
-    if(!m_db.Init())
-        return FALSE;
+    if(!m_db.Init()) return FALSE;
 
     SetTitle(NULL);
     BOOL bRet = StartListening();
