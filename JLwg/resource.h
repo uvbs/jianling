@@ -70,6 +70,7 @@
 #define ID_CONFIG_DONTKILL              40060
 #define ID_HOOKSTRIKE                   40061
 #define ID_CONFIG_ALWAYSKILL            40062
+#define ID_GOTOBACK                     40063
 #define IDP_SOCKETS_INIT_FAIL           61204
 #define IDP_SOCKETS_DNS_FAIL            61205
 #define IDS_CREATEFAILED                61206
@@ -80,7 +81,7 @@
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        131
-#define _APS_NEXT_COMMAND_VALUE         40063
+#define _APS_NEXT_COMMAND_VALUE         40064
 #define _APS_NEXT_CONTROL_VALUE         1109
 #define _APS_NEXT_SYMED_VALUE           101
 #endif

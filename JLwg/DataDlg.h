@@ -98,6 +98,7 @@ protected:
     afx_msg void OnHookCombat();
 	afx_msg void OnBossBombat();
 	afx_msg void OnSelchangeTab1(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnGotoback();
 	//}}AFX_MSG
     DECLARE_MESSAGE_MAP()
 };

@@ -271,9 +271,10 @@ IDR_OBJECT MENU DISCARDABLE
 BEGIN
     POPUP "对象"
     BEGIN
-        MENUITEM "转向这个对象",                IDC_TURNTO
-        MENUITEM "走向这个对象",                ID_STEPTOOBJET
-        MENUITEM "hook这个怪的技能",            ID_HOOKSTRIKE
+        MENUITEM "转向这怪",                    IDC_TURNTO
+        MENUITEM "走向这怪",                    ID_STEPTOOBJET
+        MENUITEM "钩这怪技能",                  ID_HOOKSTRIKE
+        MENUITEM "走到身后",                    ID_GOTOBACK
     END
 END
 

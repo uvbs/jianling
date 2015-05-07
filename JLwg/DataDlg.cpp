@@ -179,7 +179,8 @@ BEGIN_MESSAGE_MAP(CDataDlg, CDialog)
     ON_BN_CLICKED(IDC_HOOK_COMBAT, OnHookCombat)
     ON_BN_CLICKED(IDC_BOSSCOMBAT, OnBossBombat)
     ON_NOTIFY(TCN_SELCHANGE, IDC_TAB1, OnSelchangeTab1)
-    //}}AFX_MSG_MAP
+	ON_COMMAND(ID_GOTOBACK, OnGotoback)
+	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
 
@@ -1239,7 +1240,7 @@ void CDataDlg::OnHookstrike()
 
 void CDataDlg::OnHookCombat()
 {
-    // TODO: Add your control notification handler code here
+
     UpdateData(TRUE);
 
     if(m_bHook_Combat)
@@ -1289,4 +1290,27 @@ void CDataDlg::OnSelchangeTab1(NMHDR* pNMHDR, LRESULT* pResult)
         m_pLuaPage->ShowWindow(SW_SHOW);
     }
     *pResult = 0;
+}
+
+void CDataDlg::OnGotoback() 
+{
+    //获取游戏外挂功能
+    GamecallEx& gcall = *GamecallEx::GetInstance();
+    
+    POSITION pos = m_ListCtrl.GetFirstSelectedItemPosition();
+    if(pos == NULL)
+    {
+        TRACE0("No items were selected!\n");
+    }
+    else
+    {
+        while(pos)
+        {
+            int nItem = m_ListCtrl.GetNextSelectedItem(pos);
+            TRACE1("Item %d was selected!\n", nItem);
+            ObjectNode* pNode = (ObjectNode*)m_ListCtrl.GetItemData(nItem);
+            
+            gcall.SteptoBack(pNode);
+        }
+    }
 }

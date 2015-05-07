@@ -1873,34 +1873,34 @@ void Gamecall::ZOULUSHUNYI(DWORD* adress, DWORD adrewss)
 //参数1: 技能id
 void Gamecall::Attack(int id)  //技能攻击  传入的是技能ID
 {
-	BYTE flag = 0;
-	int cs = 0;
+    BYTE flag = 0;
+    int cs = 0;
     __try
     {
-		while(flag == 0)
-		{
-			if (cs > 50)
-			{
-				break;
-			}
-			__asm
-			{
-				mov eax, id;
-				push eax;
-				mov eax, obj_enum_base;
-				mov eax, [eax];
-				mov eax, [eax + attack_offset1];
-				mov eax, [eax + attack_offset2];
-				mov eax, [eax + attack_offset3];
-				push eax;
-				mov eax, attack_call;
-				call eax;
-				mov flag,al;
-			}
-			TRACE("技能执行返回%d",flag);
-			Sleep(10);
-			cs++;
-		}
+        while(flag == 0)
+        {
+            if(cs > 50)
+            {
+                break;
+            }
+            __asm
+            {
+                mov eax, id;
+                push eax;
+                mov eax, obj_enum_base;
+                mov eax, [eax];
+                mov eax, [eax + attack_offset1];
+                mov eax, [eax + attack_offset2];
+                mov eax, [eax + attack_offset3];
+                push eax;
+                mov eax, attack_call;
+                call eax;
+                mov flag, al;
+            }
+            TRACE(_T("技能执行返回%d"), flag);
+            Sleep(10);
+            cs++;
+        }
     }
     __except(1)
     {
@@ -3819,7 +3819,7 @@ void Gamecall::KeyPress(WPARAM vk)
     if(theApp.m_hGameWnd != NULL)
     {
         PostMessage(theApp.m_hGameWnd, WM_KEYDOWN, vk, 0);
-      //  PostMessage(theApp.m_hGameWnd, WM_KEYUP, vk, 0xc0000000);
+        //  PostMessage(theApp.m_hGameWnd, WM_KEYUP, vk, 0xc0000000);
     }
     else
     {
