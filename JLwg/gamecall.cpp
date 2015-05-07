@@ -3808,6 +3808,7 @@ void Gamecall::KeyPress(WPARAM vk)
     if(theApp.m_hGameWnd != NULL)
     {
         PostMessage(theApp.m_hGameWnd, WM_KEYDOWN, vk, 0);
+      //  PostMessage(theApp.m_hGameWnd, WM_KEYUP, vk, 0xc0000000);
     }
     else
     {

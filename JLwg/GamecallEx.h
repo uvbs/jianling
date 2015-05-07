@@ -61,8 +61,6 @@ public:
     BOOL kill_PickupBody();
     BOOL kill_Task(int MyQuestID, int MyQuestStep);
     void Kill_Tab();//tab释放等待
-    void AttackNormal();    //普通攻击 , rt 循环按, 需要参数来使视角总是面向这个对象
-    void AttackAOE();                       //AOE攻击
 
     //自定义杀怪过滤
     BOOL isCustomKill_DontKill(wchar_t* name);
@@ -86,6 +84,8 @@ public:
     BOOL Stepto(float y, float x, float z, double timeout = 10, DWORD OkRange = CAN_OPERATOR, DWORD toolong = 1000, BOOL sp3x = FALSE);
     void Stepto(wchar_t* name);
     void Stepto(ObjectNode* pNode);
+    void SteptoBack(ObjectNode *pObj);
+
     void FollowNpc(wchar_t* name, DWORD range = 1000);
     void FuHuo();
     BOOL _CityConvey(DWORD cityid);     //传送
@@ -134,7 +134,7 @@ public:
     BOOL BuqiBaGua();
     BOOL TihuanBaGua(wchar_t* name);
 
- 
+
     //天赋
     void AddTalent(DWORD id);   //添加一个技能点
     void DelAllTalent();    //删除所有技能点
@@ -142,6 +142,10 @@ public:
     void _NewSpend(float x);
     int ClearCustom();
 
+
+    //任务
+    int GetPresentTaskStep();    //获取当前任务步骤
+    int GetPresentTaskID();     //当前任务ID;
 
     //组队
     void AddToPary();

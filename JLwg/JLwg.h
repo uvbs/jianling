@@ -7,7 +7,6 @@
 
 #include "resource.h"       // main symbols
 
-#include "LuaScript.h"
 
 class CJLDlg;
 class CJLwgApp: public CWinApp
@@ -24,13 +23,10 @@ public:
     HANDLE m_hPipe;
     void SendStatus(TCHAR szText[]);
 
-    
     //调试时关掉
     BOOL InitPipe();
     BOOL InitLog();
-    
-    //脚本
-    LuaScript m_lua;
+
 
     HWND m_hGameWnd;
     WNDPROC wpOrigGameProc;

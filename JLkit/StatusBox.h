@@ -23,6 +23,8 @@ public:
     //{{AFX_VIRTUAL(CStatusBox)
 protected:
     virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+    virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam);
+    virtual BOOL OnInitDialog();
     //}}AFX_VIRTUAL
 
 // Implementation
@@ -30,8 +32,7 @@ protected:
 
     // Generated message map functions
     //{{AFX_MSG(CStatusBox)
-	virtual BOOL OnInitDialog();
-	//}}AFX_MSG
+    //}}AFX_MSG
     DECLARE_MESSAGE_MAP()
 };
 

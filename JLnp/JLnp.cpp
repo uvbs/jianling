@@ -57,10 +57,13 @@ CreateRemoteThreadLoadDll RemoteLoadDll;
 // DWORD CheckNP = 0x00B4C8D0;     //dwInitNP1+1c0
 
 
-DWORD dwInitNP1 = 0x00b4c6e0;
-DWORD dwInitNP2 = 0x00b4c6a0;
-DWORD CheckNP = 0x00b4c8a0;
+// DWORD dwInitNP1 = 0x00b4c6e0;
+// DWORD dwInitNP2 = 0x00b4c6a0;
+// DWORD CheckNP = 0x00b4c8a0;
 
+DWORD dwInitNP1 = 0x00B4cA10;
+DWORD dwInitNP2 = 0x00B4C9D0;   //dwInitNP1-40
+DWORD CheckNP = 0x00B4CBD0;     //dwInitNP1+1c0
 #else
 
 #error "no write"

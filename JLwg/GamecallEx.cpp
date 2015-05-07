@@ -826,32 +826,6 @@ void GamecallEx::DeliverQuests(DWORD id, DWORD step, wchar_t* name, DWORD questt
 //参数4: 任务的类型, 通常是 0 1 2 3 这几个值
 void GamecallEx::DeliverQuests(DWORD id, DWORD step, DWORD npcid1, DWORD npcid2, DWORD questtype, DWORD ff, DWORD unknow)
 {
-
-    //ObjectNode* Node;
-    //int npcid1;
-    //int npcid2;
-
-    //if(name == NULL)
-    //{
-    //  npcid1 = 0;
-    //  npcid2 = 0;
-    //}
-    //else
-    //{
-    //  Node = GetObjectByName(name);
-    //  if(Node == NULL)
-    //  {
-    //      TRACE(_T("%s: 没有找到这个NPC"), FUNCNAME);
-    //      return;
-    //  }
-
-    //  npcid1 = Node->id;
-    //  npcid2 = Node->id2;
-    //}
-
-    //取任务面板地址, 测试不用这个地址
-    //DWORD dwUIAddr;
-    //GetUIAddrByName(GetUIBinTreeBaseAddr(), L"TalkProgressMissionPanel", &dwUIAddr);
     PARAM_DELIVERQUEST temp;
     temp.ff = ff;
     temp.id = id;
@@ -1183,6 +1157,8 @@ BOOL Gamecall::Stepto(fPosition& tarpos, double timeOut, DWORD okRange, DWORD to
         TRACE(_T("执行走路时在读图，等待一会。"));
         Sleep(2000);
     }
+
+
     //首先, 人得是活的
     if(GetPlayerDeadStatus() == 1 ||
             GetPlayerDeadStatus() == 2)
@@ -1197,7 +1173,7 @@ BOOL Gamecall::Stepto(fPosition& tarpos, double timeOut, DWORD okRange, DWORD to
     fPosition fmypos;
     if(GetPlayerPos(&fmypos) == FALSE)
     {
-        LOGER(_T("没能获取自身坐标"));
+        TRACE(_T("没能获取自身坐标"));
         return FALSE;
     }
 
@@ -1205,7 +1181,7 @@ BOOL Gamecall::Stepto(fPosition& tarpos, double timeOut, DWORD okRange, DWORD to
     DWORD dis = (DWORD)CalcC(fmypos, tarpos);
     if(dis >= tooLong)
     {
-        LOGER(_T("%s: 目的距离太远"), FUNCNAME);
+        TRACE(_T("%s: 目的距离太远"), FUNCNAME);
         return FALSE;
     }
 
@@ -1218,6 +1194,8 @@ BOOL Gamecall::Stepto(fPosition& tarpos, double timeOut, DWORD okRange, DWORD to
     {
         sendcall(id_msg_step, &tarpos);
     }
+
+
     for(;;)
     {
         //等200微妙再判断, 否则调用Step时游戏内并没有立刻走
@@ -1226,7 +1204,6 @@ BOOL Gamecall::Stepto(fPosition& tarpos, double timeOut, DWORD okRange, DWORD to
 
 
         //判断距离太远
-        fmypos;
         if(GetPlayerPos(&fmypos) == FALSE)
         {
             LOGER(_T("没能获取自身坐标"));
@@ -1234,12 +1211,7 @@ BOOL Gamecall::Stepto(fPosition& tarpos, double timeOut, DWORD okRange, DWORD to
         }
 
         dis = (DWORD)CalcC(fmypos, tarpos);
-        //走到
-        if(dis <= okRange)
-        {
-            return TRUE;
-        }
-
+        if(dis <= okRange) return TRUE;
 
         if((GetTickCount() - tc1) >= (timeOut * 1000))
         {
@@ -1249,7 +1221,8 @@ BOOL Gamecall::Stepto(fPosition& tarpos, double timeOut, DWORD okRange, DWORD to
                 WaitPlans();
                 return FALSE;
             }
-            LOGER(_T("超时"));
+
+            TRACE(_T("超时"));
             sendcall(id_msg_attack, (LPVOID)0x5e6a);
             return FALSE;
         }
@@ -1266,11 +1239,11 @@ BOOL Gamecall::Stepto(fPosition& tarpos, double timeOut, DWORD okRange, DWORD to
             {
                 sendcall(id_msg_step, &tarpos);
             }
-
         }
 
     }
 }
+
 
 //走路
 //参数0: 目的坐标
@@ -1285,8 +1258,9 @@ BOOL GamecallEx::Stepto(float y, float x, float z, double timeOut, DWORD okRange
     tarpos.x = x;
     tarpos.y = y;
     tarpos.z = z;
-    TRACE3("走路:%d,%d,%d", (int)y, (int)x, (int)z);
-    return Gamecall::Stepto(tarpos, timeOut, okRange, tooLong, sp3x);
+
+    BOOL bRet = Gamecall::Stepto(tarpos, timeOut, okRange, tooLong, sp3x);
+    return bRet;
 }
 
 
@@ -2167,45 +2141,6 @@ void GamecallEx::Kill_Tab()
         Sleep(100);
     }
 }
-//普通攻击, rt 循环按, 具体逻辑看里面, 需要参数来使视角总是面向这个对象
-void GamecallEx::AttackNormal()
-{
-
-    //放技能, 加对魔法值的判断
-    if(GetPlayerMana() >= 60)
-    {
-        //T
-        sendcall(id_msg_attack, (LPVOID)0x5dde);
-    }
-    else
-    {
-        //Attack(ATTACK_R);
-        sendcall(id_msg_attack, (LPVOID)0x5dc1);
-    }
-
-}
-
-
-//AOE攻击
-//TODO: 可以通过判断公共cd来优化
-void GamecallEx::AttackAOE()
-{
-
-    int mana = GetPlayerMana();
-    if(mana >= 60)
-    {
-        /*sendcall(id_msg_attack, (LPVOID)0x5dca);
-        Sleep(1000);*/
-        Kill_Tab();
-    }
-    else
-    {
-        sendcall(id_msg_attack, (LPVOID)0x5dc1);
-    }
-
-
-}
-
 
 
 //杀死对象, 逻辑中带有走路
@@ -2225,6 +2160,7 @@ int GamecallEx::KillObject(DWORD range, ObjectNode* pNode, DWORD mode, DWORD can
     for(;;)
     {
 
+        int tick_begin = GetTickCount();
         ZeroMemory(&targetpos, sizeof(fPosition));
         ZeroMemory(&mypos, sizeof(fPosition));        //TRACE(_T("判断人物死亡"));
 
@@ -2274,10 +2210,6 @@ int GamecallEx::KillObject(DWORD range, ObjectNode* pNode, DWORD mode, DWORD can
             targetpos.x = targetpos.x - 10;
             targetpos.y = targetpos.y - 10;
             Gamecall::Stepto(targetpos, 10, CAN_OPERATOR, range);
-            /*}else if(dis <= 2){
-            TRACE(_T("自己的坐标X:%d,y:%d,怪物的坐标X:%d,Y:%d"),(int)mypos.x,(int)mypos.y,(int)targetpos.x,(int)targetpos.y);
-            TRACE(_T("%s: 重叠怪物"), FUNCNAME);
-            RandomStep(30);*/
         }
         else if(dis <= canKillRange)
         {
@@ -2303,18 +2235,22 @@ int GamecallEx::KillObject(DWORD range, ObjectNode* pNode, DWORD mode, DWORD can
                     TRACE(_T("进入倒地状态:0x5E9C"));
                     sendcall(id_msg_attack, (LPVOID)0x5E9C);
                 }
-                /*else if(isStrikeCd(0x5EB0) == TRUE)
-                {
-                    TRACE(_T("进入倒地状态:0x5EB0"));
-                    sendcall(id_msg_attack, (LPVOID)0x5EB0);
-                }*/
 
             }
             //杀怪时才需要转向
             Gamecall::TurnTo(targetpos);
             if(mode & modeOnlyAoe)
             {
-                AttackAOE();
+                //TRACE(_T("执行AEO"));
+                int mana = GetPlayerMana();
+                if(mana >= 60)
+                {
+                    Kill_Tab();
+                }
+                else
+                {
+                    sendcall(id_msg_attack, (LPVOID)0x5dc1);
+                }
             }
             else
             {
@@ -2323,21 +2259,34 @@ int GamecallEx::KillObject(DWORD range, ObjectNode* pNode, DWORD mode, DWORD can
                     if(GetRangeMonsterCount() > 2)
                     {
                         //TRACE(_T("执行AEO"));
-                        AttackAOE();
+                        int mana = GetPlayerMana();
+                        if(mana >= 60)
+                        {
+                            Kill_Tab();
+                        }
+                        else
+                        {
+                            sendcall(id_msg_attack, (LPVOID)0x5dc1);
+                        }
                     }
+                    else
                     {
-                        //TRACE(_T("执行RT"));
-                        //TRACE(_T("执行RT"));
-                        AttackNormal();
+                        if(GetPlayerMana() >= 60)
+                        {
+                            sendcall(id_msg_attack, (LPVOID)0x5dde);
+                        }
+                        else
+                        {
+                            sendcall(id_msg_attack, (LPVOID)0x5dc1);
+                        }
                     }
                 }
                 else
                 {
-                    //TRACE(_T("执行AOE外的RT"));
-                    //TRACE(_T("执行AOE外的RT"));
-                    AttackNormal();
+                    KeyPress('R');
                 }
             }
+
             //5秒没能打掉血就退
             DWORD curTime = GetTickCount();
             if((curTime - oriTime) >= 5000)
@@ -2359,6 +2308,8 @@ int GamecallEx::KillObject(DWORD range, ObjectNode* pNode, DWORD mode, DWORD can
 
             Sleep(50);
         }//for
+
+
     }
 }
 
@@ -2804,7 +2755,7 @@ UINT GamecallEx::KeepAliveThread(LPVOID pParam)
         }
         pCall->CloseXiaoDongHua();
 
-        Sleep(1000);
+        Sleep(2000);
     }
 
     return 0;
@@ -3007,4 +2958,67 @@ void GamecallEx::UnLoad()
         TerminateThread(m_hTHelper, 0);
         CloseHandle(m_hTHelper);
     }
+}
+
+int GamecallEx::GetPresentTaskID()
+{
+    DWORD pStartAddr = GetTaskStartAddr();//获取任务开始地址
+    DWORD ID = GetTaskID(0, pStartAddr);//获得当前任务ID
+    return ID;
+}
+
+int GamecallEx::GetPresentTaskStep()
+{
+    DWORD pStartAddr = GetTaskStartAddr();//获取任务开始地址
+    DWORD dwStep = GetPresentTaskIndexes(0, pStartAddr);//获得当前做到第几个小任务
+    return dwStep;
+}
+
+void GamecallEx::SteptoBack(ObjectNode *pObj)
+{
+    //
+    fPosition rpos;
+    GetObjectPos(pObj, &rpos);
+
+    //获取怪物面向
+    DWORD objview = GetObjectView(pObj->ObjAddress);
+    if(objview < 360 && objview > 270) //西北
+    {
+       rpos.x -= 20;
+       rpos.y += 20;
+    }
+    else if(objview <270 && objview < 180) //西南
+    {
+        rpos.y += 20;
+        rpos.x += 20;
+    }
+    else if(objview > 90 && objview < 180)  //东南
+    {
+        rpos.x -= 20;
+        rpos.y += 20;
+    }
+    else if(objview >0 && objview < 90) //东北
+    {
+        rpos.y -= 20;
+        rpos.x -= 20;
+    }
+    else if(objview == 0)   //正北
+    {
+        rpos.x -= 20;
+    }
+    else if(objview == 90)  //正东
+    {
+        rpos.y -= 20;
+    }
+    else if(objview == 180) //正南
+    {
+        rpos.x += 20;
+    }
+    else if(objview == 270) //正西
+    {
+        rpos.y += 20;   
+    }
+
+
+    Gamecall::Stepto(rpos);
 }

@@ -39,6 +39,7 @@ void CStatusBox::SetMsg(TCHAR szMsg[])
 
 BEGIN_MESSAGE_MAP(CStatusBox, CDialog)
 	//{{AFX_MSG_MAP(CStatusBox)
+	ON_WM_SETFOCUS()
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
@@ -52,4 +53,12 @@ BOOL CStatusBox::OnInitDialog()
     CenterWindow();
 	return TRUE;  // return TRUE unless you set the focus to a control
 	              // EXCEPTION: OCX Property Pages should return FALSE
+}
+
+BOOL CStatusBox::OnCommand(WPARAM wParam, LPARAM lParam) 
+{
+	// TODO: Add your specialized code here and/or call the base class
+	if(wParam == IDOK || wParam == IDCANCEL) return FALSE;
+
+	return CDialog::OnCommand(wParam, lParam);
 }

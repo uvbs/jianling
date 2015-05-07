@@ -3,6 +3,7 @@
 
 #include "stdafx.h"
 #include "Jlwg.h"
+#include "JLDlg.h"
 #include "DataDlg.h"
 #include "GameHook.h"
 #include "GameConfig.h"
@@ -10,6 +11,8 @@
 #include "ConfigObjPage.h"
 #include "ConfigQhPage.h"
 #include "ConfigSheet.h"
+#include "LuaPage.h"
+#include "DbgPage.h"
 
 
 #ifdef _DEBUG
@@ -112,11 +115,7 @@ TCHAR* cli_Loots[] =
 };
 
 
-
-/////////////////////////////////////////////////////////////////////////////
-// CDataDlg dialog
-
-
+//构造函数
 CDataDlg::CDataDlg(CWnd* pParent /*=NULL*/)
     : CDialog(CDataDlg::IDD, pParent)
 {
@@ -130,15 +129,23 @@ CDataDlg::CDataDlg(CWnd* pParent /*=NULL*/)
     m_bHook_Accquest = FALSE;
     m_bHook_Combat = FALSE;
     //}}AFX_DATA_INIT
+
+    m_pLuaPage = NULL;
+    m_pDbgPage = NULL;
 }
 
+CDataDlg::~CDataDlg()
+{
+    SafeDelete(m_pDbgPage);
+    SafeDelete(m_pLuaPage);
+}
 
 void CDataDlg::DoDataExchange(CDataExchange* pDX)
 {
     CDialog::DoDataExchange(pDX);
     //{{AFX_DATA_MAP(CDataDlg)
+	DDX_Control(pDX, IDC_TAB1, m_TabCtrl);
     DDX_Control(pDX, IDC_LIST, m_ListCtrl);
-    DDX_Control(pDX, IDC_EDITINFO, m_hEdit);
     DDX_Control(pDX, IDC_COMBO_DATATYPE, m_ComBox);
     DDX_Text(pDX, IDC_EDITMEMINPUT, m_nRange);
     DDX_Check(pDX, IDC_HOOK_SENDSTEP, m_bHook_step);
@@ -148,7 +155,7 @@ void CDataDlg::DoDataExchange(CDataExchange* pDX)
     DDX_Check(pDX, IDC_HOOK_CHUANZHUANGBEI, m_bHook_Weaquit);
     DDX_Check(pDX, IDC_HOOK_ACCEPTQUEST, m_bHook_Accquest);
     DDX_Check(pDX, IDC_HOOK_COMBAT, m_bHook_Combat);
-    //}}AFX_DATA_MAP
+	//}}AFX_DATA_MAP
 }
 
 
@@ -172,9 +179,9 @@ BEGIN_MESSAGE_MAP(CDataDlg, CDialog)
     ON_BN_CLICKED(IDC_HOOK_ACCEPTQUEST, OnHookAcceptquest)
     ON_COMMAND(ID_HOOKSTRIKE, OnHookstrike)
     ON_BN_CLICKED(IDC_HOOK_COMBAT, OnHookCombat)
-    ON_BN_CLICKED(IDC_ADDTOPARTY, OnAddtoparty)
     ON_BN_CLICKED(IDC_BOSSCOMBAT, OnBossBombat)
-    //}}AFX_MSG_MAP
+	ON_NOTIFY(TCN_SELCHANGE, IDC_TAB1, OnSelchangeTab1)
+	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
 
@@ -207,7 +214,7 @@ void CDataDlg::CheckHook()
 
 }
 
-void CDataDlg::AddInfo(TCHAR szFormat[], ...)
+void CDataDlg::AddInfo(const TCHAR szFormat[], ...)
 {
     TCHAR buffer[BUFSIZ] = {0};
 
@@ -218,10 +225,8 @@ void CDataDlg::AddInfo(TCHAR szFormat[], ...)
 
     _tcscat(buffer, _T("\r\n"));
 
-    int len = m_hEdit.GetWindowTextLength();
-    m_hEdit.SetSel(len, -1);
-    m_hEdit.ReplaceSel(buffer);
-
+    m_pDbgPage->m_strInfo += buffer;
+    m_pDbgPage->UpdateData(FALSE);
 }
 
 
@@ -246,6 +251,30 @@ BOOL CDataDlg::OnInitDialog()
 
     m_ListCtrl.SetExtendedStyle(LVS_EX_FULLROWSELECT);
 
+    //配置lua和调试信息两个页面
+    if(m_pDbgPage == NULL)
+    {
+        m_pDbgPage = new CDbgPage;
+    }
+
+    if(m_pLuaPage == NULL)
+    {
+        m_pLuaPage = new CLuaPage;
+    }
+
+    CRect rect;
+    m_TabCtrl.GetWindowRect((LPRECT)rect);
+    ScreenToClient((LPRECT)rect);
+
+    m_TabCtrl.InsertItem(0, _T("调试"));
+    m_TabCtrl.InsertItem(1, _T("脚本"));
+
+    m_pLuaPage->Create(CLuaPage::IDD, this);
+    m_pDbgPage->Create(CDbgPage::IDD, this);
+
+    m_pLuaPage->SetWindowPos(NULL, rect.left + 5, rect.top + 20, 0, 0, SWP_NOSIZE);
+    m_pDbgPage->SetWindowPos(NULL, rect.left + 5, rect.top + 20, 0, 0, SWP_NOSIZE);
+    m_pDbgPage->ShowWindow(SW_SHOW);
 
     CheckHook();
 
@@ -259,7 +288,6 @@ BOOL CDataDlg::OnInitDialog()
 
 BOOL CDataDlg::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult)
 {
-    // TODO: Add your specialized code here and/or call the base class
 
     NMHDR* pNMHdr = (NMHDR*)lParam;
     switch(pNMHdr->code)
@@ -271,9 +299,7 @@ BOOL CDataDlg::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult)
             CString strClick = m_ListCtrl.GetItemText(pItem->iItem, pItem->iSubItem);
             if(strClick.IsEmpty() == FALSE)
             {
-                strClick += _T("\r\n");
-                m_hEdit.ReplaceSel(strClick);
-
+                AddInfo((LPCTSTR)strClick);
             }
         }
         break;
@@ -1000,11 +1026,10 @@ void CDataDlg::OnSelchangeComboDatatype()
 
 void CDataDlg::OnBtnConfig()
 {
-    //隐藏主窗口
     ShowWindow(SW_HIDE);
 
     //配置对话框
-    CPropertySheet sheet;
+    CPropertySheet sheet(_T("配置文件"));
     CConfigQhPage qhpage;
     CConfigObjPage objpage;
     CConfigItemPage itempage;
@@ -1022,13 +1047,12 @@ void CDataDlg::OnBtnConfig()
     }
 
 
-    //显示主窗口
+
     ShowWindow(SW_SHOW);
 }
 
 void CDataDlg::OnRefresh()
 {
-    // TODO: Add your control notification handler code here
     OnSelchangeComboDatatype();
 }
 
@@ -1089,10 +1113,13 @@ void CDataDlg::OnHookDundi()
     // TODO: Add your control notification handler code here
     UpdateData(TRUE);
     if(m_bHook_Dundi)
+    {
         GameHook::GetInstance()->backupDunDi = GameHook::GetInstance()->DundiHook.hook();
-
+    }
     else
+    {
         GameHook::GetInstance()->DundiHook.unhook();
+    }
 
 }
 
@@ -1104,8 +1131,8 @@ BOOL CDataDlg::DestroyWindow()
 
 void CDataDlg::OnClr()
 {
-    m_hEdit.SetSel(0, -1);
-    m_hEdit.Clear();
+    m_pDbgPage->m_strInfo = _T("");
+    m_pDbgPage->UpdateData(FALSE);
 }
 
 void CDataDlg::OnTurnto()
@@ -1159,7 +1186,6 @@ void CDataDlg::OnSteptoobjet()
 
 void CDataDlg::OnRclickList(NMHDR* pNMHDR, LRESULT* pResult)
 {
-    // TODO: Add your control notification handler code here
 
     if(m_ListCtrl.GetSelectedCount() != 0)
     {
@@ -1169,19 +1195,11 @@ void CDataDlg::OnRclickList(NMHDR* pNMHDR, LRESULT* pResult)
         CMenu menu;
         menu.LoadMenu(IDR_OBJECT);
         menu.GetSubMenu(0)->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point.x, point.y, this);
-
-
     }
-
 
     *pResult = 0;
 }
 
-void CDataDlg::OnScriptwriter()
-{
-    // TODO: Add your control notification handler code here
-
-}
 
 void CDataDlg::OnFindthenkill()
 {
@@ -1223,16 +1241,11 @@ void CDataDlg::OnHookCombat()
         GameHook::GetInstance()->backupCombat = GameHook::GetInstance()->CombatHook.hook();
     }
     else
+    {
         GameHook::GetInstance()->CombatHook.unhook();
+    }
 }
 
-void CDataDlg::OnAddtoparty()
-{
-    //获取游戏外挂功能
-    GamecallEx& gcall = *GamecallEx::GetInstance();
-
-    gcall.AddToPary();
-}
 
 void CDataDlg::ShowHook(TCHAR* pszFormat, ...)
 {
@@ -1245,40 +1258,27 @@ void CDataDlg::ShowHook(TCHAR* pszFormat, ...)
 
     _tcscat(buffer, _T("\r\n"));
 
-    int len = m_hEdit.GetWindowTextLength();
-    m_hEdit.SetSel(len, -1);
-    m_hEdit.ReplaceSel(buffer);
-
+    AddInfo(buffer);
 }
-
-UINT CombatThread(LPVOID pParam)
-{
-    CDataDlg* pDlg = (CDataDlg*)pParam;
-
-    if(pDlg->m_ListCtrl.GetSelectedCount() == 0)
-    {
-        AfxMessageBox(_T("选个对象测试"));
-        return 0;
-    }
-
-    POSITION rpos = pDlg->m_ListCtrl.GetFirstSelectedItemPosition();
-    if(rpos)
-    {
-        int inItem  = pDlg->m_ListCtrl.GetNextSelectedItem(rpos);
-        //获得名字
-        CString strName = pDlg->m_ListCtrl.GetItemText(inItem, 1);
-        GamecallEx::GetInstance()->KillBoss((LPCTSTR)strName);
-    }
-
-
-
-    return 0;
-}
-
 
 void CDataDlg::OnBossBombat()
 {
-    //这里直接用KillBoss会导致一个死锁. 具体看钩子处理那里
-    //测试用另外一个单独线程可以
-    AfxBeginThread(CombatThread, this);
+    theApp.m_pWgDlg->m_pWorkThread->PostThreadMessage(WM_WORKTHREAD_TESTCOMBATBOSS, (WPARAM)this, 0);
+}
+
+
+void CDataDlg::OnSelchangeTab1(NMHDR* pNMHDR, LRESULT* pResult) 
+{
+    int inIndex = m_TabCtrl.GetCurSel();
+    if(inIndex == 0)
+    {
+        m_pDbgPage->ShowWindow(SW_SHOW);
+        m_pLuaPage->ShowWindow(SW_HIDE);
+    }
+    else if(inIndex == 1)
+    {
+        m_pDbgPage->ShowWindow(SW_HIDE);
+        m_pLuaPage->ShowWindow(SW_SHOW);
+    }
+	*pResult = 0;
 }

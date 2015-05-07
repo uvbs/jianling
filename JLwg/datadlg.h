@@ -2,25 +2,25 @@
 #define AFX_DATADLG1_H__2800A9AC_001C_43E1_8873_9016C0DF9B34__INCLUDED_
 
 
-
 #include "GameHook.h"
 #include "GamecallEx.h"
 
 /////////////////////////////////////////////////////////////////////////////
 // CDataDlg dialog
-
+class CLuaPage;
+class CDbgPage;
 class CDataDlg : public CDialog, public IHookRetSink
 {
 // Construction
 public:
     CDataDlg(CWnd* pParent = NULL);   // standard constructor
-
+    ~CDataDlg();
 
 // Dialog Data
     //{{AFX_DATA(CDataDlg)
-    enum { IDD = IDD_WGDATA };
+	enum { IDD = IDD_WGDATA };
+	CTabCtrl	m_TabCtrl;
     CListCtrl   m_ListCtrl;
-    CEdit   m_hEdit;
     CComboBox   m_ComBox;
     UINT    m_nRange;
     BOOL    m_bHook_step;
@@ -30,8 +30,11 @@ public:
     BOOL    m_bHook_Weaquit;
     BOOL    m_bHook_Accquest;
     BOOL    m_bHook_Combat;
-    //}}AFX_DATA
+	//}}AFX_DATA
 
+    //
+    CLuaPage *m_pLuaPage;
+    CDbgPage *m_pDbgPage;
 
     //–∂‘ÿÀ˘”–
     void CheckHook();
@@ -65,7 +68,7 @@ public:
     void PrintfStrike();
     void PrintfRangeMonster(BOOL bApplyConfig = FALSE);
     void PrintfRangeObject();
-    void AddInfo(TCHAR szFormat[], ...);
+    void AddInfo(const TCHAR szFormat[], ...);
 
 
 
@@ -89,13 +92,12 @@ protected:
     afx_msg void OnTurnto();
     afx_msg void OnSteptoobjet();
     afx_msg void OnRclickList(NMHDR* pNMHDR, LRESULT* pResult);
-    afx_msg void OnScriptwriter();
     afx_msg void OnFindthenkill();
     afx_msg void OnHookAcceptquest();
     afx_msg void OnHookstrike();
     afx_msg void OnHookCombat();
-    afx_msg void OnAddtoparty();
 	afx_msg void OnBossBombat();
+	afx_msg void OnSelchangeTab1(NMHDR* pNMHDR, LRESULT* pResult);
 	//}}AFX_MSG
     DECLARE_MESSAGE_MAP()
 };

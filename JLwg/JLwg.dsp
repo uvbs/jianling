@@ -130,6 +130,10 @@ SOURCE=.\DataDlg.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\DbgPage.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\EventDispatcher.cpp
 # End Source File
 # Begin Source File
@@ -175,6 +179,10 @@ SOURCE=..\common\LDasm.cpp
 # Begin Source File
 
 SOURCE=..\common\logger.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\LuaPage.cpp
 # End Source File
 # Begin Source File
 
@@ -243,6 +251,10 @@ SOURCE=.\DataDlg.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\DbgPage.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\EventDispatcher.h
 # End Source File
 # Begin Source File
@@ -292,6 +304,10 @@ SOURCE=..\JLkit\JLkitSocket.h
 # Begin Source File
 
 SOURCE=.\JLwg.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\LuaPage.h
 # End Source File
 # Begin Source File
 

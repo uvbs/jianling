@@ -11,12 +11,15 @@
 #define IDD_SETINI_ITEMFILTER1          119
 #define IDD_SETINI_ITEMFILTER           119
 #define IDR_FILTER                      127
+#define IDD_DEBUG                       130
+#define IDD_LUA                         131
 #define IDC_EDITMEMINPUT                1001
 #define IDC_EDITINFO                    1017
 #define IDC_COMBO_DATATYPE              1028
 #define IDC_LIST                        1029
 #define IDC_REFRESH                     1030
 #define IDC_GOTASK                      1033
+#define IDC_GOTASK2                     1034
 #define IDC_WGDATA                      1040
 #define IDC_HOOK_SENDSTEP               1040
 #define IDC_HOOK_DEQUEST                1042
@@ -47,6 +50,10 @@
 #define IDC_INVITE_RANGE                1094
 #define IDC_INVITE_INMAP                1095
 #define IDC_BUTTON1                     1099
+#define IDC_TESTLUA                     1099
+#define IDC_EDIT1                       1101
+#define IDC_LOADLUA                     1102
+#define IDC_TAB1                        1108
 #define ID_GETPALYERINFO                40006
 #define ID_FINDTHENKILL                 40008
 #define ID_CLR                          40011
@@ -72,9 +79,9 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        130
+#define _APS_NEXT_RESOURCE_VALUE        131
 #define _APS_NEXT_COMMAND_VALUE         40063
-#define _APS_NEXT_CONTROL_VALUE         1100
+#define _APS_NEXT_CONTROL_VALUE         1109
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

@@ -5,8 +5,6 @@
 #if !defined(AFX_OMBATBOSS_H__4807637C_C4C2_4752_9D02_052934507027__INCLUDED_)
 #define AFX_OMBATBOSS_H__4807637C_C4C2_4752_9D02_052934507027__INCLUDED_
 
-
-
 #include "GameHook.h"
 
 class CombatBoss: public ICombatHookSink

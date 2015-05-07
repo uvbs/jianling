@@ -6,6 +6,9 @@
 #include "GameLog.h"
 #include "JLDlg.h"
 #include "GameSpend.h"
+#include "LuaScript.h"
+
+
 
 //程序实例唯一
 CJLwgApp theApp;
@@ -14,7 +17,7 @@ CJLwgApp theApp;
 CJLwgApp::CJLwgApp()
 {
     m_hPipe = INVALID_HANDLE_VALUE;
-    _tcscpy(m_stData.szAccount, _T("No Control"));
+    _tcscpy(m_stData.szAccount, _T("无控制"));
     _tcscpy(m_stData.szConfig, _T("default.ini"));
     _tcscpy(m_stData.szScript, _T("default.lua"));
 }
@@ -100,6 +103,9 @@ DWORD CALLBACK WgThread(LPVOID pParam)
 {
     AFX_MANAGE_STATE(AfxGetStaticModuleState())
 
+    //
+    //DebugBreak();
+
     if(!AfxSocketInit())
     {
         LOGER(_T("套接字初始化失败"));
@@ -132,6 +138,15 @@ DWORD CALLBACK WgThread(LPVOID pParam)
 
 
 
+    //创建一个lua状态
+    if(!LuaScript::GetInstance()->Init())
+    {
+        LOGER(_T("脚本初始化失败"));
+        ExitProcess(0);
+        return FALSE;
+    }
+
+
     if(!GamecallEx::GetInstance()->Init())
     {
         LOGER(_T("外挂功能初始化失败"));
@@ -139,14 +154,9 @@ DWORD CALLBACK WgThread(LPVOID pParam)
         return FALSE;
     }
 
-    if(!LuaScript::GetInstance()->Init())
-    {
-        LOGER(_T("LUA初始化失败"));
-        ExitProcess(0);
-        return FALSE;
-    }
 
     LOGER(_T("启动完成"));
+
 
 
     //钩游戏窗口处理
@@ -297,7 +307,6 @@ BOOL CJLwgApp::InitInstance()
     {
         return FALSE;
     }
-
 
 
     //至此日志能使用

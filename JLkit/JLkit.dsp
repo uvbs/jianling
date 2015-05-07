@@ -185,10 +185,6 @@ SOURCE=..\common\webpost.cpp
 
 SOURCE=..\common\WHService.cpp
 # End Source File
-# Begin Source File
-
-SOURCE=.\WorkThread.cpp
-# End Source File
 # End Group
 # Begin Group "Header Files"
 
@@ -276,10 +272,6 @@ SOURCE=..\common\webpost.h
 # Begin Source File
 
 SOURCE=..\common\WHService.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\WorkThread.h
 # End Source File
 # End Group
 # Begin Group "Resource Files"

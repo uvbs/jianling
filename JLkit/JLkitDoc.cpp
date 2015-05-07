@@ -6,12 +6,11 @@
 #include "Settingdlg.h"
 #include "ConfigMgr.h"
 #include "MsgBox.h"
-#include "WorkThread.h"
 #include "LoginSheet.h"
 
 
 #ifdef _DEBUG
-    #define new DEBUG_NEW
+#define new DEBUG_NEW
 #endif
 
 
@@ -208,7 +207,6 @@ void CJLkitDoc::ShowLogin()
 
 bool CJLkitDoc::PerformLogonMission()
 {
-
     ShowStatus(_T("正在连接服务器.."));
 
     CString strSrvIp;
@@ -243,7 +241,7 @@ bool CJLkitDoc::OnEventTCPSocketLink(CJLkitSocket* pSocket, INT nErrorCode)
     }
     else
     {
-        ShowStatus(NULL);
+        ShowStatus(_T("正在登陆.."));
 
         //完成链接, 开始发送登陆数据
         BYTE cbBuffer[SOCKET_TCP_PACKET];
@@ -281,7 +279,7 @@ void CJLkitDoc::ProcessLogin(CJLkitSocket* pSocket, const Tcp_Head& stTcpHead, v
     switch(stTcpHead.wSubCmdID)
     {
 
-        case fun_login_fail:
+    case fun_login_fail:
         {
             PROCESS_DESCRIBE* pDes = (PROCESS_DESCRIBE*)pData;
             m_socket.Close();
@@ -290,18 +288,20 @@ void CJLkitDoc::ProcessLogin(CJLkitSocket* pSocket, const Tcp_Head& stTcpHead, v
             break;
         }
 
-        case fun_login_ok:
+    case fun_login_ok:
         {
             
+            ShowStatus(NULL);
+
             //自动加载上次打开的文件
             if(CConfigMgr::GetInstance()->m_szFileName[0] != _T('\0'))
             {
                 OnOpenDocument(CConfigMgr::GetInstance()->m_szFileName.c_str());
             }
-            
+
             //显示主窗口
             ((CMainFrame*)AfxGetMainWnd())->ActivateFrame();
-            
+
             PROCESS_DESCRIBE* pLoginSucess = (PROCESS_DESCRIBE*)pData;
             m_socket.Send(M_KEY, fun_querykey, NULL, 0);
 
@@ -309,8 +309,8 @@ void CJLkitDoc::ProcessLogin(CJLkitSocket* pSocket, const Tcp_Head& stTcpHead, v
         }
 
 
-        case fun_regist_ok:
-        case fun_regist_fail:
+    case fun_regist_ok:
+    case fun_regist_fail:
         {
             PROCESS_DESCRIBE* pDes = (PROCESS_DESCRIBE*)pData;
             AfxMessageBox(pDes->szDescribe);
@@ -319,8 +319,8 @@ void CJLkitDoc::ProcessLogin(CJLkitSocket* pSocket, const Tcp_Head& stTcpHead, v
         }
 
 
-        default:
-            break;
+    default:
+        break;
     }
 }
 
@@ -328,22 +328,22 @@ void CJLkitDoc::ProcessKey(CJLkitSocket* pSocket, const Tcp_Head& stTcpHead, voi
 {
     switch(stTcpHead.wSubCmdID)
     {
-        case fun_bindkey_fail:
-        case fun_bindkey_ok:
+    case fun_bindkey_fail:
+    case fun_bindkey_ok:
         {
             PROCESS_DESCRIBE* pDesc = (PROCESS_DESCRIBE*)pData;
             AfxMessageBox(pDesc->szDescribe);
             break;
         }
 
-        case fun_unbindkey_fail:
+    case fun_unbindkey_fail:
         {
             PROCESS_DESCRIBE* pDesc = (PROCESS_DESCRIBE*)pData;
             AfxMessageBox(pDesc->szDescribe);
             break;
         }
 
-        case fun_unbindkey_ok:
+    case fun_unbindkey_ok:
         {
             //刷新对话框列表
             if(m_pKeyDlg)
@@ -353,9 +353,9 @@ void CJLkitDoc::ProcessKey(CJLkitSocket* pSocket, const Tcp_Head& stTcpHead, voi
             break;
         }
 
-        case fun_querykey_ok:
+    case fun_querykey_ok:
         {
-            
+
             QUERYKEY_SUCCESS* pKey = (QUERYKEY_SUCCESS*)pData;
 
             //放到用户全局数据中
@@ -364,7 +364,7 @@ void CJLkitDoc::ProcessKey(CJLkitSocket* pSocket, const Tcp_Head& stTcpHead, voi
         }
 
 
-        case fun_querykey_fail:
+    case fun_querykey_fail:
         {
             if(m_pKeyDlg)
             {
@@ -376,8 +376,8 @@ void CJLkitDoc::ProcessKey(CJLkitSocket* pSocket, const Tcp_Head& stTcpHead, voi
         }
 
 
-        default:
-            break;
+    default:
+        break;
     }
 }
 
@@ -385,12 +385,12 @@ void CJLkitDoc::ProcessHelp(CJLkitSocket* pSocket, const Tcp_Head& stTcpHead, vo
 {
     switch(stTcpHead.wSubCmdID)
     {
-        case fun_bugrep_ok:
+    case fun_bugrep_ok:
         {
             break;
         }
 
-        case fun_bugrep_fail:
+    case fun_bugrep_fail:
         {
             break;
         }
@@ -405,20 +405,20 @@ bool CJLkitDoc::OnEventTCPSocketRead(CJLkitSocket* pSocket, const Tcp_Head& stTc
 
     switch(stTcpHead.wMainCmdID)
     {
-        case M_LOGIN:
-            ProcessLogin(pSocket, stTcpHead, pData, wDataSize);
-            break;
+    case M_LOGIN:
+        ProcessLogin(pSocket, stTcpHead, pData, wDataSize);
+        break;
 
-        case M_KEY:
-            ProcessKey(pSocket, stTcpHead, pData, wDataSize);
-            break;
+    case M_KEY:
+        ProcessKey(pSocket, stTcpHead, pData, wDataSize);
+        break;
 
-        case M_HELP:
-            ProcessHelp(pSocket, stTcpHead, pData, wDataSize);
-            break;
+    case M_HELP:
+        ProcessHelp(pSocket, stTcpHead, pData, wDataSize);
+        break;
 
-        default:
-            break;
+    default:
+        break;
     }
 
     return true;
