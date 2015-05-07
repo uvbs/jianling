@@ -103,8 +103,8 @@ UINT WorkThread(LPVOID pParam)
 
         case WM_WORKTHREAD_EXCUTASK:
             {
-                TaskScript task;
-                task.BeginTask();
+                //TaskScript task;
+                //task.BeginTask();
                 break;
             }
 

@@ -75,7 +75,7 @@ void EventDispatcher::Notify()
     //将当前事件通知给监听者
     for(std::vector<Listener*>::iterator it = _listeners.begin(); it != _listeners.end(); it++)
     {
-        std::list<EventArg>::iterator it = _events.begin();
+        //std::list<EventArg>::iterator ita = _events.begin();
 
         //根据事件类型给不同的监听者, 还是一个事件通知给所有监听者
         //这样通知造成的结果是整个处理事件是同步的, 事件没有处理完,

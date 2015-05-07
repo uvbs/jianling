@@ -134,23 +134,30 @@ void CombatBoss::run()
             case 0x5455E1:
                 {
                     pCall->TurnToNear(300);
-                    Sleep(600);
+                    Sleep(300);
                     TRACE(_T("0x5455E1"));
                     //pCall->KeyPress(86);
                     if(pCall->isStrikeCd(0x5DFC))
                     {
-                        pCall->sendcall(id_msg_attack, (LPVOID)0x5DFC);//v
-                        Sleep(600);
-                        pCall->sendcall(id_msg_attack, (LPVOID)0x5ECE);//v-r
-                        Sleep(400);
-                        pCall->sendcall(id_msg_attack, (LPVOID)0x5ECE);//v-r
-                        Sleep(400);
-                        pCall->sendcall(id_msg_attack, (LPVOID)0x5ECE);//v-r
+                        //pCall->sendcall(id_msg_attack, (LPVOID)0x5DFC);//v
+                        //Sleep(600);
+                        //pCall->sendcall(id_msg_attack, (LPVOID)0x5ECE);//v-r
+                        //Sleep(400);
+                        //pCall->sendcall(id_msg_attack, (LPVOID)0x5ECE);//v-r
+                        //Sleep(400);
+                        //pCall->sendcall(id_msg_attack, (LPVOID)0x5ECE);//v-r
                         //pCall->Attack(0x5DFC);
+						pCall->Attack(0x5DFC);
+						pCall->Attack(0x5ECE);
+						pCall->Attack(0x5ECE);
+						pCall->Attack(0x5ECE);
+						pCall->Attack(0x5ECE);
+						pCall->Attack(0x5ECE);
                     }
                     else
                     {
-						pCall->sendcall(id_msg_attack, (LPVOID)0x5E1A);//E
+						//pCall->sendcall(id_msg_attack, (LPVOID)0x5E1A);//E
+						pCall->Attack(0x5E1A);
                         //pCall->sendcall(id_msg_attack, (LPVOID)0x5dca);//tab
                         //Sleep(500);
                     }
@@ -180,29 +187,48 @@ void CombatBoss::run()
                     //pCall->Attack(0x5dc1);
                     //Sleep(500);
                     //pCall->KeyPress(88);
-                    if(pCall->isStrikeCd(0x5E24))
+      //              if(pCall->isStrikeCd(0x5E24))
+      //              {
+						//pCall->Attack(0x5E24);//x
+						//pCall->Attack(0x5dc1);
+						//pCall->Attack(0x5dc1);
+						//pCall->Attack(0x5dca);
+						//pCall->Attack(0x5E1B);
+
+      ////                  pCall->sendcall(id_msg_attack, (LPVOID)0x5E24);//x
+      ////                  //pCall->Attack(0x5E24);
+      ////                  Sleep(800);
+						////pCall->sendcall(id_msg_attack, (LPVOID)0x5dc1);//r
+						////Sleep(500);
+						////pCall->sendcall(id_msg_attack, (LPVOID)0x5dca);//tab
+						////Sleep(1000);
+						////pCall->sendcall(id_msg_attack, (LPVOID)0x5E1B);//C
+						////Sleep(800);
+						////pCall->Attack(0);
+      //              }
+      //              else 
+					if(pCall->isStrikeCd(0x5e74))
                     {
-                        pCall->sendcall(id_msg_attack, (LPVOID)0x5E24);//x
-                        //pCall->Attack(0x5E24);
-                        Sleep(800);
-						pCall->sendcall(id_msg_attack, (LPVOID)0x5dc1);//r
-						Sleep(500);
-						pCall->sendcall(id_msg_attack, (LPVOID)0x5dca);//tab
-						Sleep(1000);
-						pCall->sendcall(id_msg_attack, (LPVOID)0x5E1B);//C
-						Sleep(800);
-						pCall->Attack(0);
-                    }
-                    else
+						pCall->Attack(0x5e74);//1
+						pCall->Attack(0x5dc1);
+						pCall->Attack(0x5dc1);
+						pCall->Attack(0x5dca);
+						pCall->Attack(0x5E1B);
+      //                  pCall->sendcall(id_msg_attack, (LPVOID)0x5dca);//tab
+      //                  Sleep(1000);
+						//pCall->sendcall(id_msg_attack, (LPVOID)0x5dc1);//r
+						//Sleep(500);
+						//pCall->sendcall(id_msg_attack, (LPVOID)0x5dc1);//r
+						//Sleep(500);
+						//pCall->sendcall(id_msg_attack, (LPVOID)0x5E1B);//C
+						//Sleep(800);
+                    }else if (pCall->isStrikeCd(0x5DF2))
                     {
-                        pCall->sendcall(id_msg_attack, (LPVOID)0x5dca);//tab
-                        Sleep(1000);
-						pCall->sendcall(id_msg_attack, (LPVOID)0x5dc1);//r
-						Sleep(500);
-						pCall->sendcall(id_msg_attack, (LPVOID)0x5dc1);//r
-						Sleep(500);
-						pCall->sendcall(id_msg_attack, (LPVOID)0x5E1B);//C
-						Sleep(800);
+						pCall->Attack(0x5DF2);//1
+						pCall->Attack(0x5dc1);
+						pCall->Attack(0x5dc1);
+						pCall->Attack(0x5dca);
+						pCall->Attack(0x5E1B);
                     }
                     break;
                 }
@@ -283,6 +309,7 @@ void CombatBoss::run()
 				}
 			case 5190089 | 5190088:
 				{
+					pCall->SteptoBack(pBossNode);
 					pCall->TurnToNear(300);
 					Sleep(500);
 					TRACE(_T("5190089"));
@@ -356,16 +383,23 @@ void CombatBoss::run()
 			{
 				if(pCall->GetPlayerMana() >= 60)
 				{
-					pCall->Kill_Tab();
+					pCall->Attack(0x5dde);
 				}
-				pCall->sendcall(id_msg_attack, (LPVOID)0x5dc1);//r
+				pCall->Attack(0x5dc1);
 			}else
 			{
 				if(pCall->GetPlayerMana() >= 60)
 				{
-					pCall->sendcall(id_msg_attack, (LPVOID)0x5dde);//t
+					//pCall->sendcall(id_msg_attack, (LPVOID)0x5dde);//t
+					pCall->Attack(0x5dde);
 				}
-				pCall->sendcall(id_msg_attack, (LPVOID)0x5dc1);//r
+				//pCall->sendcall(id_msg_attack, (LPVOID)0x5dc1);//r
+				pCall->Attack(0x5dc1);
+
+			}
+			if (pCall->isStrikeCd(0x5E24))
+			{
+				pCall->Attack(0x5E24);
 			}
         }
 

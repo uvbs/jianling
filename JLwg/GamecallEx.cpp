@@ -3025,5 +3025,6 @@ void GamecallEx::SteptoBack(ObjectNode *pObj)
     }
 
 
-    Gamecall::Stepto(rpos);
+    Gamecall::Stepto(rpos,10,10,1000,TRUE);
+
 }
