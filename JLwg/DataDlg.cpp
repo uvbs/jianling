@@ -1268,7 +1268,8 @@ void CDataDlg::ShowHook(TCHAR* pszFormat, ...)
 
     _tcscat(buffer, _T("\r\n"));
 
-    AddInfo(buffer);
+    m_pDbgPage->m_strInfo += buffer;
+    m_pDbgPage->UpdateData(FALSE);
 }
 
 void CDataDlg::OnBossBombat()

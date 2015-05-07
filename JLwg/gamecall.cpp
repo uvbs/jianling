@@ -1893,7 +1893,8 @@ void Gamecall::Attack(int id)  //技能攻击  传入的是技能ID
 				call eax;
 				mov flag,al;
 			}
-			TRACE("%d",flag);
+
+			TRACE(_T("%d"),flag);
 			Sleep(10);
 		}
     }

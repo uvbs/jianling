@@ -134,10 +134,6 @@ SOURCE=.\DbgPage.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\EventDispatcher.cpp
-# End Source File
-# Begin Source File
-
 SOURCE=.\gamecall.cpp
 # End Source File
 # Begin Source File
@@ -252,10 +248,6 @@ SOURCE=.\DataDlg.h
 # Begin Source File
 
 SOURCE=.\DbgPage.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\EventDispatcher.h
 # End Source File
 # Begin Source File
 
