@@ -36,6 +36,7 @@ CombatBoss::~CombatBoss()
 //需要一种异步调用, 在执行完获得通知
 void CombatBoss::run()
 {
+	TRACE(_T("准备打BOSS"));
     //hook怪物技能, 设置回调
     GameHook::GetInstance()->SetCombatSink(this);
 
@@ -379,24 +380,29 @@ void CombatBoss::run()
             pCall->TurnToNear(300);
             Sleep(50);
             //pCall->KeyPress(82);
-			if (wcscmp(m_name.c_str() ,L"銀剛力士") == 0)
+			//if (wcscmp(m_name.c_str() ,L"銀剛力士") == 0)
+			//{
+			//	if(pCall->GetPlayerMana() >= 60)
+			//	{
+			//		if (pCall->isStrikeCd(0x5dde))
+			//		{
+			//			pCall->Attack(0x5dde);
+			//		}
+			//	}
+			//	pCall->Attack(0x5dc1);
+			//}else
+			//{
+			if(pCall->GetPlayerMana() >= 60)
 			{
-				if(pCall->GetPlayerMana() >= 60)
+				//pCall->sendcall(id_msg_attack, (LPVOID)0x5dde);//t
+				if (pCall->isStrikeCd(0x5dde))
 				{
 					pCall->Attack(0x5dde);
 				}
-				pCall->Attack(0x5dc1);
-			}else
-			{
-				if(pCall->GetPlayerMana() >= 60)
-				{
-					//pCall->sendcall(id_msg_attack, (LPVOID)0x5dde);//t
-					pCall->Attack(0x5dde);
-				}
-				//pCall->sendcall(id_msg_attack, (LPVOID)0x5dc1);//r
-				pCall->Attack(0x5dc1);
-
 			}
+			//pCall->sendcall(id_msg_attack, (LPVOID)0x5dc1);//r
+			pCall->Attack(0x5dc1);
+			//}
 			if (pCall->isStrikeCd(0x5E24))
 			{
 				pCall->Attack(0x5E24);
