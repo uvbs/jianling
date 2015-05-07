@@ -1210,7 +1210,12 @@ void CDataDlg::OnFindthenkill()
 {
     //获取游戏外挂功能
     GamecallEx& gcall = *GamecallEx::GetInstance();
-    gcall.FindThenKill(0, 1000, modeNormal);
+    //gcall.FindThenKill(0, 1000, modeNormal);
+
+	gcall.Attack(0x5dc1);
+	gcall.Attack(0x5dc1);
+	gcall.Attack(0x5dc1);
+	gcall.Attack(0x5dc1);
 }
 
 void CDataDlg::OnHookAcceptquest()

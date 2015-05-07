@@ -2121,6 +2121,7 @@ void GamecallEx::Kill_Tab()
     int cs;
     cs = 0;
     sendcall(id_msg_attack, (LPVOID)0x5dca);
+	Sleep(500);
     while(true)
     {
         if(isPlayerDaodi())
@@ -2134,6 +2135,7 @@ void GamecallEx::Kill_Tab()
         }
         if(isStrikeCd(0x5dca))
         {
+			TRACE(_T("0x5dca的CD完,%d"),cs);
             break;
         }
         cs++;
@@ -2153,11 +2155,14 @@ int GamecallEx::KillObject(DWORD range, ObjectNode* pNode, DWORD mode, DWORD can
     //记录当下状态来判断目标是否死亡或者杀怪超时
     DWORD oriTime = GetTickCount();
     DWORD tarHealth = GetType4HP(pNode->ObjAddress);;
-
+DWORD begitime = 0;
+DWORD endtime = 0;
+DWORD rs = 0;
     fPosition mypos;
     fPosition targetpos;
     for(;;)
     {
+		begitime = GetTickCount();
 
         int tick_begin = GetTickCount();
         ZeroMemory(&targetpos, sizeof(fPosition));
@@ -3019,5 +3024,6 @@ void GamecallEx::SteptoBack(ObjectNode *pObj)
     }
 
 
-    Gamecall::Stepto(rpos);
+    Gamecall::Stepto(rpos,10,10,1000,TRUE);
+
 }

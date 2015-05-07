@@ -1874,22 +1874,28 @@ void Gamecall::ZOULUSHUNYI(DWORD* adress, DWORD adrewss)
 //参数1: 技能id
 void Gamecall::Attack(int id)  //技能攻击  传入的是技能ID
 {
+	BYTE flag = 0;
     __try
     {
-        __asm
-        {
-            mov eax, id;
-            push eax;
-            mov eax, obj_enum_base;
-            mov eax, [eax];
-            mov eax, [eax + attack_offset1];
-            mov eax, [eax + attack_offset2];
-            mov eax, [eax + attack_offset3];
-            push eax;
-            mov eax, attack_call;
-            call eax;
-        }
-
+		while(flag == 0)
+		{
+			__asm
+			{
+				mov eax, id;
+				push eax;
+				mov eax, obj_enum_base;
+				mov eax, [eax];
+				mov eax, [eax + attack_offset1];
+				mov eax, [eax + attack_offset2];
+				mov eax, [eax + attack_offset3];
+				push eax;
+				mov eax, attack_call;
+				call eax;
+				mov flag,al;
+			}
+			TRACE("%d",flag);
+			Sleep(10);
+		}
     }
     __except(1)
     {
@@ -7050,8 +7056,8 @@ BOOL Gamecall::isStrikeCd(DWORD id)
     if(GetPlayerDeadStatus() == 0)
     {
         std::vector<STRIKEINFO> StrikeVec;
-        sendcall(id_msg_GetStrikeToVector, &StrikeVec);
-        //GetStrikeToVector();
+        //sendcall(id_msg_GetStrikeToVector, &StrikeVec);
+        GetStrikeToVector(StrikeVec);
 
         for(int i = 0; i < StrikeVec.size(); i++)
         {
