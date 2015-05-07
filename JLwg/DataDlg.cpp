@@ -887,11 +887,11 @@ void CDataDlg::PrintfRangeObject()
         //是否是怪物
         if(gcall.isCanKill(pNode))
         {
-            m_ListCtrl.SetItemText(index, 8, L"是");
+            m_ListCtrl.SetItemText(index, 8, _T("是"));
         }
         else
         {
-            m_ListCtrl.SetItemText(index, 8, L"否");
+            m_ListCtrl.SetItemText(index, 8, _T("否"));
         }
 
 

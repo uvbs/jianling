@@ -26,7 +26,7 @@ static char THIS_FILE[] = __FILE__;
 lua_pushinteger(L, x);\
 lua_setglobal(L, #x);
 
-int utf8ToUnicode16(const   char* utf8, wchar_t* unicode16,  int  length)
+int utf8ToUnicode16(const char* utf8, wchar_t* unicode16, int length)
 {
     char  c;
     int  i = 0;
@@ -70,6 +70,13 @@ int utf8ToUnicode16(const   char* utf8, wchar_t* unicode16,  int  length)
     }
 
     return  i + 1;
+}
+
+
+static int AddToPary()
+{
+    GamecallEx::GetInstance()->AddToPary();
+    return 0;
 }
 
 //utf8->utf-16的转换
@@ -169,7 +176,7 @@ static int KillBoss(lua_State* L)
 static int STATUS(lua_State* L)
 {
     const char* pszText = lua_tostring(L, 1);
-    theApp.SendStatus((wchar_t *)pszText);
+    theApp.SendStatus((wchar_t*)pszText);
     return 0;
 }
 
@@ -199,10 +206,27 @@ static int GetPresentTaskID(lua_State* L)
 static int MessageBox(lua_State* L)
 {
     const char* pszText = lua_tostring(L, 1);
-    MessageBoxW(NULL, (wchar_t *)pszText, L"脚本", MB_OK);
+    MessageBoxW(NULL, (wchar_t*)pszText, L"脚本", MB_OK);
 
     return 0;
 }
+
+static int FollowNpc(lua_State* L)
+{
+    const char* pszText = lua_tostring(L, 1);
+    int range = lua_tointeger(L, 2);
+    GamecallEx::GetInstance()->FollowNpc((wchar_t *)pszText, range);
+    return 0;
+}
+
+
+static int FuHuo(lua_State* L)
+{
+
+    GamecallEx::GetInstance()->FuHuo();
+    return 0;
+}
+
 
 static int DeliverQuests(lua_State* L)
 {
@@ -215,10 +239,28 @@ static int DeliverQuests(lua_State* L)
             int a2 = lua_tointeger(L, 2);
             const char* a3 = lua_tostring(L, 3);
 
-            GamecallEx::GetInstance()->DeliverQuests(a1, a2, (wchar_t *)a3);
+            GamecallEx::GetInstance()->DeliverQuests(a1, a2, (wchar_t*)a3);
         }
     }
 
+    return 0;
+}
+
+static int CityConvey(lua_State *L)
+{
+    int id = lua_tointeger(L, 1);
+    GamecallEx::GetInstance()->CityConvey(id);
+    return 0;
+}
+
+static int Shunyi(lua_State* L)
+{
+    const char* pszText = lua_tostring(L, 1);
+#ifdef _UNICODE
+    GamecallEx::GetInstance()->Shunyi((wchar_t*)pszText);
+#else
+#pragma error("no wirte")
+#endif
     return 0;
 }
 
@@ -284,4 +326,9 @@ void LuaScript::GameLib(lua_State* L)
     REGLUAFUN(Sleep);
     REGLUAFUN(DeliverQuests);
     REGLUAFUN(L);
+    REGLUAFUN(AddToPary);
+    REGLUAFUN(FuHuo);
+    REGLUAFUN(FollowNpc);
+    REGLUAFUN(Shunyi);
+    REGLUAFUN(CityConvey);
 }
