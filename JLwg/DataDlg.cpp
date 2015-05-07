@@ -46,7 +46,8 @@ TCHAR* cli_RangeObject[] =
     {_T("距离")},
     {_T("坐标")},
     {_T("是否怪物")},
-    {_T("索引")}
+    {_T("索引")},
+    {_T("面向")}
 };
 
 //技能 需要的控件列
@@ -144,7 +145,7 @@ void CDataDlg::DoDataExchange(CDataExchange* pDX)
 {
     CDialog::DoDataExchange(pDX);
     //{{AFX_DATA_MAP(CDataDlg)
-	DDX_Control(pDX, IDC_TAB1, m_TabCtrl);
+    DDX_Control(pDX, IDC_TAB1, m_TabCtrl);
     DDX_Control(pDX, IDC_LIST, m_ListCtrl);
     DDX_Control(pDX, IDC_COMBO_DATATYPE, m_ComBox);
     DDX_Text(pDX, IDC_EDITMEMINPUT, m_nRange);
@@ -155,7 +156,7 @@ void CDataDlg::DoDataExchange(CDataExchange* pDX)
     DDX_Check(pDX, IDC_HOOK_CHUANZHUANGBEI, m_bHook_Weaquit);
     DDX_Check(pDX, IDC_HOOK_ACCEPTQUEST, m_bHook_Accquest);
     DDX_Check(pDX, IDC_HOOK_COMBAT, m_bHook_Combat);
-	//}}AFX_DATA_MAP
+    //}}AFX_DATA_MAP
 }
 
 
@@ -180,8 +181,8 @@ BEGIN_MESSAGE_MAP(CDataDlg, CDialog)
     ON_COMMAND(ID_HOOKSTRIKE, OnHookstrike)
     ON_BN_CLICKED(IDC_HOOK_COMBAT, OnHookCombat)
     ON_BN_CLICKED(IDC_BOSSCOMBAT, OnBossBombat)
-	ON_NOTIFY(TCN_SELCHANGE, IDC_TAB1, OnSelchangeTab1)
-	//}}AFX_MSG_MAP
+    ON_NOTIFY(TCN_SELCHANGE, IDC_TAB1, OnSelchangeTab1)
+    //}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
 
@@ -803,6 +804,10 @@ void CDataDlg::PrintfRangeMonster(BOOL bApplyConfig)
             m_ListCtrl.SetItemText(index, 9, strTemp);
         }
 
+        //怪物面向
+        strTemp.Format(_T("%d"), gcall.GetObjectView(pNode->ObjAddress));
+        m_ListCtrl.SetItemText(index, 10, strTemp);
+
 
         m_ListCtrl.SetItemData(index, (DWORD)pNode);
     }
@@ -1267,7 +1272,7 @@ void CDataDlg::OnBossBombat()
 }
 
 
-void CDataDlg::OnSelchangeTab1(NMHDR* pNMHDR, LRESULT* pResult) 
+void CDataDlg::OnSelchangeTab1(NMHDR* pNMHDR, LRESULT* pResult)
 {
     int inIndex = m_TabCtrl.GetCurSel();
     if(inIndex == 0)
@@ -1280,5 +1285,5 @@ void CDataDlg::OnSelchangeTab1(NMHDR* pNMHDR, LRESULT* pResult)
         m_pDbgPage->ShowWindow(SW_HIDE);
         m_pLuaPage->ShowWindow(SW_SHOW);
     }
-	*pResult = 0;
+    *pResult = 0;
 }
