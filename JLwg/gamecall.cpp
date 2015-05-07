@@ -5,7 +5,6 @@
 #include "GameConfig.h"
 #include "GameSpend.h"
 #include "gamehook.h"
-#include "GameLog.h"
 
 
 
