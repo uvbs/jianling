@@ -180,6 +180,7 @@ BEGIN_MESSAGE_MAP(CDataDlg, CDialog)
     ON_BN_CLICKED(IDC_BOSSCOMBAT, OnBossBombat)
     ON_NOTIFY(TCN_SELCHANGE, IDC_TAB1, OnSelchangeTab1)
 	ON_COMMAND(ID_GOTOBACK, OnGotoback)
+	ON_UPDATE_COMMAND_UI(ID_HOOKSTRIKE, OnUpdateHookstrike)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
@@ -1225,6 +1226,8 @@ void CDataDlg::OnHookAcceptquest()
         GameHook::GetInstance()->aeQuestHook.unhook();
 }
 
+
+//钩选中的怪的技能释放
 void CDataDlg::OnHookstrike()
 {
     POSITION pos = m_ListCtrl.GetFirstSelectedItemPosition();
@@ -1313,4 +1316,10 @@ void CDataDlg::OnGotoback()
             gcall.SteptoBack(pNode);
         }
     }
+}
+
+void CDataDlg::OnUpdateHookstrike(CCmdUI* pCmdUI) 
+{
+	// TODO: Add your command update UI handler code here
+	
 }

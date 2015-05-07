@@ -99,6 +99,7 @@ protected:
 	afx_msg void OnBossBombat();
 	afx_msg void OnSelchangeTab1(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnGotoback();
+	afx_msg void OnUpdateHookstrike(CCmdUI* pCmdUI);
 	//}}AFX_MSG
     DECLARE_MESSAGE_MAP()
 };

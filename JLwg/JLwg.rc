@@ -273,7 +273,7 @@ BEGIN
     BEGIN
         MENUITEM "转向这怪",                    IDC_TURNTO
         MENUITEM "走向这怪",                    ID_STEPTOOBJET
-        MENUITEM "钩这怪技能",                  ID_HOOKSTRIKE
+        MENUITEM "钩这怪技能",                  ID_HOOKSTRIKE, CHECKED
         MENUITEM "走到身后",                    ID_GOTOBACK
     END
 END
