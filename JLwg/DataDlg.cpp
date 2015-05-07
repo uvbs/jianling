@@ -1340,6 +1340,8 @@ void CDataDlg::OnGotoback()
 
 void CDataDlg::OnUpdateHookstrike(CCmdUI* pCmdUI)
 {
+    pCmdUI->SetCheck(0);
+
     //获取游戏外挂功能
     GamecallEx& gcall = *GamecallEx::GetInstance();
 
