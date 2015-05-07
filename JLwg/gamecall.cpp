@@ -1875,10 +1875,15 @@ void Gamecall::ZOULUSHUNYI(DWORD* adress, DWORD adrewss)
 void Gamecall::Attack(int id)  //技能攻击  传入的是技能ID
 {
 	BYTE flag = 0;
+	int cs = 0;
     __try
     {
 		while(flag == 0)
 		{
+			if (cs > 50)
+			{
+				break;
+			}
 			__asm
 			{
 				mov eax, id;
@@ -1893,9 +1898,9 @@ void Gamecall::Attack(int id)  //技能攻击  传入的是技能ID
 				call eax;
 				mov flag,al;
 			}
-
-			TRACE(_T("%d"),flag);
+			TRACE("技能执行返回%d",flag);
 			Sleep(10);
+			cs++;
 		}
     }
     __except(1)
