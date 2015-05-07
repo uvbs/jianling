@@ -198,10 +198,10 @@ void __stdcall GameHook::myCombatFilter()
         if(objAddr == m_ObjAddrVec[i])
         {
 
-            if(GameHook::GetInstance()->m_sink != NULL)
-            {
-                GameHook::GetInstance()->m_sink->ShowHook(_T("怪物: %08x, 技能: %d"), objAddr, id);
-            }
+            //if(GameHook::GetInstance()->m_sink != NULL)
+            //{
+            //    GameHook::GetInstance()->m_sink->ShowHook(_T("怪物: %08x, 技能: %d"), objAddr, id);
+            //}
 
 
             if(GameHook::GetInstance()->m_pCombatSink != NULL)
