@@ -2999,8 +2999,8 @@ void GamecallEx::SteptoBack(ObjectNode *pObj)
     }
     else if(objview > 90 && objview < 180)  //东南
     {
-        rpos.x -= CAN_OPERATOR;
-        rpos.y += CAN_OPERATOR;
+        rpos.x += CAN_OPERATOR;
+        rpos.y -= CAN_OPERATOR;
     }
     else if(objview >0 && objview < 90) //东北
     {

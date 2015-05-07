@@ -179,9 +179,9 @@ BEGIN_MESSAGE_MAP(CDataDlg, CDialog)
     ON_BN_CLICKED(IDC_HOOK_COMBAT, OnHookCombat)
     ON_BN_CLICKED(IDC_BOSSCOMBAT, OnBossBombat)
     ON_NOTIFY(TCN_SELCHANGE, IDC_TAB1, OnSelchangeTab1)
-	ON_COMMAND(ID_GOTOBACK, OnGotoback)
-	ON_UPDATE_COMMAND_UI(ID_HOOKSTRIKE, OnUpdateHookstrike)
-	//}}AFX_MSG_MAP
+    ON_COMMAND(ID_GOTOBACK, OnGotoback)
+    ON_UPDATE_COMMAND_UI(ID_HOOKSTRIKE, OnUpdateHookstrike)
+    //}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
 
@@ -1211,10 +1211,10 @@ void CDataDlg::OnFindthenkill()
     GamecallEx& gcall = *GamecallEx::GetInstance();
     //gcall.FindThenKill(0, 1000, modeNormal);
 
-	gcall.Attack(0x5dc1);
-	gcall.Attack(0x5dc1);
-	gcall.Attack(0x5dc1);
-	gcall.Attack(0x5dc1);
+    gcall.Attack(0x5dc1);
+    gcall.Attack(0x5dc1);
+    gcall.Attack(0x5dc1);
+    gcall.Attack(0x5dc1);
 }
 
 void CDataDlg::OnHookAcceptquest()
@@ -1231,13 +1231,33 @@ void CDataDlg::OnHookAcceptquest()
 void CDataDlg::OnHookstrike()
 {
     POSITION pos = m_ListCtrl.GetFirstSelectedItemPosition();
-
-    while(pos)
+    if(pos)
     {
+        std::vector<ObjectNode*> &HookVec = GameHook::GetInstance()->m_ObjAddrVec;
         int nItem = m_ListCtrl.GetNextSelectedItem(pos);
         ObjectNode* pNode = (ObjectNode*)m_ListCtrl.GetItemData(nItem);
 
-        GameHook::GetInstance()->m_ObjAddrVec.push_back(pNode->ObjAddress);
+        CMenu menu;
+        menu.LoadMenu(IDR_OBJECT);
+        if(menu.GetMenuState(ID_HOOKSTRIKE, MF_BYCOMMAND) == MF_CHECKED)
+        {
+
+            //从钩子vec中删掉
+            for(std::vector<ObjectNode*>::iterator it = HookVec.begin(); it != HookVec.end(); it++)
+            {
+                if(*it == pNode)
+                {
+                    HookVec.erase(it);
+                    break;
+                }
+            }
+        }
+
+        GameHook::GetInstance()->m_ObjAddrVec.push_back(pNode);
+    }
+    else
+    {
+        AfxMessageBox(_T("选个要钩的怪"));
     }
 }
 
@@ -1295,11 +1315,11 @@ void CDataDlg::OnSelchangeTab1(NMHDR* pNMHDR, LRESULT* pResult)
     *pResult = 0;
 }
 
-void CDataDlg::OnGotoback() 
+void CDataDlg::OnGotoback()
 {
     //获取游戏外挂功能
     GamecallEx& gcall = *GamecallEx::GetInstance();
-    
+
     POSITION pos = m_ListCtrl.GetFirstSelectedItemPosition();
     if(pos == NULL)
     {
@@ -1312,14 +1332,31 @@ void CDataDlg::OnGotoback()
             int nItem = m_ListCtrl.GetNextSelectedItem(pos);
             TRACE1("Item %d was selected!\n", nItem);
             ObjectNode* pNode = (ObjectNode*)m_ListCtrl.GetItemData(nItem);
-            
+
             gcall.SteptoBack(pNode);
         }
     }
 }
 
-void CDataDlg::OnUpdateHookstrike(CCmdUI* pCmdUI) 
+void CDataDlg::OnUpdateHookstrike(CCmdUI* pCmdUI)
 {
-	// TODO: Add your command update UI handler code here
-	
+    //获取游戏外挂功能
+    GamecallEx& gcall = *GamecallEx::GetInstance();
+
+    POSITION pos = m_ListCtrl.GetFirstSelectedItemPosition();
+    if(pos)
+    {
+        int nItem = m_ListCtrl.GetNextSelectedItem(pos);
+        ObjectNode* pNode = (ObjectNode*)m_ListCtrl.GetItemData(nItem);
+
+        for(int i = 0; i < GameHook::GetInstance()->m_ObjAddrVec.size(); i++)
+        {
+            if(GameHook::GetInstance()->m_ObjAddrVec[i] == pNode)
+            {
+                pCmdUI->SetCheck();
+                break;
+            }
+        }
+    }
+
 }

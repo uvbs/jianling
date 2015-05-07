@@ -1873,39 +1873,39 @@ void Gamecall::ZOULUSHUNYI(DWORD* adress, DWORD adrewss)
 //参数1: 技能id
 void Gamecall::Attack(int id)  //技能攻击  传入的是技能ID
 {
-	BYTE flag = 0;
-	int cs = 0;
+    BYTE flag = 0;
+    int cs = 0;
     __try
     {
-		
-		while(flag == 0)
-		{
-			Sleep(50);
-			if (cs > 10)
-			{
-				break;
-			}
-			__asm
-			{
-				mov eax, id;
-				push eax;
-				mov eax, obj_enum_base;
-				mov eax, [eax];
-				mov eax, [eax + attack_offset1];
-				mov eax, [eax + attack_offset2];
-				mov eax, [eax + attack_offset3];
-				push eax;
-				mov eax, attack_call;
-				call eax;
-				mov flag,al;
-			}
-			TRACE("技能ID:%d,技能执行返回%d",id,flag);
-			cs++;
-			if (id == 0x5dde || id == 0x5dc1)
-			{
-				break;
-			}
-		}
+
+        while(flag == 0)
+        {
+            Sleep(50);
+            if(cs > 10)
+            {
+                break;
+            }
+            __asm
+            {
+                mov eax, id;
+                push eax;
+                mov eax, obj_enum_base;
+                mov eax, [eax];
+                mov eax, [eax + attack_offset1];
+                mov eax, [eax + attack_offset2];
+                mov eax, [eax + attack_offset3];
+                push eax;
+                mov eax, attack_call;
+                call eax;
+                mov flag, al;
+            }
+            TRACE(_T("技能ID:%d,技能执行返回%d"), id, flag);
+            cs++;
+            if(id == 0x5dde || id == 0x5dc1)
+            {
+                break;
+            }
+        }
     }
     __except(1)
     {

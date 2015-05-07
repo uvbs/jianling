@@ -6,6 +6,8 @@
 #define AFX_GAMEHOOK_H__E712D73C_7E44_4074_8CE5_C484C0DE297F__INCLUDED_
 
 
+#include "gamestruct.h"
+
 
 typedef struct _MONSTERATAACK
 {
@@ -62,7 +64,7 @@ public:
     static DWORD* backupCombat;
 
 
-    static std::vector<DWORD> m_ObjAddrVec;
+    static std::vector<ObjectNode *> m_ObjAddrVec;
 
 
 
