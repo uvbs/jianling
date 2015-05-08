@@ -31,7 +31,7 @@ CJLwgApp::~CJLwgApp()
 
 
 //钩游戏的消息窗口
-LRESULT CALLBACK GameMsgProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+LRESULT CALLBACK CJLwgApp::GameWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 
     if(!theApp.m_pWgDlg || !theApp.m_pWgDlg->GetSafeHwnd())
@@ -102,7 +102,7 @@ LRESULT CALLBACK GameMsgProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 }
 
 
-DWORD CALLBACK CJLwgApp::WgThread(LPVOID pParam)
+DWORD CALLBACK CJLwgApp::WorkThread(LPVOID pParam)
 {
     AFX_MANAGE_STATE(AfxGetStaticModuleState())
 
@@ -162,7 +162,7 @@ DWORD CALLBACK CJLwgApp::WgThread(LPVOID pParam)
 
 
     //钩游戏窗口处理
-    theApp.wpOrigGameProc = (WNDPROC)::SetWindowLong(theApp.m_hGameWnd, GWL_WNDPROC, (LONG)GameMsgProc);
+    theApp.wpOrigGameProc = (WNDPROC)::SetWindowLong(theApp.m_hGameWnd, GWL_WNDPROC, (LONG)theApp.GameWndProc);
     ::SetWindowText(theApp.m_hGameWnd, theApp.m_stData.szAccount);
 
 
@@ -315,7 +315,7 @@ BOOL CJLwgApp::InitInstance()
     LOGER(_T("###外挂启动"));
 
     //外挂主线程
-    HANDLE hThread = ::CreateThread(NULL, 0, WgThread, this, 0, 0);
+    HANDLE hThread = ::CreateThread(NULL, 0, WorkThread, this, 0, 0);
     if(hThread == NULL)
     {
         LOGER(_T("主线程创建失败"));

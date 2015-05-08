@@ -2,12 +2,11 @@
 #define _JLWG_H_
 
 #ifndef __AFXWIN_H__
-    #error include 'stdafx.h' before including this file for PCH
+#error include 'stdafx.h' before including this file for PCH
 #endif
 
 #include "resource.h"       // main symbols
 
-#include "..\common\logger.h"
 
 
 class CJLDlg;
@@ -30,13 +29,14 @@ public:
     BOOL InitLog();
 
 
+    static LRESULT CALLBACK GameWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
     HWND m_hGameWnd;
     WNDPROC wpOrigGameProc;
     CJLDlg* m_pWgDlg;
 
 
     //Õ‚π“œﬂ≥Ã
-    static DWORD CALLBACK WgThread(LPVOID pParam);
+    static DWORD CALLBACK WorkThread(LPVOID pParam);
 
 
 // Overrides
@@ -54,9 +54,9 @@ public:
 class GameLog : public Logger
 {
 public:
-    GameLog(){};
-    virtual ~GameLog(){};
-    
+    GameLog() {};
+    virtual ~GameLog() {};
+
     DECLARE_SINGLETON(GameLog)
 };
 

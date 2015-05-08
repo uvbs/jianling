@@ -19,6 +19,7 @@ static char THIS_FILE[] = __FILE__;
 
 //方便注册自己的函数
 #define REGLUAFUN(x) \
+    _ASSERTE(L != NULL); \
     lua_register(L, #x, (lua_CFunction)&x);
 
 
@@ -119,7 +120,7 @@ int utf8ToUnicode16(const char* utf8, wchar_t* unicode16, int length)
     --length;
     while(c = *utf8)
     {
-        
+
         if(c & 0x80)
         {
             if(c & 0x20)

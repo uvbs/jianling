@@ -36,7 +36,7 @@ CombatBoss::~CombatBoss()
 //需要一种异步调用, 在执行完获得通知
 void CombatBoss::run()
 {
-	TRACE(_T("准备打BOSS"));
+    TRACE(_T("准备打BOSS"));
     //hook怪物技能, 设置回调
     GameHook::GetInstance()->SetCombatSink(this);
 
@@ -148,19 +148,19 @@ void CombatBoss::run()
                         //Sleep(400);
                         //pCall->sendcall(id_msg_attack, (LPVOID)0x5ECE);//v-r
                         //pCall->Attack(0x5DFC);
-						pCall->Attack(0x5DFC);
-						pCall->TurnToNear(300);
-						Sleep(300);
-						pCall->Attack(0x5ECE);
-						pCall->Attack(0x5ECE);
-						pCall->Attack(0x5ECE);
-						pCall->Attack(0x5ECE);
-						pCall->Attack(0x5ECE);
+                        pCall->Attack(0x5DFC);
+                        pCall->TurnToNear(300);
+                        Sleep(300);
+                        pCall->Attack(0x5ECE);
+                        pCall->Attack(0x5ECE);
+                        pCall->Attack(0x5ECE);
+                        pCall->Attack(0x5ECE);
+                        pCall->Attack(0x5ECE);
                     }
                     else
                     {
-						//pCall->sendcall(id_msg_attack, (LPVOID)0x5E1A);//E
-						pCall->Attack(0x5E1A);
+                        //pCall->sendcall(id_msg_attack, (LPVOID)0x5E1A);//E
+                        pCall->Attack(0x5E1A);
                         //pCall->sendcall(id_msg_attack, (LPVOID)0x5dca);//tab
                         //Sleep(500);
                     }
@@ -198,19 +198,19 @@ void CombatBoss::run()
                     //pCall->Attack(0x5dca);
                     //pCall->Attack(0x5E1B);
 
-      ////                  pCall->sendcall(id_msg_attack, (LPVOID)0x5E24);//x
-      ////                  //pCall->Attack(0x5E24);
-      ////                  Sleep(800);
-						////pCall->sendcall(id_msg_attack, (LPVOID)0x5dc1);//r
-						////Sleep(500);
-						////pCall->sendcall(id_msg_attack, (LPVOID)0x5dca);//tab
-						////Sleep(1000);
-						////pCall->sendcall(id_msg_attack, (LPVOID)0x5E1B);//C
-						////Sleep(800);
-						////pCall->Attack(0);
-      //              }
-      //              else 
-					if(pCall->isStrikeCd(0x5e74))
+                    ////                  pCall->sendcall(id_msg_attack, (LPVOID)0x5E24);//x
+                    ////                  //pCall->Attack(0x5E24);
+                    ////                  Sleep(800);
+                    ////pCall->sendcall(id_msg_attack, (LPVOID)0x5dc1);//r
+                    ////Sleep(500);
+                    ////pCall->sendcall(id_msg_attack, (LPVOID)0x5dca);//tab
+                    ////Sleep(1000);
+                    ////pCall->sendcall(id_msg_attack, (LPVOID)0x5E1B);//C
+                    ////Sleep(800);
+                    ////pCall->Attack(0);
+                    //              }
+                    //              else
+                    if(pCall->isStrikeCd(0x5e74))
                     {
                         pCall->Attack(0x5e74);//1
                         pCall->Attack(0x5dc1);
@@ -237,101 +237,103 @@ void CombatBoss::run()
                     break;
                 }
             case 5190087:
-				{
-					pCall->TurnToNear(300);
-					Sleep(300);
-					TRACE(_T("5190087"));
-					//pCall->sendcall(id_msg_attack, (LPVOID)0x5dc1);//r
-					pCall->Attack(0x5dc1);
-					pCall->Kill_Tab();
-					//pCall->sendcall(id_msg_attack, (LPVOID)0x5dca);//tab
-					//Sleep(1000);
-					//pCall->sendcall(id_msg_attack, (LPVOID)0x5dc1);//r
-					pCall->Attack(0x5dc1);
-					pCall->Kill_Tab();
-					break;
-				}
-			case 5190074:
-				{
-					pCall->TurnToNear(300);
-					Sleep(600);
-					TRACE(_T("5190074"));
-					//pCall->sendcall(id_msg_attack, (LPVOID)0x5dca);//tab
-					//Sleep(1000);
-					pCall->Kill_Tab();
-					//pCall->sendcall(id_msg_attack, (LPVOID)0x5dc1);//r
-					pCall->KeyPress(82);
-					break;
-				}
-			case 5190070:
-				{
-					pCall->TurnToNear(300);
-					Sleep(300);
-					TRACE(_T("5190074"));
-					//pCall->sendcall(id_msg_attack, (LPVOID)0x5dca);//tab
-					//Sleep(1000);
-					pCall->Kill_Tab();
-					//pCall->sendcall(id_msg_attack, (LPVOID)0x5dc1);//r
-					//pCall->KeyPress(82);
-					break;
-				}
-			case 5190071:
-				{
-					pCall->TurnToNear(300);
-					Sleep(300);
-					TRACE(_T("5190071"));
-					//pCall->sendcall(id_msg_attack, (LPVOID)0x5dca);//tab
-					//Sleep(1000);
-					pCall->Kill_Tab();
-					//pCall->sendcall(id_msg_attack, (LPVOID)0x5dc1);//r
-					//pCall->KeyPress(82);
-					break;
-				}
-			case 5190088:
-				{
-					//pCall->TurnToNear(300);
-					Sleep(300);
-					pCall->SteptoBack(pBossNode);
-					TRACE(_T("锤子来了"));
-					break;
-				}
-			case 5190089:
-				{
-					//pCall->TurnToNear(300);
-					Sleep(300);
-					pCall->SteptoBack(pBossNode);
-					TRACE(_T("锤子来了"));
-					//if (pCall->isStrikeCd(0x5e6a))
-					//{
-					//	pCall->sendcall(id_msg_attack, (LPVOID)0x5e6a);//ss
-					//	Sleep(2500);
-					//	pCall->sendcall(id_msg_attack, (LPVOID)0x5e74);//1
-					//}else 
-					if(pCall->isStrikeCd(0x5E1B))
-					{
-						Sleep(500);
-						//pCall->sendcall(id_msg_attack, (LPVOID)0x5E1B);//C
-						pCall->KeyPress(67);
-						Sleep(800);
-					}else if (pCall->isStrikeCd(0x5DF2))
-					{
-						Sleep(500);
-						//pCall->sendcall(id_msg_attack, (LPVOID)0x5DF2);//2
-						pCall->KeyPress(50);
-						Sleep(500);
-					}else if (pCall->isStrikeCd(0x5DFC))
-					{
-						pCall->Attack(0x5DFC);
-						pCall->TurnToNear(300);
-						Sleep(300);
-						pCall->Attack(0x5ECE);
-						pCall->Attack(0x5ECE);
-						pCall->Attack(0x5ECE);
-						pCall->Attack(0x5ECE);
-						pCall->Attack(0x5ECE);
-					}
-					break;
-				}
+                {
+                    pCall->TurnToNear(300);
+                    Sleep(300);
+                    TRACE(_T("5190087"));
+                    //pCall->sendcall(id_msg_attack, (LPVOID)0x5dc1);//r
+                    pCall->Attack(0x5dc1);
+                    pCall->Kill_Tab();
+                    //pCall->sendcall(id_msg_attack, (LPVOID)0x5dca);//tab
+                    //Sleep(1000);
+                    //pCall->sendcall(id_msg_attack, (LPVOID)0x5dc1);//r
+                    pCall->Attack(0x5dc1);
+                    pCall->Kill_Tab();
+                    break;
+                }
+            case 5190074:
+                {
+                    pCall->TurnToNear(300);
+                    Sleep(600);
+                    TRACE(_T("5190074"));
+                    //pCall->sendcall(id_msg_attack, (LPVOID)0x5dca);//tab
+                    //Sleep(1000);
+                    pCall->Kill_Tab();
+                    //pCall->sendcall(id_msg_attack, (LPVOID)0x5dc1);//r
+                    pCall->KeyPress(82);
+                    break;
+                }
+            case 5190070:
+                {
+                    pCall->TurnToNear(300);
+                    Sleep(300);
+                    TRACE(_T("5190074"));
+                    //pCall->sendcall(id_msg_attack, (LPVOID)0x5dca);//tab
+                    //Sleep(1000);
+                    pCall->Kill_Tab();
+                    //pCall->sendcall(id_msg_attack, (LPVOID)0x5dc1);//r
+                    //pCall->KeyPress(82);
+                    break;
+                }
+            case 5190071:
+                {
+                    pCall->TurnToNear(300);
+                    Sleep(300);
+                    TRACE(_T("5190071"));
+                    //pCall->sendcall(id_msg_attack, (LPVOID)0x5dca);//tab
+                    //Sleep(1000);
+                    pCall->Kill_Tab();
+                    //pCall->sendcall(id_msg_attack, (LPVOID)0x5dc1);//r
+                    //pCall->KeyPress(82);
+                    break;
+                }
+            case 5190088:
+                {
+                    //pCall->TurnToNear(300);
+                    Sleep(300);
+                    pCall->SteptoBack(pBossNode);
+                    TRACE(_T("锤子来了"));
+                    break;
+                }
+            case 5190089:
+                {
+                    //pCall->TurnToNear(300);
+                    Sleep(300);
+                    pCall->SteptoBack(pBossNode);
+                    TRACE(_T("锤子来了"));
+                    //if (pCall->isStrikeCd(0x5e6a))
+                    //{
+                    //  pCall->sendcall(id_msg_attack, (LPVOID)0x5e6a);//ss
+                    //  Sleep(2500);
+                    //  pCall->sendcall(id_msg_attack, (LPVOID)0x5e74);//1
+                    //}else
+                    if(pCall->isStrikeCd(0x5E1B))
+                    {
+                        Sleep(500);
+                        //pCall->sendcall(id_msg_attack, (LPVOID)0x5E1B);//C
+                        pCall->KeyPress(67);
+                        Sleep(800);
+                    }
+                    else if(pCall->isStrikeCd(0x5DF2))
+                    {
+                        Sleep(500);
+                        //pCall->sendcall(id_msg_attack, (LPVOID)0x5DF2);//2
+                        pCall->KeyPress(50);
+                        Sleep(500);
+                    }
+                    else if(pCall->isStrikeCd(0x5DFC))
+                    {
+                        pCall->Attack(0x5DFC);
+                        pCall->TurnToNear(300);
+                        Sleep(300);
+                        pCall->Attack(0x5ECE);
+                        pCall->Attack(0x5ECE);
+                        pCall->Attack(0x5ECE);
+                        pCall->Attack(0x5ECE);
+                        pCall->Attack(0x5ECE);
+                    }
+                    break;
+                }
             default:
                 {
                     //杀怪
@@ -351,53 +353,54 @@ void CombatBoss::run()
                 if(pCall->isStrikeCd(0x5e60))
                 {
                     //pCall->sendcall(id_msg_attack, (LPVOID)0x5e60);
-					pCall->Attack(0x5e60);
+                    pCall->Attack(0x5e60);
                     //Sleep(1000);
                 }
                 else if(pCall->isStrikeCd(0x5EA6))
                 {
                     //pCall->sendcall(id_msg_attack, (LPVOID)0x5EA6);
-					pCall->Attack(0x5EA6);
+                    pCall->Attack(0x5EA6);
                 }
                 else if(pCall->isStrikeCd(0x5E9C))
                 {
                     //pCall->sendcall(id_msg_attack, (LPVOID)0x5E9C);
-					pCall->Attack(0x5E9C);
+                    pCall->Attack(0x5E9C);
                 }
             }
             pCall->TurnToNear(300);
             Sleep(50);
             //pCall->KeyPress(82);
-			//if (wcscmp(m_name.c_str() ,L"銀剛力士") == 0)
-			//{
-			//	if(pCall->GetPlayerMana() >= 60)
-			//	{
-			//		if (pCall->isStrikeCd(0x5dde))
-			//		{
-			//			pCall->Attack(0x5dde);
-			//		}
-			//	}
-			//	pCall->Attack(0x5dc1);
-			//}else
-			//{
-			if (pCall->isStrikeCd(0x5E24))
-			{
-				pCall->Attack(0x5E24);
-			}
-			if(pCall->GetPlayerMana() > 70)
-			{
-				//pCall->sendcall(id_msg_attack, (LPVOID)0x5dde);//t
-				//if (pCall->isStrikeCd(0x5dde))
-				//{
-					pCall->Attack(0x5dde);
-				//}
-			}else
-			{
-				pCall->Attack(0x5dc1);
-			}
-			//pCall->sendcall(id_msg_attack, (LPVOID)0x5dc1);//r
-			//}
-			
+            //if (wcscmp(m_name.c_str() ,L"銀剛力士") == 0)
+            //{
+            //  if(pCall->GetPlayerMana() >= 60)
+            //  {
+            //      if (pCall->isStrikeCd(0x5dde))
+            //      {
+            //          pCall->Attack(0x5dde);
+            //      }
+            //  }
+            //  pCall->Attack(0x5dc1);
+            //}else
+            //{
+            if(pCall->isStrikeCd(0x5E24))
+            {
+                pCall->Attack(0x5E24);
+            }
+            if(pCall->GetPlayerMana() > 70)
+            {
+                //pCall->sendcall(id_msg_attack, (LPVOID)0x5dde);//t
+                //if (pCall->isStrikeCd(0x5dde))
+                //{
+                pCall->Attack(0x5dde);
+                //}
+            }
+            else
+            {
+                pCall->Attack(0x5dc1);
+            }
+            //pCall->sendcall(id_msg_attack, (LPVOID)0x5dc1);//r
+            //}
+
         }
         //事件发送过快导致执行对应动作时为时已晚怎么办, 这个暂时不考虑
         //计算机没来得及处理人更不可能了
@@ -417,8 +420,8 @@ void CombatBoss::NotifyMonsterAttack(MONSTERATAACK* pAttack)
 {
 
     static MONSTERATAACK old1;
-    static DWORD dwFirst;
-    DWORD dwSec = GetTickCount();
+    static DWORD dwEnd = GetTickCount();
+    DWORD dwStart = GetTickCount();
 
 
     //先按时间过滤
@@ -443,9 +446,19 @@ void CombatBoss::NotifyMonsterAttack(MONSTERATAACK* pAttack)
             //比如一个灭团技能被排队处理了, 还排了1秒. 这时候再被处理已经没意义了.
 
             old1 = *pAttack;
+            dwEnd = GetTickCount(); //记录这次处理技能的时间
         }
-
-        dwFirst = GetTickCount();
+        else
+        {
+            //技能相等， 因为确实有两个连续释放的技能， 但是间隔2秒左右
+            //也需要应对， 所以判断， 如果相等并且和上次释放间隔2秒也处理
+            if((dwStart - dwEnd) > 1000)
+            {
+                m_Mutex.Lock();
+                _event.push_front(*pAttack);
+                m_Mutex.Unlock();
+            }
+        }
     }
 }
 

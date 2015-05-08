@@ -568,7 +568,7 @@
 #elif defined(LUA_USE_WINDOWS) /* }{ */
 /* in Windows, can use specific Windows types */
 
-#define LUA_INTEGER		int
+#define LUA_INTEGER		    int
 #define LUA_INTEGER_FRMLEN	""
 
 #define LUA_MAXINTEGER		_I32_MAX
