@@ -23,7 +23,7 @@ public:
     enum { IDD = IDD_WGDLG };
     //}}AFX_DATA
 
-
+    static UINT WorkThread(LPVOID pParam);
     CWinThread* m_pWorkThread;
     bool m_bWorking;
 
@@ -49,6 +49,7 @@ public:
     afx_msg void OnStopTask();
     afx_msg void OnGotask2();
     afx_msg void OnUpdateGoTask(CCmdUI* pCmdUI);
+    afx_msg LRESULT OnKickIdle(WPARAM, LPARAM);
     //}}AFX_MSG
     DECLARE_MESSAGE_MAP()
 };

@@ -225,8 +225,11 @@ void CDataDlg::AddInfo(const TCHAR szFormat[], ...)
 
     _tcscat(buffer, _T("\r\n"));
 
-    m_pDbgPage->m_strInfo += buffer;
-    m_pDbgPage->UpdateData(FALSE);
+    CEdit* pEdit = (CEdit*)m_pDbgPage->GetDlgItem(IDC_EDITINFO);
+    int inLen = pEdit->GetWindowTextLength();
+    pEdit->SetSel(inLen, inLen);
+    pEdit->ReplaceSel(buffer);
+
 }
 
 
@@ -272,8 +275,8 @@ BOOL CDataDlg::OnInitDialog()
     m_pLuaPage->Create(CLuaPage::IDD, this);
     m_pDbgPage->Create(CDbgPage::IDD, this);
 
-    m_pLuaPage->SetWindowPos(NULL, rect.left + 5, rect.top + 20, 0, 0, SWP_NOSIZE);
-    m_pDbgPage->SetWindowPos(NULL, rect.left + 5, rect.top + 20, 0, 0, SWP_NOSIZE);
+    m_pLuaPage->SetWindowPos(NULL, rect.left, rect.top + 20, 0, 0, SWP_NOSIZE);
+    m_pDbgPage->SetWindowPos(NULL, rect.left, rect.top + 20, 0, 0, SWP_NOSIZE);
     m_pDbgPage->ShowWindow(SW_SHOW);
 
     CheckHook();
@@ -1135,8 +1138,9 @@ BOOL CDataDlg::DestroyWindow()
 
 void CDataDlg::OnClr()
 {
-    m_pDbgPage->m_strInfo = _T("");
-    m_pDbgPage->UpdateData(FALSE);
+    CEdit *pEdit = (CEdit *)m_pDbgPage->GetDlgItem(IDC_EDITINFO);
+    pEdit->SetSel(0, -1);
+    pEdit->Clear();
 }
 
 void CDataDlg::OnTurnto()
@@ -1233,7 +1237,7 @@ void CDataDlg::OnHookstrike()
     POSITION pos = m_ListCtrl.GetFirstSelectedItemPosition();
     if(pos)
     {
-        std::vector<ObjectNode*> &HookVec = GameHook::GetInstance()->m_ObjAddrVec;
+        std::vector<ObjectNode*>& HookVec = GameHook::GetInstance()->m_ObjAddrVec;
         int nItem = m_ListCtrl.GetNextSelectedItem(pos);
         ObjectNode* pNode = (ObjectNode*)m_ListCtrl.GetItemData(nItem);
 
@@ -1289,8 +1293,10 @@ void CDataDlg::ShowHook(TCHAR* pszFormat, ...)
 
     _tcscat(buffer, _T("\r\n"));
 
-    m_pDbgPage->m_strInfo += buffer;
-    m_pDbgPage->UpdateData(FALSE);
+    CEdit* pEdit = (CEdit*)m_pDbgPage->GetDlgItem(IDC_EDITINFO);
+    int inLen = pEdit->GetWindowTextLength();
+    pEdit->SetSel(inLen, inLen);
+    pEdit->ReplaceSel(buffer);
 }
 
 void CDataDlg::OnBossBombat()

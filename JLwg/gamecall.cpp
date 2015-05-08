@@ -4823,7 +4823,6 @@ bool Gamecall::WaitPlans(int inMaxTime)
     for(int i = 0; i < dwCount; i++)
     {
         if(isLoadingMap() == 3) return true;
-
         Sleep(3000);
     }
 

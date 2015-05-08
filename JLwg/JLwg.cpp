@@ -20,7 +20,7 @@ CJLwgApp theApp;
 CJLwgApp::CJLwgApp()
 {
     m_hPipe = INVALID_HANDLE_VALUE;
-    _tcscpy(m_stData.szAccount, _T("无控制"));
+    _tcscpy(m_stData.szAccount, _T("无控制台"));
     _tcscpy(m_stData.szConfig, _T("default.ini"));
     _tcscpy(m_stData.szScript, _T("default.lua"));
 }
@@ -102,7 +102,7 @@ LRESULT CALLBACK GameMsgProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 }
 
 
-DWORD CALLBACK WgThread(LPVOID pParam)
+DWORD CALLBACK CJLwgApp::WgThread(LPVOID pParam)
 {
     AFX_MANAGE_STATE(AfxGetStaticModuleState())
 
@@ -149,14 +149,13 @@ DWORD CALLBACK WgThread(LPVOID pParam)
         return FALSE;
     }
 
-
+    //初始化call类
     if(!GamecallEx::GetInstance()->Init())
     {
         LOGER(_T("外挂功能初始化失败"));
         ExitProcess(0);
-        return FALSE;
+        return 0;
     }
-
 
     LOGER(_T("启动完成"));
 
@@ -312,7 +311,7 @@ BOOL CJLwgApp::InitInstance()
     }
 
 
-    //至此日志能使用
+    //日志能用
     LOGER(_T("###外挂启动"));
 
     //外挂主线程
@@ -331,9 +330,6 @@ BOOL CJLwgApp::InitInstance()
 //向控制台通信
 void CJLwgApp::SendStatus(TCHAR szText[])
 {
-    _ASSERTE(_tcslen(szText) <= MAX_PATH);
-
-
     PIPESTATUS status;
     status.dwPid = m_stData.dwPid;
     status.dwItem = m_stData.dwItem;

@@ -7,6 +7,7 @@
 #include "DataDlg.h"
 #include "LuaScript.h"
 
+#include <afxpriv.h>
 
 #ifdef JLTW
 #include "TaskScript_tw.h"
@@ -23,105 +24,13 @@ static char THIS_FILE[] = __FILE__;
 #endif
 
 
-
-//任务线程
-UINT WorkThread(LPVOID pParam)
-{
-
-    CJLDlg* pDlg = (CJLDlg*)pParam;
-
-    lua_State* pL = LuaScript::GetInstance()->m_pstate;
-
-    //创建线程消息队列
-    MSG msg;
-    PeekMessage(&msg, NULL, WM_USER, WM_USER, PM_NOREMOVE);
-
-    while(1)
-    {
-        //状态
-        pDlg->m_bWorking = false;
-
-        GetMessage(&msg, NULL, 0, 0);
-        pDlg->m_bWorking = true;
-
-        switch(msg.message)
-        {
-        case WM_QUIT:
-            {
-                return 1;
-            }
-
-        case WM_WORKTHREAD_TESTCOMBATBOSS:
-            {
-                CDataDlg *pDlg = (CDataDlg *)msg.wParam;
-
-                if(pDlg->m_ListCtrl.GetSelectedCount() == 0)
-                {
-                    AfxMessageBox(_T("选个对象测试"));
-                    return 0;
-                }
-
-                POSITION rpos = pDlg->m_ListCtrl.GetFirstSelectedItemPosition();
-                if(rpos)
-                {
-                    int inItem  = pDlg->m_ListCtrl.GetNextSelectedItem(rpos);
-                    //获得名字
-                    CString strName = pDlg->m_ListCtrl.GetItemText(inItem, 1);
-                    GamecallEx::GetInstance()->KillBoss((LPCTSTR)strName);
-                }
-
-                break;
-            }
-        case WM_WORKTHREAD_EXCULUA:
-            {
-
-                //获得模块当前路径
-                TCHAR szExe[MAX_PATH] = {0};
-                GetModuleFileName(theApp.m_hInstance, szExe, MAX_PATH);
-                PathRemoveFileSpec(szExe);
-                PathAppend(szExe, _T("脚本"));
-                PathAppend(szExe, theApp.m_stData.szScript);
-
-                if(!PathFileExists(szExe))
-                {
-                    AfxMessageBox(_T("脚本不存在"));
-                    break;
-                }
-
-                //加载lua脚本
-                USES_CONVERSION;
-                if(luaL_loadfile(pL, T2A(szExe)) || lua_pcall(pL, 0, 0, 0))
-                {
-                    MessageBoxA(NULL, lua_tostring(pL, -1), "错误", MB_OK);
-                    SENDLOG(_T("脚本执行失败"));
-                }
-                
-
-                break;
-            }
-
-        case WM_WORKTHREAD_EXCUTASK:
-            {
-                //TaskScript task;
-                //task.BeginTask();
-                break;
-            }
-
-        default:
-            break;
-        }
-    }
-
-    return 0;
-}
-
-
 //构造函数
 CJLDlg::CJLDlg(CWnd* pParent /*=NULL*/)
     : CDialog(CJLDlg::IDD, pParent)
 {
     //{{AFX_DATA_INIT(CJLDlg)
     //}}AFX_DATA_INIT
+    m_bWorking = true;
 }
 
 //析构函数
@@ -146,6 +55,7 @@ BEGIN_MESSAGE_MAP(CJLDlg, CDialog)
     ON_WM_CLOSE()
     ON_WM_SHOWWINDOW()
     ON_WM_PAINT()
+    ON_MESSAGE(WM_KICKIDLE, OnKickIdle)
     ON_UPDATE_COMMAND_UI(IDC_GOTASK, OnUpdateGoTask)
     ON_UPDATE_COMMAND_UI(IDC_GOTASK2, OnUpdateGoTask)
     //}}AFX_MSG_MAP
@@ -227,4 +137,115 @@ void CJLDlg::OnUpdateGoTask(CCmdUI* pCmdUI)
     {
         pCmdUI->Enable();
     }
+}
+
+LRESULT CJLDlg::OnKickIdle(WPARAM wParam, LPARAM lParam)
+{
+    UpdateDialogControls(this, FALSE);
+    return 0;
+}
+
+
+
+
+//任务线程
+UINT CJLDlg::WorkThread(LPVOID pParam)
+{
+
+    CJLDlg* pDlg = (CJLDlg*)pParam;
+
+
+    //获取lua状态
+    lua_State* pL = LuaScript::GetInstance()->m_pstate;
+
+
+    //创建线程消息队列
+    MSG msg;
+    PeekMessage(&msg, NULL, WM_USER, WM_USER, PM_NOREMOVE);
+
+    while(1)
+    {
+        //状态
+        pDlg->m_bWorking = false;
+
+        GetMessage(&msg, NULL, 0, 0);
+        pDlg->m_bWorking = true;
+
+        switch(msg.message)
+        {
+        case WM_QUIT:
+            {
+                return 1;
+            }
+
+        case WM_WORKTHREAD_TESTCOMBATBOSS:
+            {
+                CDataDlg* pDlg = (CDataDlg*)msg.wParam;
+
+                if(pDlg->m_ListCtrl.GetSelectedCount() == 0)
+                {
+                    AfxMessageBox(_T("选个对象测试"));
+                    return 0;
+                }
+
+                POSITION rpos = pDlg->m_ListCtrl.GetFirstSelectedItemPosition();
+                if(rpos)
+                {
+                    int inItem  = pDlg->m_ListCtrl.GetNextSelectedItem(rpos);
+                    TCHAR szName[MAX_PATH] = {0};
+                    pDlg->m_ListCtrl.GetItemText(inItem, 1, szName, sizeof(szName));
+                    GamecallEx::GetInstance()->KillBoss(szName);
+                }
+
+                break;
+            }
+
+
+        case WM_WORKTHREAD_EXCULUA:
+            {
+
+                //获得模块当前路径
+                TCHAR szExe[MAX_PATH] = {0};
+                GetModuleFileName(theApp.m_hInstance, szExe, MAX_PATH);
+                PathRemoveFileSpec(szExe);
+                PathAppend(szExe, _T("脚本"));
+                PathAppend(szExe, theApp.m_stData.szScript);
+
+                if(!PathFileExists(szExe))
+                {
+                    AfxMessageBox(_T("脚本不存在"));
+                    break;
+                }
+
+                LPCSTR pszPath;
+#ifdef _UNICODE
+                USES_CONVERSION;
+                pszPath = T2A(szExe);
+#else
+                pszPath = szExe;
+#endif
+
+                //加载lua脚本
+                if(luaL_dofile(pL, pszPath) != LUA_OK)
+                {
+                    MessageBoxA(NULL, lua_tostring(pL, -1), "错误", MB_OK);
+                }
+
+
+                break;
+            }
+
+        case WM_WORKTHREAD_EXCUTASK:
+            {
+                //TaskScript task;
+                //task.BeginTask();
+                break;
+            }
+
+        default:
+            break;
+        }
+    }
+
+    return 0;
 }

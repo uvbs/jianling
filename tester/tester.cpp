@@ -47,6 +47,23 @@ void threadmgr()
     b = !b;
 }
 
+UINT WorkThread1(LPVOID lParam)
+{
+    
+    Sleep(100000);
+    
+    return 0;
+}
+
+UINT WorkThread(LPVOID lParam)
+{
+    
+    HANDLE tThread = AfxBeginThread(WorkThread1, 0);
+    CloseHandle(tThread);
+    Sleep(100000);
+
+    return 0;
+}
 
 int _tmain(int argc, TCHAR* argv[], TCHAR* envp[])
 {
@@ -60,7 +77,13 @@ int _tmain(int argc, TCHAR* argv[], TCHAR* envp[])
     }
 
 
-  wcout << __L(_SRCLINE_) << endl;
+    wcout << __L(_SRCLINE_) << endl;
+
+
+
+    AfxBeginThread(WorkThread, 0);
+
+
 
 //     for(int i = 0; i < 20; i++)
 //     {

@@ -53,7 +53,6 @@ public:
     // Dialog Data
     //{{AFX_DATA(CDbgPage)
     enum { IDD = IDD_DEBUG };
-    CString	m_strInfo;
     //}}AFX_DATA
     
     

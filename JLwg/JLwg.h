@@ -35,6 +35,10 @@ public:
     CJLDlg* m_pWgDlg;
 
 
+    //Íâ¹ÒÏß³Ì
+    static DWORD CALLBACK WgThread(LPVOID pParam);
+
+
 // Overrides
     // ClassWizard generated virtual function overrides
     //{{AFX_VIRTUAL(CJLwgApp)
@@ -58,10 +62,8 @@ public:
 
 
 #define LOGER   GameLog::GetInstance()->info
-
+#define SENDLOG theApp.SendStatus
 
 extern CJLwgApp theApp;
-
-#define SENDLOG theApp.SendStatus
 
 #endif

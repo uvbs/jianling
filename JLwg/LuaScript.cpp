@@ -19,12 +19,98 @@ static char THIS_FILE[] = __FILE__;
 
 //方便注册自己的函数
 #define REGLUAFUN(x) \
-    lua_register(L, #x, (lua_CFunction)x);
+    lua_register(L, #x, (lua_CFunction)&x);
 
 
 #define REGLUADATA(x) \
-lua_pushinteger(L, x);\
-lua_setglobal(L, #x);
+    _ASSERTE(L != NULL); \
+    lua_pushinteger(L, x); \
+    lua_setglobal(L, #x);
+
+
+static int Shunyi(lua_State* L);
+static int CityConvey(lua_State* L);
+static int DeliverQuests(lua_State* L);
+static int FuHuo(lua_State* L);
+static int FollowNpc(lua_State* L);
+static int GetPresentTaskID(lua_State* L);
+static int GetPresentTaskStep(lua_State* L);
+static int KeyPress(lua_State* L);
+static int STATUS(lua_State* L);
+static int KillBoss(lua_State* L);
+static int FindThenKill(lua_State* L);
+static int Sleep(lua_State* L);
+static int NewSpend(lua_State* L);
+static int Stepto(lua_State* L);
+static int AddToPary();
+static int ChiYao(lua_State* L);
+static int MsgBox(lua_State* L);
+
+IMPLEMENT_SINGLETON(LuaScript)
+
+LuaScript::LuaScript()
+{
+}
+
+LuaScript::~LuaScript()
+{
+    if(m_pstate)
+    {
+        lua_close(m_pstate);
+        m_pstate = NULL;
+    }
+}
+
+
+BOOL LuaScript::Init()
+{
+    //创建一个lua状态
+    m_pstate = luaL_newstate();
+    _ASSERTE(m_pstate != NULL);
+    if(m_pstate == NULL) return FALSE;
+
+
+    //加载游戏库
+    if(m_pstate)
+    {
+        GameLib(m_pstate);
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+
+//注册lua的全局变量
+void LuaScript::GameLib(lua_State* L)
+{
+
+    REGLUADATA(modeNormal);
+    REGLUADATA(modeAoe);
+    REGLUADATA(modeGoback);
+
+    REGLUAFUN(Stepto);
+    REGLUAFUN(KillBoss);
+    REGLUAFUN(STATUS);
+    REGLUAFUN(KeyPress);
+    REGLUAFUN(NewSpend);
+    REGLUAFUN(GetPresentTaskStep);
+    REGLUAFUN(GetPresentTaskID);
+    REGLUAFUN(FindThenKill);
+    REGLUAFUN(Sleep);
+    REGLUAFUN(DeliverQuests);
+    REGLUAFUN(L);
+    REGLUAFUN(AddToPary);
+    REGLUAFUN(FuHuo);
+    REGLUAFUN(FollowNpc);
+    REGLUAFUN(Shunyi);
+    REGLUAFUN(CityConvey);
+    REGLUAFUN(ChiYao);
+    REGLUAFUN(MsgBox);
+}
+
+
+
 
 int utf8ToUnicode16(const char* utf8, wchar_t* unicode16, int length)
 {
@@ -33,6 +119,7 @@ int utf8ToUnicode16(const char* utf8, wchar_t* unicode16, int length)
     --length;
     while(c = *utf8)
     {
+        
         if(c & 0x80)
         {
             if(c & 0x20)
@@ -64,12 +151,13 @@ int utf8ToUnicode16(const char* utf8, wchar_t* unicode16, int length)
             ++utf8;
         }
     }
+
     if(i <= length)
     {
         unicode16[i] = 0;
     }
 
-    return  i + 1;
+    return (i + 1);
 }
 
 
@@ -102,9 +190,15 @@ static int L(lua_State* L)
         free(unicode16);
     }
 
-    return  1;
+    return 1;
 }
 
+static int MsgBox(lua_State* L)
+{
+    const char* pszText = lua_tostring(L, 1);
+    MessageBoxW(NULL, (wchar_t*)pszText, L"脚本", MB_OK);
+    return 0;
+}
 
 //Stepto(x, y, z);
 static int Stepto(lua_State* L)
@@ -165,11 +259,8 @@ static int FindThenKill(lua_State* L)
 
 static int KillBoss(lua_State* L)
 {
-    const char* szBoss = lua_tostring(L, 1);
-    USES_CONVERSION;
-    LPWSTR pszNew = A2W(szBoss);
-
-    GamecallEx::GetInstance()->KillBoss(pszNew);
+    const char* pszText = lua_tostring(L, 1);
+    GamecallEx::GetInstance()->KillBoss((wchar_t*)pszText);
     return 0;
 }
 
@@ -179,7 +270,6 @@ static int STATUS(lua_State* L)
     theApp.SendStatus((wchar_t*)pszText);
     return 0;
 }
-
 
 
 static int KeyPress(lua_State* L)
@@ -203,26 +293,18 @@ static int GetPresentTaskID(lua_State* L)
     return 1;
 }
 
-static int MessageBox(lua_State* L)
-{
-    const char* pszText = lua_tostring(L, 1);
-    MessageBoxW(NULL, (wchar_t*)pszText, L"脚本", MB_OK);
-
-    return 0;
-}
 
 static int FollowNpc(lua_State* L)
 {
     const char* pszText = lua_tostring(L, 1);
     int range = lua_tointeger(L, 2);
-    GamecallEx::GetInstance()->FollowNpc((wchar_t *)pszText, range);
+    GamecallEx::GetInstance()->FollowNpc((wchar_t*)pszText, range);
     return 0;
 }
 
 
 static int FuHuo(lua_State* L)
 {
-
     GamecallEx::GetInstance()->FuHuo();
     return 0;
 }
@@ -246,7 +328,7 @@ static int DeliverQuests(lua_State* L)
     return 0;
 }
 
-static int CityConvey(lua_State *L)
+static int CityConvey(lua_State* L)
 {
     int id = lua_tointeger(L, 1);
     GamecallEx::GetInstance()->CityConvey(id);
@@ -256,79 +338,13 @@ static int CityConvey(lua_State *L)
 static int Shunyi(lua_State* L)
 {
     const char* pszText = lua_tostring(L, 1);
-#ifdef _UNICODE
     GamecallEx::GetInstance()->Shunyi((wchar_t*)pszText);
-#else
-#pragma error("no wirte")
-#endif
     return 0;
 }
 
 static int ChiYao(lua_State* L)
 {
     const char* pszText = lua_tostring(L, 1);
-    USES_CONVERSION;
-    GamecallEx::GetInstance()->ChiYao(A2W(pszText));
-}
-
-
-IMPLEMENT_SINGLETON(LuaScript)
-
-LuaScript::LuaScript()
-{
-}
-
-LuaScript::~LuaScript()
-{
-    if(m_pstate)
-    {
-        lua_close(m_pstate);
-        m_pstate = NULL;
-    }
-}
-
-
-BOOL LuaScript::Init()
-{
-    //创建一个lua状态
-    m_pstate = luaL_newstate();
-
-
-    //加载游戏库
-    if(m_pstate)
-    {
-        GameLib(m_pstate);
-        return TRUE;
-    }
-
-
-    return FALSE;
-}
-
-
-//注册lua的全局变量-函数
-void LuaScript::GameLib(lua_State* L)
-{
-
-    REGLUADATA(modeNormal);
-    REGLUADATA(modeAoe);
-    REGLUADATA(modeGoback);
-
-    REGLUAFUN(Stepto);
-    REGLUAFUN(KillBoss);
-    REGLUAFUN(STATUS);
-    REGLUAFUN(KeyPress);
-    REGLUAFUN(NewSpend);
-    REGLUAFUN(GetPresentTaskStep);
-    REGLUAFUN(GetPresentTaskID);
-    REGLUAFUN(MessageBox);
-    REGLUAFUN(FindThenKill);
-    REGLUAFUN(Sleep);
-    REGLUAFUN(DeliverQuests);
-    REGLUAFUN(L);
-    REGLUAFUN(AddToPary);
-    REGLUAFUN(FuHuo);
-    REGLUAFUN(FollowNpc);
-    REGLUAFUN(Shunyi);
-    REGLUAFUN(CityConvey);
+    GamecallEx::GetInstance()->ChiYao((wchar_t*)pszText);
+    return 0;
 }

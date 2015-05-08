@@ -86,7 +86,6 @@ CDbgPage::CDbgPage(CWnd* pParent /*=NULL*/)
 : CPropertyPage(CDbgPage::IDD)
 {
     //{{AFX_DATA_INIT(CDbgPage)
-    m_strInfo = _T("");
     //}}AFX_DATA_INIT
 }
 
@@ -95,7 +94,6 @@ void CDbgPage::DoDataExchange(CDataExchange* pDX)
 {
     CDialog::DoDataExchange(pDX);
     //{{AFX_DATA_MAP(CDbgPage)
-    DDX_Text(pDX, IDC_EDITINFO, m_strInfo);
     //}}AFX_DATA_MAP
 }
 
