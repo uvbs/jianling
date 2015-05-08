@@ -22,7 +22,7 @@ DWORD* GameHook::backupQuest = NULL;
 DWORD* GameHook::backupCombat = NULL;
 
 
-std::vector<ObjectNode *> GameHook::m_ObjAddrVec;
+std::vector<ObjectNode*> GameHook::m_ObjAddrVec;
 
 
 DWORD* jmpTo;
@@ -198,10 +198,10 @@ void __stdcall GameHook::myCombatFilter()
         if(objAddr == m_ObjAddrVec[i]->ObjAddress)
         {
 
-            //if(GameHook::GetInstance()->m_sink != NULL)
-            //{
-            //    GameHook::GetInstance()->m_sink->ShowHook(_T("怪物: %08x, 技能: %d"), objAddr, id);
-            //}
+            if(GameHook::GetInstance()->m_sink != NULL)
+            {
+                GameHook::GetInstance()->m_sink->ShowHook(_T("怪物: %08x, 技能: %d"), objAddr, id);
+            }
 
 
             if(GameHook::GetInstance()->m_pCombatSink != NULL)

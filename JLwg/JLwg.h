@@ -29,14 +29,22 @@ public:
     BOOL InitLog();
 
 
+    //游戏窗口过程
     static LRESULT CALLBACK GameWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
     HWND m_hGameWnd;
     WNDPROC wpOrigGameProc;
+
+    //外挂窗口
     CJLDlg* m_pWgDlg;
 
 
     //外挂线程
     static DWORD CALLBACK WorkThread(LPVOID pParam);
+
+    //lua脚本
+    void RegGameLib(lua_State* L);
+    lua_State* m_pstate;
+    bool InitLua();
 
 
 // Overrides
@@ -61,9 +69,12 @@ public:
 };
 
 
+extern CJLwgApp theApp;
 #define LOGER   GameLog::GetInstance()->info
 #define SENDLOG theApp.SendStatus
 
-extern CJLwgApp theApp;
+
+
+
 
 #endif

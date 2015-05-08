@@ -156,7 +156,7 @@ UINT CJLDlg::WorkThread(LPVOID pParam)
 
 
     //获取lua状态
-    lua_State* pL = LuaScript::GetInstance()->m_pstate;
+    lua_State* pL = theApp.m_pstate;
 
 
     //创建线程消息队列

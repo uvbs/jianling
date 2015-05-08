@@ -1138,7 +1138,7 @@ BOOL CDataDlg::DestroyWindow()
 
 void CDataDlg::OnClr()
 {
-    CEdit *pEdit = (CEdit *)m_pDbgPage->GetDlgItem(IDC_EDITINFO);
+    CEdit* pEdit = (CEdit*)m_pDbgPage->GetDlgItem(IDC_EDITINFO);
     pEdit->SetSel(0, -1);
     pEdit->Clear();
 }
@@ -1284,6 +1284,8 @@ void CDataDlg::OnHookCombat()
 
 void CDataDlg::ShowHook(TCHAR* pszFormat, ...)
 {
+
+    CEdit* pEdit = (CEdit*)m_pDbgPage->GetDlgItem(IDC_EDITINFO);
     TCHAR buffer[BUFSIZ] = {0};
 
     va_list argptr;
@@ -1294,17 +1296,18 @@ void CDataDlg::ShowHook(TCHAR* pszFormat, ...)
     _tcscat(buffer, _T("\r\n"));
 
     time_t ltime;
-    time( &ltime );
+    time(&ltime);
 
     std::basic_string<TCHAR*> strTime;
     strTime = _tctime(&ltime);
 
-    strTime += buffer;
-    
-    CEdit* pEdit = (CEdit*)m_pDbgPage->GetDlgItem(IDC_EDITINFO);
     int inLen = pEdit->GetWindowTextLength();
     pEdit->SetSel(inLen, inLen);
     pEdit->ReplaceSel((LPCTSTR)strTime.c_str());
+
+    inLen = pEdit->GetWindowTextLength();
+    pEdit->SetSel(inLen, inLen);
+    pEdit->ReplaceSel(buffer);
 }
 
 void CDataDlg::OnBossBombat()

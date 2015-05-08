@@ -162,10 +162,6 @@ SOURCE=.\LuaPage.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\LuaScript.cpp
-# End Source File
-# Begin Source File
-
 SOURCE=..\common\MSJEXHND.cpp
 # End Source File
 # Begin Source File
@@ -260,10 +256,6 @@ SOURCE=.\JLwg.h
 # Begin Source File
 
 SOURCE=.\LuaPage.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\LuaScript.h
 # End Source File
 # Begin Source File
 

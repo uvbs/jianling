@@ -48,7 +48,7 @@ END_MESSAGE_MAP()
 void CLuaPage::OnTestLua()
 {
 
-    lua_State* pL = LuaScript::GetInstance()->m_pstate;
+    lua_State* pL = theApp.m_pstate;
 
 
     CString strLua;
