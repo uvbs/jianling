@@ -46,6 +46,8 @@ public:
     lua_State* m_pstate;
     bool InitLua();
 
+    //ÈÕÖ¾
+    Logger m_GameLog;
 
 // Overrides
     // ClassWizard generated virtual function overrides
@@ -57,20 +59,8 @@ public:
 };
 
 
-
-
-class GameLog : public Logger
-{
-public:
-    GameLog() {};
-    virtual ~GameLog() {};
-
-    DECLARE_SINGLETON(GameLog)
-};
-
-
 extern CJLwgApp theApp;
-#define LOGER   GameLog::GetInstance()->info
+#define LOGER   theApp.m_GameLog.info
 #define SENDLOG theApp.SendStatus
 
 

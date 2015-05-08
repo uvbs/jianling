@@ -22,10 +22,6 @@ lua_setglobal(L, #x);
 
 
 
-IMPLEMENT_SINGLETON(GameLog)
-
-
-
 //³ÌÐòÊµÀýÎ¨Ò»
 CJLwgApp theApp;
 
@@ -299,7 +295,7 @@ BOOL CJLwgApp::InitLog()
 
 
 
-    if(!GameLog::GetInstance()->open(szLogPath))
+    if(!m_GameLog.open(szLogPath))
     {
         TRACE(_T("can't open log file!"));
         ExitProcess(0);
