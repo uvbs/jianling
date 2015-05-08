@@ -2990,44 +2990,44 @@ void GamecallEx::SteptoBack(ObjectNode* pObj)
     if(objview < 360 && objview > 270) //西北
     {
         TRACE(_T("西北"));
-        rpos.x -= CAN_OPERATOR/2;
-        rpos.y += CAN_OPERATOR/2;
+       rpos.x -= CAN_OPERATOR;
+       rpos.y += CAN_OPERATOR;
     }
-    else if(objview < 270 && objview > 180) //西南
+    else if(objview <270 && objview < 180) //西南
     {
         TRACE(_T("西南"));
-        rpos.y += CAN_OPERATOR/2;
-        rpos.x += CAN_OPERATOR/2;
+        rpos.y += CAN_OPERATOR;
+        rpos.x += CAN_OPERATOR;
     }
     else if(objview > 90 && objview < 180)  //东南
     {
         TRACE(_T("东南"));
-        rpos.x += CAN_OPERATOR/2;
-        rpos.y -= CAN_OPERATOR/2;
+        rpos.x += CAN_OPERATOR;
+        rpos.y -= CAN_OPERATOR;
     }
-    else if(objview > 0 && objview < 90) //东北
+    else if(objview >0 && objview < 90) //东北
     {
         TRACE(_T("东北"));
-        rpos.y -= CAN_OPERATOR/2;
-        rpos.x -= CAN_OPERATOR/2;
+        rpos.y -= CAN_OPERATOR;
+        rpos.x -= CAN_OPERATOR;
     }
     else if(objview == 0)   //正北
     {
-        rpos.x -= CAN_OPERATOR/2;
+        rpos.x -= CAN_OPERATOR;
     }
     else if(objview == 90)  //正东
     {
-        rpos.y -= CAN_OPERATOR/2;
+        rpos.y -= CAN_OPERATOR;
     }
     else if(objview == 180) //正南
     {
-        rpos.x += CAN_OPERATOR/2;
+        rpos.x += CAN_OPERATOR;
     }
     else if(objview == 270) //正西
     {
-        rpos.y += CAN_OPERATOR/2;
+        rpos.y += CAN_OPERATOR;   
     }
 
 
-    Stepto(rpos.y, rpos.x - 10, rpos.z, 10, 5, 1000, TRUE);
+    Stepto(rpos.y,rpos.x,rpos.z,10,10,1000,TRUE);
 }
