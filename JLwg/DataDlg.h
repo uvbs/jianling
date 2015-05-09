@@ -68,6 +68,7 @@ public:
     void PrintfStrike();
     void PrintfRangeMonster(BOOL bApplyConfig = FALSE);
     void PrintfRangeObject();
+	void PrintfTeaminfo();
     void AddInfo(const TCHAR szFormat[], ...);
 
 

@@ -60,7 +60,7 @@ public:
     void kill_PickupOnce();
     BOOL kill_PickupBody();
     BOOL kill_Task(int MyQuestID, int MyQuestStep);
-    void Kill_Tab();//tab释放等待
+    void Kill_Tab(int id);//tab释放等待
 
     //自定义杀怪过滤
     BOOL isCustomKill_DontKill(wchar_t* name);

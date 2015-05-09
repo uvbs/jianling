@@ -2116,13 +2116,13 @@ void GamecallEx::TurnToNear(DWORD range)
     }
 }
 
-void GamecallEx::Kill_Tab()
+void GamecallEx::Kill_Tab(int id)
 {
     int cs;
     cs = 0;
     //sendcall(id_msg_attack, (LPVOID)0x5dca);
-    Attack(0x5dca);
-    Sleep(500);
+    Attack(id);
+	TRACE(_T("执行一次"));
     while(true)
     {
         if(isPlayerDaodi())
@@ -2130,17 +2130,30 @@ void GamecallEx::Kill_Tab()
             TRACE(_T("TAB释放时倒地跳出"));
             break;
         }
-        if(cs > 30)
+        if(cs > 50)
         {
+			TRACE("cs退出");
             return;
         }
-        if(isStrikeCd(0x5dca))
-        {
-            TRACE(_T("0x5dca的CD完,%d"), cs);
-            break;
-        }
+
+		//TRACE("%d",isStrikeCd(0x5dca));
+		//if (isStrikeCd(0x5dca))
+		//{
+		//	TRACE("cd到,%d",isStrikeCd(0x5dca));
+		//	break;
+		//}
+		//TRACE("%d",GetPlayerSkillStatus());
+		if (GetPlayerSkillStatus() == FALSE)
+		{
+			//TRACE("没在释放技能,%d",GetPlayerSkillStatus());
+			if (GetPlayerBusy() == FALSE)
+			{
+				TRACE("没在忙碌,%d",GetPlayerBusy());
+				break;
+			}
+		}
         cs++;
-        Sleep(100);
+        Sleep(50);
     }
 }
 
@@ -2224,18 +2237,18 @@ int GamecallEx::KillObject(DWORD range, ObjectNode* pNode, DWORD mode, DWORD can
                 //5E60->5EA6->5EB0->5E9C
                 TRACE(_T("进入倒地状态"));
                 Sleep(500);
-                if(isStrikeCd(0x5e60) == TRUE)
+                if(isStrikeCd(0x5e60) == FALSE)
                 {
                     TRACE(_T("进入倒地状态:0x5e60"));
                     sendcall(id_msg_attack, (LPVOID)0x5e60);
                     Sleep(1000);
                 }
-                else if(isStrikeCd(0x5EA6) == TRUE)
+                else if(isStrikeCd(0x5EA6) == FALSE)
                 {
                     TRACE(_T("进入倒地状态:0x5EA6"));
                     sendcall(id_msg_attack, (LPVOID)0x5EA6);
                 }
-                else if(isStrikeCd(0x5E9C) == TRUE)
+                else if(isStrikeCd(0x5E9C) == FALSE)
                 {
                     TRACE(_T("进入倒地状态:0x5E9C"));
                     sendcall(id_msg_attack, (LPVOID)0x5E9C);
@@ -2250,7 +2263,7 @@ int GamecallEx::KillObject(DWORD range, ObjectNode* pNode, DWORD mode, DWORD can
                 int mana = GetPlayerMana();
                 if(mana >= 60)
                 {
-                    Kill_Tab();
+                    Kill_Tab(0x5dca);
                 }
                 else
                 {
@@ -2267,7 +2280,7 @@ int GamecallEx::KillObject(DWORD range, ObjectNode* pNode, DWORD mode, DWORD can
                         int mana = GetPlayerMana();
                         if(mana >= 60)
                         {
-                            Kill_Tab();
+                            Kill_Tab(0x5dca);
                         }
                         else
                         {
@@ -2990,44 +3003,45 @@ void GamecallEx::SteptoBack(ObjectNode* pObj)
     if(objview < 360 && objview > 270) //西北
     {
         TRACE(_T("西北"));
-       rpos.x -= CAN_OPERATOR;
-       rpos.y += CAN_OPERATOR;
+        rpos.x -= CAN_OPERATOR/2;
+        rpos.y += CAN_OPERATOR/2;
     }
-    else if(objview <270 && objview < 180) //西南
+    else if(objview < 270 && objview > 180) //西南
     {
         TRACE(_T("西南"));
-        rpos.y += CAN_OPERATOR;
-        rpos.x += CAN_OPERATOR;
+        rpos.y += CAN_OPERATOR/2;
+        rpos.x += CAN_OPERATOR/2;
     }
     else if(objview > 90 && objview < 180)  //东南
     {
         TRACE(_T("东南"));
-        rpos.x += CAN_OPERATOR;
-        rpos.y -= CAN_OPERATOR;
+        rpos.x += CAN_OPERATOR/2;
+        rpos.y -= CAN_OPERATOR/2;
     }
-    else if(objview >0 && objview < 90) //东北
+    else if(objview > 0 && objview < 90) //东北
     {
         TRACE(_T("东北"));
-        rpos.y -= CAN_OPERATOR;
-        rpos.x -= CAN_OPERATOR;
+        rpos.y -= CAN_OPERATOR/2;
+        rpos.x -= CAN_OPERATOR/2;
     }
     else if(objview == 0)   //正北
     {
-        rpos.x -= CAN_OPERATOR;
+        rpos.x -= CAN_OPERATOR/2;
     }
     else if(objview == 90)  //正东
     {
-        rpos.y -= CAN_OPERATOR;
+        rpos.y -= CAN_OPERATOR/2;
     }
     else if(objview == 180) //正南
     {
-        rpos.x += CAN_OPERATOR;
+        rpos.x += CAN_OPERATOR/2;
     }
     else if(objview == 270) //正西
     {
-        rpos.y += CAN_OPERATOR;   
+        rpos.y += CAN_OPERATOR/2;
     }
 
 
-    Stepto(rpos.y,rpos.x,rpos.z,10,10,1000,TRUE);
+    //sendcall(id_msg_step,(LPVOID)&rpos);
+	Stepto(rpos.y,rpos.x,rpos.z,10,15,1000,TRUE);
 }

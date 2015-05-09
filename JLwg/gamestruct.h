@@ -252,4 +252,22 @@ typedef struct _UIOperator
     DWORD   c5;
 } UIOperator, *PUIOperator;
 
+
+
+typedef struct _Team
+{
+	DWORD       PAddress; //对象的指针
+	wchar_t*     name;   //对象的名字
+	DWORD       Channel;       //对象的线路
+	DWORD       CurrLife;   //当前生命
+	DWORD       MaxLife;    //最大生命
+	DWORD       ID;         //对象的ID
+	DWORD       ID2;        //对象的ID2
+	fPosition   Pos;        //坐标
+	DWORD       Angle;      //面向
+	DWORD       Range;      //距离
+	DWORD       LV;         //等级;
+	DWORD       TeamNum;    //队伍人数
+}Team,*PTeam;
+
 #endif

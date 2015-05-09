@@ -16,6 +16,7 @@
 typedef std::vector<CUSTOMKILL> CustKillVector;
 typedef std::vector<ObjectNode*> ObjectVector;
 typedef std::vector<_BAGSTU> BagVector;
+typedef std::vector<PTeam> TeamVector;
 
 
 class Gamecall
@@ -97,6 +98,8 @@ public:
     DWORD GetExperienceNameID(DWORD ID);        //获取经验名字ID
     wchar_t* GetExperienceName(DWORD ID);       //获取经验名字
     BOOL GetPlayerFightingStatus();             //获得战斗状态
+	BOOL GetPlayerSkillStatus();                //获得是否正在使用技能状态
+	BOOL GetPlayerBusy();                       //角色当前是否正在忙碌
 
 
 
@@ -350,6 +353,8 @@ public:
     void    ChiYao(_BAGSTU& goods);
     void    ChiYao(const wchar_t* name);       //吃药, 药名
     void    Attack(int id);
+
+	int    _Attack(int id);
     void    Attack(const wchar_t* name);
 
 
@@ -368,7 +373,18 @@ public:
     void TuiChuDuiWu() /*退出队伍 */;
     void YaoQingZuDui(DWORD ID, DWORD Info) /*邀请组队 参数1是对象ID 参数2 就是10000数值 */;
     DWORD DuiWu_EndAdress() /*遍历队伍的结束地址 */;
-
+	DWORD DuiWu_StartAdress();//队伍开始地址
+	void GetPartyInfo(TeamVector& TeamInfo);//获取队伍信息
+	DWORD GetPartyByAddress(DWORD PartyAddress,int i);//获取当前角色地址
+	wchar_t* GetPartyName(DWORD PartyAddress);//获取队伍角色名
+	DWORD GetPartyChannel(DWORD PartyAddress);//获取角色当前频道
+	DWORD GetPartyCurrlife(DWORD PartyAddress);//获取角色当前血值
+	DWORD GetPartyMaxlife(DWORD PartyAddress);//获取角色最大血值
+	DWORD GetPartyId(DWORD PartyAddress);//获取角色id
+	DWORD GetPartyId2(DWORD PartyAddress);//获取角色id2
+	fPosition GetPartyPos(DWORD PartyAddress);//获取角色x坐标
+	DWORD GetPartyAngle(DWORD PartyAddress);//获取角色面向
+	DWORD GetPartyLv(DWORD PartyAddress);//获取角色等级
 private:
     HANDLE m_hModuleBsEngine;
 };
@@ -380,7 +396,7 @@ WORD ReadWORD(DWORD addr);
 DWORD ReadDWORD(DWORD addr);
 int ReadInt(DWORD addr);
 float ReadFloat(DWORD addr);
-char* ReadStr(DWORD addr);
+wchar_t* ReadStr(DWORD addr);
 
 
 #endif
