@@ -4819,10 +4819,16 @@ void Gamecall::SetMouseMode()
 //等待进入游戏
 bool Gamecall::WaitPlans(int inMaxTime)
 {
+
     DWORD dwCount = inMaxTime / 3;
     for(int i = 0; i < dwCount; i++)
     {
-        if(isLoadingMap() == 3) return true;
+        if(isLoadingMap() == 3)
+        {
+            return true;
+        }
+
+
         Sleep(3000);
     }
 

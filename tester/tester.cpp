@@ -65,6 +65,15 @@ UINT WorkThread(LPVOID lParam)
     return 0;
 }
 
+#define TT(x) printf("%08x", &x); printf(" %s", #x)
+
+int L()
+{
+
+    return 0;
+}
+
+
 int _tmain(int argc, TCHAR* argv[], TCHAR* envp[])
 {
 
@@ -77,25 +86,11 @@ int _tmain(int argc, TCHAR* argv[], TCHAR* envp[])
     }
 
 
-    wcout << __L(_SRCLINE_) << endl;
 
-
-
-    AfxBeginThread(WorkThread, 0);
-
-
-
-//     for(int i = 0; i < 20; i++)
-//     {
-//         threadmgr();
-//         Sleep(100);
-//     }
-
-
-
+    printf("%08x", &L);
+    printf(" %08x\r\n", *(DWORD *)&L);
+    TT(L);
 
     getchar();
-
-
     return 0;
 }

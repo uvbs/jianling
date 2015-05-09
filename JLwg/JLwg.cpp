@@ -5,20 +5,17 @@
 #include "GameConfig.h"
 #include "JLDlg.h"
 #include "GameSpend.h"
-#include "LuaScript.h"
 
 
 
 //方便注册自己的函数
 #define REGLUAFUN(x) \
-    _ASSERTE(L != NULL); \
-lua_register(L, #x, (lua_CFunction)&x);
+    lua_register(L, #x, (lua_CFunction)x);
 
 
 #define REGLUADATA(x) \
-    _ASSERTE(L != NULL); \
     lua_pushinteger(L, x); \
-lua_setglobal(L, #x);
+    lua_setglobal(L, #x);
 
 
 
@@ -350,7 +347,11 @@ void CJLwgApp::SendStatus(TCHAR szText[])
     _tcsncpy(status.szStatus, szText, _tcslen(szText) + 1);
 
     DWORD dwWriten;
-    WriteFile(m_hPipe, &status, sizeof(PIPESTATUS), &dwWriten, NULL);
+    if(WriteFile(m_hPipe, &status, sizeof(PIPESTATUS), &dwWriten, NULL) == 0)
+    {
+        //无控制台, dbgview
+        TRACE(szText);
+    }
 }
 
 int CJLwgApp::ExitInstance()
@@ -361,14 +362,13 @@ int CJLwgApp::ExitInstance()
 
 
 
-int utf8ToUnicode16(const char* utf8, wchar_t* unicode16, int length)
+int utf8ToUnicode16(const   char* utf8, wchar_t* unicode16,  int  length)
 {
     char  c;
     int  i = 0;
     --length;
     while(c = *utf8)
     {
-
         if(c & 0x80)
         {
             if(c & 0x20)
@@ -400,13 +400,11 @@ int utf8ToUnicode16(const char* utf8, wchar_t* unicode16, int length)
             ++utf8;
         }
     }
-
     if(i <= length)
     {
         unicode16[i] = 0;
     }
-
-    return (i + 1);
+    return  i + 1;
 }
 
 
@@ -417,25 +415,24 @@ static int AddToPary()
 }
 
 //utf8->utf-16的转换
-static int L(lua_State* L)
+static int w(lua_State* L)
 {
-    wchar_t a[256];
+    wchar_t a[256] = {0};
     wchar_t* unicode16 = a;
-
-    int  length = 0;
+    int length = 0;
     const char* utf8;
 
     utf8 = luaL_checkstring(L, 1);
     length = utf8ToUnicode16(utf8, unicode16, 256);
     if(length <= 256)
     {
-        lua_pushlstring(L, (const char*) unicode16, length * 2);
+        lua_pushlstring(L, (const   char*) unicode16, length * 2);
     }
     else
     {
         unicode16 = (wchar_t*)malloc(length);
         utf8ToUnicode16(utf8, unicode16, length);
-        lua_pushlstring(L, (const char*) unicode16, length * 2);
+        lua_pushlstring(L, (const   char*) unicode16, length * 2);
         free(unicode16);
     }
 
@@ -558,6 +555,39 @@ static int FuHuo(lua_State* L)
     return 0;
 }
 
+static int WearEquipment(lua_State* L)
+{
+    const char* name = lua_tostring(L, 1);
+    int pos = lua_tointeger(L, 2);
+    GamecallEx::GetInstance()->WearEquipment((wchar_t*)name, pos);
+
+    return 0;
+}
+static int PickupTask(lua_State* L)
+{
+    int nums = lua_gettop(L);
+    switch(nums)
+    {
+    case 0:
+
+        GamecallEx::GetInstance()->PickupTask();
+        break;
+
+
+    case 1:
+        {
+
+            int range = lua_tointeger(L, 1);
+            GamecallEx::GetInstance()->PickupTask();
+            break;
+        }
+    default:
+        _ASSERTE(FALSE); //不应运行到这
+        break;
+    }
+
+    return 0;
+}
 
 static int DeliverQuests(lua_State* L)
 {
@@ -571,7 +601,24 @@ static int DeliverQuests(lua_State* L)
             const char* a3 = lua_tostring(L, 3);
 
             GamecallEx::GetInstance()->DeliverQuests(a1, a2, (wchar_t*)a3);
+            break;
         }
+
+    case 6:
+        {
+
+            int a1 = lua_tointeger(L, 1);
+            int a2 = lua_tointeger(L, 2);
+            const char* a3 = lua_tostring(L, 3);
+            int a4 = lua_tointeger(L, 4);
+            int a5 = lua_tointeger(L, 5);
+            int a6 = lua_tointeger(L, 6);
+            GamecallEx::GetInstance()->DeliverQuests(a1, a2, (wchar_t*)a3, a4, a5, a6);
+            break;
+        }
+
+    default:
+        _ASSERTE(FALSE); //不应该
     }
 
     return 0;
@@ -636,7 +683,7 @@ void CJLwgApp::RegGameLib(lua_State* L)
     REGLUAFUN(FindThenKill);
     REGLUAFUN(Sleep);
     REGLUAFUN(DeliverQuests);
-    REGLUAFUN(L);
+    REGLUAFUN(w);
     REGLUAFUN(AddToPary);
     REGLUAFUN(FuHuo);
     REGLUAFUN(FollowNpc);
@@ -644,6 +691,8 @@ void CJLwgApp::RegGameLib(lua_State* L)
     REGLUAFUN(CityConvey);
     REGLUAFUN(ChiYao);
     REGLUAFUN(MsgBox);
+    REGLUAFUN(PickupTask);
+    REGLUAFUN(WearEquipment);
 }
 
 

@@ -4,7 +4,6 @@
 #include "stdafx.h"
 #include "jlwg.h"
 #include "LuaPage.h"
-#include "LuaScript.h"
 
 
 

@@ -2933,7 +2933,7 @@ BOOL GamecallEx::Init()
 {
 
     //等待进入游戏
-    if(WaitPlans(540))
+    if(WaitPlans(10000000))
     {
         LOGER(_T("进入游戏完成"));
     }
