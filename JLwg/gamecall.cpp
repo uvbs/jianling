@@ -499,7 +499,7 @@ DWORD Gamecall::call(DWORD id, LPVOID pParam)
 
     case id_msg_attack:
         {
-			return _Attack((DWORD)pParam);
+            return _Attack((DWORD)pParam);
         }
     case id_msg_clickui:
         {
@@ -1870,31 +1870,31 @@ void Gamecall::ZOULUSHUNYI(DWORD* adress, DWORD adrewss)
 //参数1: 技能id
 int Gamecall::_Attack(int id)  //技能攻击  传入的是技能ID
 {
-	char c_ret;
-	//DWORD rs;
-	__try
-	{
-		__asm
-		{
-			mov eax, obj_enum_base;
-			mov eax, [eax];
-			mov eax, [eax + attack_offset1];
-			mov eax, [eax + attack_offset2];
-			mov esi, [eax + attack_offset3];
-			push id;
-			push esi;
-			mov eax, attack_call;
-			call eax;
-			mov c_ret, al;
-			//mov rs,eax;
-		}
-		//TRACE("rs:%x",rs);
-	}
+    char c_ret;
+    //DWORD rs;
+    __try
+    {
+        __asm
+        {
+            mov eax, obj_enum_base;
+            mov eax, [eax];
+            mov eax, [eax + attack_offset1];
+            mov eax, [eax + attack_offset2];
+            mov esi, [eax + attack_offset3];
+            push id;
+            push esi;
+            mov eax, attack_call;
+            call eax;
+            mov c_ret, al;
+            //mov rs,eax;
+        }
+        //TRACE("rs:%x",rs);
+    }
     __except(1)
     {
         TRACE(FUNCNAME);
     }
-	return c_ret;
+    return c_ret;
 }
 
 //取得技能基地址
@@ -6923,24 +6923,24 @@ void Gamecall::Attack(const wchar_t* name)
 
 void Gamecall::Attack(int id)
 {
-	int cs = 0;
-	int flag = 0;
-	while(flag == 0)
-	{
-		Sleep(100);
-		if(cs > 6)
-		{
-			break;
-		}
-		flag = sendcall(id_msg_attack,(LPVOID)id);
-		if (flag)
-		{
-			TRACE(_T("技能ID:%d,技能执行返回%d"), id, flag);
-			break;
-		}
-		//TRACE(_T("技能ID:%d,技能执行返回%d"), id, flag);
-		cs++;
-	}
+    int cs = 0;
+    int flag = 0;
+    while(flag == 0)
+    {
+        Sleep(100);
+        if(cs > 6)
+        {
+            break;
+        }
+        flag = sendcall(id_msg_attack, (LPVOID)id);
+        if(flag)
+        {
+            TRACE(_T("技能ID:%d,技能执行返回%d"), id, flag);
+            break;
+        }
+        //TRACE(_T("技能ID:%d,技能执行返回%d"), id, flag);
+        cs++;
+    }
 }
 
 
@@ -7047,21 +7047,21 @@ BOOL Gamecall::isPlayerDaodi()
     __try
     {
         if(m_Adress)
-            Adress = ReadDWORD(ReadDWORD(m_Adress + 0x14)+0x180);
-        if(Adress == 0x400 || Adress == 4 || Adress == 0x22 || Adress == 0x1) 
-			State = TRUE;
+            Adress = ReadDWORD(ReadDWORD(m_Adress + 0x14) + 0x180);
+        if(Adress == 0x400 || Adress == 4 || Adress == 0x22 || Adress == 0x1)
+            State = TRUE;
         else
-			State = FALSE;
-		/* 
-		$1:Result.nUnusual:='眩晕';
-		$4:Result.nUnusual:='倒地';
-		$6:Result.nUnusual:='频死';
-		$B:Result.nUnusual:='眩晕';
-		$D:Result.nUnusual:='倒地';
-		$21:Result.nUnusual:='疗伤';
-		$22:Result.nUnusual:='格挡';
-		$400:Result.nUnusual:='倒地';
-		*/
+            State = FALSE;
+        /*
+        $1:Result.nUnusual:='眩晕';
+        $4:Result.nUnusual:='倒地';
+        $6:Result.nUnusual:='频死';
+        $B:Result.nUnusual:='眩晕';
+        $D:Result.nUnusual:='倒地';
+        $21:Result.nUnusual:='疗伤';
+        $22:Result.nUnusual:='格挡';
+        $400:Result.nUnusual:='倒地';
+        */
     }
     __except(1)
     {
@@ -7098,9 +7098,9 @@ BOOL Gamecall::isStrikeCd(DWORD id)
                 {
                     //CD= 2是冷却 =1 是释放中
                     if(StrikeVec[i].cd == 0)
-						return FALSE;
+                        return FALSE;
                     else
-						return TRUE;
+                        return TRUE;
                 }
                 else
                     break;
@@ -7900,269 +7900,307 @@ DWORD Gamecall::GetObjectView(DWORD pObjAddress)
 
 BOOL Gamecall::GetPlayerSkillStatus()
 {
-	DWORD pAddr = GetPlayerDataAddr();
-	WORD value = 0;
+    DWORD pAddr = GetPlayerDataAddr();
+    WORD value = 0;
 
 
-	__try
-	{
-		value = ReadWORD(ReadDWORD(pAddr + 0x14)+0x80);
-	}
-	__except(1)
-	{
-		TRACE(_T("获得释放技能状态出错"));
-	}
+    __try
+    {
+        value = ReadWORD(ReadDWORD(pAddr + 0x14) + 0x80);
+    }
+    __except(1)
+    {
+        TRACE(_T("获得释放技能状态出错"));
+    }
 
-	return (value != 0xFFFF);
+    return (value != 0xFFFF);
 }
 
 BOOL Gamecall::GetPlayerBusy()
 {
-	DWORD pAddr = GetPlayerDataAddr();
-	DWORD value_1 = 0;
-	DWORD value_2 = 0;
+    DWORD pAddr = GetPlayerDataAddr();
+    DWORD value_1 = 0;
+    DWORD value_2 = 0;
 
 
-	__try
-	{
-		value_1 = ReadDWORD(ReadDWORD(pAddr + 0x14)+0x28);
-		value_2 = ReadDWORD(pAddr + 0xF8);
-		if (value_1 > 0 || value_2 == 5)
-		{
-			return TRUE;
-		}
-	}
-	__except(1)
-	{
-		TRACE(_T("获得忙碌状态出错"));
-	}
+    __try
+    {
+        value_1 = ReadDWORD(ReadDWORD(pAddr + 0x14) + 0x28);
+        value_2 = ReadDWORD(pAddr + 0xF8);
+        if(value_1 > 0 || value_2 == 5)
+        {
+            return TRUE;
+        }
+    }
+    __except(1)
+    {
+        TRACE(_T("获得忙碌状态出错"));
+    }
 
-	return FALSE;
+    return FALSE;
 }
 
 DWORD Gamecall::DuiWu_StartAdress()
 {
-	DWORD Adress;
-	_try
-	{
-		_asm
-		{
-			mov eax, obj_enum_base;
-			mov eax, [eax+0];
-			mov eax, [eax+enum_party_startaddr_offset1];
-			mov eax, [eax+enum_party_startaddr_offset2];
-			mov eax, [eax+enum_party_startaddr_offset3];
-			mov eax, [eax+enum_party_startaddr_offset4];  //遍历队伍的结束地址四级偏移
-			mov Adress, eax;
-		}
-	}
-	_except(1)
-	{
-		TRACE(_T("遍历队伍的结束地址出错"));
-		return 0;
-	}
-	return Adress;
+    DWORD Adress;
+    _try
+    {
+        _asm
+        {
+            mov eax, obj_enum_base;
+            mov eax, [eax+0];
+            mov eax, [eax+enum_party_startaddr_offset1];
+            mov eax, [eax+enum_party_startaddr_offset2];
+            mov eax, [eax+enum_party_startaddr_offset3];
+            mov eax, [eax+enum_party_startaddr_offset4];  //遍历队伍的结束地址四级偏移
+            mov Adress, eax;
+        }
+    }
+    _except(1)
+    {
+        TRACE(_T("遍历队伍的结束地址出错"));
+        return 0;
+    }
+    return Adress;
 }
 
 void Gamecall::GetPartyInfo(TeamVector& TeamInfo)
 {
-	DWORD StartAdress  = DuiWu_StartAdress(); //遍历队伍的开始地址
-	DWORD EndAdress  = DuiWu_EndAdress(); //遍历队伍的结束地址
-	DWORD count;
-	DWORD C_Address;
-	fPosition fmypos;
-	PTeam tm;
-	ZeroMemory(&tm,sizeof(PTeam));
-	ZeroMemory(&fmypos,sizeof(fPosition));
-	C_Address = 0;
+    DWORD StartAdress  = DuiWu_StartAdress(); //遍历队伍的开始地址
+    DWORD EndAdress  = DuiWu_EndAdress(); //遍历队伍的结束地址
+    DWORD count;
+    DWORD C_Address;
+    fPosition fmypos;
+    PTeam tm;
+    ZeroMemory(&tm, sizeof(PTeam));
+    ZeroMemory(&fmypos, sizeof(fPosition));
+    C_Address = 0;
 
-	count = (EndAdress - StartAdress) / 4;
-	if (count > 0 && count <=6)
-	{
-		GetPlayerPos(&fmypos);
-		for (int i=0;i < count;i++)
-		{
-			C_Address = GetPartyByAddress(StartAdress, i);
-			tm->PAddress = C_Address;
-			tm->name = GetPartyName(C_Address);
-			tm->Channel = GetPartyChannel(C_Address);
-			tm->CurrLife = GetPartyCurrlife(C_Address);
-			tm->MaxLife = GetPartyMaxlife(C_Address);
-			tm->ID = GetPartyId(C_Address);
-			tm->ID2 = GetPartyId2(C_Address);
-			tm->Pos = GetPartyPos(C_Address);
-			tm->Angle = GetPartyAngle(C_Address);
-			tm->Range = CalcC(tm->Pos,fmypos);
-			tm->LV = GetPartyLv(C_Address);
-			TeamInfo.push_back(tm);
-			TRACE("%d",tm->PAddress);
-		}
-	}else
-	{
-		TRACE("未组队");
-	}
-	
+    count = (EndAdress - StartAdress) / 4;
+    if(count > 0 && count <= 6)
+    {
+        GetPlayerPos(&fmypos);
+        for(int i = 0; i < count; i++)
+        {
+            C_Address = GetPartyByAddress(StartAdress, i);
+            tm->PAddress = C_Address;
+            tm->name = GetPartyName(C_Address);
+            tm->Channel = GetPartyChannel(C_Address);
+            tm->CurrLife = GetPartyCurrlife(C_Address);
+            tm->MaxLife = GetPartyMaxlife(C_Address);
+            tm->ID = GetPartyId(C_Address);
+            tm->ID2 = GetPartyId2(C_Address);
+            tm->Pos = GetPartyPos(C_Address);
+            tm->Angle = GetPartyAngle(C_Address);
+            tm->Range = CalcC(tm->Pos, fmypos);
+            tm->LV = GetPartyLv(C_Address);
+            TeamInfo.push_back(tm);
+            TRACE(_T("%d"), tm->PAddress);
+        }
+    }
+    else
+    {
+        TRACE(_T("未组队"));
+    }
+
 }
 
 wchar_t* Gamecall::GetPartyName(DWORD PartyAddress)
 {
-	wchar_t* name;
-	name = NULL;
-	_try
-	{
-		if(ReadDWORD(PartyAddress + 0x7c + 0x14)>= 0xF)
-		{
-			name = ReadStr(ReadDWORD(PartyAddress + 0x7C));
-		}else
-		{
-			name = ReadStr(PartyAddress + 0x7C);
-		}
-	}
-	_except(1)
-	{
-		TRACE("获取角色名字出错");
-	}
-	return name;
+    wchar_t* name;
+    name = NULL;
+    _try
+    {
+        if(ReadDWORD(PartyAddress + 0x7c + 0x14) >= 0xF)
+        {
+            name = ReadStr(ReadDWORD(PartyAddress + 0x7C));
+        }
+        else
+        {
+            name = ReadStr(PartyAddress + 0x7C);
+        }
+    }
+    _except(1)
+    {
+        TRACE(_T("获取角色名字出错"));
+    }
+    return name;
 }
 
 DWORD Gamecall::GetPartyChannel(DWORD PartyAddress)
 {
-	DWORD line;
-	line = NULL;
-	_try
-	{
-		line = ReadDWORD(PartyAddress + 0x44);
-	}
-	_except(1)
-	{
-		TRACE("获取角色线路出错");
-		line = 0;
-	}
-	return line;
+    DWORD line;
+    line = NULL;
+    _try
+    {
+        line = ReadDWORD(PartyAddress + 0x44);
+    }
+    _except(1)
+    {
+        TRACE(_T("获取角色线路出错"));
+        line = 0;
+    }
+    return line;
 }
 
 DWORD Gamecall::GetPartyCurrlife(DWORD PartyAddress)
 {
-	DWORD Currlife;
-	Currlife = NULL;
-	_try
-	{
-		Currlife = ReadDWORD(PartyAddress + 0x14);
-	}
-	_except(1)
-	{
-		TRACE("获取角色当前血值出错");
-	}
-	return Currlife;
+    DWORD Currlife;
+    Currlife = NULL;
+    _try
+    {
+        Currlife = ReadDWORD(PartyAddress + 0x14);
+    }
+    _except(1)
+    {
+        TRACE(_T("获取角色当前血值出错"));
+    }
+    return Currlife;
 }
 
 DWORD Gamecall::GetPartyMaxlife(DWORD PartyAddress)
 {
-	DWORD Maxlife;
-	Maxlife = NULL;
-	_try
-	{
-		Maxlife = ReadDWORD(PartyAddress + 0x28);
-	}
-	_except(1)
-	{
-		TRACE("获取角色最大血值出错");
-	}
-	return Maxlife;
+    DWORD Maxlife;
+    Maxlife = NULL;
+    _try
+    {
+        Maxlife = ReadDWORD(PartyAddress + 0x28);
+    }
+    _except(1)
+    {
+        TRACE(_T("获取角色最大血值出错"));
+    }
+    return Maxlife;
 }
 
 DWORD Gamecall::GetPartyId(DWORD PartyAddress)
 {
-	DWORD id;
-	id = NULL;
-	_try
-	{
-		id = ReadDWORD(PartyAddress + 0x8);
-	}
-	_except(1)
-	{
-		TRACE("获取角色ID出错");
-	}
-	return id;
+    DWORD id;
+    id = NULL;
+    _try
+    {
+        id = ReadDWORD(PartyAddress + 0x8);
+    }
+    _except(1)
+    {
+        TRACE(_T("获取角色ID出错"));
+    }
+    return id;
 }
 
 DWORD Gamecall::GetPartyId2(DWORD PartyAddress)
 {
-	DWORD id2;
-	id2 = NULL;
-	_try
-	{
-		id2 = ReadDWORD(PartyAddress + 0xC);
-	}
-	_except(1)
-	{
-		TRACE("获取角色ID2出错");
-	}
-	return id2;
+    DWORD id2;
+    id2 = NULL;
+    _try
+    {
+        id2 = ReadDWORD(PartyAddress + 0xC);
+    }
+    _except(1)
+    {
+        TRACE(_T("获取角色ID2出错"));
+    }
+    return id2;
 }
 
 fPosition Gamecall::GetPartyPos(DWORD PartyAddress)
 {
-	fPosition pos;
-	ZeroMemory(&pos,sizeof(fPosition));
-	_try
-	{
-		pos.x = (ReadWORD(PartyAddress + 0x1C) - 10000) * 4;
-		pos.y = (ReadWORD(PartyAddress + 0x1E) - 10000) * 4;
-		pos.z = (ReadWORD(PartyAddress + 0x20) - 10000) * 4;
-		
-	}
-	_except(1)
-	{
-		TRACE("获取角色坐标出错");
-	}
-	return pos;
+    fPosition pos;
+    ZeroMemory(&pos, sizeof(fPosition));
+    _try
+    {
+        pos.x = (ReadWORD(PartyAddress + 0x1C) - 10000) * 4;
+        pos.y = (ReadWORD(PartyAddress + 0x1E) - 10000) * 4;
+        pos.z = (ReadWORD(PartyAddress + 0x20) - 10000) * 4;
+
+    }
+    _except(1)
+    {
+        TRACE(_T("获取角色坐标出错"));
+    }
+    return pos;
 }
 
 DWORD Gamecall::GetPartyAngle(DWORD PartyAddress)
 {
-	DWORD Angle;
-	Angle = NULL;
-	_try
-	{
-		Angle = ReadWORD(PartyAddress + 0x32);
-	}
-	_except(1)
-	{
-		TRACE("获取角色ID2出错");
-	}
-	return Angle;
+    DWORD Angle;
+    Angle = NULL;
+    _try
+    {
+        Angle = ReadWORD(PartyAddress + 0x32);
+    }
+    _except(1)
+    {
+        TRACE(_T("获取角色ID2出错"));
+    }
+    return Angle;
 }
 
 DWORD Gamecall::GetPartyLv(DWORD PartyAddress)
 {
-	DWORD Lv;
-	Lv = NULL;
-	_try
-	{
-		Lv = (DWORD)ReadWORD(PartyAddress + 0x1A);
-	}
-	_except(1)
-	{
-		TRACE("获取角色ID2出错");
-	}
-	return Lv;
+    DWORD Lv;
+    Lv = NULL;
+    _try
+    {
+        Lv = (DWORD)ReadWORD(PartyAddress + 0x1A);
+    }
+    _except(1)
+    {
+        TRACE(_T("获取角色ID2出错"));
+    }
+    return Lv;
 }
 
-DWORD Gamecall::GetPartyByAddress(DWORD PartyAddress,int i)
+DWORD Gamecall::GetPartyByAddress(DWORD PartyAddress, int i)
 {
-	DWORD NewAddress;
-	NewAddress = NULL;
-	_try
-	{
-		NewAddress = ReadDWORD(PartyAddress + i * 4);
-	}
-	_except(1)
-	{
-		TRACE("获取当前角色地址出错");
-	}
-	return NewAddress;
+    DWORD NewAddress;
+    NewAddress = NULL;
+    _try
+    {
+        NewAddress = ReadDWORD(PartyAddress + i * 4);
+    }
+    _except(1)
+    {
+        TRACE(_T("获取当前角色地址出错"));
+    }
+    return NewAddress;
 }
+
+BOOL Gamecall::d_Walk(float x, float y, float z)
+{
+    BOOL bRet = FALSE;
+    if(x == 0 || y == 0 || z == 0) return FALSE;
+
+    __try
+    {
+        __asm
+        {
+            mov  edi, Offset_Game_Base
+            mov  edi, dword ptr ds:[edi]
+            mov  edi, dword ptr ds:[edi+ Offset_Game_Offset]
+            mov  edi, dword ptr ds:[edi+ Offset_Role_Offset]
+            mov  ecx, dword ptr ds:[edi+ Offset_Role_Attr]
+            fld  z
+            sub  esp, 0xC
+            fstp dword ptr ss:[esp+ 0x8]
+            fld  y
+            fstp dword ptr ss:[esp+ 0x4]
+            fld  x
+            fstp dword ptr ss:[esp]
+            Call FUNC_WALK
+        }
+
+        bRet = TRUE;
+
+    }
+    _except(1)
+    {
+        TRACE(FUNCNAME);
+    }
+
+    return bRet;
+}
+
 
 BYTE ReadByte(DWORD addr)
 {

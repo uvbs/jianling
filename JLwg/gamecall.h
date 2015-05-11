@@ -335,6 +335,7 @@ public:
 
 
     //走路
+    BOOL d_Walk(float x, float y, float z);   //另一数据
     BOOL Stepto(fPosition& tarpos, double timeOut = 10, DWORD okRange = CAN_OPERATOR, DWORD tooLong = 1000, BOOL sp3x = FALSE);
     void Step(float x, float y, float z);
     void Step3x(float x, float y, float z);
@@ -356,7 +357,6 @@ public:
 
 	int    _Attack(int id);
     void    Attack(const wchar_t* name);
-
 
 
     //转向

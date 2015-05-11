@@ -49,15 +49,15 @@ void threadmgr()
 
 UINT WorkThread1(LPVOID lParam)
 {
-    
+
     Sleep(100000);
-    
+
     return 0;
 }
 
 UINT WorkThread(LPVOID lParam)
 {
-    
+
     HANDLE tThread = AfxBeginThread(WorkThread1, 0);
     CloseHandle(tThread);
     Sleep(100000);
@@ -86,10 +86,16 @@ int _tmain(int argc, TCHAR* argv[], TCHAR* envp[])
     }
 
 
+    int x, y, z = 1;
+    x = 0;
+    y = 1;
 
-    printf("%08x", &L);
-    printf(" %08x\r\n", *(DWORD *)&L);
-    TT(L);
+    if(x == 0 || y == 0 || z == 0)
+    {
+        printf("%d, %d, %d", x, y, z);
+    }
+
+
 
     getchar();
     return 0;

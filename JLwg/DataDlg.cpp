@@ -76,16 +76,16 @@ TCHAR* cli_Quest[] =
 
 TCHAR* cli_Team[] =
 {
-	{_T("指针")},
-	{_T("名字")},
-	{_T("当前血值")},
-	{_T("最大血值")},
-	{_T("Id")},
-	{_T("Id2")},
-	{_T("坐标")},
-	{_T("面向")},
-	{_T("距离")},
-	{_T("等级")},
+    {_T("指针")},
+    {_T("名字")},
+    {_T("当前血值")},
+    {_T("最大血值")},
+    {_T("Id")},
+    {_T("Id2")},
+    {_T("坐标")},
+    {_T("面向")},
+    {_T("距离")},
+    {_T("等级")},
 };
 
 TCHAR* cli_TaskItem[] =
@@ -263,7 +263,7 @@ BOOL CDataDlg::OnInitDialog()
     m_ComBox.AddString(_T("装备"));
     m_ComBox.AddString(_T("周围掉落"));
     m_ComBox.AddString(_T("范围怪物(配置文件)"));
-	m_ComBox.AddString(_T("遍历队伍信息"));
+    m_ComBox.AddString(_T("遍历队伍信息"));
 
     m_ListCtrl.SetExtendedStyle(LVS_EX_FULLROWSELECT);
 
@@ -347,8 +347,8 @@ void CDataDlg::OnGetpalyerinfo()
     AddInfo(_T("角色最大体力: %d"), (int)gcall.GetPlayerMaxVit());
     AddInfo(_T("角色体力: %d"), (int) gcall.GetPlayerVit());
     AddInfo(_T("角色视角: %d"), (int)gcall.GetPlayerViewPoint());
-	AddInfo(_T("角色释放技能状态: %d"), gcall.GetPlayerSkillStatus());
-	AddInfo(_T("角色是否忙碌: %d"), gcall.GetPlayerBusy());
+    AddInfo(_T("角色释放技能状态: %d"), gcall.GetPlayerSkillStatus());
+    AddInfo(_T("角色是否忙碌: %d"), gcall.GetPlayerBusy());
     AddInfo(_T("人物UI状态: %d"), gcall.GetPlayerQuestUIStatus());
     AddInfo(_T("人物UI状态2: %d"), gcall.GetPlayerQuestUIStatusts());
     AddInfo(_T("LoadingMap: %d"), gcall.isLoadingMap());
@@ -1033,11 +1033,11 @@ void CDataDlg::OnSelchangeComboDatatype()
         InsertColumnHelper(cli_Quest, sizeof(cli_Quest) / sizeof(TCHAR*));
         PrintfQuest();
     }
-	else if (strSel == _T("遍历队伍信息"))
-	{
-		InsertColumnHelper(cli_Team, sizeof(cli_Team) / sizeof(TCHAR*));
-		PrintfTeaminfo();
-	}
+    else if(strSel == _T("遍历队伍信息"))
+    {
+        InsertColumnHelper(cli_Team, sizeof(cli_Team) / sizeof(TCHAR*));
+        PrintfTeaminfo();
+    }
 
 
     int i = 0;
@@ -1239,12 +1239,12 @@ void CDataDlg::OnFindthenkill()
     //gcall.Attack(0x5dca);
     //gcall.Attack(0x5dca);
     //gcall.Attack(0x5dca);
-	while (1)
-	{
-		gcall.Kill_Tab(0x5dc1);//gcall.Attack(0x5dc1);
-		gcall.Kill_Tab(0x5dca);
-	}
-	
+    while(1)
+    {
+        gcall.Kill_Tab(0x5dc1);//gcall.Attack(0x5dc1);
+        gcall.Kill_Tab(0x5dca);
+    }
+
 }
 
 void CDataDlg::OnHookAcceptquest()
@@ -1408,41 +1408,45 @@ void CDataDlg::OnUpdateHookstrike(CCmdUI* pCmdUI)
 
 void CDataDlg::PrintfTeaminfo()
 {
-	//获取游戏外挂功能
-	GamecallEx& gcall = *GamecallEx::GetInstance();
-	TeamVector tv;
-	gcall.GetPartyInfo(tv);
-	int size = tv.size();
-	CString strTemp;
-	for(int i = 0; i < size; i++)
-	{
-		m_ListCtrl.InsertItem(i, tv[i]->name);
+    //获取游戏外挂功能
+    GamecallEx& gcall = *GamecallEx::GetInstance();
 
-		strTemp.Format(_T("%x"), tv[i]->PAddress);
-		m_ListCtrl.SetItemText(i, 1, strTemp);
 
-		strTemp.Format(_T("%d"), tv[i]->CurrLife);
-		m_ListCtrl.SetItemText(i, 2, strTemp);
+    TeamVector tv;
+    gcall.GetPartyInfo(tv);
 
-		strTemp.Format(_T("%d"), tv[i]->MaxLife);
-		m_ListCtrl.SetItemText(i, 3, strTemp);
 
-		strTemp.Format(_T("%d"), tv[i]->ID);
-		m_ListCtrl.SetItemText(i, 4, strTemp);
+    int size = tv.size();
+    CString strTemp;
+    for(int i = 0; i < size; i++)
+    {
+        m_ListCtrl.InsertItem(i, tv[i]->name);
 
-		strTemp.Format(_T("%d"), tv[i]->ID2);
-		m_ListCtrl.SetItemText(i, 5, strTemp);
+        strTemp.Format(_T("%x"), tv[i]->PAddress);
+        m_ListCtrl.SetItemText(i, 1, strTemp);
 
-		strTemp.Format(_T("%d,%d,%d"), tv[i]->Pos.y,tv[i]->Pos.x,tv[i]->Pos.z);
-		m_ListCtrl.SetItemText(i, 6, strTemp);
+        strTemp.Format(_T("%d"), tv[i]->CurrLife);
+        m_ListCtrl.SetItemText(i, 2, strTemp);
 
-		strTemp.Format(_T("%d"), tv[i]->Angle);
-		m_ListCtrl.SetItemText(i, 7, strTemp);
+        strTemp.Format(_T("%d"), tv[i]->MaxLife);
+        m_ListCtrl.SetItemText(i, 3, strTemp);
 
-		strTemp.Format(_T("%d"), tv[i]->Range);
-		m_ListCtrl.SetItemText(i, 8, strTemp);
+        strTemp.Format(_T("%d"), tv[i]->ID);
+        m_ListCtrl.SetItemText(i, 4, strTemp);
 
-		strTemp.Format(_T("%d"), tv[i]->LV);
-		m_ListCtrl.SetItemText(i, 9, strTemp);
-	}
+        strTemp.Format(_T("%d"), tv[i]->ID2);
+        m_ListCtrl.SetItemText(i, 5, strTemp);
+
+        strTemp.Format(_T("%d,%d,%d"), tv[i]->Pos.y, tv[i]->Pos.x, tv[i]->Pos.z);
+        m_ListCtrl.SetItemText(i, 6, strTemp);
+
+        strTemp.Format(_T("%d"), tv[i]->Angle);
+        m_ListCtrl.SetItemText(i, 7, strTemp);
+
+        strTemp.Format(_T("%d"), tv[i]->Range);
+        m_ListCtrl.SetItemText(i, 8, strTemp);
+
+        strTemp.Format(_T("%d"), tv[i]->LV);
+        m_ListCtrl.SetItemText(i, 9, strTemp);
+    }
 }
