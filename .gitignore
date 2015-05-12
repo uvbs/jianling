@@ -2,6 +2,7 @@ Release/
 Debug/
 Backup/
 ipch/
+bin/
 
 *.*.suo
 *.ncb
