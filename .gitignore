@@ -1,25 +1,16 @@
 Release/
-
 Debug/
-
 Backup/
-
-bin/
 ipch/
 
-JL.v11.suo
-
+*.*.suo
 *.ncb
-
 *.opt
-
 *.sdf
-
 *.clw
 *.plg
 *.aps
 *.orig
-UpgradeLog.htm
 *.vcproj.*.user
 *.vcproj
 *.sln
