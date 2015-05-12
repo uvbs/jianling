@@ -9,9 +9,9 @@
 #include "GamecallEx.h"
 
 #ifdef _DEBUG
-    #define new DEBUG_NEW
-    #undef THIS_FILE
-    static char THIS_FILE[] = __FILE__;
+#define new DEBUG_NEW
+#undef THIS_FILE
+static char THIS_FILE[] = __FILE__;
 #endif
 
 /////////////////////////////////////////////////////////////////////////////
@@ -93,8 +93,7 @@ BOOL CConfigQhPage::OnCommand(WPARAM wParam, LPARAM lParam)
 {
 
     int Notifyid = HIWORD(wParam);
-    if(Notifyid == EN_CHANGE ||
-            Notifyid == BM_CLICK)
+    if(Notifyid == EN_CHANGE || Notifyid == BM_CLICK)
     {
         SetModified();
     }
@@ -102,8 +101,6 @@ BOOL CConfigQhPage::OnCommand(WPARAM wParam, LPARAM lParam)
 
     return CDialog::OnCommand(wParam, lParam);
 }
-
-
 
 
 /////////////////////////////////////////////////////////////////////////////
@@ -267,37 +264,31 @@ void CConfigItemPage::GetSelToFilterList(TCHAR szName[])
 }
 void CConfigItemPage::OnConfigCuncang()
 {
-    // TODO: Add your command handler code here
     GetSelToFilterList(strBankItem);
 }
 
 void CConfigItemPage::OnConfigFenjie()
 {
-    // TODO: Add your command handler code here
     GetSelToFilterList(strDisenchantItem);
 }
 
 void CConfigItemPage::OnConfigJiaoyi()
 {
-    // TODO: Add your command handler code here
     GetSelToFilterList(strTradeItem);
 }
 
 void CConfigItemPage::OnConfigQhsp()
 {
-    // TODO: Add your command handler code here
     GetSelToFilterList(strQHAccessories);
 }
 
 void CConfigItemPage::OnConfigQhwq()
 {
-    // TODO: Add your command handler code here
     GetSelToFilterList(strQHWeapons);
 }
 
 void CConfigItemPage::OnConfigSell()
 {
-    // TODO: Add your command handler code here
     GetSelToFilterList(strSellItem);
 }
 
@@ -372,6 +363,7 @@ BOOL CConfigItemPage::OnCommand(WPARAM wParam, LPARAM lParam)
     {
         SetModified();
     }
+
     return CDialog::OnCommand(wParam, lParam);
 }
 
@@ -508,7 +500,6 @@ void CConfigObjPage::OnConfigRefresh()
 
 void CConfigObjPage::OnRclickListObjects(NMHDR* pNMHDR, LRESULT* pResult)
 {
-    // TODO: Add your control notification handler code here
     POINT point;
     GetCursorPos(&point);
 
@@ -522,37 +513,29 @@ void CConfigObjPage::OnRclickListObjects(NMHDR* pNMHDR, LRESULT* pResult)
 void CConfigObjPage::GetSelToFilterList(TCHAR szName[])
 {
     POSITION pos = m_ObjList.GetFirstSelectedItemPosition();
-    if(pos == NULL)
-    {
-        TRACE0("No items were selected!\n");
-    }
-    else
-    {
-        while(pos)
-        {
-            int nItem = m_ObjList.GetNextSelectedItem(pos);
-            //TRACE1("Item %d was selected!\n", nItem);
-            // you could do your own processing on nItem here
-            CString strItem = m_ObjList.GetItemText(nItem, 0);
 
-            //添加到过滤控件
-            DWORD dwCount = m_FilterList.GetItemCount();
-            m_FilterList.InsertItem(dwCount, strItem);
-            m_FilterList.SetItemText(dwCount, 1, szName);
-        }
+    while(pos)
+    {
+        int nItem = m_ObjList.GetNextSelectedItem(pos);
+
+        // you could do your own processing on nItem here
+        CString strItem = m_ObjList.GetItemText(nItem, 0);
+
+        //添加到过滤控件
+        DWORD dwCount = m_FilterList.GetItemCount();
+        m_FilterList.InsertItem(dwCount, strItem);
+        m_FilterList.SetItemText(dwCount, 1, szName);
     }
 }
 
 
 void CConfigObjPage::OnConfigFirst()
 {
-    // TODO: Add your command handler code here
     GetSelToFilterList(strFirstKill);
 }
 
 void CConfigObjPage::OnConfigDontkill()
 {
-    // TODO: Add your command handler code here
     GetSelToFilterList(strDontKill);
 }
 
@@ -566,7 +549,6 @@ void CConfigObjPage::OnDblclkListObjectfilter(NMHDR* pNMHDR, LRESULT* pResult)
 
 void CConfigObjPage::OnConfigAlwayskill()
 {
-    // TODO: Add your command handler code here
     GetSelToFilterList(strAlwaysKill);
 }
 
@@ -574,12 +556,12 @@ BOOL CConfigObjPage::OnApply()
 {
     UpdateData();
 
-    GameConfig *pConfig = GameConfig::GetInstance();
+    GameConfig* pConfig = GameConfig::GetInstance();
 
     ItemVector& dontkill = pConfig->m_DontKill;
     ItemVector& alwayskill = pConfig->m_AlwaysKill;
     ItemVector& firstkill = pConfig->m_FirstKill;
-    
+
     for(int i = 0; i < m_FilterList.GetItemCount(); i++)
     {
         CString strName = m_FilterList.GetItemText(i, 0);
@@ -596,7 +578,7 @@ BOOL CConfigObjPage::OnApply()
         {
             alwayskill.push_back((LPCTSTR)strName);
         }
-        }
+    }
 
 
     return TRUE;

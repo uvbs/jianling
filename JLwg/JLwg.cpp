@@ -160,7 +160,9 @@ DWORD CALLBACK CJLwgApp::WorkThread(LPVOID pParam)
         return FALSE;
     }
 
-    //初始化call类
+    //初始化call类 这个游戏功能的初始化可以放到脚本线程开始执行
+    //这样不会阻塞外挂界面线程, 就是这个线程
+    //使外挂界面能尽早出现, 但是放在脚本线程会导致
     if(!GamecallEx::GetInstance()->Init())
     {
         LOGER(_T("外挂功能初始化失败"));
@@ -487,16 +489,31 @@ static int FindThenKill(lua_State* L)
     {
         GamecallEx::GetInstance()->FindThenKill(0, 1000, modeNormal);
     }
-    else
+    else if(nums == 6)
     {
         int pos = lua_tointeger(L, 1);
         DWORD range = lua_tointeger(L, 2);
         DWORD mode = lua_tointeger(L, 3);
-        DWORD MyQuestStep = lua_tointeger(L, 41);
+        DWORD MyQuestStep = lua_tointeger(L, 4);
         DWORD MyQuestID = lua_tointeger(L, 5);
         DWORD canKillRange = lua_tointeger(L, 6);
 
         GamecallEx::GetInstance()->FindThenKill(pos, range, mode, MyQuestStep, MyQuestID, canKillRange);
+    }
+    else if(nums == 5)
+    {
+        int pos = lua_tointeger(L, 1);
+        DWORD range = lua_tointeger(L, 2);
+        DWORD mode = lua_tointeger(L, 3);
+        DWORD MyQuestStep = lua_tointeger(L, 4);
+        DWORD MyQuestID = lua_tointeger(L, 5);
+
+        GamecallEx::GetInstance()->FindThenKill(pos, range, mode, MyQuestStep, MyQuestID);
+    }
+    else
+    {
+        //lua_error()
+        _ASSERTE(FALSE);
     }
 
     return 0;
@@ -617,6 +634,17 @@ static int DeliverQuests(lua_State* L)
             break;
         }
 
+    case 4:
+        {
+            int a1 = lua_tointeger(L, 1);
+            int a2 = lua_tointeger(L, 2);
+            const char* a3 = lua_tostring(L, 3);
+            int a4 = lua_tointeger(L, 4);
+            GamecallEx::GetInstance()->DeliverQuests(a1, a2, (wchar_t*)a3, a4);
+            break;
+        }
+
+
     default:
         _ASSERTE(FALSE); //不应该
     }
@@ -645,6 +673,18 @@ static int ChiYao(lua_State* L)
     return 0;
 }
 
+static int WaitPlans(lua_State* L)
+{
+    GamecallEx::GetInstance()->WaitPlans();
+    return 0;
+}
+
+static int randXianlu(lua_State* L)
+{
+    int id = lua_tointeger(L, 1);
+    GamecallEx::GetInstance()->randXianlu(id);
+    return 0;
+}
 
 bool CJLwgApp::InitLua()
 {
@@ -672,6 +712,8 @@ void CJLwgApp::RegGameLib(lua_State* L)
     REGLUADATA(modeNormal);
     REGLUADATA(modeAoe);
     REGLUADATA(modeGoback);
+    REGLUADATA(modePickupOnce);
+    REGLUADATA(modeTask);
 
     REGLUAFUN(Stepto);
     REGLUAFUN(KillBoss);
@@ -693,6 +735,8 @@ void CJLwgApp::RegGameLib(lua_State* L)
     REGLUAFUN(MsgBox);
     REGLUAFUN(PickupTask);
     REGLUAFUN(WearEquipment);
+    REGLUAFUN(WaitPlans);
+    REGLUAFUN(randXianlu);
 }
 
 

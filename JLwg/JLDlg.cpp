@@ -244,7 +244,10 @@ UINT CJLDlg::WorkThread(LPVOID pParam)
             }
 
         default:
-            break;
+            {
+                _ASSERTE(FALSE);
+                break;
+            }
         }
     }
 

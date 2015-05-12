@@ -42,11 +42,12 @@ BOOL CHook::GetPatchSize(void* Proc, DWORD dwNeedSize, LPDWORD lpPatchSize)
     DWORD Length;
     PUCHAR pOpcode;
     DWORD PatchSize = 0;
+
+
     //前置的参数检查
-    if(!Proc || !lpPatchSize)
-    {
-        return FALSE;
-    }
+    if(!Proc || !lpPatchSize) return FALSE;
+
+    
     do
     {
         Length = LDasm::SizeOfCode(Proc, &pOpcode);

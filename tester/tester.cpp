@@ -2,7 +2,7 @@
 //
 
 #include "stdafx.h"
-
+#include "Test.h"
 
 
 //方便根据字符集设置输出相应的调试信息
@@ -13,39 +13,7 @@
 
 CWinApp theApp;
 
-using namespace std;
 
-
-#include "Test.h"
-
-
-void thread1()
-{
-    static int i = 0;
-    printf("thread1: %d\r\n", i++);
-}
-
-void thread2()
-{
-    static int i = 0;
-    printf("thread2: %d\r\n", i++);
-}
-
-void threadmgr()
-{
-    //轮流调度
-    static bool b = true;
-    if(b)
-    {
-        thread2();
-    }
-    else
-    {
-        thread1();
-    }
-
-    b = !b;
-}
 
 UINT WorkThread1(LPVOID lParam)
 {
@@ -65,15 +33,7 @@ UINT WorkThread(LPVOID lParam)
     return 0;
 }
 
-#define TT(x) printf("%08x", &x); printf(" %s", #x)
-
-int L()
-{
-
-    return 0;
-}
-
-
+using namespace std;
 int _tmain(int argc, TCHAR* argv[], TCHAR* envp[])
 {
 
@@ -84,17 +44,6 @@ int _tmain(int argc, TCHAR* argv[], TCHAR* envp[])
         cerr << _T("Fatal Error: MFC initialization failed") << endl;
         return 1;
     }
-
-
-    int x, y, z = 1;
-    x = 0;
-    y = 1;
-
-    if(x == 0 || y == 0 || z == 0)
-    {
-        printf("%d, %d, %d", x, y, z);
-    }
-
 
 
     getchar();

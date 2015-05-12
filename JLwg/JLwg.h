@@ -60,6 +60,9 @@ public:
 
 
 extern CJLwgApp theApp;
+
+
+
 #define LOGER   theApp.m_GameLog.info
 #define SENDLOG theApp.SendStatus
 

@@ -43,6 +43,7 @@ CJLkitApp::~CJLkitApp()
 BOOL CJLkitApp::InitInstance()
 {
 
+
 #ifdef JLTW
     if(!LoadLibrary(_T("JLnp_tw.dll")))
 #else

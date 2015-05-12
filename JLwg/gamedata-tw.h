@@ -403,3 +403,8 @@
 #define     sxbb_call_offset3          0x40        //
 #define     sxbb_call_offset4          0x3A0        //
 #define     sxbb_call_offset5          0x41C        //
+
+
+
+//{×ßÂ·}
+ #define FUNC_WALK   0x00642430

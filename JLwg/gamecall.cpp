@@ -8166,41 +8166,6 @@ DWORD Gamecall::GetPartyByAddress(DWORD PartyAddress, int i)
     return NewAddress;
 }
 
-BOOL Gamecall::d_Walk(float x, float y, float z)
-{
-    BOOL bRet = FALSE;
-    if(x == 0 || y == 0 || z == 0) return FALSE;
-
-    __try
-    {
-        __asm
-        {
-            mov  edi, Offset_Game_Base
-            mov  edi, dword ptr ds:[edi]
-            mov  edi, dword ptr ds:[edi+ Offset_Game_Offset]
-            mov  edi, dword ptr ds:[edi+ Offset_Role_Offset]
-            mov  ecx, dword ptr ds:[edi+ Offset_Role_Attr]
-            fld  z
-            sub  esp, 0xC
-            fstp dword ptr ss:[esp+ 0x8]
-            fld  y
-            fstp dword ptr ss:[esp+ 0x4]
-            fld  x
-            fstp dword ptr ss:[esp]
-            Call FUNC_WALK
-        }
-
-        bRet = TRUE;
-
-    }
-    _except(1)
-    {
-        TRACE(FUNCNAME);
-    }
-
-    return bRet;
-}
-
 
 BYTE ReadByte(DWORD addr)
 {

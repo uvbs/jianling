@@ -241,7 +241,20 @@ bool CJLSrvrDoc::ProcessLogin(CJLkitSocket* pSocket, const Tcp_Head& stTcpHead, 
             _userdata[pSocket] = *pLogin;
 
 
-            inDbRet = m_db.CheckUser(pLogin->name, pLogin->pw);
+            try
+            {
+
+                inDbRet = m_db.CheckUser(pLogin->name, pLogin->pw);
+
+            }
+            catch(CDBException* pEx)
+            {
+                inDbRet = 0;
+                TRACE(pEx->m_strError);
+                pEx->Delete();
+            }
+
+
             switch(inDbRet)
             {
             case 0:

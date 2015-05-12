@@ -14,25 +14,14 @@
 //单例
 IMPLEMENT_SINGLETON(GameHook)
 
-DWORD* GameHook::backupSendStep = NULL;
-DWORD* GameHook::backupWearEquipment = NULL;
-DWORD* GameHook::backupYiciJianWu = NULL;
-DWORD* GameHook::backupDunDi = NULL;
-DWORD* GameHook::backupQuest = NULL;
-DWORD* GameHook::backupCombat = NULL;
-
-
-std::vector<ObjectNode*> GameHook::m_ObjAddrVec;
 
 
 DWORD* jmpTo;
-DWORD g_RecordStepRange = 200;
-fPosition g_fmypos;
 
 
 //构造函数
 GameHook::GameHook():
-    stepHook((void*)shunyi_call, mySendStep),
+    stepHook((void*)FUNC_WALK, mySendStep),
     deQuestHook((void*)deliver_quest_call, myDeliveQuest),
     aeQuestHook((void*)npc_quest_call, myAcceptQuest),
     WearHook((void*)chuanzhuangbei_call, myWearEquipment),
@@ -54,8 +43,6 @@ GameHook::~GameHook()
 
 void __stdcall GameHook::ShunyiQietu()
 {
-
-
     __asm
     {
         leave;
@@ -63,28 +50,10 @@ void __stdcall GameHook::ShunyiQietu()
     }
 }
 
-void __stdcall GameHook::mySendStep(SENDSTEP* ftarpos)
+
+//记录走路发包
+void __stdcall GameHook::RecordStepPacket(STEPPACKET *pBuf)
 {
-    Gamecall* pCall = Gamecall::GetInstance();
-
-
-    fPosition tarpos = {ftarpos->x, ftarpos->y, ftarpos->z};
-
-    BYTE* backup = (BYTE*)ftarpos;
-
-    //多长距离输出一次
-    if(pCall->CalcC(g_fmypos, tarpos) >= g_RecordStepRange)
-    {
-        GameHook::GetInstance()->m_sink->ShowHook(_T("gcall.Stepto(%d,%d,%d);"), (int)ftarpos->y, (int)ftarpos->x, (int)ftarpos->z);
-        g_fmypos.x = ftarpos->x;
-        g_fmypos.y = ftarpos->y;
-        g_fmypos.z = ftarpos->z;
-    }
-
-
-    GameConfig* pConfig = GameConfig::GetInstance();
-
-
     TCHAR szExe[MAX_PATH] = {0};
     GetModuleFileName(AfxGetInstanceHandle(), szExe, MAX_PATH);
     PathRemoveFileSpec(szExe);
@@ -94,6 +63,7 @@ void __stdcall GameHook::mySendStep(SENDSTEP* ftarpos)
         _tmkdir(szExe);
     }
 
+    char *backup = (char *)pBuf;
     PathAppend(szExe, _T("new.bin"));
 
     //追加
@@ -109,6 +79,8 @@ void __stdcall GameHook::mySendStep(SENDSTEP* ftarpos)
         {
 
             BYTE buff[512];
+
+
             //从参数中复制512字节到缓冲区
             memcpy(buff, backup, 512);
 
@@ -128,9 +100,17 @@ void __stdcall GameHook::mySendStep(SENDSTEP* ftarpos)
 
     }
 
-    jmpTo = backupSendStep;
+}
+
+void __stdcall GameHook::mySendStep(float x, float y, float z)
+{
+    __asm pushad;
+    GameHook::GetInstance()->m_sink->ShowHook(_T("gcall.Stepto(%d,%d,%d);"), (int)y, (int)x, (int)z);
+
+    jmpTo = GameHook::GetInstance()->backupSendStep;
     __asm
     {
+        popad;
         leave;
         jmp jmpTo;
     }
@@ -171,7 +151,7 @@ void __stdcall GameHook::myWearEquipment(DWORD argv1, DWORD value, DWORD argv3, 
         GameHook::GetInstance()->m_sink->ShowHook(_T("穿装备失败"));
     }
 
-    jmpTo = backupWearEquipment;
+    jmpTo = GameHook::GetInstance()->backupWearEquipment;
     __asm
     {
         leave;
@@ -193,16 +173,15 @@ void __stdcall GameHook::myCombatFilter()
         mov id, eax;
     }
 
-    for(int i = 0; i < m_ObjAddrVec.size(); i++)
+    for(int i = 0; i < GameHook::GetInstance()->m_ObjAddrVec.size(); i++)
     {
-        if(objAddr == m_ObjAddrVec[i]->ObjAddress)
+        if(objAddr == GameHook::GetInstance()->m_ObjAddrVec[i]->ObjAddress)
         {
 
             if(GameHook::GetInstance()->m_sink != NULL)
             {
                 GameHook::GetInstance()->m_sink->ShowHook(_T("怪物: %08x, 技能: %d"), objAddr, id);
             }
-
 
             if(GameHook::GetInstance()->m_pCombatSink != NULL)
             {
@@ -215,7 +194,7 @@ void __stdcall GameHook::myCombatFilter()
         }
     }
 
-    jmpTo = backupCombat;
+    jmpTo = GameHook::GetInstance()->backupCombat;
     __asm
     {
         leave;
@@ -241,7 +220,7 @@ void __stdcall GameHook::myYiCiJianWu(
         GameHook::GetInstance()->m_sink->ShowHook(_T("esp+%d %08x"), i, *(pEsp + i));
     }
 
-    jmpTo = backupYiciJianWu;
+    jmpTo = GameHook::GetInstance()->backupYiciJianWu;
     __asm
     {
         leave;
@@ -262,7 +241,7 @@ void __stdcall GameHook::myDunDi()
 
     GameHook::GetInstance()->m_sink->ShowHook(_T("eax = %08x"), eax_value);
 
-    jmpTo = backupDunDi;
+    jmpTo = GameHook::GetInstance()->backupDunDi;
     __asm
     {
         leave;
@@ -288,7 +267,7 @@ void __stdcall GameHook::myDeliveQuest(DWORD unknow, DWORD questID, UCHAR questS
         {
             mov edi_value, edi;
         }
-        pushad;
+
     }
 
     //过掉返回值
@@ -303,6 +282,7 @@ void __stdcall GameHook::myDeliveQuest(DWORD unknow, DWORD questID, UCHAR questS
     }
 
     GameHook::GetInstance()->m_sink->ShowHook(_T("mianban: %08x"), edi_value);
+
     BOOL bFined;
     bFined = FALSE;
     wchar_t* name = NULL;
@@ -341,12 +321,11 @@ void __stdcall GameHook::myDeliveQuest(DWORD unknow, DWORD questID, UCHAR questS
                             NULL, MB_OKCANCEL);
 
 
-    jmpTo = backupQuest;
+    jmpTo = GameHook::GetInstance()->backupQuest;
     if(result == IDOK)
     {
         __asm
         {
-            popad;
             leave;
             jmp jmpTo;
         }
@@ -355,7 +334,6 @@ void __stdcall GameHook::myDeliveQuest(DWORD unknow, DWORD questID, UCHAR questS
     {
         __asm
         {
-            popad;
             leave;
             retn 32;
         }

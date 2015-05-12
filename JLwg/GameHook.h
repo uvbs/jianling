@@ -25,6 +25,7 @@ interface ICombatHookSink
     virtual void NotifyMonsterAttack(MONSTERATAACK * pAttack) = 0;
 };
 
+
 //负责Hook
 class GameHook
 {
@@ -56,15 +57,15 @@ public:
     }
 
 
-    static DWORD* backupSendStep;
-    static DWORD* backupWearEquipment;
-    static DWORD* backupYiciJianWu;
-    static DWORD* backupDunDi;
-    static DWORD* backupQuest;
-    static DWORD* backupCombat;
+    DWORD* backupSendStep;
+    DWORD* backupWearEquipment;
+    DWORD* backupYiciJianWu;
+    DWORD* backupDunDi;
+    DWORD* backupQuest;
+    DWORD* backupCombat;
 
 
-    static std::vector<ObjectNode *> m_ObjAddrVec;
+    std::vector<ObjectNode*> m_ObjAddrVec;
 
 
 
@@ -81,13 +82,13 @@ public:
 
 
     //走路发包的结构
-    typedef struct _SENDSTEP
+    typedef struct _STEPPACKET
     {
         DWORD unknow;
         float x;
         float y;
         float z;
-    } SENDSTEP, PSENDSTEP;
+    } STEPPACKET, PSTEPPACKET;
 
     //Hooked Functions!
     static void __stdcall ShunyiQietu();
@@ -97,7 +98,8 @@ public:
     static void __stdcall myYiCiJianWu(DWORD argv1, DWORD argv2, DWORD argv3, DWORD argv4, DWORD argv5);
     static void __stdcall myCombatFilter();//战斗日志
     static void __stdcall myWearEquipment(DWORD argv1, DWORD value, DWORD argv3, DWORD itemtype);//穿装备
-    static void __stdcall mySendStep(SENDSTEP* ftarpos);//走路
+    static void __stdcall mySendStep(float x, float y, float z);//走路
+    static void __stdcall RecordStepPacket(STEPPACKET *pBuf);
 };
 
 #endif // !defined(AFX_GAMEHOOK_H__E712D73C_7E44_4074_8CE5_C484C0DE297F__INCLUDED_)

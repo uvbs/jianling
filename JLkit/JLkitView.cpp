@@ -98,6 +98,7 @@ BOOL CJLkitView::PreCreateWindow(CREATESTRUCT& cs)
 
 int CJLkitView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
+
     if(CListView::OnCreate(lpCreateStruct) == -1) return -1;
 
     CString strHeading;

@@ -16,7 +16,7 @@ using namespace Gdiplus;
 
 
 #ifdef _DEBUG
-    #define new DEBUG_NEW
+#define new DEBUG_NEW
 #endif
 
 
@@ -30,11 +30,14 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
     //{{AFX_MSG_MAP(CMainFrame)
     ON_WM_CREATE()
     ON_WM_CLOSE()
+    ON_WM_TIMER()
+	ON_CBN_SELCHANGE(ID_COMBO2, OnCombo2)
+	ON_CBN_SELCHANGE(ID_COMBO1, OnCombo1)
     ON_WM_DROPFILES()
     ON_WM_ACTIVATE()
     ON_WM_PAINT()
-    ON_WM_TIMER()
-    //}}AFX_MSG_MAP
+	ON_WM_SIZE()
+	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
 
@@ -76,7 +79,7 @@ void CMainFrame::InitComBox()
     PathRemoveFileSpec(szExe);
 
     std::basic_string<TCHAR> strCurPath = szExe;
-    strCurPath += _T("\\½Å±¾\\*.ini");
+    strCurPath += _T("\\½Å±¾\\*.lua");
 
 
     WIN32_FIND_DATA FindData;
@@ -88,11 +91,15 @@ void CMainFrame::InitComBox()
             m_cbScript.AddString(FindData.cFileName);
         }
         while(FindNextFile(hFinder, &FindData));
+
+        FindClose(hFinder);
     }
     else
     {
         m_cbScript.AddString(_T("default.lua"));
     }
+
+
 
     strCurPath = szExe;
     strCurPath += _T("\\ÅäÖÃ\\*.ini");
@@ -104,11 +111,14 @@ void CMainFrame::InitComBox()
             m_cbConfig.AddString(FindData.cFileName);
         }
         while(FindNextFile(hFinder, &FindData));
+
+        FindClose(hFinder);
     }
     else
     {
         m_cbConfig.AddString(_T("default.ini"));
     }
+
 
 
     //Ñ¡ÖÐÅäÖÃ
@@ -223,7 +233,7 @@ void CMainFrame::OnClose()
     GetModuleFileName(NULL, szIni, MAX_PATH);
     PathRemoveExtension(szIni);
     _tcscat(szIni, _T(".ini"));
-    
+
     //±£´æÅäÖÃ
     CConfigMgr* pConfig =  CConfigMgr::GetInstance();
     pConfig->SaveConfig(szIni);
@@ -268,4 +278,41 @@ void CMainFrame::OnTimer(UINT nIDEvent)
 
 
     CFrameWnd::OnTimer(nIDEvent);
+}
+
+
+void CMainFrame::OnCombo2() 
+{
+
+    CString strSel;
+	m_cbScript.GetLBText(m_cbScript.GetCurSel(), strSel);
+
+
+    CListCtrl &list = ((CJLkitView *)GetActiveView())->GetListCtrl();
+    int inCount = list.GetItemCount();
+    for(int i = 0; i < inCount; i++)
+    {
+        list.SetItemText(i, COLUMN_TEXT_SCRIPT, strSel);
+    }
+}
+
+void CMainFrame::OnCombo1() 
+{
+    CString strSel;
+    m_cbConfig.GetLBText(m_cbConfig.GetCurSel(), strSel);
+    
+    CListCtrl &list = ((CJLkitView *)GetActiveView())->GetListCtrl();
+    int inCount = list.GetItemCount();
+    for(int i = 0; i < inCount; i++)
+    {
+        list.SetItemText(i, COLUMN_TEXT_CONFIG, strSel);
+    }
+}
+
+void CMainFrame::OnSize(UINT nType, int cx, int cy) 
+{
+	CFrameWnd::OnSize(nType, cx, cy);
+	
+	// TODO: Add your message handler code here
+	RepositionBars(AFX_IDW_CONTROLBAR_FIRST, AFX_IDW_CONTROLBAR_LAST, ID_INDICATOR_VALIDKEY);
 }

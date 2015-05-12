@@ -2966,7 +2966,7 @@ void GamecallEx::UnLoad()
     //等待所有线程退出
     if(m_hTHelper != INVALID_HANDLE_VALUE)
     {
-        TerminateThread(m_hTHelper, 0);
+        TerminateThread(m_hTHelper, 0); //这里强关了, 在考虑怎么避免
         CloseHandle(m_hTHelper);
     }
 }

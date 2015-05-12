@@ -52,19 +52,16 @@ CreateRemoteThreadLoadDll RemoteLoadDll;
 #ifdef JLTW
 
 //4月27
- //DWORD dwInitNP1 = 0x00B4c710;
- //DWORD dwInitNP2 = 0x00B4C6D0;   //dwInitNP1-40
- //DWORD CheckNP = 0x00B4C8D0;     //dwInitNP1+1c0
+//DWORD dwInitNP1 = 0x00B4c710;
+//DWORD dwInitNP2 = 0x00B4C6D0;   //dwInitNP1-40
+//DWORD CheckNP = 0x00B4C8D0;     //dwInitNP1+1c0
 
- //5月6
- DWORD dwInitNP1 = 0x00B4cA10;
- DWORD dwInitNP2 = 0x00B4C9D0;   //dwInitNP1-40
- DWORD CheckNP = 0x00B4CBD0;     //dwInitNP1+1c0
-
-
+//5月6
 DWORD dwInitNP1 = 0x00B4cA10;
 DWORD dwInitNP2 = 0x00B4C9D0;   //dwInitNP1-40
 DWORD CheckNP = 0x00B4CBD0;     //dwInitNP1+1c0
+
+
 #else
 
 #error "no write"
@@ -255,7 +252,11 @@ HANDLE WINAPI CreateFileW_Hook(
 
     //处理文件独占
     if(dwShareMode == NULL)
+    {
         dwShareMode = FILE_SHARE_READ | FILE_SHARE_WRITE;
+    }
+
+
     return Orig_CreateFileW(lpFileName, dwDesiredAccess, dwShareMode, lpSecurityAttributes, dwCreationDisposition, dwFlagsAndAttributes, hTemplateFile);
 }
 

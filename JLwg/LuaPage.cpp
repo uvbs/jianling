@@ -69,11 +69,7 @@ void CLuaPage::OnTestLua()
                 lua_pcall(pL, 0, 0, 0);
     if(error)
     {
-        CEdit* pEdit = (CEdit*)GetDlgItem(IDC_EDIT1);
-        int len = pEdit->GetWindowTextLength();
-        pEdit->SetSel(len, -1);
-        pEdit->ReplaceSel(A2T(lua_tostring(pL, -1)));
-
+        MessageBoxA(NULL, lua_tostring(pL, -1), "½Å±¾", MB_ICONINFORMATION);
         lua_pop(pL, 1);
     }
 }
