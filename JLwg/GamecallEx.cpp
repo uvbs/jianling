@@ -3070,7 +3070,6 @@ void GamecallEx::Party_KillObject()
 		Party_Node = GetObjectByName(name,3000);//Íæ¼ÒµÄ¶þ²æ
 		if (IsObjectFightStatus(Party_Node->ObjAddress))
 		{
-			TRACE("%d",IsPlayerSkillStatus(Party_Node->ObjAddress));
 			if (IsPlayerSkillStatus(Party_Node->ObjAddress))
 			{
 				s_Id = GetObjectTargetId(Party_Node->ObjAddress);

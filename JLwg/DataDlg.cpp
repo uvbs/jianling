@@ -196,10 +196,10 @@ BEGIN_MESSAGE_MAP(CDataDlg, CDialog)
     ON_COMMAND(ID_GOTOBACK, OnGotoback)
     ON_UPDATE_COMMAND_UI(ID_HOOKSTRIKE, OnUpdateHookstrike)
 	ON_BN_CLICKED(IDC_CALLTOOL, OnCalltool)
+    ON_BN_CLICKED(ID_FINDTHENKILLaa, OnBnClickedFindthenkillaa)
+    ON_BN_CLICKED(IDC_BUTTON1, OnBnClickedButton1)
+	ON_BN_CLICKED(IDC_BUTTON2, OnBnClickedButton2)
 	//}}AFX_MSG_MAP
-	ON_BN_CLICKED(ID_FINDTHENKILLaa, &CDataDlg::OnBnClickedFindthenkillaa)
-	ON_BN_CLICKED(IDC_BUTTON1, &CDataDlg::OnBnClickedButton1)
-	ON_BN_CLICKED(IDC_BUTTON2, &CDataDlg::OnBnClickedButton2)
 END_MESSAGE_MAP()
 
 
