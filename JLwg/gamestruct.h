@@ -186,15 +186,15 @@ typedef struct _QuestNode
 typedef struct _ObjectNode
 {
     _ObjectNode*    left;
-    _ObjectNode*    last;
-    _ObjectNode*    right;
-    DWORD           unknow;
-    DWORD           id;
-    DWORD           id2;
-    DWORD           ObjAddress;
-    DWORD           unknow2;
-    bool            unknow3;
-    bool            end;
+    _ObjectNode*    last;//4
+    _ObjectNode*    right;//8
+    DWORD           unknow;//c
+    DWORD           id;//10
+    DWORD           id2;//14
+    DWORD           ObjAddress;//18
+    DWORD           unknow2;//1c
+    bool            unknow3;//20
+    bool            end;//21
 } ObjectNode, *PObjectNode;
 
 typedef struct _SkillNameCANSHUQ

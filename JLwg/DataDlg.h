@@ -31,7 +31,7 @@ public:
     BOOL    m_bHook_Accquest;
     BOOL    m_bHook_Combat;
 	//}}AFX_DATA
-
+	HANDLE hand;
     //
     CLuaPage *m_pLuaPage;
     CDbgPage *m_pDbgPage;
@@ -104,6 +104,11 @@ protected:
 	afx_msg void OnCalltool();
 	//}}AFX_MSG
     DECLARE_MESSAGE_MAP()
+public:
+	afx_msg void OnBnClickedFindthenkillaa();
+	afx_msg void OnBnClickedFindthenkill2();
+	afx_msg void OnBnClickedButton1();
+	afx_msg void OnBnClickedButton2();
 };
 
 //{{AFX_INSERT_LOCATION}}

@@ -1460,20 +1460,15 @@ BYTE Gamecall::GetObjectType(DWORD pObjAddress)
 
     __try
     {
-        //Objtype = ReadDWORD(pObjAddress+obj_type_offset);
-        if(!IsBadReadPtr((void*)pObjAddress, sizeof(DWORD)))
+        __asm
         {
-            __asm
-            {
-                mov eax, pObjAddress;
-                mov eax, [eax + obj_type_offset];
-                mov Objtype, eax;
-            }
+            mov eax, pObjAddress;
+            mov eax, [eax + obj_type_offset];
+            mov Objtype, eax;
         }
     }
     __except(1)
     {
-        //TRACE(_T("GetObjectType-error:%d"),pObjAddress);
         TRACE(FUNCNAME);
         return 0;
     }
@@ -1506,6 +1501,28 @@ BOOL Gamecall::GetObjectPos(ObjectNode* pNode, fPosition* fpos)
         sPosition spos;
         GetObjectPos2_0x90(pNode->ObjAddress, &spos);
         *fpos = ShortPosToFloatPos(spos);
+    }
+    else if(type == 1 || type == 2)
+    {
+        __asm
+        {
+            mov eax, pNode;
+            mov edx, [eax]ObjectNode.ObjAddress;
+            mov edx, [edx+0x14]
+
+
+            mov eax, [edx + 0x1A8];
+
+            mov ebx, fpos;
+            mov [ebx]fpos.x, eax;
+
+            mov eax, [edx + 0x1ac];
+            mov [ebx]fpos.y, eax;
+
+
+            mov eax, [edx + 0x1b0];
+            mov [ebx]fpos.z, eax;
+        }
     }
     else
     {
@@ -4327,7 +4344,6 @@ DWORD Gamecall::GetIndexByType(DWORD pObjAddress)
             index = GetObjectSY12(pObjAddress);
         else if(type == 0x90)
             index = GetObjectSy_90(pObjAddress);
-
     }
     __except(1)
     {
@@ -4995,7 +5011,20 @@ UCHAR Gamecall::GetPlayerLevel() //获得角色等级
 //取得对象名字
 wchar_t* Gamecall::GetObjectName(DWORD pObjAddress)
 {
-    return GetObjectNameByIndex(GetIndexByType(pObjAddress));
+    DWORD type = GetObjectType(pObjAddress);
+    if(type == 1 || type == 2)
+    {
+        return (wchar_t*)ReadDWORD(pObjAddress + 0x8c);
+    }
+    else if(type < 1)
+    {
+        _ASSERTE(FALSE);
+    }
+    else
+    {
+        return GetObjectNameByIndex(GetIndexByType(pObjAddress));
+    }
+    return NULL;
 }
 
 
@@ -7048,7 +7077,7 @@ BOOL Gamecall::isPlayerDaodi()
     {
         if(m_Adress)
             Adress = ReadDWORD(ReadDWORD(m_Adress + 0x14) + 0x180);
-        if(Adress == 0x400 || Adress == 4 || Adress == 0x22 || Adress == 0x1)
+        if(Adress == 0x400 || Adress == 4 || Adress == 0x22 || Adress == 0x1 || Adress == 0xD)
             State = TRUE;
         else
             State = FALSE;
@@ -7971,8 +8000,8 @@ void Gamecall::GetPartyInfo(TeamVector& TeamInfo)
     DWORD count;
     DWORD C_Address;
     fPosition fmypos;
-    PTeam tm;
-    ZeroMemory(&tm, sizeof(PTeam));
+    Team team;
+    ZeroMemory(&team, sizeof(Team));
     ZeroMemory(&fmypos, sizeof(fPosition));
     C_Address = 0;
 
@@ -7983,19 +8012,19 @@ void Gamecall::GetPartyInfo(TeamVector& TeamInfo)
         for(int i = 0; i < count; i++)
         {
             C_Address = GetPartyByAddress(StartAdress, i);
-            tm->PAddress = C_Address;
-            tm->name = GetPartyName(C_Address);
-            tm->Channel = GetPartyChannel(C_Address);
-            tm->CurrLife = GetPartyCurrlife(C_Address);
-            tm->MaxLife = GetPartyMaxlife(C_Address);
-            tm->ID = GetPartyId(C_Address);
-            tm->ID2 = GetPartyId2(C_Address);
-            tm->Pos = GetPartyPos(C_Address);
-            tm->Angle = GetPartyAngle(C_Address);
-            tm->Range = CalcC(tm->Pos, fmypos);
-            tm->LV = GetPartyLv(C_Address);
-            TeamInfo.push_back(tm);
-            TRACE(_T("%d"), tm->PAddress);
+            team.PAddress = C_Address;
+            team.name = GetPartyName(C_Address);
+            team.Channel = GetPartyChannel(C_Address);
+            team.CurrLife = GetPartyCurrlife(C_Address);
+            team.MaxLife = GetPartyMaxlife(C_Address);
+            team.ID = GetPartyId(C_Address);
+            team.ID2 = GetPartyId2(C_Address);
+            team.Pos = GetPartyPos(C_Address);
+            team.Angle = GetPartyAngle(C_Address);
+            team.Range = CalcC(team.Pos, fmypos);
+            team.LV = GetPartyLv(C_Address);
+            TeamInfo.push_back(team);
+            //TRACE(_T("地址:%x,人名:%s,频道:%d,当前生命:%d,最大生命:%d,ID:%x,ID2%x,面向%d,距离:%d,坐标:%d,%d,%d"),team.PAddress,team.name,team.Channel,team.CurrLife,team.MaxLife,team.ID,team.ID2,team.Angle,team.Range,team.Pos.x,team.Pos.y,team.Pos.z);
         }
     }
     else
@@ -8065,6 +8094,7 @@ DWORD Gamecall::GetPartyMaxlife(DWORD PartyAddress)
     _try
     {
         Maxlife = ReadDWORD(PartyAddress + 0x28);
+        Maxlife = Maxlife + ReadDWORD(PartyAddress + 0x2C);
     }
     _except(1)
     {
@@ -8109,10 +8139,35 @@ fPosition Gamecall::GetPartyPos(DWORD PartyAddress)
     ZeroMemory(&pos, sizeof(fPosition));
     _try
     {
-        pos.x = (ReadWORD(PartyAddress + 0x1C) - 10000) * 4;
-        pos.y = (ReadWORD(PartyAddress + 0x1E) - 10000) * 4;
-        pos.z = (ReadWORD(PartyAddress + 0x20) - 10000) * 4;
+        pos.x = (ReadWORD(PartyAddress + 0x1C) - 0x10000) * 4;
+        pos.y = (ReadWORD(PartyAddress + 0x1E) - 0x10000) * 4;
+        pos.z = (ReadWORD(PartyAddress + 0x20) - 0x10000) * 4;
 
+        if(abs(pos.x) > 0xFFFF)
+        {
+            pos.x = ReadWORD(PartyAddress + 0x1C) * 4;
+        }
+        if(abs(pos.y) > 0xFFFF)
+        {
+            pos.y = ReadWORD(PartyAddress + 0x1E) * 4;
+        }
+        if(abs(pos.z) > 0xFFFF)
+        {
+            pos.z = ReadWORD(PartyAddress + 0x20) * 4;
+        }
+
+        if(abs(pos.x) > 0xFFFF)
+        {
+            pos.x = (0xFFFF - ReadWORD(PartyAddress + 0x1C)) * 4 * -1;
+        }
+        if(abs(pos.y) > 0xFFFF)
+        {
+            pos.y = (0xFFFF - ReadWORD(PartyAddress + 0x1E)) * 4 * -1;
+        }
+        if(abs(pos.z) > 0xFFFF)
+        {
+            pos.z = (0xFFFF - ReadWORD(PartyAddress + 0x20)) * 4 * -1;
+        }
     }
     _except(1)
     {
@@ -8131,7 +8186,7 @@ DWORD Gamecall::GetPartyAngle(DWORD PartyAddress)
     }
     _except(1)
     {
-        TRACE(_T("获取角色ID2出错"));
+        TRACE(_T("获取面向出错"));
     }
     return Angle;
 }
@@ -8142,11 +8197,11 @@ DWORD Gamecall::GetPartyLv(DWORD PartyAddress)
     Lv = NULL;
     _try
     {
-        Lv = (DWORD)ReadWORD(PartyAddress + 0x1A);
+        Lv = (DWORD)ReadByte(PartyAddress + 0x1A);
     }
     _except(1)
     {
-        TRACE(_T("获取角色ID2出错"));
+        TRACE(_T("获取队伍等级出错"));
     }
     return Lv;
 }
@@ -8157,13 +8212,88 @@ DWORD Gamecall::GetPartyByAddress(DWORD PartyAddress, int i)
     NewAddress = NULL;
     _try
     {
-        NewAddress = ReadDWORD(PartyAddress + i * 4);
+        NewAddress = ReadDWORD(PartyAddress + i * 0x4);
     }
     _except(1)
     {
         TRACE(_T("获取当前角色地址出错"));
     }
     return NewAddress;
+}
+
+DWORD Gamecall::GetObjectTargetId(DWORD pObjAddress)
+{
+    DWORD TargetId;
+    TargetId = NULL;
+    _try
+    {
+        TargetId = ReadDWORD(pObjAddress + 0x108);
+    }
+    _except(1)
+    {
+        TRACE(_T("获取TargetId出错"));
+    }
+    return TargetId;
+}
+
+
+ObjectNode* Gamecall::GetObjectById(DWORD Id)
+{
+    ObjectVector ov;
+    GetAllObjectToVector(GetObjectBinTreeBaseAddr(), ov);
+
+    for(int i = 0 ; i < ov.size(); i++)
+    {
+        if(ov[i]->id == Id)
+        {
+            return ov[i];
+        }
+    }
+    return NULL;
+}
+
+BOOL Gamecall::IsObjectFightStatus(DWORD pObjAddress)
+{
+    BOOL value = FALSE;
+    __try
+    {
+        value = ReadByte(pObjAddress + Play_fighting_status_offset3);
+        //TRACE1("战斗状态:%d",value);
+    }
+    __except(1)
+    {
+        TRACE(_T("获得战斗状态出错"));
+    }
+    return value;
+}
+
+BOOL Gamecall::IsPlayerSkillStatus(DWORD pObjAddress)
+{
+    WORD value = 0;
+    _try
+    {
+        value = ReadWORD(ReadDWORD(pObjAddress + 0x14) + 0x80);
+    }
+    _except(1)
+    {
+        TRACE(_T("获得释放技能状态出错"));
+    }
+    return (value != 0xFFFF);
+}
+
+DWORD Gamecall::GetPlarerRedHeart()
+{
+	DWORD pAddr = GetPlayerDataAddr();
+	BYTE Rh = 0;
+	_try
+	{
+		Rh = ReadByte(pAddr + 0x1AA);
+	}
+	_except(1)
+	{
+		TRACE(_T("获得角色红心出错"));
+	}
+	return Rh;
 }
 
 

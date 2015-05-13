@@ -16,7 +16,7 @@
 typedef std::vector<CUSTOMKILL> CustKillVector;
 typedef std::vector<ObjectNode*> ObjectVector;
 typedef std::vector<_BAGSTU> BagVector;
-typedef std::vector<PTeam> TeamVector;
+typedef std::vector<Team> TeamVector;
 
 
 class Gamecall
@@ -100,6 +100,7 @@ public:
     BOOL GetPlayerFightingStatus();             //获得战斗状态
 	BOOL GetPlayerSkillStatus();                //获得是否正在使用技能状态
 	BOOL GetPlayerBusy();                       //角色当前是否正在忙碌
+	DWORD GetPlarerRedHeart();                  //获取本角色红心数量
 
 
 
@@ -133,6 +134,12 @@ public:
     DWORD GetObjectSy_90(DWORD pObjAddress);        //取90的索引
     DWORD GetIndexByType(DWORD pObjAddress);        //通过类型取得索引
     DWORD GetObjectView(DWORD pObjAddress);         //获取对象角度
+	DWORD GetObjectTargetId(DWORD pObjAddress);     //获取对象目标
+	ObjectNode* GetObjectById(DWORD Id);            //根据ID获取二叉地址
+	BOOL IsObjectFightStatus(DWORD pObjAddress);   //获取对象战斗状态
+	BOOL IsPlayerSkillStatus(DWORD pObjAddress);    //获得对象是否正在使用技能状态
+
+
 
 
     //判断

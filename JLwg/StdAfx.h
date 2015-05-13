@@ -22,8 +22,10 @@
 #pragma warning(once:4701)
 #pragma warning(once:4703)
 #pragma warning(once:4702)
+#pragma warning(disable:4099)
 #pragma warning(disable:4018)
 #pragma warning(disable:4996)
+
 
 
 #include <afxwin.h>
