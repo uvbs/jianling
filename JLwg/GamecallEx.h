@@ -53,7 +53,7 @@ public:
 
 
 
-
+	
     //打怪
     void KillBoss(const wchar_t* name);
     int FindThenKill(int pos, DWORD range, DWORD mode, DWORD MyQuestStep = 0, DWORD MyQuestID = 0, DWORD canKillRange = CAN_OPERATOR);    //找到杀掉
@@ -77,7 +77,7 @@ public:
     //杀怪
     int KillObject(DWORD range, ObjectNode* pNode, DWORD mode, DWORD canKillRange = CAN_OPERATOR); //杀死这个对象
     void AddCustomKill(wchar_t* name, CUSTOMTYPE type);
-
+	void Party_KillObject();
 
 
     //控制
@@ -85,6 +85,7 @@ public:
     void Stepto(wchar_t* name);
     void Stepto(ObjectNode* pNode);
     void SteptoBack(ObjectNode *pObj);
+	wchar_t* SteptoParty();//跟随组队玩家
 
     void FollowNpc(wchar_t* name, DWORD range = 1000);
     void FuHuo();

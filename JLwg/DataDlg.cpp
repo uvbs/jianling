@@ -25,7 +25,7 @@ TCHAR* cli_AllObject[] =
     {_T("地址")},
     {_T("名字")},
     {_T("ID")},
-    {_T("ID2")},
+    {_T("目标ID")},
     {_T("类型")},
     {_T("血量")},
     {_T("索引")},
@@ -37,7 +37,7 @@ TCHAR* cli_RangeObject[] =
     {_T("地址")},
     {_T("名字")},
     {_T("ID")},
-    {_T("ID2")},
+    {_T("目标ID")},
     {_T("类型")},
     {_T("血量")},
     {_T("距离")},
@@ -76,16 +76,17 @@ TCHAR* cli_Quest[] =
 
 TCHAR* cli_Team[] =
 {
-    {_T("指针")},
-    {_T("名字")},
-    {_T("当前血值")},
-    {_T("最大血值")},
-    {_T("Id")},
-    {_T("Id2")},
-    {_T("坐标")},
-    {_T("面向")},
-    {_T("距离")},
-    {_T("等级")},
+	{_T("名字")},
+	{_T("指针")},
+	{_T("当前血值")},
+	{_T("最大血值")},
+	{_T("Id")},
+	{_T("Id2")},
+	{_T("坐标")},
+	{_T("面向")},
+	{_T("距离")},
+	{_T("等级")},
+	{_T("线路")}
 };
 
 TCHAR* cli_TaskItem[] =
@@ -142,6 +143,7 @@ CDataDlg::CDataDlg(CWnd* pParent /*=NULL*/)
 
     m_pLuaPage = NULL;
     m_pDbgPage = NULL;
+	hand = INVALID_HANDLE_VALUE;
 }
 
 CDataDlg::~CDataDlg()
@@ -194,6 +196,9 @@ BEGIN_MESSAGE_MAP(CDataDlg, CDialog)
     ON_COMMAND(ID_GOTOBACK, OnGotoback)
     ON_UPDATE_COMMAND_UI(ID_HOOKSTRIKE, OnUpdateHookstrike)
     //}}AFX_MSG_MAP
+	ON_BN_CLICKED(ID_FINDTHENKILLaa, &CDataDlg::OnBnClickedFindthenkillaa)
+	ON_BN_CLICKED(IDC_BUTTON1, &CDataDlg::OnBnClickedButton1)
+	ON_BN_CLICKED(IDC_BUTTON2, &CDataDlg::OnBnClickedButton2)
 END_MESSAGE_MAP()
 
 
@@ -335,15 +340,17 @@ void CDataDlg::OnGetpalyerinfo()
 
     sPosition PlayerPos2;
     gcall.GetPlayerPos2(&PlayerPos2);
-
+	
+	AddInfo(_T("角色地址: %x"), gcall.GetPlayerDataAddr());
     AddInfo(_T("角色名: %s"), gcall.GetPlayerName());
+	AddInfo(_T("角色ID: %d"), gcall.GetPlayerID());
     AddInfo(_T("角色地图ID: %d"), gcall.GetCityID());
     AddInfo(_T("角色魔法: %d"), gcall.GetPlayerMana());
     AddInfo(_T("角色等级: %d"), gcall.GetPlayerLevel());
     AddInfo(_T("角色血量: %d"), gcall.GetPlayerHealth());
     AddInfo(_T("角色最大血量: %d"), gcall.GetPlayerMaxHealth());
     AddInfo(_T("角色内力: %d"), gcall.GetPlayerMana());
-    AddInfo(_T("角色ID: %d"), gcall.GetPlayerID());
+    AddInfo(_T("角色红心数量: %d"), gcall.GetPlarerRedHeart());
     AddInfo(_T("角色最大体力: %d"), (int)gcall.GetPlayerMaxVit());
     AddInfo(_T("角色体力: %d"), (int) gcall.GetPlayerVit());
     AddInfo(_T("角色视角: %d"), (int)gcall.GetPlayerViewPoint());
@@ -352,7 +359,6 @@ void CDataDlg::OnGetpalyerinfo()
     AddInfo(_T("人物UI状态: %d"), gcall.GetPlayerQuestUIStatus());
     AddInfo(_T("人物UI状态2: %d"), gcall.GetPlayerQuestUIStatusts());
     AddInfo(_T("LoadingMap: %d"), gcall.isLoadingMap());
-
     AddInfo(_T("角色坐标: x:%d y:%d z:%d"), (int)PlayerPos.x, (int)PlayerPos.y, (int)PlayerPos.z);
     AddInfo(_T("角色坐标2: x:%d y:%d z:%d"), (int)PlayerPos2.x, (int)PlayerPos2.y, (int)PlayerPos2.z);
 
@@ -369,6 +375,7 @@ void CDataDlg::PrintfAllObject()
     ObjectVector RangeObject;
     gcall.GetAllObjectToVector(gcall.GetObjectBinTreeBaseAddr(), RangeObject);
 
+
     m_ListCtrl.SetRedraw(FALSE);
     for(DWORD i = 0; i < RangeObject.size(); i++)
     {
@@ -378,7 +385,7 @@ void CDataDlg::PrintfAllObject()
 
         //地址
         CString strAddr;
-        strAddr.Format(_T("%08x"), pNode->ObjAddress);
+        strAddr.Format(_T("%08x"), pNode);
         m_ListCtrl.InsertItem(i, strAddr);
 
 
@@ -394,7 +401,8 @@ void CDataDlg::PrintfAllObject()
         strTemp.Format(_T("%d"), pNode->id);
         m_ListCtrl.SetItemText(i, 2, strTemp);
 
-        strTemp.Format(_T("%d"), pNode->id2);
+		DWORD TargetId = gcall.GetObjectTargetId(pNode->ObjAddress);
+        strTemp.Format(_T("%d"), TargetId);
         m_ListCtrl.SetItemText(i, 3, strTemp);
 
 
@@ -872,7 +880,7 @@ void CDataDlg::PrintfRangeObject()
         strTemp.Format(_T("%d"), pNode->id);
         m_ListCtrl.SetItemText(index, 2, strTemp);
 
-        strTemp.Format(_T("%d"), pNode->id2);
+        strTemp.Format(_T("%d"), gcall.GetObjectTargetId(pNode->ObjAddress));
         m_ListCtrl.SetItemText(index, 3, strTemp);
 
         strTemp.Format(_T("%d"), type);
@@ -1233,18 +1241,27 @@ void CDataDlg::OnFindthenkill()
 {
     //获取游戏外挂功能
     GamecallEx& gcall = *GamecallEx::GetInstance();
-    //gcall.FindThenKill(0, 1000, modeNormal);
 
-    //gcall.Attack(0x5dca);
-    //gcall.Attack(0x5dca);
-    //gcall.Attack(0x5dca);
-    //gcall.Attack(0x5dca);
-    while(1)
-    {
-        gcall.Kill_Tab(0x5dc1);//gcall.Attack(0x5dc1);
-        gcall.Kill_Tab(0x5dca);
-    }
-
+	while (1)
+	{
+		gcall.Stepto(47820,-27420,-4818,10,10,3000);
+		gcall.FindThenKill(0,300,modeNormal | modePickup);
+		gcall.Stepto(47832,-26837,-4818,10,10,3000);
+		gcall.FindThenKill(0,300,modeNormal | modePickup);
+		gcall.Stepto(48224,-26502,-4818,10,10,3000);
+		gcall.FindThenKill(0,300,modeNormal | modePickup);
+		gcall.Stepto(48733,-26449,-4818,10,10,3000);
+		gcall.FindThenKill(0,300,modeNormal | modePickup);
+		gcall.Stepto(49140,-26806,-4818,10,10,3000);
+		gcall.FindThenKill(0,300,modeNormal | modePickup);
+		gcall.Stepto(49167,-27362,-4818,10,10,3000);
+		gcall.FindThenKill(0,300,modeNormal | modePickup);
+		gcall.Stepto(48815,-27746,-4818,10,10,3000);
+		gcall.FindThenKill(0,300,modeNormal | modePickup);
+	}
+	
+	
+	
 }
 
 void CDataDlg::OnHookAcceptquest()
@@ -1398,45 +1415,82 @@ void CDataDlg::OnUpdateHookstrike(CCmdUI* pCmdUI)
 
 void CDataDlg::PrintfTeaminfo()
 {
-    //获取游戏外挂功能
-    GamecallEx& gcall = *GamecallEx::GetInstance();
+	//获取游戏外挂功能
+	GamecallEx& gcall = *GamecallEx::GetInstance();
+	TeamVector tv;
+	gcall.GetPartyInfo(tv);
+	int size = tv.size();
+	CString strTemp;
+	for(int i = 0; i < size; i++)
+	{
+		m_ListCtrl.InsertItem(i, tv[i].name);
+
+		strTemp.Format(_T("%x"), tv[i].PAddress);
+		m_ListCtrl.SetItemText(i, 1, strTemp);
+
+		strTemp.Format(_T("%d"), tv[i].CurrLife);
+		m_ListCtrl.SetItemText(i, 2, strTemp);
+
+		strTemp.Format(_T("%d"), tv[i].MaxLife);
+		m_ListCtrl.SetItemText(i, 3, strTemp);
+
+		strTemp.Format(_T("%x"), tv[i].ID);
+		m_ListCtrl.SetItemText(i, 4, strTemp);
+
+		strTemp.Format(_T("%x"), tv[i].ID2);
+		m_ListCtrl.SetItemText(i, 5, strTemp);
+
+		strTemp.Format(_T("%d,%d,%d"), (int)tv[i].Pos.y,(int)tv[i].Pos.x,(int)tv[i].Pos.z);
+		m_ListCtrl.SetItemText(i, 6, strTemp);
+
+		strTemp.Format(_T("%d"), tv[i].Angle);
+		m_ListCtrl.SetItemText(i, 7, strTemp);
+
+		strTemp.Format(_T("%d"), tv[i].Range);
+		m_ListCtrl.SetItemText(i, 8, strTemp);
+
+		strTemp.Format(_T("%d"), tv[i].LV);
+		m_ListCtrl.SetItemText(i, 9, strTemp);
+
+		strTemp.Format(_T("%d"), tv[i].Channel);
+		m_ListCtrl.SetItemText(i, 10, strTemp);
 
 
-    TeamVector tv;
-    gcall.GetPartyInfo(tv);
+	}
+}
+
+void CDataDlg::OnBnClickedFindthenkillaa()
+{
+	
+}
+
+void CDataDlg::OnBnClickedFindthenkill2()
+{
+	// TODO: 在此添加控件通知处理程序代码
+}
+
+UINT testThread(LPVOID ll)
+{
+	CDataDlg* dlg = (CDataDlg*)ll;
+	GamecallEx& gcall = *GamecallEx::GetInstance();
+	gcall.Party_KillObject();
+	dlg->hand = INVALID_HANDLE_VALUE;
+	return 0;
+}
+void CDataDlg::OnBnClickedButton1()
+{
+	if (hand == INVALID_HANDLE_VALUE)
+	{
+		hand = AfxBeginThread(testThread,this)->m_hThread;
+	}
+}
 
 
-    int size = tv.size();
-    CString strTemp;
-    for(int i = 0; i < size; i++)
-    {
-        m_ListCtrl.InsertItem(i, tv[i]->name);
-
-        strTemp.Format(_T("%x"), tv[i]->PAddress);
-        m_ListCtrl.SetItemText(i, 1, strTemp);
-
-        strTemp.Format(_T("%d"), tv[i]->CurrLife);
-        m_ListCtrl.SetItemText(i, 2, strTemp);
-
-        strTemp.Format(_T("%d"), tv[i]->MaxLife);
-        m_ListCtrl.SetItemText(i, 3, strTemp);
-
-        strTemp.Format(_T("%d"), tv[i]->ID);
-        m_ListCtrl.SetItemText(i, 4, strTemp);
-
-        strTemp.Format(_T("%d"), tv[i]->ID2);
-        m_ListCtrl.SetItemText(i, 5, strTemp);
-
-        strTemp.Format(_T("%d,%d,%d"), tv[i]->Pos.y, tv[i]->Pos.x, tv[i]->Pos.z);
-        m_ListCtrl.SetItemText(i, 6, strTemp);
-
-        strTemp.Format(_T("%d"), tv[i]->Angle);
-        m_ListCtrl.SetItemText(i, 7, strTemp);
-
-        strTemp.Format(_T("%d"), tv[i]->Range);
-        m_ListCtrl.SetItemText(i, 8, strTemp);
-
-        strTemp.Format(_T("%d"), tv[i]->LV);
-        m_ListCtrl.SetItemText(i, 9, strTemp);
-    }
+void CDataDlg::OnBnClickedButton2()
+{
+	if (hand != INVALID_HANDLE_VALUE)
+	{
+		TerminateThread(hand,0);
+		hand = INVALID_HANDLE_VALUE;
+	}
 }

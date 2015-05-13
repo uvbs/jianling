@@ -2176,6 +2176,7 @@ int GamecallEx::KillObject(DWORD range, ObjectNode* pNode, DWORD mode, DWORD can
         ZeroMemory(&mypos, sizeof(fPosition));        //TRACE(_T("判断人物死亡"));
 
 
+
         if(GetPlayerHealth() <= 0)
         {
             TRACE(_T("%s: 人物死亡了"), FUNCNAME);
@@ -2260,7 +2261,8 @@ int GamecallEx::KillObject(DWORD range, ObjectNode* pNode, DWORD mode, DWORD can
                 }
                 else
                 {
-                    sendcall(id_msg_attack, (LPVOID)0x5dc1);
+                    //sendcall(id_msg_attack, (LPVOID)0x5dc1);
+					Attack(0x5dc1);
                 }
             }
             else
@@ -2277,7 +2279,8 @@ int GamecallEx::KillObject(DWORD range, ObjectNode* pNode, DWORD mode, DWORD can
                         }
                         else
                         {
-                            sendcall(id_msg_attack, (LPVOID)0x5dc1);
+                            //sendcall(id_msg_attack, (LPVOID)0x5dc1);
+							Attack(0x5dc1);
                         }
                     }
                     else
@@ -2285,16 +2288,22 @@ int GamecallEx::KillObject(DWORD range, ObjectNode* pNode, DWORD mode, DWORD can
                         if(GetPlayerMana() >= 60)
                         {
                             sendcall(id_msg_attack, (LPVOID)0x5dde);
+							//Attack(0x5dde);
                         }
-                        else
-                        {
                             sendcall(id_msg_attack, (LPVOID)0x5dc1);
-                        }
+							//Attack(0x5dc1);
+                        
                     }
                 }
                 else
                 {
-                    KeyPress('R');
+					if(GetPlayerMana() >= 60)
+					{
+						sendcall(id_msg_attack, (LPVOID)0x5dde);
+						//Attack(0x5dde);
+					}
+					sendcall(id_msg_attack, (LPVOID)0x5dc1);
+					//Attack(0x5dc1);
                 }
             }
 
@@ -2916,7 +2925,6 @@ BOOL GamecallEx::Kill_ApplyConfig(std::vector<ObjectNode*>& ObjectVec)
                 it++;
             }
         }
-
     }
     catch(...)
     {
@@ -3037,4 +3045,38 @@ void GamecallEx::SteptoBack(ObjectNode* pObj)
 
     //sendcall(id_msg_step,(LPVOID)&rpos);
     Stepto(rpos.y, rpos.x, rpos.z, 10, 15, 1000, TRUE);
+}
+
+wchar_t* GamecallEx::SteptoParty()
+{
+	TeamVector team;
+	GetPartyInfo(team);
+	Stepto(team[0].Pos.y,team[0].Pos.x,team[0].Pos.z,10,15,1000,TRUE);
+
+	return team[0].name;
+}
+
+void GamecallEx::Party_KillObject()
+{
+	wchar_t * name = NULL;
+	ObjectNode* Party_Node;
+	ObjectNode* Monster;
+	DWORD s_Id = NULL;
+	//ZeroMemory()
+	
+	while (1)
+	{
+		name = SteptoParty();
+		Party_Node = GetObjectByName(name,3000);//玩家的二叉
+		if (IsObjectFightStatus(Party_Node->ObjAddress))
+		{
+			TRACE("%d",IsPlayerSkillStatus(Party_Node->ObjAddress));
+			if (IsPlayerSkillStatus(Party_Node->ObjAddress))
+			{
+				s_Id = GetObjectTargetId(Party_Node->ObjAddress);
+				Monster = GetObjectById(s_Id);
+				KillObject(3000,Monster,modeNormal | modeAoe,155);
+			}
+		}
+	}
 }
