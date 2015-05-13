@@ -10,7 +10,7 @@
 #include "ConfigQhPage.h"
 #include "ConfigSheet.h"
 #include "LuaPage.h"
-
+#include "ToolDlg.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -193,7 +193,8 @@ BEGIN_MESSAGE_MAP(CDataDlg, CDialog)
     ON_NOTIFY(TCN_SELCHANGE, IDC_TAB1, OnSelchangeTab1)
     ON_COMMAND(ID_GOTOBACK, OnGotoback)
     ON_UPDATE_COMMAND_UI(ID_HOOKSTRIKE, OnUpdateHookstrike)
-    //}}AFX_MSG_MAP
+	ON_BN_CLICKED(IDC_CALLTOOL, OnCalltool)
+	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
 
@@ -378,7 +379,7 @@ void CDataDlg::PrintfAllObject()
 
         //µØÖ·
         CString strAddr;
-        strAddr.Format(_T("%08x"), pNode->ObjAddress);
+        strAddr.Format(_T("%08x"), pNode);
         m_ListCtrl.InsertItem(i, strAddr);
 
 
@@ -1439,4 +1440,10 @@ void CDataDlg::PrintfTeaminfo()
         strTemp.Format(_T("%d"), tv[i]->LV);
         m_ListCtrl.SetItemText(i, 9, strTemp);
     }
+}
+
+void CDataDlg::OnCalltool() 
+{
+	CToolDlg dlg;
+    dlg.DoModal();
 }

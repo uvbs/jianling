@@ -13,6 +13,7 @@
 #define IDR_FILTER                      127
 #define IDD_DEBUG                       130
 #define IDD_LUA                         131
+#define IDD_TOOL                        132
 #define IDC_EDITMEMINPUT                1001
 #define IDC_EDITINFO                    1017
 #define IDC_COMBO_DATATYPE              1028
@@ -51,9 +52,13 @@
 #define IDC_INVITE_INMAP                1095
 #define IDC_BUTTON1                     1099
 #define IDC_TESTLUA                     1099
+#define IDC_CALLTOOL                    1099
 #define IDC_EDIT1                       1101
 #define IDC_LOADLUA                     1102
 #define IDC_TAB1                        1108
+#define IDC_CHECK1                      1109
+#define IDC_CHECK2                      1110
+#define IDC_CHECK3                      1111
 #define ID_GETPALYERINFO                40006
 #define ID_FINDTHENKILL                 40008
 #define ID_CLR                          40011
@@ -80,9 +85,9 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        131
+#define _APS_NEXT_RESOURCE_VALUE        133
 #define _APS_NEXT_COMMAND_VALUE         40064
-#define _APS_NEXT_CONTROL_VALUE         1109
+#define _APS_NEXT_CONTROL_VALUE         1112
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

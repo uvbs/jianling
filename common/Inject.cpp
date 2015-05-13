@@ -1,6 +1,8 @@
 #include "StdAfx.h"
 #include "Inject.h"
 
+#include <shlwapi.h>
+#pragma comment(lib, "shlwapi")
 
 CInject::CInject(const TCHAR* lpszName)
 {
@@ -20,10 +22,14 @@ BOOL CInject::EnableDebugPrivilege(void)
         TOKEN_PRIVILEGES   tp;
         tp.PrivilegeCount = 1;
         if(!LookupPrivilegeValue(NULL, SE_DEBUG_NAME, &tp.Privileges[0].Luid))
+        {
             tp.Privileges[0].Attributes = SE_PRIVILEGE_ENABLED;
+        }
 
         if(AdjustTokenPrivileges(hToken, FALSE, &tp, sizeof(tp), NULL, NULL))
+        {
             fOk = TRUE;
+        }
 
         CloseHandle(hToken);
     }

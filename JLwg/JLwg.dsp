@@ -182,6 +182,10 @@ SOURCE=.\TaskScript2.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\ToolDlg.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\TranScript.cpp
 # End Source File
 # End Group
@@ -271,6 +275,10 @@ SOURCE=.\StdAfx.h
 # Begin Source File
 
 SOURCE=.\TaskScript.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ToolDlg.h
 # End Source File
 # End Group
 # Begin Group "Resource Files"
