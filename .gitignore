@@ -13,6 +13,4 @@ bin/
 *.aps
 *.orig
 *.vcproj.*.user
-*.vcproj
-*.sln
 *.suo
