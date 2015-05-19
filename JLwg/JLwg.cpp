@@ -1,6 +1,5 @@
 #include "stdafx.h"
 #include "JLwg.h"
-#include "TaskScript.h"
 #include "GamecallEx.h"
 #include "GameConfig.h"
 #include "JLDlg.h"
@@ -56,7 +55,7 @@ LRESULT CALLBACK CJLwgApp::GameWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPAR
     {
 
     //因为程序保护的问题, 好像游戏进程退出时, 外挂模块并不会被通知到
-    case WM_DESTROY:
+    case WM_CLOSE:
         {
             theApp.m_pWgDlg->OnUnloadwg();
             break;
@@ -116,73 +115,83 @@ LRESULT CALLBACK CJLwgApp::GameWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPAR
 
 DWORD CALLBACK CJLwgApp::WorkThread(LPVOID pParam)
 {
-    AFX_MANAGE_STATE(AfxGetStaticModuleState())
 
-    //
-    //DebugBreak();
-
-    if(!AfxSocketInit())
+    try
     {
-        LOGER(_T("套接字初始化失败"));
-        ExitProcess(0);
-        return FALSE;
-    }
+        AFX_MANAGE_STATE(AfxGetStaticModuleState())
 
-    if(!theApp.WaitGameCreate(30))
+        //
+        //DebugBreak();
+
+        if(!AfxSocketInit())
+        {
+            LOGER(_T("套接字初始化失败"));
+            ExitProcess(0);
+            return FALSE;
+        }
+
+        if(!theApp.WaitGameCreate(30))
+        {
+            LOGER(_T("等待游戏窗口超时"));
+            ExitProcess(0);
+            return FALSE;
+        }
+
+
+        if(!GameSpend::GetInstance()->Init())
+        {
+            LOGER(_T("初始化加速失败"));
+            ExitProcess(0);
+            return FALSE;
+        }
+
+
+        if(!GameConfig::GetInstance()->LoadConfig())
+        {
+            LOGER(_T("加载配置文件失败"));
+            ExitProcess(0);
+            return FALSE;
+        }
+
+
+        //创建一个lua状态
+        if(!theApp.InitLua())
+        {
+            LOGER(_T("脚本初始化失败"));
+            ExitProcess(0);
+            return FALSE;
+        }
+
+        //初始化call类 这个游戏功能的初始化可以放到脚本线程开始执行
+        //这样不会阻塞外挂界面线程, 就是这个线程
+        //使外挂界面能尽早出现, 但是放在脚本线程会导致
+        if(!GamecallEx::GetInstance()->Init())
+        {
+            LOGER(_T("外挂功能初始化失败"));
+            ExitProcess(0);
+            return 0;
+        }
+
+        LOGER(_T("启动完成"));
+
+
+
+        //钩游戏窗口处理
+        theApp.wpOrigGameProc = (WNDPROC)::SetWindowLong(theApp.m_hGameWnd, GWL_WNDPROC, (LONG)theApp.GameWndProc);
+        ::SetWindowText(theApp.m_hGameWnd, theApp.m_stData.szAccount);
+
+        CFrameWnd a;   //生成一个框架窗口对象
+        a.Create(NULL, _T("HideTaskBar")); //生成窗口,不带ws_visible
+
+        //主对话框
+        theApp.m_pWgDlg = new CJLDlg(&a);
+        theApp.m_pWgDlg->DoModal();
+
+    }
+    catch(...)
     {
-        LOGER(_T("等待游戏窗口超时"));
-        ExitProcess(0);
-        return FALSE;
+        AfxMessageBox(_T("异常! 重新注入"));
     }
-
-
-    if(!GameSpend::GetInstance()->Init())
-    {
-        LOGER(_T("初始化加速失败"));
-        ExitProcess(0);
-        return FALSE;
-    }
-
-
-    if(!GameConfig::GetInstance()->LoadConfig())
-    {
-        LOGER(_T("加载配置文件失败"));
-        ExitProcess(0);
-        return FALSE;
-    }
-
-
-    //创建一个lua状态
-    if(!theApp.InitLua())
-    {
-        LOGER(_T("脚本初始化失败"));
-        ExitProcess(0);
-        return FALSE;
-    }
-
-    //初始化call类 这个游戏功能的初始化可以放到脚本线程开始执行
-    //这样不会阻塞外挂界面线程, 就是这个线程
-    //使外挂界面能尽早出现, 但是放在脚本线程会导致
-    if(!GamecallEx::GetInstance()->Init())
-    {
-        LOGER(_T("外挂功能初始化失败"));
-        ExitProcess(0);
-        return 0;
-    }
-
-    LOGER(_T("启动完成"));
-
-
-
-    //钩游戏窗口处理
-    theApp.wpOrigGameProc = (WNDPROC)::SetWindowLong(theApp.m_hGameWnd, GWL_WNDPROC, (LONG)theApp.GameWndProc);
-    ::SetWindowText(theApp.m_hGameWnd, theApp.m_stData.szAccount);
-
-
-    //外挂主对话框
-    theApp.m_pWgDlg = new CJLDlg;
-    theApp.m_pWgDlg->DoModal();
-
 
 
     GamecallEx::GetInstance()->UnLoad();
@@ -199,7 +208,7 @@ DWORD CALLBACK CJLwgApp::WorkThread(LPVOID pParam)
         ::SetWindowLong(theApp.m_hGameWnd, GWL_WNDPROC, (LONG)theApp.wpOrigGameProc);
     }
 
-    LOGER(_T("卸载"));
+    LOGER(_T("正常卸载"));
     FreeLibraryAndExitThread(theApp.m_hInstance, 0);
     return 0;
 }
@@ -358,7 +367,6 @@ void CJLwgApp::SendStatus(TCHAR szText[])
 
 int CJLwgApp::ExitInstance()
 {
-    TRACE(_T("ExitInstance()"));
     return CWinApp::ExitInstance();
 }
 
@@ -469,7 +477,7 @@ static int NewSpend(lua_State* L)
 
 static int Sleep(lua_State* L)
 {
-    int x = lua_tonumber(L, 1);
+    int x = lua_tointeger(L, 1);
     Sleep(x);
     return 0;
 }
@@ -510,8 +518,18 @@ static int FindThenKill(lua_State* L)
 
         GamecallEx::GetInstance()->FindThenKill(pos, range, mode, MyQuestStep, MyQuestID);
     }
+    else if(nums == 4)
+    {
+        int pos = lua_tointeger(L, 1);
+        DWORD range = lua_tointeger(L, 2);
+        DWORD mode = lua_tointeger(L, 3);
+        DWORD MyQuestStep = lua_tointeger(L, 4);
+
+        GamecallEx::GetInstance()->FindThenKill(pos, range, mode, MyQuestStep);
+    }
     else
     {
+
         //lua_error()
         _ASSERTE(FALSE);
     }
@@ -598,6 +616,16 @@ static int PickupTask(lua_State* L)
             GamecallEx::GetInstance()->PickupTask();
             break;
         }
+
+    case 3:
+        {
+            int c1 = lua_tointeger(L, 1);
+            int c2 = lua_tointeger(L, 1);
+            int c3 = lua_tointeger(L, 1);
+            GamecallEx::GetInstance()->PickupTask(c1, c2, c3);
+            break;
+        }
+
     default:
         _ASSERTE(FALSE); //不应运行到这
         break;
@@ -646,7 +674,10 @@ static int DeliverQuests(lua_State* L)
 
 
     default:
-        _ASSERTE(FALSE); //不应该
+        {
+            _ASSERTE(FALSE); //不应该
+            break;
+        }
     }
 
     return 0;
@@ -679,10 +710,51 @@ static int WaitPlans(lua_State* L)
     return 0;
 }
 
+static int NewBag(lua_State* L)
+{
+    GamecallEx::GetInstance()->NewBag();
+    return 0;
+}
+
 static int randXianlu(lua_State* L)
 {
     int id = lua_tointeger(L, 1);
     GamecallEx::GetInstance()->randXianlu(id);
+    return 0;
+}
+
+static int NPCJieRenWu(lua_State* L)
+{
+    int nums = lua_gettop(L);
+    if(nums == 4)
+    {
+        const char* name = lua_tostring(L, 1);
+        int canshu2 = lua_tointeger(L, 2);
+        int canshu3 = lua_tointeger(L, 3);
+        int canshu4 = lua_tointeger(L, 4);
+        GamecallEx::GetInstance()->NPCJieRenWu((wchar_t*)name, canshu2, canshu3, canshu4);
+    }
+    else if(nums == 5)
+    {
+        int c1 = lua_tointeger(L, 1);
+        int c2 = lua_tointeger(L, 2);
+        int c3 = lua_tointeger(L, 3);
+        int c4 = lua_tointeger(L, 4);
+        int c5 = lua_tointeger(L, 5);
+        GamecallEx::GetInstance()->NPCJieRenWu(c1, c2, c3, c4, c5);
+    }
+    else
+    {
+        _ASSERTE(FALSE);
+    }
+
+    return 0;
+}
+
+static int HeChengWuQiByHun(lua_State* L)
+{
+    int pos = lua_tointeger(L, 1);
+    GamecallEx::GetInstance()->HeChengWuQiByHun((EQUITMENT_POS)pos);
     return 0;
 }
 
@@ -714,6 +786,13 @@ void CJLwgApp::RegGameLib(lua_State* L)
     REGLUADATA(modeGoback);
     REGLUADATA(modePickupOnce);
     REGLUADATA(modeTask);
+    REGLUADATA(modePickup);
+    REGLUADATA(WUQI);
+    REGLUADATA(YIFU);
+    REGLUADATA(YAODAI);
+    REGLUADATA(XIANGLIAN);
+    REGLUADATA(JIEZHI);
+    REGLUADATA(ERHUAN);
 
     REGLUAFUN(Stepto);
     REGLUAFUN(KillBoss);
@@ -737,6 +816,9 @@ void CJLwgApp::RegGameLib(lua_State* L)
     REGLUAFUN(WearEquipment);
     REGLUAFUN(WaitPlans);
     REGLUAFUN(randXianlu);
+    REGLUAFUN(NewBag);
+    REGLUAFUN(NPCJieRenWu);
+    REGLUAFUN(HeChengWuQiByHun);
 }
 
 

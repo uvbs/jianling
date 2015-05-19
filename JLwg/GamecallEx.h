@@ -57,7 +57,6 @@ public:
     //打怪
     void KillBoss(const wchar_t* name);
     int FindThenKill(int pos, DWORD range, DWORD mode, DWORD MyQuestStep = 0, DWORD MyQuestID = 0, DWORD canKillRange = CAN_OPERATOR);    //找到杀掉
-    void kill_PickupOnce();
     BOOL kill_PickupBody();
     BOOL kill_Task(int MyQuestID, int MyQuestStep);
     void Kill_Tab(int id);//tab释放等待
@@ -105,7 +104,7 @@ public:
     void NewBag();
     void BuyItem(DWORD nums, DWORD index, wchar_t* npcname, BOOL bClose = TRUE);  //购买物品
     void CunCangku(wchar_t* name, wchar_t* npcname);   //放仓库
-    void CuncangkuByConfig(wchar_t* name);//配置文件存仓库
+    void CuncangkuByConfig();//配置文件存仓库
     void DeleteItem(std::wstring name);   //删除一个物品
     void DeleteItemByConfig();      //删除配置文件中所有物品
     void SellItem(wchar_t* name, wchar_t* npcName, BOOL bClose = TRUE);     //卖掉一个物品

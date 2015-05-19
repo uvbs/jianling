@@ -15,12 +15,12 @@ typedef struct _MONSTERATAACK
     DWORD dwStrikeId;
 } MONSTERATAACK, *PMONSTERATAACK;
 
-interface IHookRetSink
+struct IHookRetSink
 {
     virtual void ShowHook(TCHAR * pszFormat, ...) = 0;
 };
 
-interface ICombatHookSink
+struct ICombatHookSink
 {
     virtual void NotifyMonsterAttack(MONSTERATAACK * pAttack) = 0;
 };

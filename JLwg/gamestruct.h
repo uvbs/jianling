@@ -2,7 +2,7 @@
 #define _GAMESTRUCT_H
 
 
-typedef struct _PARAM_JIEFENGZHUANGBEI
+typedef struct _PARAM_7
 {
     DWORD   argv1;
     DWORD   argv2;
@@ -11,23 +11,35 @@ typedef struct _PARAM_JIEFENGZHUANGBEI
     DWORD   argv5;
     DWORD   argv6;
     DWORD   argv7;
-} PARAM_JIEFENGZHUANGBEI, *PPARAM_JIEFENGZHUANGBEI;
+} PARAM_7, *PPARAM_7;
 
-typedef struct _PARAM_GETUIADDRBYNAME
+typedef struct _PARAM_5
 {
     DWORD   argv1;
     DWORD   argv2;
     DWORD   argv3;
-} PARAM_GETUIADDRBYNAME, *PPARAM_GETUIADDRBYNAME;
+    DWORD   argv4;
+    DWORD   argv5;
+    DWORD   argv6;
+    DWORD   argv7;
+} PARAM_5, *PPARAM_5;
 
-//这些结构定义方便传参
-typedef struct _PARAM_GUANSHANGDIAN
+typedef struct _PARAM_3
 {
     DWORD   argv1;
     DWORD   argv2;
-} PARAM_GUANSHANGDIAN, *PPARAM_GUANSHANGDIAN;
+    DWORD   argv3;
+} PARAM_3, *PPARAM_3;
 
-typedef struct _PARAM_DELIVERQUEST
+//这些结构定义方便传参
+typedef struct _PARAM_2
+{
+    DWORD   argv1;
+    DWORD   argv2;
+} PARAM_2, *PPARAM_2;
+
+
+typedef struct _PARAM_8
 {
     DWORD   id;
     DWORD   step;
@@ -37,27 +49,8 @@ typedef struct _PARAM_DELIVERQUEST
     DWORD   npcid2;
     DWORD   unknow;
     DWORD   mianban;
-} PARAM_DELIVERQUEST, *PPARAM_DELIVERQUEST;
+} PARAM_8, *PPARAM_8;
 
-typedef struct _PARAM_HECHENGWUQI
-{
-    DWORD   zhu;
-    DWORD   fu;
-    DWORD   adress;
-} PARAM_HECHENGWUQI, *PPARAM_HECHENGWUQI;
-
-
-
-typedef struct _CHARACTER
-{
-    char            unknow[2];
-    unsigned char   _clsss;
-    char            unknow1[0x5e];
-    wchar_t*        name;
-    char            unknow2[0xce];
-    unsigned char   level;
-
-} CHARACTER, *PCHARACTER;
 
 typedef struct _YaoPingCD_JG
 {
@@ -66,17 +59,23 @@ typedef struct _YaoPingCD_JG
     DWORD   canshu3;
 } YaoPingCD_JG, *PYaoPingCD_JG;
 
-struct _BAGSTU
+typedef struct _BAGSTU
 {
+    char        CanSell; //是否可以出售
+    char        UFaction; //使用职业
+    char        UseLevel;    //使用等级
+    char        EquipIndex; //身上位置
     DWORD       m_Base;                     //物品的首地址
     DWORD       m_Info;                     //物品所在的格子数
     DWORD       m_ID;                       //物品的ID
     DWORD       m_NameID;                   //物品名字的ID
     int         m_Type;                     //物品的类型
-    int         m_Site;                     //吃药和装备需要的一个参数
     int         m_Num;                      //物品的数量
     int         m_LV;                       //物品的等级
-    DWORD       m_Lasting;                  //物品的持久
+
+    DWORD       MaxDur;   //最大耐久
+    DWORD       CurDur;   //当前耐久
+
     DWORD       m_YanSe;                    //物品的颜色
     DWORD       m_IsFengYin;                //物品是否封印
     DWORD       m_BagLeiXing;               //物品的背包类型
@@ -94,7 +93,8 @@ struct _BAGSTU
     DWORD       canshu2;
     DWORD       canshu3;
     DWORD       canshu4;
-};
+
+} BAGSTU, *PBAGSTU;
 
 typedef struct _YouJianLeiXing
 {
@@ -197,16 +197,6 @@ typedef struct _ObjectNode
     bool            end;//21
 } ObjectNode, *PObjectNode;
 
-typedef struct _SkillNameCANSHUQ
-{
-    DWORD   canshu1;
-    DWORD   canshu2;
-    DWORD   canshu3;
-    DWORD   canshu4;
-    DWORD   canshu5;
-    DWORD   canshu6;
-    DWORD   canshu7;
-} SkillNameCANSHUQ, *PSkillNameCANSHUQ;
 
 typedef struct _SkillM
 {
@@ -257,9 +247,9 @@ typedef struct _UIOperator
 
 typedef struct _Team
 {
-    DWORD       PAddress; //对象的指针
-    wchar_t*     name;   //对象的名字
-    DWORD       Channel;       //对象的线路
+    DWORD       PAddress;   //对象的指针
+    wchar_t*    name;       //对象的名字
+    DWORD       Channel;    //对象的线路
     DWORD       CurrLife;   //当前生命
     DWORD       MaxLife;    //最大生命
     DWORD       ID;         //对象的ID
@@ -270,5 +260,6 @@ typedef struct _Team
     DWORD       LV;         //等级;
     DWORD       TeamNum;    //队伍人数
 } Team, *PTeam;
+
 
 #endif

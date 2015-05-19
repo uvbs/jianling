@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "Job.h"
 
+#include <windows.h>
 
 inline CJob::CJob(HANDLE hJob)
 {

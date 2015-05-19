@@ -21,6 +21,7 @@ public:
 
     CHook m_dbgprint;
     CHook m_bsEGetInstance;
+    CHook m_RtlAllocHeap;
 
 // Overrides
 	// ClassWizard generated virtual function overrides
@@ -36,6 +37,7 @@ protected:
 	//{{AFX_MSG(CToolDlg)
 	afx_msg void OnCheck1();
 	afx_msg void OnCheck2();
+	afx_msg void OnCheck3();
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 };

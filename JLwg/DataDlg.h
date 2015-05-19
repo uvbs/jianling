@@ -3,7 +3,7 @@
 
 
 #include "GameHook.h"
-#include "GamecallEx.h"
+
 
 /////////////////////////////////////////////////////////////////////////////
 // CDataDlg dialog
@@ -32,6 +32,8 @@ public:
     BOOL    m_bHook_Combat;
 	//}}AFX_DATA
 	HANDLE hand;
+
+
     //
     CLuaPage *m_pLuaPage;
     CDbgPage *m_pDbgPage;
@@ -102,6 +104,7 @@ protected:
 	afx_msg void OnGotoback();
 	afx_msg void OnUpdateHookstrike(CCmdUI* pCmdUI);
 	afx_msg void OnCalltool();
+	afx_msg void OnTimer(UINT nIDEvent);
 	//}}AFX_MSG
     DECLARE_MESSAGE_MAP()
 public:

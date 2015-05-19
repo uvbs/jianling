@@ -165,14 +165,15 @@ BOOL CConfigItemPage::OnInitDialog()
     GameConfig* pConfig = GameConfig::GetInstance();
 
     //填充背包
-    std::vector<_BAGSTU> GoodsVec;
-    gcall.GetAllGoodsToVector(GoodsVec);
-    for(i = 0; i < GoodsVec.size(); i++)
+    BagVector BagVec;
+    gcall.GetAllGoodsToVector(BagVec);
+    for(i = 0; i < BagVec.size(); i++)
     {
-        m_BagList.InsertItem(i, GoodsVec[i].name);
+    
+        m_BagList.InsertItem(i, BagVec[i].name);
 
         CString strPos;
-        strPos.Format(_T("%d"), GoodsVec[i].m_Info);
+        strPos.Format(_T("%d"), BagVec[i].m_Info);
         m_BagList.SetItemText(i, 1, strPos);
 
     }
@@ -313,6 +314,14 @@ BOOL CConfigItemPage::OnApply()
     ItemVector& dell = pConfig-> m_DelItem;    //删除
     ItemVector& qhacce = pConfig-> m_QHAccessories;    //强化饰品
     ItemVector& qhweapon = pConfig-> m_QHWeapons;    //强化武器
+
+    sell.clear();
+    bank.clear();
+    disenchant.clear();
+    trade.clear();
+    dell.clear();
+    qhacce.clear();
+    qhweapon.clear();
 
 
     for(int i = 0; i < m_FilterList.GetItemCount(); i++)
@@ -561,6 +570,11 @@ BOOL CConfigObjPage::OnApply()
     ItemVector& dontkill = pConfig->m_DontKill;
     ItemVector& alwayskill = pConfig->m_AlwaysKill;
     ItemVector& firstkill = pConfig->m_FirstKill;
+
+    dontkill.clear();
+    alwayskill.clear();
+    firstkill.clear();
+
 
     for(int i = 0; i < m_FilterList.GetItemCount(); i++)
     {

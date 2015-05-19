@@ -4,6 +4,7 @@
 
 #ifdef JLTW
 #include "gamedata-tw.h"
+#include "gamedata-tw_new.h"
 #else
 #include "gamedata.h"
 #endif
@@ -15,7 +16,7 @@
 
 typedef std::vector<CUSTOMKILL> CustKillVector;
 typedef std::vector<ObjectNode*> ObjectVector;
-typedef std::vector<_BAGSTU> BagVector;
+typedef std::vector<BAGSTU> BagVector;
 typedef std::vector<Team> TeamVector;
 
 
@@ -45,8 +46,7 @@ public:
     void HookQietu(BOOL bEnable);   //hook 切图
     void KeyPress(WPARAM vk);
     DWORD CalcC(fPosition& p1, fPosition& p2);      //计算两个坐标距离
-    fPosition ShortPosToFloatPos(sPosition& shortp);   //坐标转换
-    void* GetStepCallAddr();                      //取走路call的地址
+    void ShortPosToFloatPos(sPosition& spos, fPosition& fpos);   //坐标转换
     void RandomStep(DWORD range);               //向某个方向随机走
     void JingDianMoShi(DWORD adress, DWORD adress1);  //经典模式
     void CloseXiaoDongHua();
@@ -85,7 +85,7 @@ public:
     float GetPlayerMaxVit();            //轻功
     float GetPlayerVit();               //当前轻工值
     int GetPlayerVitStatus();           //轻功状态
-    BOOL GetPlayerPos(fPosition* PlayerPosition);                //float坐标
+    BOOL GetPlayerPos(fPosition* fpos);   //float坐标
     BOOL GetPlayerPos2(sPosition* spos);            //short型坐标
     float GetPlayerViewPoint();         //角色面向
     DWORD GetPlayerQuestUIStatus();     //判断角色任务相关ui状态是否弹出
@@ -98,9 +98,9 @@ public:
     DWORD GetExperienceNameID(DWORD ID);        //获取经验名字ID
     wchar_t* GetExperienceName(DWORD ID);       //获取经验名字
     BOOL GetPlayerFightingStatus();             //获得战斗状态
-	BOOL GetPlayerSkillStatus();                //获得是否正在使用技能状态
-	BOOL GetPlayerBusy();                       //角色当前是否正在忙碌
-	DWORD GetPlarerRedHeart();                  //获取本角色红心数量
+    BOOL GetPlayerSkillStatus();                //获得是否正在使用技能状态
+    BOOL GetPlayerBusy();                       //角色当前是否正在忙碌
+    DWORD GetPlarerRedHeart();                  //获取本角色红心数量
 
 
 
@@ -126,7 +126,7 @@ public:
     wchar_t* GetObjectNameByIndex(DWORD index);                     //对象名
     wchar_t* _GetObjectNameByIndex(DWORD index);
     wchar_t* GetObjectName(DWORD pObjAddress);
-    DWORD GetType4HP(DWORD pObjAddress);            //获取类型为4的对象血量
+    DWORD GetObjectHP(DWORD pObjAddress);            //获取类型为4的对象血量
     DWORD GetObject_0x14(DWORD pObjAddress);
     DWORD GetObjectLevel(DWORD pObjAddress);        //取对象等级
     DWORD GetObjectSY12(DWORD pObjAddress);
@@ -134,10 +134,10 @@ public:
     DWORD GetObjectSy_90(DWORD pObjAddress);        //取90的索引
     DWORD GetIndexByType(DWORD pObjAddress);        //通过类型取得索引
     DWORD GetObjectView(DWORD pObjAddress);         //获取对象角度
-	DWORD GetObjectTargetId(DWORD pObjAddress);     //获取对象目标
-	ObjectNode* GetObjectById(DWORD Id);            //根据ID获取二叉地址
-	BOOL IsObjectFightStatus(DWORD pObjAddress);   //获取对象战斗状态
-	BOOL IsPlayerSkillStatus(DWORD pObjAddress);    //获得对象是否正在使用技能状态
+    DWORD GetObjectTargetId(DWORD pObjAddress);     //获取对象目标
+    ObjectNode* GetObjectById(DWORD Id);            //根据ID获取二叉地址
+    BOOL IsObjectFightStatus(DWORD pObjAddress);   //获取对象战斗状态
+    BOOL IsPlayerSkillStatus(DWORD pObjAddress);    //获得对象是否正在使用技能状态
 
 
 
@@ -196,7 +196,7 @@ public:
     void        FaSonXianLuBao(DWORD adress1);
     void        OpenXianluUI();
     void        LoginGame(int index);   //进入游戏
-    PCHARACTER  GetCharacter(int index);    //角色选择 ui
+
 
     BOOL        ClickUI(UIOperator uiOp);   //点击ui
     Tree*       GetUIBinTreeBaseAddr();
@@ -262,26 +262,19 @@ public:
 
     BOOL        GetAllBaGuaToVector(BagVector& BaGuaVec);
     BOOL        GetSpecBaGuaToVector(wchar_t* name, BagVector& BaGuaVec);
-    DWORD       GetBagbodyInfoBase();               //获取背包身上装备仓库遍历Base
-    DWORD       GetBagInfoBase(DWORD pAddr);    //获取背包遍历Base
+    DWORD       GetBagbodyInfoBase();                   //获取背包身上装备仓库遍历Base
+    DWORD       GetBagInfoBase(DWORD pAddr);            //获取背包遍历Base
     DWORD       GetBodyInfoBase(DWORD pBase);
-    DWORD       GetBagGridNumber();     //当前背包的总的格子数
-    DWORD       GetBagGridNumberLast();
+    DWORD       GetBagGridNumber();                     //当前背包的总的格子数
     DWORD       GetGoodsBase(DWORD pAddr, int index);   //获取物品的首地址
     DWORD       GetGoodsID(DWORD pAddr);                //获取物品的ID
     DWORD       GetGoodsNameID(DWORD pAddr);            //获取物品的名字ID
-    wchar_t*    GatBagGoodrName(DWORD ID);       //获取背包物品名字
     DWORD       GetGoodsBagInfo(DWORD m_Adress);
     DWORD       GetGoodsType(DWORD pAddr);          //获取物品的类型
-    DWORD       GetGoodsInfo(DWORD pAddr);          //获取物品的所在格子数
+    DWORD       GetGoodsPos(DWORD pAddr);           //获取物品的所在格子数
     DWORD       GetGoodsNum(DWORD pAddr);           //获取物品的数量
-    DWORD       GetGoodsLasting(DWORD pAddr);       //获取物品的持久
-    DWORD       GetGoodsLLV(DWORD pAddr);            //获取物品的等级
-    DWORD       GetCanshu_a(DWORD pAddr);       //吃药和穿装备需要的一个参数
-    DWORD       Getcanshu4(DWORD pAddr);        //参数4
-    DWORD       Getcanshu3(DWORD pAddr);        //参数3
-    DWORD       Getcanshu2(DWORD pAddr);        //参数2
-    DWORD       Getcanshu1(DWORD pAddr);        //参数1
+    DWORD       GetGoodsDur(DWORD pAddr);           //获取物品的持久
+    DWORD       GetGoodsLV(DWORD pAddr);            //获取物品的等级
 
 
     BOOL        GetGoodsFromBagByName(std::wstring name, BagVector& GoodsVec);
@@ -290,8 +283,8 @@ public:
 
 
     BOOL        FillGoods(_BAGSTU& goods);
-    int         GetGoodsYanSe(DWORD m_Adress);  //获取物品的颜色
-    DWORD       GetGoodsIsFengYin(DWORD m_Adress);  //获取物品是否封印
+    int         GetGoodsColor(DWORD m_Adress);  //获取物品的颜色
+    char        GetGoodsIsFengYin(DWORD m_Adress);  //获取物品是否封印
     DWORD       GetBagYouJianCaoZuoType(DWORD Adress, DWORD AAA); // 获取背包物品右键操作类型
     DWORD       GetGoodsYouJianType(DWORD m_BagLeiXing, DWORD m_Info); //获取背包物品右键操作类型
     DWORD       GetGoodsWuQiPingJi(DWORD m_Adress);  //获取武器的评级
@@ -301,7 +294,7 @@ public:
     DWORD       GetBaGuaGeZiShu(DWORD m_Adress);  //获取八卦格子数
     BOOL        GetGoodsByName_Hezi(wchar_t* name, BagVector& GoodsVec); //用来枚举盒子
     void        KaiHeZi(_BAGSTU& bag);
-    BOOL        SortBag();
+    DWORD       SortBag();  //整理背包
     BOOL        NewBag();
 
 
@@ -327,12 +320,15 @@ public:
     void        WearEquipment(_BAGSTU& bag);
     void        _XieZhuangBei(DWORD pos);
 
+
+
     //捡东西
     void        Pickup1(ObjectNode* pObj);    //第一次捡
     void        Pickup2(ObjectNode* pObj);   //第二次捡起来
     void        Pickup2ts();   //特殊的2次捡物
     BOOL        Pickup(ObjectNode* pObj);     //捡东西
     void        _PickupTask(ObjectNode* pObj);  //
+
     BOOL        PickupTask(ObjectNode* pNode);
     BOOL        PickupTaskts(ObjectNode* pNode);
     void        PickupDeadbody(DWORD id1, DWORD id2);
@@ -356,13 +352,12 @@ public:
 
 
     //攻击
-    int     GetHealth(DWORD theValue);
-    void    ChiYao(_BAGSTU& goods);
-    void    ChiYao(const wchar_t* name);       //吃药, 药名
-    void    Attack(int id);
-
-	int    _Attack(int id);
-    void    Attack(const wchar_t* name);
+    int GetHealth(DWORD theValue);
+    void ChiYao(_BAGSTU& goods);
+    void ChiYao(const wchar_t* name);       //吃药, 药名
+    void Attack(int id);
+    int _Attack(int id);
+    void Attack(const wchar_t* name);
 
 
     //转向
@@ -376,21 +371,23 @@ public:
     static BOOL UDgreater(ObjectNode* elem1, ObjectNode* elem2);
 
     //组队
-    void TuiChuDuiWu() /*退出队伍 */;
-    void YaoQingZuDui(DWORD ID, DWORD Info) /*邀请组队 参数1是对象ID 参数2 就是10000数值 */;
+    void TuiChuDuiWu(); //退出队伍
+    void YaoQingZuDui(DWORD ID, DWORD Info); /*邀请组队 参数1是对象ID 参数2 就是10000数值 */;
     DWORD DuiWu_EndAdress() /*遍历队伍的结束地址 */;
-	DWORD DuiWu_StartAdress();//队伍开始地址
-	void GetPartyInfo(TeamVector& TeamInfo);//获取队伍信息
-	DWORD GetPartyByAddress(DWORD PartyAddress,int i);//获取当前角色地址
-	wchar_t* GetPartyName(DWORD PartyAddress);//获取队伍角色名
-	DWORD GetPartyChannel(DWORD PartyAddress);//获取角色当前频道
-	DWORD GetPartyCurrlife(DWORD PartyAddress);//获取角色当前血值
-	DWORD GetPartyMaxlife(DWORD PartyAddress);//获取角色最大血值
-	DWORD GetPartyId(DWORD PartyAddress);//获取角色id
-	DWORD GetPartyId2(DWORD PartyAddress);//获取角色id2
-	fPosition GetPartyPos(DWORD PartyAddress);//获取角色x坐标
-	DWORD GetPartyAngle(DWORD PartyAddress);//获取角色面向
-	DWORD GetPartyLv(DWORD PartyAddress);//获取角色等级
+    DWORD DuiWu_StartAdress();//队伍开始地址
+    void GetPartyInfo(TeamVector& TeamInfo);//获取队伍信息
+    DWORD GetPartyByAddress(DWORD PartyAddress, int i); //获取当前角色地址
+    wchar_t* GetPartyName(DWORD PartyAddress);//获取队伍角色名
+    DWORD GetPartyChannel(DWORD PartyAddress);//获取角色当前频道
+    DWORD GetPartyCurrlife(DWORD PartyAddress);//获取角色当前血值
+    DWORD GetPartyMaxlife(DWORD PartyAddress);//获取角色最大血值
+    DWORD GetPartyId(DWORD PartyAddress);//获取角色id
+    DWORD GetPartyId2(DWORD PartyAddress);//获取角色id2
+    fPosition GetPartyPos(DWORD PartyAddress);//获取角色x坐标
+    DWORD GetPartyAngle(DWORD PartyAddress);//获取角色面向
+    DWORD GetPartyLv(DWORD PartyAddress);//获取角色等级
+
+
 private:
     HANDLE m_hModuleBsEngine;
 };

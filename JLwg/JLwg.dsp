@@ -161,32 +161,12 @@ SOURCE=.\LuaPage.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=..\common\MSJEXHND.cpp
-# End Source File
-# Begin Source File
-
 SOURCE=.\StdAfx.cpp
 # ADD CPP /Yc"stdafx.h"
 # End Source File
 # Begin Source File
 
-SOURCE=.\TaskScript.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\TaskScript1.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\TaskScript2.cpp
-# End Source File
-# Begin Source File
-
 SOURCE=.\ToolDlg.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\TranScript.cpp
 # End Source File
 # End Group
 # Begin Group "Header Files"
@@ -226,6 +206,10 @@ SOURCE=.\GameConfig.h
 # End Source File
 # Begin Source File
 
+SOURCE=".\gamedata-tw_new.h"
+# End Source File
+# Begin Source File
+
 SOURCE=.\gamedef.h
 # End Source File
 # Begin Source File
@@ -262,19 +246,11 @@ SOURCE=.\LuaPage.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\common\MSJEXHND.h
-# End Source File
-# Begin Source File
-
 SOURCE=.\resource.h
 # End Source File
 # Begin Source File
 
 SOURCE=.\StdAfx.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\TaskScript.h
 # End Source File
 # Begin Source File
 

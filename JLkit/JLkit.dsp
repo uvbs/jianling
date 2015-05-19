@@ -46,7 +46,7 @@ RSC=rc.exe
 # ADD BASE CPP /nologo /MDd /W3 /GX /Zi /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_UNICODE" /D "UNICODE" /D "_AFXDLL" /D "JLTW" /FAs /Yu"stdafx.h" /FD /c
 # SUBTRACT BASE CPP /Gf /Fr
 # ADD CPP /nologo /MDd /W3 /GX /Zi /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_UNICODE" /D "UNICODE" /D "_AFXDLL" /D "JLTW" /FAs /Yu"stdafx.h" /FD /c
-# SUBTRACT CPP /O<none> /Gf /Fr
+# SUBTRACT CPP /Gf /Fr
 # ADD BASE MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0x804 /d "NDEBUG" /d "_AFXDLL"
@@ -162,6 +162,10 @@ SOURCE=..\common\MSJEXHND.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\MyStatusBar.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\registdlg.cpp
 # End Source File
 # Begin Source File
@@ -244,6 +248,10 @@ SOURCE=.\MsgBox.h
 # Begin Source File
 
 SOURCE=..\common\MSJEXHND.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\MyStatusBar.h
 # End Source File
 # Begin Source File
 

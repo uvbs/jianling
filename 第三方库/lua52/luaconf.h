@@ -559,11 +559,11 @@
 #if defined(LLONG_MAX)		/* { */
 /* use ISO C99 stuff */
 
-#define LUA_INTEGER		long long
-#define LUA_INTEGER_FRMLEN	"ll"
+#define LUA_INTEGER		int
+#define LUA_INTEGER_FRMLEN	""
 
-#define LUA_MAXINTEGER		LLONG_MAX
-#define LUA_MININTEGER		LLONG_MIN
+#define LUA_MAXINTEGER		_I32_MAX
+#define LUA_MININTEGER		_I32_MIN
 
 #elif defined(LUA_USE_WINDOWS) /* }{ */
 /* in Windows, can use specific Windows types */

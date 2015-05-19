@@ -76,7 +76,7 @@ void CombatBoss::run()
         }
 
 
-        if(pCall->GetType4HP(pBossNode->ObjAddress) == -1 || pCall->GetType4HP(pBossNode->ObjAddress) == 0)
+        if(pCall->GetObjectHP(pBossNode->ObjAddress) == -1 || pCall->GetObjectHP(pBossNode->ObjAddress) == 0)
         {
             TRACE(_T("%s: —™¡ø≈–∂œπ÷À¿¡À"), FUNCNAME);
             break;

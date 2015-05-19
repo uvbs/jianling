@@ -37,11 +37,13 @@ static char THIS_FILE[] = __FILE__;
 #define GOTODATA(sec, key)  \
     {for(ItemIterator it = m_##sec.begin(); it != m_##sec.end(); it++) {\
         this->SetValue(str##sec, str##key, (*it).c_str());\
+        TRACE(_T("%s"), (*it).c_str());\
     }}
 
 #define GOTODATA2(sec, key)  \
     {for(ItemIterator it = m_##key.begin(); it != m_##key.end(); it++) {\
         this->SetValue(str##sec, str##key, (*it).c_str());\
+        TRACE(_T("%s"), (*it).c_str());\
     }}
 
 
@@ -133,6 +135,7 @@ BOOL GameConfig::LoadConfig()
 void GameConfig::SaveConfig()
 {
 
+    SetMultiKey(false);
     //∫»“©∞Ÿ∑÷±»
     SetLongValue(strCombat, strYaoPecent, m_HealthPercent);
     SetValue(strQhColor, strQhColor, m_szQHColor.c_str());
@@ -150,7 +153,7 @@ void GameConfig::SaveConfig()
     SetLongValue(strTeam, strAcpt_Range, m_bAccept_Range);
     SetLongValue(strTeam, strAcpt_RangeValue, m_nAccept_Range);
 
-    SetMultiKey();
+    SetMultiKey(true);
     GOTODATA(TradeItem, ItemName);
     GOTODATA(BankItem, ItemName);
     GOTODATA(DelItem, ItemName);
@@ -162,7 +165,7 @@ void GameConfig::SaveConfig()
     GOTODATA2(Combat, FirstKill);
     GOTODATA2(Combat, DontKill);
     GOTODATA2(Combat, AlwaysKill);
-    SetMultiKey(false);
+    
 
     TCHAR szExe[MAX_PATH] = {0};
     GetModuleFileName(AfxGetInstanceHandle(), szExe, MAX_PATH);
@@ -172,6 +175,7 @@ void GameConfig::SaveConfig()
     {
         _tmkdir(szExe);
     }
+
 
     PathAppend(szExe, theApp.m_stData.szConfig);
     SaveFile(szExe);

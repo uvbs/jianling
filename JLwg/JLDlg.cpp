@@ -5,16 +5,10 @@
 #include "JLwg.h"
 #include "JLDlg.h"
 #include "DataDlg.h"
+#include "GamecallEx.h"
+
 
 #include <afxpriv.h>
-
-#ifdef JLTW
-#include "TaskScript_tw.h"
-#else
-#include "TaskScript.h"
-#endif
-
-
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -30,6 +24,7 @@ CJLDlg::CJLDlg(CWnd* pParent /*=NULL*/)
     //{{AFX_DATA_INIT(CJLDlg)
     //}}AFX_DATA_INIT
     m_bWorking = true;
+    m_DataDlg = NULL;
 }
 
 //析构函数
@@ -75,6 +70,7 @@ void CJLDlg::OnGotask()
 
 BOOL CJLDlg::OnInitDialog()
 {
+
     if(!CDialog::OnInitDialog())
         return FALSE;
 
@@ -91,8 +87,12 @@ void CJLDlg::OnWgdata()
 {
     ShowWindow(SW_HIDE);
 
-    CDataDlg dlg;
-    dlg.DoModal();
+    if(m_DataDlg == NULL)
+    {
+        m_DataDlg = new CDataDlg(this);
+    }
+
+    m_DataDlg->DoModal();
 
     ShowWindow(SW_SHOW);
 }
@@ -115,7 +115,6 @@ void CJLDlg::OnUnloadwg()
 
 void CJLDlg::PostNcDestroy()
 {
-    TRACE(_T("PostNcDestroy"));
     delete this;
 }
 
@@ -170,86 +169,94 @@ UINT CJLDlg::WorkThread(LPVOID pParam)
         GetMessage(&msg, NULL, 0, 0);
         pDlg->m_bWorking = true;
 
-
-        switch(msg.message)
+        try
         {
-        case WM_QUIT:
-            {
-                return 1;
-            }
 
-        case WM_WORKTHREAD_TESTCOMBATBOSS:
+            switch(msg.message)
             {
-                CDataDlg* pDlg = (CDataDlg*)msg.wParam;
-
-                if(pDlg->m_ListCtrl.GetSelectedCount() == 0)
+            case WM_QUIT:
                 {
-                    AfxMessageBox(_T("选个对象测试"));
-                    return 0;
+                    return 1;
                 }
 
-                POSITION rpos = pDlg->m_ListCtrl.GetFirstSelectedItemPosition();
-                if(rpos)
+            case WM_WORKTHREAD_TESTCOMBATBOSS:
                 {
-                    int inItem  = pDlg->m_ListCtrl.GetNextSelectedItem(rpos);
-                    TCHAR szName[MAX_PATH] = {0};
-                    pDlg->m_ListCtrl.GetItemText(inItem, 1, szName, sizeof(szName));
-                    GamecallEx::GetInstance()->KillBoss(szName);
-                }
+                    CDataDlg* pDlg = (CDataDlg*)msg.wParam;
 
-                break;
-            }
+                    if(pDlg->m_ListCtrl.GetSelectedCount() == 0)
+                    {
+                        AfxMessageBox(_T("选个对象测试"));
+                        return 0;
+                    }
 
+                    POSITION rpos = pDlg->m_ListCtrl.GetFirstSelectedItemPosition();
+                    if(rpos)
+                    {
+                        int inItem  = pDlg->m_ListCtrl.GetNextSelectedItem(rpos);
+                        TCHAR szName[MAX_PATH] = {0};
+                        pDlg->m_ListCtrl.GetItemText(inItem, 1, szName, sizeof(szName));
+                        GamecallEx::GetInstance()->KillBoss(szName);
+                    }
 
-        case WM_WORKTHREAD_EXCULUA:
-            {
-
-                //获得模块当前路径
-                TCHAR szExe[MAX_PATH] = {0};
-                GetModuleFileName(theApp.m_hInstance, szExe, MAX_PATH);
-                PathRemoveFileSpec(szExe);
-                PathAppend(szExe, _T("脚本"));
-                PathAppend(szExe, theApp.m_stData.szScript);
-
-                if(!PathFileExists(szExe))
-                {
-                    AfxMessageBox(_T("脚本不存在"));
                     break;
                 }
 
-                LPCSTR pszPath;
+
+            case WM_WORKTHREAD_EXCULUA:
+                {
+
+                    //获得模块当前路径
+                    TCHAR szExe[MAX_PATH] = {0};
+                    GetModuleFileName(theApp.m_hInstance, szExe, MAX_PATH);
+                    PathRemoveFileSpec(szExe);
+                    PathAppend(szExe, _T("脚本"));
+                    PathAppend(szExe, theApp.m_stData.szScript);
+
+                    if(!PathFileExists(szExe))
+                    {
+                        AfxMessageBox(_T("脚本不存在"));
+                        break;
+                    }
+
+                    LPCSTR pszPath;
 #ifdef _UNICODE
-                USES_CONVERSION;
-                pszPath = T2A(szExe);
+                    USES_CONVERSION;
+                    pszPath = T2A(szExe);
 #else
-                pszPath = szExe;
+                    pszPath = szExe;
 #endif
 
-                //加载lua脚本
-                if(luaL_dofile(pL, pszPath) != LUA_OK)
-                {
-                    MessageBoxA(NULL, lua_tostring(pL, -1), "脚本", MB_OK);
-                    lua_pop(pL, 1);
+                    //加载lua脚本
+                    if(luaL_dofile(pL, pszPath) != LUA_OK)
+                    {
+                        MessageBoxA(NULL, lua_tostring(pL, -1), "脚本", MB_OK);
+                        lua_pop(pL, 1);
+                    }
+
+
+                    break;
                 }
 
+            case WM_WORKTHREAD_EXCUTASK:
+                {
+                    //TaskScript task;
+                    //task.BeginTask();
+                    break;
+                }
 
-                break;
-            }
-
-        case WM_WORKTHREAD_EXCUTASK:
-            {
-                //TaskScript task;
-                //task.BeginTask();
-                break;
-            }
-
-        default:
-            {
-                _ASSERTE(FALSE);
-                break;
+            default:
+                {
+                    _ASSERTE(FALSE);
+                    break;
+                }
             }
         }
-    }
+        catch(...)
+        {
+            AfxMessageBox(_T("执行任务异常!"));
+        }
+
+    }//while
 
     return 0;
 }

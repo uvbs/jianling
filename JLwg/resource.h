@@ -1,8 +1,9 @@
 //{{NO_DEPENDENCIES}}
-// Microsoft Visual C++ generated include file.
+// Microsoft Developer Studio generated include file.
 // Used by JLwg.rc
 //
 #define IDD_WGDLG                       101
+#define IDT_TEST                        101
 #define IDD_WGDATA                      108
 #define IDR_OBJECT                      114
 #define IDD_SETINI_PARTY                116
@@ -90,7 +91,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        131
 #define _APS_NEXT_COMMAND_VALUE         40064
-#define _APS_NEXT_CONTROL_VALUE         1110
-#define _APS_NEXT_SYMED_VALUE           101
+#define _APS_NEXT_CONTROL_VALUE         1111
+#define _APS_NEXT_SYMED_VALUE           102
 #endif
 #endif

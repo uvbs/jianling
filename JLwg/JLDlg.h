@@ -11,6 +11,7 @@ enum WORKTHREADMSGID
 
 
 // CJLDlg dialog
+class CDataDlg;
 class CJLDlg : public CDialog
 {
 // Construction
@@ -27,6 +28,8 @@ public:
     CWinThread* m_pWorkThread;
     bool m_bWorking;
 
+
+    CDataDlg *m_DataDlg;
 
     // Overrides
     // ClassWizard generated virtual function overrides

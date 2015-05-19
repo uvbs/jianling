@@ -148,7 +148,6 @@ enum CUSTOMMSGID
     id_msg_JingDianMoShi,
     id_msg_PickdownBody,
     id_msg_DunDi,
-    id_msg_GatBagGoodrName,
     id_msg_GatTaskName,
     id_msg_ZOULUSHUNYI,
     id_msg_OpenQuestItem,

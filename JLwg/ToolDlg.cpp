@@ -37,6 +37,7 @@ BEGIN_MESSAGE_MAP(CToolDlg, CDialog)
     //{{AFX_MSG_MAP(CToolDlg)
     ON_BN_CLICKED(IDC_CHECK1, OnCheck1)
     ON_BN_CLICKED(IDC_CHECK2, OnCheck2)
+    ON_BN_CLICKED(IDC_CHECK3, OnCheck3)
     //}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
@@ -47,6 +48,8 @@ END_MESSAGE_MAP()
 
 DWORD ori_gameprint = 0;
 DWORD ori_eGetInstance = 0;
+DWORD ori_RtlAllocateHeap = 0;
+
 void __stdcall gameprint()
 {
     int* _ebp;
@@ -102,7 +105,7 @@ void __stdcall eGetInstance()
 
     _ebp += 1;
 
-    static old = (DWORD) * _ebp;
+    static int old = (DWORD)(*_ebp);
 
     if(old != (DWORD)*_ebp)
     {
@@ -119,6 +122,32 @@ void __stdcall eGetInstance()
     {
         leave;
         jmp ori_eGetInstance;
+    }
+}
+
+void __stdcall _RtlAllocateHeap(PVOID  HeapHandle,ULONG  Flags, SIZE_T Size)
+{
+    __asm pushad;
+    int* _ebp;
+    __asm mov _ebp, ebp;
+
+    //handle
+    //flags
+    //size 8
+    //ret  4
+    //ebp
+
+
+    char buf[100];
+    wsprintfA(buf, "ret: %08x, size: %08x", *(_ebp + 1), Size);
+    OutputDebugStringA(buf);
+
+
+    __asm
+    {
+        __asm popad;
+        leave;
+        jmp ori_RtlAllocateHeap;
     }
 }
 
@@ -151,6 +180,8 @@ void CToolDlg::OnCheck1()
         {
             AfxMessageBox(_T("安装钩子失败"));
         }
+
+        CloseHandle(hClient);
     }
 }
 
@@ -187,5 +218,48 @@ void CToolDlg::OnCheck2()
         {
             AfxMessageBox(_T("安装钩子失败"));
         }
+
+        CloseHandle(hbs);
+    }
+}
+
+
+//钩住游戏的 RtlAllocHeap
+//好像有大量call用到这个数据
+//比如接任务
+//RtlAllocateHeap 77B3E086   8BFF            mov     edi, edi
+
+void CToolDlg::OnCheck3()
+{
+
+    if(((CButton*)GetDlgItem(IDC_CHECK3))->GetState()  == BST_UNCHECKED)
+    {
+        AfxMessageBox(_T("RtlAllocateHeap unhook"));
+        m_dbgprint.unhook();
+    }
+    else
+    {
+        HMODULE hNt = GetModuleHandle(_T("C:\\Windows\\SysWow64\\ntdll.dll"));
+        if(hNt != NULL)
+        {
+            FARPROC funRtlAllocateHeap = GetProcAddress(hNt, "RtlAllocateHeap");
+
+            TRACE(_T("%08x"), funRtlAllocateHeap);
+            if(funRtlAllocateHeap == NULL)
+            {
+                AfxMessageBox(_T("没能获取RtlAllocateHeap的地址"));
+                return;
+            }
+
+            //77B3E088                     55              push    ebp
+            m_RtlAllocHeap.Init((void*)((DWORD)funRtlAllocateHeap + 2), _RtlAllocateHeap);
+            if((ori_RtlAllocateHeap = (DWORD)m_RtlAllocHeap.hook()) == 0)
+            {
+                AfxMessageBox(_T("安装钩子失败"));
+            }
+
+            CloseHandle(hNt);
+        }
+
     }
 }

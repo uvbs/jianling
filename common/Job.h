@@ -25,8 +25,8 @@ public:
     operator HANDLE() const {return(m_hJob);}
 
     // Functions to create/open a job object
-    BOOL Create(PSECURITY_ATTRIBUTES psa = NULL, PCTSTR pszName = NULL);
-    BOOL Open(PCTSTR pszName, DWORD dwDesiredAccess,
+    BOOL Create(PSECURITY_ATTRIBUTES psa = NULL, LPCTSTR pszName = NULL);
+    BOOL Open(LPCTSTR pszName, DWORD dwDesiredAccess,
               BOOL fInheritHandle = FALSE);
 
     // Functions that manipulate a job object

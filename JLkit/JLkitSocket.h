@@ -21,7 +21,7 @@ class CJLkitSocket;
 
 
 //ÍøÂç½Ó¿Ú
-interface ITCPSocketSink
+struct ITCPSocketSink
 {
     virtual bool OnEventTCPSocketLink(CJLkitSocket* pSocket, INT nErrorCode) = 0;
     virtual bool OnEventTCPSocketShut(CJLkitSocket* pSocket, BYTE cbShutReason) = 0;

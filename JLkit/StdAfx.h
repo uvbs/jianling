@@ -3,9 +3,8 @@
 
 #define VC_EXTRALEAN        // 从 Windows 标头中排除不常使用的资料
 
+#define _WIN32_WINNT 0x501
 
-#define _WIN32_WINNT    0x501
-#define WINVER          0x501
 #define _CRT_SECURE_NO_WARNINGS
 
 #pragma warning(disable: 4018)
@@ -25,17 +24,16 @@
     #include <afxcmn.h>         // MFC support for Windows Common Controls
 #endif // _AFX_NO_AFXCMN_SUPPORT
 
-#include <Iphlpapi.h>
 
-#include <GdiPlus.h>
-#pragma comment(lib, "gdiplus")
 
 #include <Tlhelp32.h>
+#include <NB30.H>
+
 
 #include <Shlwapi.h>
 #pragma comment(lib, "shlwapi")
 
-#include <Nb30.h>
+
 
 #include <string>
 #include <sstream>

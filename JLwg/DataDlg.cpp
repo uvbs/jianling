@@ -8,9 +8,10 @@
 #include "GameHook.h"
 #include "GameConfig.h"
 #include "ConfigQhPage.h"
-#include "ConfigSheet.h"
 #include "LuaPage.h"
 #include "ToolDlg.h"
+#include "GamecallEx.h"
+
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -28,7 +29,7 @@ TCHAR* cli_AllObject[] =
     {_T("目标ID")},
     {_T("类型")},
     {_T("血量")},
-    {_T("索引")},
+    {_T("名字ID")},
     {_T("坐标")}
 };
 
@@ -43,7 +44,7 @@ TCHAR* cli_RangeObject[] =
     {_T("距离")},
     {_T("坐标")},
     {_T("是否怪物")},
-    {_T("索引")},
+    {_T("名字ID")},
     {_T("面向")}
 };
 
@@ -76,17 +77,17 @@ TCHAR* cli_Quest[] =
 
 TCHAR* cli_Team[] =
 {
-	{_T("名字")},
-	{_T("指针")},
-	{_T("当前血值")},
-	{_T("最大血值")},
-	{_T("Id")},
-	{_T("Id2")},
-	{_T("坐标")},
-	{_T("面向")},
-	{_T("距离")},
-	{_T("等级")},
-	{_T("线路")}
+    {_T("名字")},
+    {_T("指针")},
+    {_T("当前血值")},
+    {_T("最大血值")},
+    {_T("Id")},
+    {_T("Id2")},
+    {_T("坐标")},
+    {_T("面向")},
+    {_T("距离")},
+    {_T("等级")},
+    {_T("线路")}
 };
 
 TCHAR* cli_TaskItem[] =
@@ -143,7 +144,7 @@ CDataDlg::CDataDlg(CWnd* pParent /*=NULL*/)
 
     m_pLuaPage = NULL;
     m_pDbgPage = NULL;
-	hand = INVALID_HANDLE_VALUE;
+    hand = INVALID_HANDLE_VALUE;
 }
 
 CDataDlg::~CDataDlg()
@@ -195,11 +196,12 @@ BEGIN_MESSAGE_MAP(CDataDlg, CDialog)
     ON_NOTIFY(TCN_SELCHANGE, IDC_TAB1, OnSelchangeTab1)
     ON_COMMAND(ID_GOTOBACK, OnGotoback)
     ON_UPDATE_COMMAND_UI(ID_HOOKSTRIKE, OnUpdateHookstrike)
-	ON_BN_CLICKED(IDC_CALLTOOL, OnCalltool)
+    ON_BN_CLICKED(IDC_CALLTOOL, OnCalltool)
     ON_BN_CLICKED(ID_FINDTHENKILLaa, OnBnClickedFindthenkillaa)
     ON_BN_CLICKED(IDC_BUTTON1, OnBnClickedButton1)
-	ON_BN_CLICKED(IDC_BUTTON2, OnBnClickedButton2)
-	//}}AFX_MSG_MAP
+    ON_BN_CLICKED(IDC_BUTTON2, OnBnClickedButton2)
+    ON_WM_TIMER()
+    //}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
 
@@ -254,6 +256,7 @@ void CDataDlg::AddInfo(const TCHAR szFormat[], ...)
 
 BOOL CDataDlg::OnInitDialog()
 {
+
     CDialog::OnInitDialog();
 
 
@@ -341,10 +344,10 @@ void CDataDlg::OnGetpalyerinfo()
 
     sPosition PlayerPos2;
     gcall.GetPlayerPos2(&PlayerPos2);
-	
-	AddInfo(_T("角色地址: %x"), gcall.GetPlayerDataAddr());
+
+    AddInfo(_T("角色地址: %x"), gcall.GetPlayerDataAddr());
     AddInfo(_T("角色名: %s"), gcall.GetPlayerName());
-	AddInfo(_T("角色ID: %d"), gcall.GetPlayerID());
+    AddInfo(_T("角色ID: %d"), gcall.GetPlayerID());
     AddInfo(_T("角色地图ID: %d"), gcall.GetCityID());
     AddInfo(_T("角色魔法: %d"), gcall.GetPlayerMana());
     AddInfo(_T("角色等级: %d"), gcall.GetPlayerLevel());
@@ -377,7 +380,6 @@ void CDataDlg::PrintfAllObject()
     gcall.GetAllObjectToVector(gcall.GetObjectBinTreeBaseAddr(), RangeObject);
 
 
-    m_ListCtrl.SetRedraw(FALSE);
     for(DWORD i = 0; i < RangeObject.size(); i++)
     {
 
@@ -402,7 +404,7 @@ void CDataDlg::PrintfAllObject()
         strTemp.Format(_T("%d"), pNode->id);
         m_ListCtrl.SetItemText(i, 2, strTemp);
 
-		DWORD TargetId = gcall.GetObjectTargetId(pNode->ObjAddress);
+        DWORD TargetId = gcall.GetObjectTargetId(pNode->ObjAddress);
         strTemp.Format(_T("%d"), TargetId);
         m_ListCtrl.SetItemText(i, 3, strTemp);
 
@@ -413,7 +415,7 @@ void CDataDlg::PrintfAllObject()
 
         if(type == 0x4)
         {
-            strTemp.Format(_T("%d"), gcall.GetType4HP(pNode->ObjAddress));
+            strTemp.Format(_T("%d"), gcall.GetObjectHP(pNode->ObjAddress));
             m_ListCtrl.SetItemText(i, 5, strTemp);
         }
 
@@ -437,7 +439,6 @@ void CDataDlg::PrintfAllObject()
 
         m_ListCtrl.SetItemData(i, (DWORD)pNode);
     }
-    m_ListCtrl.SetRedraw(TRUE);
 }
 
 void CDataDlg::InertBagItem(DWORD i, _BAGSTU& BagBuff)
@@ -446,7 +447,7 @@ void CDataDlg::InertBagItem(DWORD i, _BAGSTU& BagBuff)
     m_ListCtrl.InsertItem(i, BagBuff.name);
 
     CString strLast;
-    strLast.Format(_T("%d"), BagBuff.m_Lasting);
+    strLast.Format(_T("%d"), BagBuff.CurDur);
     m_ListCtrl.SetItemText(i, 1, strLast);
 
     strLast.Format(_T("%d"), BagBuff.m_LV);
@@ -490,12 +491,12 @@ void CDataDlg::PrintfPlayerEquip()
     //获取游戏外挂功能
     GamecallEx& gcall = *GamecallEx::GetInstance();
 
-    std::vector<_BAGSTU> GoodsItem;
-    gcall.GetAllBodyEquipToVector(GoodsItem);
+    BagVector BagVec;
+    gcall.GetAllBodyEquipToVector(BagVec);
 
-    for(DWORD i = 0; i < GoodsItem.size() ; i++)
+    for(DWORD i = 0; i < BagVec.size() ; i++)
     {
-        InertBagItem(i, GoodsItem[i]);
+        InertBagItem(i, BagVec[i]);
 
     }
 }
@@ -799,7 +800,7 @@ void CDataDlg::PrintfRangeMonster(BOOL bApplyConfig)
         //hp
         if(type == 0x4)
         {
-            strTemp.Format(_T("%d"), gcall.GetType4HP(pNode->ObjAddress));
+            strTemp.Format(_T("%d"), gcall.GetObjectHP(pNode->ObjAddress));
             m_ListCtrl.SetItemText(index, 5, strTemp);
         }
 
@@ -890,7 +891,7 @@ void CDataDlg::PrintfRangeObject()
 
         if(type == 0x4)
         {
-            strTemp.Format(_T("%d"), gcall.GetType4HP(pNode->ObjAddress));
+            strTemp.Format(_T("%d"), gcall.GetObjectHP(pNode->ObjAddress));
             m_ListCtrl.SetItemText(index, 5, strTemp);
         }
 
@@ -1065,7 +1066,7 @@ void CDataDlg::OnBtnConfig()
     ShowWindow(SW_HIDE);
 
     //配置对话框
-    CPropertySheet sheet(_T("配置文件"));
+    CPropertySheet sheet(_T("配置文件"), this);
     CConfigQhPage qhpage;
     CConfigObjPage objpage;
     CConfigItemPage itempage;
@@ -1079,6 +1080,7 @@ void CDataDlg::OnBtnConfig()
 
     if(sheet.DoModal() == IDOK)
     {
+        TRACE(_T("DoModal Ret = "));
         GameConfig::GetInstance()->SaveConfig();
     }
 
@@ -1243,26 +1245,26 @@ void CDataDlg::OnFindthenkill()
     //获取游戏外挂功能
     GamecallEx& gcall = *GamecallEx::GetInstance();
 
-	while (1)
-	{
-		gcall.Stepto(47820,-27420,-4818,10,10,3000);
-		gcall.FindThenKill(0,300,modeNormal | modePickup);
-		gcall.Stepto(47832,-26837,-4818,10,10,3000);
-		gcall.FindThenKill(0,300,modeNormal | modePickup);
-		gcall.Stepto(48224,-26502,-4818,10,10,3000);
-		gcall.FindThenKill(0,300,modeNormal | modePickup);
-		gcall.Stepto(48733,-26449,-4818,10,10,3000);
-		gcall.FindThenKill(0,300,modeNormal | modePickup);
-		gcall.Stepto(49140,-26806,-4818,10,10,3000);
-		gcall.FindThenKill(0,300,modeNormal | modePickup);
-		gcall.Stepto(49167,-27362,-4818,10,10,3000);
-		gcall.FindThenKill(0,300,modeNormal | modePickup);
-		gcall.Stepto(48815,-27746,-4818,10,10,3000);
-		gcall.FindThenKill(0,300,modeNormal | modePickup);
-	}
-	
-	
-	
+    while(1)
+    {
+        gcall.Stepto(47820, -27420, -4818, 10, 10, 3000);
+        gcall.FindThenKill(0, 300, modeNormal | modePickup);
+        gcall.Stepto(47832, -26837, -4818, 10, 10, 3000);
+        gcall.FindThenKill(0, 300, modeNormal | modePickup);
+        gcall.Stepto(48224, -26502, -4818, 10, 10, 3000);
+        gcall.FindThenKill(0, 300, modeNormal | modePickup);
+        gcall.Stepto(48733, -26449, -4818, 10, 10, 3000);
+        gcall.FindThenKill(0, 300, modeNormal | modePickup);
+        gcall.Stepto(49140, -26806, -4818, 10, 10, 3000);
+        gcall.FindThenKill(0, 300, modeNormal | modePickup);
+        gcall.Stepto(49167, -27362, -4818, 10, 10, 3000);
+        gcall.FindThenKill(0, 300, modeNormal | modePickup);
+        gcall.Stepto(48815, -27746, -4818, 10, 10, 3000);
+        gcall.FindThenKill(0, 300, modeNormal | modePickup);
+    }
+
+
+
 }
 
 void CDataDlg::OnHookAcceptquest()
@@ -1416,88 +1418,98 @@ void CDataDlg::OnUpdateHookstrike(CCmdUI* pCmdUI)
 
 void CDataDlg::PrintfTeaminfo()
 {
-	//获取游戏外挂功能
-	GamecallEx& gcall = *GamecallEx::GetInstance();
-	TeamVector tv;
-	gcall.GetPartyInfo(tv);
-	int size = tv.size();
-	CString strTemp;
-	for(int i = 0; i < size; i++)
-	{
-		m_ListCtrl.InsertItem(i, tv[i].name);
+    //获取游戏外挂功能
+    GamecallEx& gcall = *GamecallEx::GetInstance();
+    TeamVector tv;
+    gcall.GetPartyInfo(tv);
+    int size = tv.size();
+    CString strTemp;
+    for(int i = 0; i < size; i++)
+    {
+        m_ListCtrl.InsertItem(i, tv[i].name);
 
-		strTemp.Format(_T("%x"), tv[i].PAddress);
-		m_ListCtrl.SetItemText(i, 1, strTemp);
+        strTemp.Format(_T("%x"), tv[i].PAddress);
+        m_ListCtrl.SetItemText(i, 1, strTemp);
 
-		strTemp.Format(_T("%d"), tv[i].CurrLife);
-		m_ListCtrl.SetItemText(i, 2, strTemp);
+        strTemp.Format(_T("%d"), tv[i].CurrLife);
+        m_ListCtrl.SetItemText(i, 2, strTemp);
 
-		strTemp.Format(_T("%d"), tv[i].MaxLife);
-		m_ListCtrl.SetItemText(i, 3, strTemp);
+        strTemp.Format(_T("%d"), tv[i].MaxLife);
+        m_ListCtrl.SetItemText(i, 3, strTemp);
 
-		strTemp.Format(_T("%x"), tv[i].ID);
-		m_ListCtrl.SetItemText(i, 4, strTemp);
+        strTemp.Format(_T("%x"), tv[i].ID);
+        m_ListCtrl.SetItemText(i, 4, strTemp);
 
-		strTemp.Format(_T("%x"), tv[i].ID2);
-		m_ListCtrl.SetItemText(i, 5, strTemp);
+        strTemp.Format(_T("%x"), tv[i].ID2);
+        m_ListCtrl.SetItemText(i, 5, strTemp);
 
-		strTemp.Format(_T("%d,%d,%d"), (int)tv[i].Pos.y,(int)tv[i].Pos.x,(int)tv[i].Pos.z);
-		m_ListCtrl.SetItemText(i, 6, strTemp);
+        strTemp.Format(_T("%d,%d,%d"), (int)tv[i].Pos.y, (int)tv[i].Pos.x, (int)tv[i].Pos.z);
+        m_ListCtrl.SetItemText(i, 6, strTemp);
 
-		strTemp.Format(_T("%d"), tv[i].Angle);
-		m_ListCtrl.SetItemText(i, 7, strTemp);
+        strTemp.Format(_T("%d"), tv[i].Angle);
+        m_ListCtrl.SetItemText(i, 7, strTemp);
 
-		strTemp.Format(_T("%d"), tv[i].Range);
-		m_ListCtrl.SetItemText(i, 8, strTemp);
+        strTemp.Format(_T("%d"), tv[i].Range);
+        m_ListCtrl.SetItemText(i, 8, strTemp);
 
-		strTemp.Format(_T("%d"), tv[i].LV);
-		m_ListCtrl.SetItemText(i, 9, strTemp);
+        strTemp.Format(_T("%d"), tv[i].LV);
+        m_ListCtrl.SetItemText(i, 9, strTemp);
 
-		strTemp.Format(_T("%d"), tv[i].Channel);
-		m_ListCtrl.SetItemText(i, 10, strTemp);
+        strTemp.Format(_T("%d"), tv[i].Channel);
+        m_ListCtrl.SetItemText(i, 10, strTemp);
 
 
-	}
+    }
 }
 
 void CDataDlg::OnBnClickedFindthenkillaa()
 {
-	
+
 }
 
 void CDataDlg::OnBnClickedFindthenkill2()
 {
-	// TODO: 在此添加控件通知处理程序代码
+    // TODO: 在此添加控件通知处理程序代码
 }
 
 UINT testThread(LPVOID ll)
 {
-	CDataDlg* dlg = (CDataDlg*)ll;
-	GamecallEx& gcall = *GamecallEx::GetInstance();
-	gcall.Party_KillObject();
-	dlg->hand = INVALID_HANDLE_VALUE;
-	return 0;
+    CDataDlg* dlg = (CDataDlg*)ll;
+    GamecallEx& gcall = *GamecallEx::GetInstance();
+    gcall.Party_KillObject();
+    dlg->hand = INVALID_HANDLE_VALUE;
+    return 0;
 }
 void CDataDlg::OnBnClickedButton1()
 {
-	if (hand == INVALID_HANDLE_VALUE)
-	{
-		hand = AfxBeginThread(testThread,this)->m_hThread;
-	}
+    if(hand == INVALID_HANDLE_VALUE)
+    {
+        hand = AfxBeginThread(testThread, this)->m_hThread;
+    }
 }
 
 
 void CDataDlg::OnBnClickedButton2()
 {
-	if (hand != INVALID_HANDLE_VALUE)
-	{
-		TerminateThread(hand,0);
-		hand = INVALID_HANDLE_VALUE;
-	}
+    if(hand != INVALID_HANDLE_VALUE)
+    {
+        TerminateThread(hand, 0);
+        hand = INVALID_HANDLE_VALUE;
+    }
 }
 
-void CDataDlg::OnCalltool() 
+void CDataDlg::OnCalltool()
 {
-	CToolDlg dlg;
+    ShowWindow(SW_HIDE);
+
+    CToolDlg dlg;
     dlg.DoModal();
+
+    ShowWindow(SW_SHOW);
+}
+
+void CDataDlg::OnTimer(UINT nIDEvent)
+{
+
+    CDialog::OnTimer(nIDEvent);
 }

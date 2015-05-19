@@ -41,33 +41,16 @@ BOOL GamecallEx::HeChengWuQi_Po5(EQUITMENT_POS pos, wchar_t* name)
     }
 
 
-    //参数有, 再判断合成目标有没有已经满5
     BOOL isFull5_fu = TRUE;
-
-    //破5的武器貌似都改成蓝颜色了，并且无需强化
-    //if (_wcsicmp(fu.name,qianhun) == 0)
-    //{
-    //  isFull5_fu = TRUE;
-    //}else
-    //{
-    //  if(fu.m_PingJi == 5 &&
-    //      (fu.m_DangQianJingYanZhi == fu.m_DangQianJingYanZongZhi))
-    //  {
-    //      //已经满5
-    //      isFull5_fu = TRUE;
-    //  }
-    //}
-
-
     if(isFull5_fu)
     {
 
-        PARAM_GUANSHANGDIAN temp;
+        PARAM_2 temp;
         temp.argv1 = (DWORD)&zhu;
         temp.argv2 = (DWORD)&fu[0];
         sendcall(id_msg_HeChengWuQi_Po5, &temp);
         Sleep(2000);
-        //破5级后继续强化
+
         HeChengWuQi(pos);
     }
     else
@@ -170,7 +153,7 @@ BOOL GamecallEx::HeChengWuQi(EQUITMENT_POS pos, wchar_t* name)
             GetGoodsByEquipPos(pos, &zhu))
     {
 
-        PARAM_GUANSHANGDIAN temp;
+        PARAM_2 temp;
         temp.argv1 = (DWORD)&zhu;
         temp.argv2 = (DWORD)&fu[0];
 
@@ -227,7 +210,7 @@ BOOL GamecallEx::HeChengWuQi(EQUITMENT_POS pos)
     std::vector<_BAGSTU> AllBagItem;
     GetAllGoodsToVector(AllBagItem);
 
-    TRACE1("AllBagItem:%d", AllBagItem.size());
+
     for(DWORD i = 0; i < AllBagItem.size(); i++)
     {
 
@@ -269,7 +252,6 @@ BOOL GamecallEx::HeChengWuQi(EQUITMENT_POS pos)
         }
     }
 
-    //TRACE1("所有材料:%d",Cailiao.size());
     //使用所有材料
     for(DWORD j = 0; j < Cailiao.size(); j++)
     {
@@ -287,7 +269,7 @@ BOOL GamecallEx::HeChengWuQi(EQUITMENT_POS pos)
 
         Sleep(500);
 
-        PARAM_GUANSHANGDIAN temp;
+        PARAM_2 temp;
         temp.argv1 = (DWORD)&goods;
         temp.argv2 = (DWORD)&Cailiao[j];
 
@@ -451,9 +433,7 @@ void GamecallEx::BuyItem(DWORD nums, DWORD index, wchar_t* npcname, BOOL bClose)
 //TODO:
 BOOL GamecallEx::XieZhuangBei(EQUITMENT_POS pos)
 {
-    _PARAM_JIEFENGZHUANGBEI temp;
-    temp.argv1 = (DWORD)pos;
-    sendcall(id_msg_XieZhuangBei, &temp);
+    sendcall(id_msg_XieZhuangBei, (LPVOID)pos);
     //修理
     _BAGSTU stu;
     if(GetGoodsByEquipPos(WUQI, &stu) == FALSE)
@@ -530,7 +510,7 @@ void GamecallEx::Shunyi(TCHAR* szLujing)
         }
 
         //发送这16384字节
-        PARAM_GUANSHANGDIAN temp;
+        PARAM_2 temp;
         temp.argv1 = (DWORD)Oribuff;
         temp.argv2 = 0xee;
         sendcall(id_msg_ZOULUSHUNYI, &temp);
@@ -541,15 +521,6 @@ void GamecallEx::Shunyi(TCHAR* szLujing)
     fclose(file);
 }
 
-
-void GamecallEx::kill_PickupOnce()
-{
-    //杀完捡起掉落, 此时的范围为了更可靠写改成x2
-    //if(GetRangeMonsterCount(200) == 0){
-    //TRACE(_T("范围无人, 开始捡东西"));
-    Pickup(0, 170);
-    //}
-}
 
 BOOL GamecallEx::kill_PickupBody()
 {
@@ -710,7 +681,7 @@ startKiLL:
         if(mode & modePickupOnce)
         {
             TRACE(_T("执行modePickupOnce"));
-            kill_PickupOnce();
+            Pickup(0, 170);
         }
 
 
@@ -803,10 +774,8 @@ void GamecallEx::DeliverQuests(DWORD id, DWORD step, wchar_t* name, DWORD questt
         npcid2 = Node->id2;
     }
 
-    //取任务面板地址, 测试不用这个地址
-    //DWORD dwUIAddr;
-    //GetUIAddrByName(GetUIBinTreeBaseAddr(), L"TalkProgressMissionPanel", &dwUIAddr);
-    PARAM_DELIVERQUEST temp;
+
+    PARAM_8 temp;
     temp.ff = ff;
     temp.id = id;
     temp.mianban = 0;
@@ -825,7 +794,7 @@ void GamecallEx::DeliverQuests(DWORD id, DWORD step, wchar_t* name, DWORD questt
 //参数4: 任务的类型, 通常是 0 1 2 3 这几个值
 void GamecallEx::DeliverQuests(DWORD id, DWORD step, DWORD npcid1, DWORD npcid2, DWORD questtype, DWORD ff, DWORD unknow)
 {
-    PARAM_DELIVERQUEST temp;
+    PARAM_8 temp;
     temp.ff = ff;
     temp.id = id;
     temp.mianban = 0;
@@ -953,7 +922,7 @@ BOOL GamecallEx::PickupSpecTypeTask(DWORD range, DWORD type, wchar_t* name, BOOL
                 fPosition fpos;
                 sPosition spos;
                 GetObjectPos2_0x90(RangeObject[i]->ObjAddress, &spos);
-                fpos = ShortPosToFloatPos(spos);
+                ShortPosToFloatPos(spos, fpos);
                 Stepto(fpos.y, fpos.x, fpos.z, 20, 10, range + 100);
             }
 
@@ -1346,7 +1315,7 @@ BOOL GamecallEx::_CityConvey(DWORD cityid)
 //NPC接任务
 void GamecallEx::NPCJieRenWu(DWORD canshu1, DWORD canshu2, DWORD canshu3, DWORD canshu4, DWORD canshu5)
 {
-    PARAM_JIEFENGZHUANGBEI temp;
+    PARAM_5 temp;
     temp.argv1 = canshu1;
     temp.argv2 = canshu2;
     temp.argv3 = canshu3;
@@ -1378,7 +1347,7 @@ void GamecallEx::NPCJieRenWu(wchar_t* name, DWORD canshu3, DWORD canshu4, DWORD 
         npcid1 = Node->id;
         npcid2 = Node->id2;
     }
-    PARAM_JIEFENGZHUANGBEI temp;
+    PARAM_5 temp;
     temp.argv1 = npcid1;
     temp.argv2 = npcid2;
     temp.argv3 = canshu3;
@@ -1524,7 +1493,7 @@ void GamecallEx::JieFengHezi(wchar_t* HeZiname, UCHAR keytype, wchar_t* Keyname,
     value <<= 16;
     value += package;
 
-    PARAM_JIEFENGZHUANGBEI temp;
+    PARAM_7 temp;
     temp.argv1 = value;
     temp.argv2 = 0;
     temp.argv3 = 1;
@@ -1643,7 +1612,7 @@ void GamecallEx::FollowNpc(wchar_t* name, DWORD range)
 
 void GamecallEx::XieBaoShi(DWORD pos)
 {
-    PARAM_GETUIADDRBYNAME temp;
+    PARAM_3 temp;
     temp.argv1 = pos;
     temp.argv2 = 0;
     temp.argv3 = 0x10001;
@@ -1667,7 +1636,7 @@ void GamecallEx::JiaBaoShi(DWORD pos, wchar_t* name)
         value <<= 16;
         value += package;
 
-        PARAM_JIEFENGZHUANGBEI temp;
+        PARAM_5 temp;
         temp.argv1 = pos;
         temp.argv2 = 0;
         temp.argv3 = value;
@@ -1760,7 +1729,7 @@ void GamecallEx::SellItem(wchar_t* name, wchar_t* npcName, BOOL bClose)
     item[0].m_Num = (item[0].m_Num == 0 ? 1 : item[0].m_Num);
 
 
-    PARAM_GUANSHANGDIAN temp;
+    PARAM_2 temp;
     temp.argv1 = (DWORD)&item[0];
     temp.argv2 = dwUiAddr;
     sendcall(id_msg_SellItem, &temp);
@@ -1970,10 +1939,10 @@ void GamecallEx::SellItemByConfig(wchar_t* name)
         {
             if(SellItem[i] == AllBag[i].name)
             {
-                PARAM_GUANSHANGDIAN temp;
+                PARAM_2 temp;
                 temp.argv1 = (DWORD)&AllBag[i];
                 temp.argv2 = dwUiAddr;
-                //TRACE(_T("执行卖"));
+
                 sendcall(id_msg_SellItem, &temp);
 
                 Sleep(1000);
@@ -2161,7 +2130,7 @@ int GamecallEx::KillObject(DWORD range, ObjectNode* pNode, DWORD mode, DWORD can
 {
     //记录当下状态来判断目标是否死亡或者杀怪超时
     DWORD oriTime = GetTickCount();
-    DWORD tarHealth = GetType4HP(pNode->ObjAddress);;
+    DWORD tarHealth = GetObjectHP(pNode->ObjAddress);;
     DWORD begitime = 0;
     DWORD endtime = 0;
     DWORD rs = 0;
@@ -2186,7 +2155,7 @@ int GamecallEx::KillObject(DWORD range, ObjectNode* pNode, DWORD mode, DWORD can
 
 
 
-        if(GetType4HP(pNode->ObjAddress) == -1 || GetType4HP(pNode->ObjAddress) == 0)
+        if(GetObjectHP(pNode->ObjAddress) == -1 || GetObjectHP(pNode->ObjAddress) == 0)
         {
             TRACE(_T("%s: 血量判断怪死了"), FUNCNAME);
             return RESULT_KILL_OK;
@@ -2262,7 +2231,7 @@ int GamecallEx::KillObject(DWORD range, ObjectNode* pNode, DWORD mode, DWORD can
                 else
                 {
                     //sendcall(id_msg_attack, (LPVOID)0x5dc1);
-					Attack(0x5dc1);
+                    Attack(0x5dc1);
                 }
             }
             else
@@ -2280,7 +2249,7 @@ int GamecallEx::KillObject(DWORD range, ObjectNode* pNode, DWORD mode, DWORD can
                         else
                         {
                             //sendcall(id_msg_attack, (LPVOID)0x5dc1);
-							Attack(0x5dc1);
+                            Attack(0x5dc1);
                         }
                     }
                     else
@@ -2288,22 +2257,22 @@ int GamecallEx::KillObject(DWORD range, ObjectNode* pNode, DWORD mode, DWORD can
                         if(GetPlayerMana() >= 60)
                         {
                             sendcall(id_msg_attack, (LPVOID)0x5dde);
-							//Attack(0x5dde);
+                            //Attack(0x5dde);
                         }
-                            sendcall(id_msg_attack, (LPVOID)0x5dc1);
-							//Attack(0x5dc1);
-                        
+                        sendcall(id_msg_attack, (LPVOID)0x5dc1);
+                        //Attack(0x5dc1);
+
                     }
                 }
                 else
                 {
-					if(GetPlayerMana() >= 60)
-					{
-						sendcall(id_msg_attack, (LPVOID)0x5dde);
-						//Attack(0x5dde);
-					}
-					sendcall(id_msg_attack, (LPVOID)0x5dc1);
-					//Attack(0x5dc1);
+                    if(GetPlayerMana() >= 60)
+                    {
+                        sendcall(id_msg_attack, (LPVOID)0x5dde);
+                        //Attack(0x5dde);
+                    }
+                    sendcall(id_msg_attack, (LPVOID)0x5dc1);
+                    //Attack(0x5dc1);
                 }
             }
 
@@ -2311,11 +2280,11 @@ int GamecallEx::KillObject(DWORD range, ObjectNode* pNode, DWORD mode, DWORD can
             DWORD curTime = GetTickCount();
             if((curTime - oriTime) >= 5000)
             {
-                DWORD curHealth = GetType4HP(pNode->ObjAddress);
+                DWORD curHealth = GetObjectHP(pNode->ObjAddress);
                 if(curHealth < tarHealth)
                 {
                     oriTime = GetTickCount();
-                    tarHealth = GetType4HP(pNode->ObjAddress);
+                    tarHealth = GetObjectHP(pNode->ObjAddress);
 
                 }
                 else
@@ -2364,7 +2333,7 @@ void GamecallEx::CityConvey(DWORD cityid)
     }
 }
 
-void GamecallEx::CuncangkuByConfig(wchar_t* name)
+void GamecallEx::CuncangkuByConfig()
 {
 
     //获取配置对象
@@ -2377,29 +2346,21 @@ void GamecallEx::CuncangkuByConfig(wchar_t* name)
     GetAllGoodsToVector(AllBag);
 
 
-    DWORD dwUiAddr = 0;
-    if(OpenShangDian(name, &dwUiAddr) == FALSE) return;
-
-
     for(int j = 0; j < BankItem.size(); j++)
     {
 
         for(int i = 0; i < AllBag.size(); i++)
         {
 
-            if(BankItem[i] == AllBag[i].name)
+            if(BankItem[j] == AllBag[i].name)
             {
-                PARAM_GUANSHANGDIAN temp;
-                temp.argv1 = (DWORD)&AllBag[i];
-                temp.argv2 = dwUiAddr;
-                sendcall(id_msg_CunCangku, &temp);
-
+                sendcall(id_msg_CunCangku, &AllBag[i]);
                 Sleep(1000);
             }
         }
     }
 
-    CloseShangDian();
+
 }
 
 
@@ -2407,11 +2368,6 @@ void GamecallEx::CuncangkuByConfig(wchar_t* name)
 BOOL GamecallEx::HeChengWuQi_Po10(wchar_t* zname, wchar_t* name)
 {
     BagVector zhu;
-    //if(GetGoodsByEquipPos(pos, &zhu) == FALSE)
-    //{
-    //    TRACE(_T("装备位置没有物品"));
-    //    return FALSE;
-    //}
     if(GetGoodsFromBagByName(zname, zhu) == FALSE)
     {
         TRACE(_T("背包里没有对应的主武器"));
@@ -2429,20 +2385,6 @@ BOOL GamecallEx::HeChengWuQi_Po10(wchar_t* zname, wchar_t* name)
 
     //参数有, 再判断合成目标有没有已经满5
     BOOL isFull5_fu = TRUE;
-    //if (_wcsicmp(fu.name,qianhun) == 0)
-    //{
-    //  isFull5_fu = TRUE;
-    //}else
-    //{
-    //  if(fu.m_PingJi == 5 &&
-    //      (fu.m_DangQianJingYanZhi == fu.m_DangQianJingYanZongZhi))
-    //  {
-    //      //已经满5
-    //      isFull5_fu = TRUE;
-    //  }
-    //}
-    TRACE2("zhu:%x,fu:%x", zhu[0].m_Info, fu[0].m_Info);
-
     DWORD tempaddress = HuoQuWuQiPo10CanShu(zhu[0].m_Base);
     if(tempaddress == -1)
     {
@@ -2453,24 +2395,15 @@ BOOL GamecallEx::HeChengWuQi_Po10(wchar_t* zname, wchar_t* name)
     if(isFull5_fu)
     {
 
-        PARAM_GETUIADDRBYNAME temp;
+        PARAM_3 temp;
         temp.argv1 = (DWORD)&zhu;
         temp.argv2 = (DWORD)&fu;
         temp.argv3 = tempaddress;
         sendcall(id_msg_HeChengWuQi_Po10, &temp);
         Sleep(1000);
-        //破5级后继续强化
-        //HeChengWuQi(pos);
     }
     else
     {
-        /*TRACE(_T("材料武器还未满5级"));
-        TRACE(_T("开始使用武魂合成"));
-        if(HeChengWuQiByHun(pos))
-        {
-            return HeChengWuQi_Po10(pos, name);
-        }
-        TRACE(_T("合成完毕, 依然不满5"));*/
         return FALSE;
     }
 
@@ -2505,7 +2438,7 @@ void GamecallEx::GoodsQuests(DWORD id, DWORD step, wchar_t* name, DWORD questtyp
     //取任务面板地址, 测试不用这个地址
     //DWORD dwUIAddr;
     //GetUIAddrByName(GetUIBinTreeBaseAddr(), L"TalkProgressMissionPanel", &dwUIAddr);
-    PARAM_DELIVERQUEST temp;
+    PARAM_8 temp;
     temp.ff = ff;
     temp.id = id;
     temp.mianban = 0;
@@ -2783,154 +2716,82 @@ UINT GamecallEx::KeepAliveThread(LPVOID pParam)
 
 
 //应用配置文件的杀怪设置
-//一些是否怪物的判断放到这里是要让遍历范围怪物尽可能多的遍历出来, 然后
-//让配置文件去过滤, 不然就需要多写一个范围所有目标过滤. 因为有配置文件
-//中存在但是原本范围过滤中不存在的情况.
-//这个函数写的也挺蛋疼的, TODO一下, 有空改下逻辑
-BOOL GamecallEx::Kill_ApplyConfig(std::vector<ObjectNode*>& ObjectVec)
+BOOL GamecallEx::Kill_ApplyConfig(ObjectVector& ObjectVec)
 {
-    try
+
+    GameConfig* pConfig = GameConfig::GetInstance();
+    ItemVector& DontKill = pConfig->m_DontKill;
+    ItemVector& FirstKill = pConfig->m_FirstKill;
+
+
+    ObjectNode* pNode;
+    wchar_t* objName = NULL;
+
+    for(ObjectVector::iterator it = ObjectVec.begin(); it != ObjectVec.end();)
     {
-
-        GameConfig* pConfig = GameConfig::GetInstance();
-        ItemVector& DontKill = pConfig->m_DontKill;
-        ItemVector& FirstKill = pConfig->m_FirstKill;
-
-        ObjectVector::iterator it;
-        ObjectNode* pNode;
-
-
-        for(it = ObjectVec.begin(); it != ObjectVec.end();)
+        //如果名字相同, 放到容器起始
+        pNode = *it;
+        objName = GetObjectName(pNode->ObjAddress);
+        if(objName == NULL)
         {
-            //如果名字相同, 放到容器起始
-            pNode = *it;
-            wchar_t* objName = GetObjectName(pNode->ObjAddress);
+            it = ObjectVec.erase(it);
+        }
+        else
+        {
 
-            if(objName == NULL)
+            if(!isCustomKill_HaveName(objName))
             {
-                it = ObjectVec.erase(it);
-                continue;
-            }
-            else
-            {
-                //应用全局之前先判断自定义
-                if(isCustomKill_HaveName(objName) == FALSE)
+
+                if(isCanKill(pNode) == FALSE)
                 {
-
-                    //要是即不可杀配置文件又没有指定要杀就删掉这个元素
-                    if(isCanKill(pNode) == FALSE &&
-                            pConfig->isHave(DontKill, objName) == FALSE)
+                    if(pConfig->isHave(DontKill, objName) == FALSE)
                     {
                         it = ObjectVec.erase(it);
-                        continue;
                     }
+
+                    if(pConfig->isHave(FirstKill, objName))
+                    {
+                        //开头队列的迭代器
+                        ObjectVector::iterator b = ObjectVec.begin();
+                        ObjectNode* pB = *b;
+    
+                        *b = *it;
+                        *it = pB;
+                    }
+
                 }
-            }
-            it++;
-        }
-
-        for(it = ObjectVec.begin(); it != ObjectVec.end();)
-        {
-
-            ObjectNode* pNode = *it;
-            wchar_t* objName = GetObjectName(pNode->ObjAddress);
-
-            if(objName == NULL)
-            {
-                it = ObjectVec.erase(it);
-                continue;
-            }
-            else
-            {
-                if(pConfig->isHave(FirstKill, objName))
-                {
-                    ObjectNode* pBack = pNode;
-                    //TRACE1("%d",__LINE__);
-                    it = ObjectVec.erase(it);
-                    //TRACE1("%d",__LINE__);
-                    it = ObjectVec.insert(ObjectVec.begin(), pBack);
-                    continue;
-                }
-
-            }
-
-            it++;
-        }
-
-        for(it = ObjectVec.begin(); it != ObjectVec.end();)
-        {
-            ObjectNode* pNode = *it;
-            wchar_t* objName = GetObjectName(pNode->ObjAddress);
-
-            if(objName == NULL)
-            {
-                it = ObjectVec.erase(it);
-                continue;
             }
             else
             {
 
-                //应用全局之前先判断自定义
-                if(isCustomKill_HaveName(objName) == FALSE)
+                for(int i = 0; i < CustomName.size(); i++)
                 {
-                    if(pConfig->isHave(DontKill, objName))
-                    {
-                        it = ObjectVec.erase(it);
-                        continue;
-                    }
 
+                    //从自定义的列表中匹配
+                    //根据名字来匹配, 匹配到一个
+                    if(wcscmp(CustomName[i].name, objName) == 0)
+                    {
+                        //开始根据设置的类型分别处理
+                        if(CustomName[i].type == DONTKILL)
+                        {
+                            it = ObjectVec.erase(it);
+                        }
+                        else if(CustomName[i].type == KILLFIRST)
+                        {
+                            ObjectNode* pBack = pNode;
+
+                            it = ObjectVec.erase(it);
+                            it = ObjectVec.insert(ObjectVec.begin(), pBack);
+                        }
+                    }
                 }
 
-            }
 
-
-            it++;
-        }
-
-
-        for(int i = 0; i < CustomName.size(); i++)
-        {
-            for(it = ObjectVec.begin(); it != ObjectVec.end();)
-            {
-
-                ObjectNode* pNode = *it;
-                wchar_t* objName = GetObjectName(pNode->ObjAddress);
-
-
-                //从自定义的列表中匹配
-
-
-                //根据名字来匹配, 匹配到一个
-                if(wcscmp(CustomName[i].name, objName) == 0)
-                {
-                    //开始根据设置的类型分别处理
-                    if(CustomName[i].type == DONTKILL)
-                    {
-                        it = ObjectVec.erase(it);
-                        continue;
-                    }
-                    /*else if(CustomName[i].type == ALWAYSKILL)
-                    {
-
-                    }*/
-                    else if(CustomName[i].type == KILLFIRST)
-                    {
-                        ObjectNode* pBack = pNode;
-
-                        it = ObjectVec.erase(it);
-                        it = ObjectVec.insert(ObjectVec.begin(), pBack);
-                        continue;
-                    }
-                }
-                it++;
             }
         }
+
+        it++;
     }
-    catch(...)
-    {
-        TRACE(_T("应用配置文件错误"));
-    }
-
 
     return TRUE;
 }
@@ -3049,33 +2910,33 @@ void GamecallEx::SteptoBack(ObjectNode* pObj)
 
 wchar_t* GamecallEx::SteptoParty()
 {
-	TeamVector team;
-	GetPartyInfo(team);
-	Stepto(team[0].Pos.y,team[0].Pos.x,team[0].Pos.z,10,15,1000,TRUE);
+    TeamVector team;
+    GetPartyInfo(team);
+    Stepto(team[0].Pos.y, team[0].Pos.x, team[0].Pos.z, 10, 15, 1000, TRUE);
 
-	return team[0].name;
+    return team[0].name;
 }
 
 void GamecallEx::Party_KillObject()
 {
-	wchar_t * name = NULL;
-	ObjectNode* Party_Node;
-	ObjectNode* Monster;
-	DWORD s_Id = NULL;
-	//ZeroMemory()
-	
-	while (1)
-	{
-		name = SteptoParty();
-		Party_Node = GetObjectByName(name,3000);//玩家的二叉
-		if (IsObjectFightStatus(Party_Node->ObjAddress))
-		{
-			if (IsPlayerSkillStatus(Party_Node->ObjAddress))
-			{
-				s_Id = GetObjectTargetId(Party_Node->ObjAddress);
-				Monster = GetObjectById(s_Id);
-				KillObject(3000,Monster,modeNormal | modeAoe,155);
-			}
-		}
-	}
+    wchar_t* name = NULL;
+    ObjectNode* Party_Node;
+    ObjectNode* Monster;
+    DWORD s_Id = NULL;
+    //ZeroMemory()
+
+    while(1)
+    {
+        name = SteptoParty();
+        Party_Node = GetObjectByName(name, 3000); //玩家的二叉
+        if(IsObjectFightStatus(Party_Node->ObjAddress))
+        {
+            if(IsPlayerSkillStatus(Party_Node->ObjAddress))
+            {
+                s_Id = GetObjectTargetId(Party_Node->ObjAddress);
+                Monster = GetObjectById(s_Id);
+                KillObject(3000, Monster, modeNormal | modeAoe, 155);
+            }
+        }
+    }
 }

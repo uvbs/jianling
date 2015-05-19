@@ -12,8 +12,6 @@
     #define new DEBUG_NEW
 #endif
 
-using namespace Gdiplus;
-
 
 //Î¨Ò»ÊµÀý
 CJLkitApp   theApp;

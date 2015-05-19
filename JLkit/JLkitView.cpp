@@ -91,7 +91,12 @@ CJLkitView::~CJLkitView()
 
 BOOL CJLkitView::PreCreateWindow(CREATESTRUCT& cs)
 {
-    return CListView::PreCreateWindow(cs);
+    if(!CListView::PreCreateWindow(cs))
+        return FALSE;
+
+    cs.dwExStyle &= ~WS_EX_CLIENTEDGE;
+    cs.style |= WS_BORDER;
+    return TRUE;
 }
 
 

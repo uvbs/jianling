@@ -159,19 +159,18 @@ DWORD Gamecall::call(DWORD id, LPVOID pParam)
         break;
     case id_msg_XieZhuangBei:
         {
-            PARAM_JIEFENGZHUANGBEI* temp = (PARAM_JIEFENGZHUANGBEI*)pParam;
-            _XieZhuangBei(temp->argv1);
+            _XieZhuangBei((DWORD)pParam);
         }
         break;
     case id_msg_IsCanShu:
         {
-            PARAM_JIEFENGZHUANGBEI* temp = (PARAM_JIEFENGZHUANGBEI*)pParam;
+            PARAM_2* temp = (PARAM_2*)pParam;
             return (DWORD)_IsCanShu(temp->argv1, temp->argv2);
         }
         break;
     case id_msg_NPCJieRenWu:
         {
-            PARAM_JIEFENGZHUANGBEI* temp = (PARAM_JIEFENGZHUANGBEI*)pParam;
+            PARAM_5* temp = (PARAM_5*)pParam;
             _NPCJieRenWu(temp->argv1, temp->argv2, temp->argv3, temp->argv4, temp->argv5);
         }
         break;
@@ -244,14 +243,14 @@ DWORD Gamecall::call(DWORD id, LPVOID pParam)
         break;
     case id_msg_GetRangeObjectToVector:
         {
-            PARAM_GETUIADDRBYNAME* temp = (PARAM_GETUIADDRBYNAME*)pParam;
+            PARAM_3* temp = (PARAM_3*)pParam;
             _GetRangeObjectToVector((ObjectNode*)temp->argv1, temp->argv2, *(ObjectVector*)temp->argv3);
         }
         break;
 
     case id_msg_GetUItoVector:
         {
-            PARAM_GUANSHANGDIAN* temp = (PARAM_GUANSHANGDIAN*)pParam;
+            PARAM_2* temp = (PARAM_2*)pParam;
             _GetUItoVector((Tree*)temp->argv1, *(std::vector<Tree*>*)temp->argv2);
         }
         break;
@@ -272,28 +271,28 @@ DWORD Gamecall::call(DWORD id, LPVOID pParam)
         }
     case id_msg_GouMaiWuPing:
         {
-            PARAM_GETUIADDRBYNAME* temp = (PARAM_GETUIADDRBYNAME*)pParam;
+            PARAM_3* temp = (PARAM_3*)pParam;
             GouMaiWuPing(temp->argv1, temp->argv2, temp->argv3);
         }
         break;
 
     case id_msg_XieBaoShi:
         {
-            PARAM_GETUIADDRBYNAME* temp = (PARAM_GETUIADDRBYNAME*)pParam;
+            PARAM_3* temp = (PARAM_3*)pParam;
             XieBaoShi(temp->argv1, temp->argv2, temp->argv3);
         }
         break;
 
     case id_msg_JiaBaoShi:
         {
-            PARAM_JIEFENGZHUANGBEI* temp = (PARAM_JIEFENGZHUANGBEI*)pParam;
+            PARAM_5* temp = (PARAM_5*)pParam;
             JiaBaoShi(temp->argv1, temp->argv2, temp->argv3, temp->argv4, temp->argv5);
         }
         break;
 
     case id_msg_JieFengZhuangBei:
         {
-            PARAM_JIEFENGZHUANGBEI* temp = (PARAM_JIEFENGZHUANGBEI*)pParam;
+            PARAM_7* temp = (PARAM_7*)pParam;
             JieFengZhuangBei(
                 temp->argv1,
                 temp->argv2,
@@ -327,7 +326,7 @@ DWORD Gamecall::call(DWORD id, LPVOID pParam)
 
     case id_msg_SellItem:
         {
-            _PARAM_GUANSHANGDIAN* temp = (_PARAM_GUANSHANGDIAN*)pParam;
+            PARAM_2* temp = (PARAM_2*)pParam;
             SellItem(*(_BAGSTU*)temp->argv1, temp->argv2);
         }
         break;
@@ -369,7 +368,7 @@ DWORD Gamecall::call(DWORD id, LPVOID pParam)
         break;
     case id_msg_OpenQuestItem:
         {
-            PARAM_GUANSHANGDIAN* temp = (PARAM_GUANSHANGDIAN*)pParam;
+            PARAM_2* temp = (PARAM_2*)pParam;
             OpenQuestItem(temp->argv1, temp->argv2);
         }
         break;
@@ -377,7 +376,7 @@ DWORD Gamecall::call(DWORD id, LPVOID pParam)
 
     case id_msg_ZOULUSHUNYI:
         {
-            PARAM_GUANSHANGDIAN* temp = (PARAM_GUANSHANGDIAN*)pParam;
+            PARAM_2* temp = (PARAM_2*)pParam;
             ZOULUSHUNYI((DWORD*)temp->argv1, temp->argv2);
         }
         break;
@@ -386,11 +385,6 @@ DWORD Gamecall::call(DWORD id, LPVOID pParam)
     case id_msg_GatTaskName:
         {
             return (DWORD)GatTaskName((DWORD)pParam);
-        }
-
-    case id_msg_GatBagGoodrName:
-        {
-            return (DWORD)GatBagGoodrName((DWORD)pParam);
         }
 
     case id_msg_DunDi:
@@ -413,13 +407,13 @@ DWORD Gamecall::call(DWORD id, LPVOID pParam)
         break;
     case id_msg_PickupDeadbody:
         {
-            PARAM_GUANSHANGDIAN* temp = (PARAM_GUANSHANGDIAN*)pParam;
+            PARAM_2* temp = (PARAM_2*)pParam;
             PickupDeadbody(temp->argv1, temp->argv2);
         }
         break;
     case id_msg_HeChengWuQi_Po10:
         {
-            PARAM_GETUIADDRBYNAME* temp = (PARAM_GETUIADDRBYNAME*)pParam;
+            PARAM_3* temp = (PARAM_3*)pParam;
             HeChengWuQi_Po10(*(_BAGSTU*)temp->argv1, *(_BAGSTU*)temp->argv2, temp->argv3);
         }
         break;
@@ -434,7 +428,7 @@ DWORD Gamecall::call(DWORD id, LPVOID pParam)
 
     case id_msg_DeliverQuests:
         {
-            PARAM_DELIVERQUEST* temp = (PARAM_DELIVERQUEST*)pParam;
+            PARAM_8* temp = (PARAM_8*)pParam;
             DeliverQuests(
                 temp->id,
                 temp->step,
@@ -492,7 +486,7 @@ DWORD Gamecall::call(DWORD id, LPVOID pParam)
         break;
     case id_msg_DaKaiDuiHuaKuang:
         {
-            PARAM_GUANSHANGDIAN* temp = (PARAM_GUANSHANGDIAN*)pParam;
+            PARAM_2* temp = (PARAM_2*)pParam;
             DaKaiDuiHuaKuang(temp->argv1, temp->argv2);
         }
         break;
@@ -510,14 +504,14 @@ DWORD Gamecall::call(DWORD id, LPVOID pParam)
 
     case id_msg_HeChengWuQi_Po5:
         {
-            PARAM_GUANSHANGDIAN* temp = (PARAM_GUANSHANGDIAN*)pParam;
+            PARAM_2* temp = (PARAM_2*)pParam;
             HeChengWuQi_Po5(*(_BAGSTU*)temp->argv1, *(_BAGSTU*)temp->argv2);
         }
         break;
 
     case id_msg_HeChengWuQi:
         {
-            PARAM_GUANSHANGDIAN* temp = (PARAM_GUANSHANGDIAN*)pParam;
+            PARAM_2* temp = (PARAM_2*)pParam;
             HeChengWuQi(*(_BAGSTU*)temp->argv1, *(_BAGSTU*)temp->argv2);
         }
         break;
@@ -540,8 +534,7 @@ DWORD Gamecall::call(DWORD id, LPVOID pParam)
 
     case id_msg_CunCangku:
         {
-            PARAM_GUANSHANGDIAN* temp = (PARAM_GUANSHANGDIAN*)pParam;
-            CunCangku(*(_BAGSTU*)temp->argv1);
+            CunCangku(*(_BAGSTU*)pParam);
         }
         break;
     }
@@ -822,23 +815,31 @@ BOOL Gamecall::Init()
 }
 
 //ÕûÀí±³°üui
-BOOL Gamecall::SortBag()
+DWORD Gamecall::SortBag()
 {
-    __try
-    {
-        UIOperator uiOp;
-        DWORD UIAddr = 0;
-        GetUIAddrByName(L"Inventory2Panel", &UIAddr);
+    DWORD dwRet = 0;
 
-        uiOp.pAddr = (DWORD*)UIAddr;
-        uiOp.c5 = *(DWORD*)(UIAddr + bag_refresh_c5);
-        sendcall(id_msg_clickui, &uiOp);
-
-        return TRUE;
-    }
-    __except(1)
+    __asm
     {
-        TRACE(FUNCNAME);
+
+        mov  eax, Offset_Game_Base
+        mov  eax, dword ptr ds: [eax]
+        mov  eax, dword ptr ds: [eax + Offset_Game_Offset]
+        mov  eax, dword ptr ds: [eax + Offset_Role_Offset]
+        mov  eax, dword ptr ds: [eax + Offset_Item_Offset]
+        test eax, eax
+        je   fun_exit
+
+        push 0
+        push 0
+        push 2
+        push eax
+        mov eax, FUNC_PACKAGEARRANGE
+        call eax;
+
+
+        fun_exit:
+        mov  dwRet, eax
     }
 
     return FALSE;
@@ -848,7 +849,6 @@ BOOL Gamecall::SortBag()
 //²ÎÊý1: ±³°üÖÐµÄ¸ñ×ÓÊý
 void Gamecall::CunCangku(_BAGSTU& goods)
 {
-    TRACE1("¸ñ×Ó:%d", goods.m_Info);
     int value = goods.m_Info;
     value <<= 16;
     value += package;
@@ -1037,7 +1037,7 @@ ObjectNode* Gamecall::GetObjectBinTreeBaseAddr()
         TRACE(FUNCNAME);
     }
 
-    /*È¡µÃÁË, ±éÀúµ½*/
+
     return Note;
 }
 
@@ -1116,7 +1116,7 @@ DWORD Gamecall::GetPlayerDataAddr()
 
 
 //È¡µÃÍæ¼Ò×ø±ê
-BOOL Gamecall::GetPlayerPos(fPosition* PlayerPosition)
+BOOL Gamecall::GetPlayerPos(fPosition* fpos)
 {
     DWORD PlayerInfo = GetPlayerDataAddr();
 
@@ -1131,16 +1131,16 @@ BOOL Gamecall::GetPlayerPos(fPosition* PlayerPosition)
             mov edx, eax; /*±£´æÒ»ÏÂ*/
             mov eax, [edx];
 
-            mov ebx, PlayerPosition;
-            mov[ebx]PlayerPosition.x, eax;   //0x3ce4
+            mov ebx, fpos;
+            mov[ebx]fpos.x, eax;   //0x3ce4
 
             add edx, 4;
             mov eax, [edx];
-            mov[ebx]PlayerPosition.y, eax;  //0x3ce8
+            mov[ebx]fpos.y, eax;  //0x3ce8
 
             add edx, 4;
             mov eax, [edx];
-            mov[ebx]PlayerPosition.z, eax; //0x3cec
+            mov[ebx]fpos.z, eax; //0x3cec
         }
 
         return TRUE;
@@ -1157,7 +1157,7 @@ BOOL Gamecall::GetPlayerPos(fPosition* PlayerPosition)
 
 
 //È¡µÃÍæ¼Ò×ø±ê
-BOOL Gamecall::GetPlayerPos2(sPosition* PlayerPosition)
+BOOL Gamecall::GetPlayerPos2(sPosition* spos)
 {
     DWORD PlayerInfo = GetPlayerDataAddr();
 
@@ -1169,14 +1169,14 @@ BOOL Gamecall::GetPlayerPos2(sPosition* PlayerPosition)
             mov edx, PlayerInfo;
             mov eax, [edx + player_pos2_x];
 
-            mov ebx, PlayerPosition;
-            mov[ebx]PlayerPosition.x, ax;
+            mov ebx, spos;
+            mov[ebx]spos.x, ax;
 
             mov eax, [edx + player_pos2_y + 2];
-            mov[ebx]PlayerPosition.y, ax;
+            mov[ebx]spos.y, ax;
 
             mov eax, [edx + player_pos2_y + 4];
-            mov[ebx]PlayerPosition.z, ax;
+            mov[ebx]spos.z, ax;
         }
 
         return TRUE;
@@ -1346,31 +1346,6 @@ DWORD Gamecall::GetPlayerHealth()
     return Health;
 }
 
-void* Gamecall::GetStepCallAddr()
-{
-    void* pCall = NULL;
-
-    __try
-    {
-        __asm
-        {
-            mov eax, step_call_base;
-            mov eax, [eax];
-            call eax;  //×ß²½
-
-            mov edx, [eax];
-            mov ecx, eax;
-            mov eax, [edx + step_call_offset1];
-            mov pCall, eax;
-        }
-    }
-    __except(1)
-    {
-        TRACE(FUNCNAME);
-    }
-
-    return pCall;
-}
 
 //×ßÂ·
 void Gamecall::Step(float x, float y, float z)
@@ -1378,13 +1353,23 @@ void Gamecall::Step(float x, float y, float z)
 
     __try
     {
-        void* pCall = GetStepCallAddr();
         __asm
         {
-            push z;
-            push y;
-            push x;
-            call pCall;
+            mov  edi, Offset_Game_Base
+            mov  edi, [edi]
+            mov  edi, [edi+ Offset_Game_Offset]
+            mov  edi, [edi+ Offset_Role_Offset]
+            mov  ecx, [edi+ Offset_Role_Attr]
+
+            fld  z
+            sub  esp, 0xC
+            fstp [esp+ 0x8]
+            fld  y
+            fstp [esp+ 0x4]
+            fld  x
+            fstp [esp]
+            mov eax, FUNC_WALK
+            call eax;
         }
     }
     __except(1)
@@ -1400,15 +1385,9 @@ void Gamecall::Step3x(float x, float y, float z)
 
     __try
     {
-        void* pCall = GetStepCallAddr();
-        __asm
-        {
-            push z;
-            push y;
-            push x;
-            call pCall;
-        }
+
         Stepto3x();
+        Step(x, y, z);
     }
     __except(1)
     {
@@ -1456,6 +1435,7 @@ void Gamecall::Turn(int angle)
 //type = 0x90 ÌØÊâÈÎÎñÎïÆ·
 BYTE Gamecall::GetObjectType(DWORD pObjAddress)
 {
+    _ASSERTE(pObjAddress != NULL);
     DWORD Objtype = 0;
 
     __try
@@ -1490,7 +1470,7 @@ BOOL Gamecall::GetObjectPos(ObjectNode* pNode, fPosition* fpos)
     {
         sPosition spos;
         GetObjectPos_0xb(pNode->ObjAddress, &spos);
-        *fpos = ShortPosToFloatPos(spos);
+        ShortPosToFloatPos(spos, *fpos);
     }
     else if(type == 0x4)
     {
@@ -1500,7 +1480,7 @@ BOOL Gamecall::GetObjectPos(ObjectNode* pNode, fPosition* fpos)
     {
         sPosition spos;
         GetObjectPos2_0x90(pNode->ObjAddress, &spos);
-        *fpos = ShortPosToFloatPos(spos);
+        ShortPosToFloatPos(spos, *fpos);
     }
     else if(type == 1 || type == 2)
     {
@@ -1710,28 +1690,24 @@ BOOL Gamecall::GetObjectPos_0xb(DWORD pObjAddress, sPosition* spos)
     return bRet;
 }
 
-/*
-»ñµÃ¶ÔÏóµÄÃû×Ö
-²ÎÊý1: ¶ÔÏóµÄË÷Òý
-*/
+
+//»ñµÃ¶ÔÏóµÄÃû×Ö
+//²ÎÊý1: ¶ÔÏóµÄË÷Òý
 wchar_t* Gamecall::GetObjectNameByIndex(DWORD index)
 {
-    //return (wchar_t*)sendcall(id_msg_GetObjectNameByIndex, (LPVOID)index);
     return _GetObjectNameByIndex(index);
+    //return (wchar_t*)sendcall(id_msg_GetObjectNameByIndex, (LPVOID)index);
 }
 
-/*
-»ñµÃ¶ÔÏóµÄÃû×Ö
-²ÎÊý1: ¶ÔÏóµÄË÷Òý
-*/
+
+//»ñµÃ¶ÔÏóµÄÃû×Ö
+//²ÎÊý1: ¶ÔÏóµÄË÷Òý
 wchar_t* Gamecall::_GetObjectNameByIndex(DWORD index)
 {
 
-    if(index == UINT_MAX)
-        return NULL;
+    if(index == 0) return NULL;
 
-    wchar_t* name;
-
+    wchar_t* name = NULL;
     __try
     {
         __asm
@@ -1751,7 +1727,7 @@ wchar_t* Gamecall::_GetObjectNameByIndex(DWORD index)
     }
     __except(1)
     {
-        name = NULL;
+        TRACE(FUNCNAME);
     }
 
     return name;
@@ -1759,8 +1735,9 @@ wchar_t* Gamecall::_GetObjectNameByIndex(DWORD index)
 
 //»ñÈ¡¶ÔÏóµÄÑªÁ¿
 //²ÎÊý1: ¶ÔÏóµØÖ·
-DWORD Gamecall::GetType4HP(DWORD pObjAddress)
+DWORD Gamecall::GetObjectHP(DWORD pObjAddress)
 {
+    _ASSERTE(pObjAddress != NULL);
     DWORD hp;
 
     __try
@@ -2156,7 +2133,7 @@ BOOL Gamecall::OpenShangDian(wchar_t* name, DWORD* pUiAddr)
                 return FALSE;
             }
 
-            PARAM_GUANSHANGDIAN temp;
+            PARAM_2 temp;
             temp.argv1 = pNode->id;
             temp.argv2 = pNode->id2;
 
@@ -2596,7 +2573,7 @@ DWORD Gamecall::GetBagbodyInfoBase()
     return addr;
 }
 
-int Gamecall::GetGoodsYanSe(DWORD m_Adress)  //»ñÈ¡ÎïÆ·µÄÑÕÉ«
+int Gamecall::GetGoodsColor(DWORD m_Adress)  //»ñÈ¡ÎïÆ·µÄÑÕÉ«
 {
     DWORD Adress = 0;
     __try
@@ -2605,9 +2582,9 @@ int Gamecall::GetGoodsYanSe(DWORD m_Adress)  //»ñÈ¡ÎïÆ·µÄÑÕÉ«
     }
     __except(1)
     {
-        TRACE(_T("»ñÈ¡ÎïÆ·µÄµÈ¼¶´íÎó"));
-        return -1;
+        TRACE(FUNCNAME);
     }
+
     return Adress;
 }
 
@@ -2674,12 +2651,12 @@ DWORD Gamecall::GetGoodsWuQiDangQianJingYan(DWORD m_Adress)  //»ñÈ¡ÎäÆ÷µ±Ç°µÄ¾­Ñ
     return Adress;
 }
 
-DWORD Gamecall::GetGoodsIsFengYin(DWORD m_Adress)  //»ñÈ¡ÎïÆ·ÊÇ·ñ·âÓ¡
+char Gamecall::GetGoodsIsFengYin(DWORD m_Adress)  //»ñÈ¡ÎïÆ·ÊÇ·ñ·âÓ¡
 {
-    DWORD Adress = 0;
+    char Adress = 0;
     __try
     {
-        Adress = (DWORD)ReadByte(ReadDWORD(m_Adress + 0x0C) + 0x0C);
+        Adress = ReadByte(ReadDWORD(m_Adress + 0x0C) + 0x0C);
     }
     __except(1)
     {
@@ -2769,9 +2746,10 @@ BOOL Gamecall::GetAllBaGuaToVector(BagVector& BaGuaVec)
     for(DWORD i = 0; i < AllGoods.size(); i++)
     {
 
-        if(AllGoods[i].m_Info >= 8 &&
-                AllGoods[i].m_Info <= 16)
+        if(AllGoods[i].m_Info >= 8 && AllGoods[i].m_Info <= 16)
+        {
             BaGuaVec.push_back(AllGoods[i]);
+        }
     }
 
 
@@ -2793,17 +2771,6 @@ BOOL Gamecall::GetSpecBaGuaToVector(wchar_t* name, BagVector& BaGuaVec)
 
     return TRUE;
 }
-
-
-
-DWORD Gamecall::GetBagGridNumberLast()
-{
-    BagVector AllGoods;
-    GetAllGoodsToVector(AllGoods);
-
-    return (GetBagGridNumber() - AllGoods.size());
-}
-
 
 //µ±Ç°±³°üµÄ×ÜµÄ¸ñ×ÓÊý
 DWORD Gamecall::GetBagGridNumber()
@@ -2903,37 +2870,6 @@ DWORD Gamecall::GetGoodsNameID(DWORD pAddr)  //»ñÈ¡ÎïÆ·µÄÃû×ÖID
     return id;
 }
 
-
-//»ñÈ¡±³°üÎïÆ·Ãû×Ö
-wchar_t* Gamecall::GatBagGoodrName(DWORD ID)
-{
-    wchar_t* name = NULL;
-
-    __try
-    {
-        __asm
-        {
-            mov eax, bag_item_name_call_base;
-            mov eax, [eax];
-            mov ecx, [eax + bag_item_name_call_offset1];
-            mov edx, [ecx];
-            mov edx, [edx + bag_item_name_call_offset2];
-            push 0;
-            mov ebx, ID;
-            push ebx;
-            call edx;
-            mov eax, [eax + 0x18];
-            mov name, eax;
-        }
-    }
-    __except(1)
-    {
-        TRACE(FUNCNAME);
-    }
-
-    return name;
-}
-
 DWORD Gamecall::GetGoodsType(DWORD pAddr)  //»ñÈ¡ÎïÆ·µÄÀàÐÍ
 {
     DWORD goodstype = UINT_MAX;
@@ -2958,7 +2894,7 @@ DWORD Gamecall::GetGoodsType(DWORD pAddr)  //»ñÈ¡ÎïÆ·µÄÀàÐÍ
 
 
 //»ñÈ¡ÎïÆ·µÄËùÔÚ¸ñ×ÓÊý
-DWORD Gamecall::GetGoodsInfo(DWORD pAddr)
+DWORD Gamecall::GetGoodsPos(DWORD pAddr)
 {
     DWORD nums = UINT_MAX;
 
@@ -2975,9 +2911,7 @@ DWORD Gamecall::GetGoodsInfo(DWORD pAddr)
     }
     __except(1)
     {
-        TCHAR szBuf[MAX_PATH];
-        wsprintf(szBuf, _T("%S: %d"), __FILE__, __LINE__);
-        TRACE(szBuf);
+        TRACE(FUNCNAME);
     }
     return nums;
 }
@@ -2986,7 +2920,7 @@ DWORD Gamecall::GetGoodsInfo(DWORD pAddr)
 //»ñÈ¡ÎïÆ·µÄÊýÁ¿
 DWORD Gamecall::GetGoodsNum(DWORD pAddr)
 {
-    DWORD nums = UINT_MAX;
+    DWORD nums = 0;
 
     __try
     {
@@ -3003,12 +2937,13 @@ DWORD Gamecall::GetGoodsNum(DWORD pAddr)
     {
         TRACE(FUNCNAME);
     }
+
     return nums;
 }
 
-DWORD Gamecall::GetGoodsLasting(DWORD pAddr)  //»ñÈ¡ÎïÆ·µÄ³Ö¾Ã
+DWORD Gamecall::GetGoodsDur(DWORD pAddr)  //»ñÈ¡ÎïÆ·µÄ³Ö¾Ã
 {
-    DWORD naijiu;
+    DWORD dwRet = 0;
 
     __try
     {
@@ -3018,23 +2953,20 @@ DWORD Gamecall::GetGoodsLasting(DWORD pAddr)  //»ñÈ¡ÎïÆ·µÄ³Ö¾Ã
             mov eax, [eax + bag_item_durability_offset];
 
             movzx eax, al;
-            mov naijiu, eax;
+            mov dwRet, eax;
         }
     }
     __except(1)
     {
-        TCHAR szBuf[MAX_PATH];
-        wsprintf(szBuf, _T("%S: %d"), __FILE__, __LINE__);
-        TRACE(szBuf);
-        naijiu = UINT_MAX;
+        TRACE(FUNCNAME);
     }
 
-    return naijiu;
+    return dwRet;
 }
 
-DWORD Gamecall::GetGoodsLLV(DWORD pAddr)  //»ñÈ¡ÎïÆ·µÄµÈ¼¶
+DWORD Gamecall::GetGoodsLV(DWORD pAddr)  //»ñÈ¡ÎïÆ·µÄµÈ¼¶
 {
-    int lv;
+    DWORD dwRet;
     __try
     {
         __asm
@@ -3044,119 +2976,7 @@ DWORD Gamecall::GetGoodsLLV(DWORD pAddr)  //»ñÈ¡ÎïÆ·µÄµÈ¼¶
             mov eax, [eax + bag_item_level_offset2];
 
             movzx eax, al;
-            mov lv, eax;
-        }
-    }
-    __except(1)
-    {
-        TRACE(FUNCNAME);
-        lv = UINT_MAX;
-    }
-
-    return lv;
-}
-
-DWORD Gamecall::GetCanshu_a(DWORD pAddr)  //³ÔÒ©ºÍ´©×°±¸ÐèÒªµÄÒ»¸ö²ÎÊý
-{
-    DWORD Adress = 0;
-
-    __try
-    {
-        __asm
-        {
-            mov eax, pAddr;
-            mov eax, [eax + 0x1c];
-
-            mov Adress, eax;
-        }
-    }
-    __except(1)
-    {
-        TRACE(FUNCNAME);
-    }
-    return Adress;
-}
-
-DWORD Gamecall::Getcanshu1(DWORD pAddr)  //²ÎÊý1
-{
-    DWORD Adress = 0;
-
-    __try
-    {
-        __asm
-        {
-            mov eax, pAddr;
-            mov eax, [eax + 0x0c];
-            mov eax, [eax + 0x938];
-
-            mov Adress, eax;
-        }
-    }
-    __except(1)
-    {
-        TRACE(FUNCNAME);
-    }
-    return Adress;
-}
-
-DWORD Gamecall::Getcanshu2(DWORD pAddr)  //²ÎÊý2
-{
-    DWORD Adress = UINT_MAX;
-
-    __try
-    {
-        __asm
-        {
-            mov eax, pAddr;
-            mov eax, [eax + 0x0c];
-            mov eax, [eax + 0x838];
-
-            mov Adress, eax;
-        }
-    }
-    __except(1)
-    {
-        TRACE(FUNCNAME);
-    }
-    return Adress;
-}
-
-DWORD Gamecall::Getcanshu3(DWORD pAddr)  //²ÎÊý3
-{
-    DWORD Adress = UINT_MAX;
-
-    __try
-    {
-        __asm
-        {
-            mov eax, pAddr;
-            mov eax, [eax + 0x0c];
-            mov eax, [eax + 0x838];
-
-            add eax, -0x3;
-            mov Adress, eax;
-        }
-    }
-    __except(1)
-    {
-        TRACE(FUNCNAME);
-    }
-    return Adress;
-}
-
-DWORD Gamecall::Getcanshu4(DWORD pAddr)  //²ÎÊý4
-{
-    DWORD Adress = 0;
-
-    __try
-    {
-        __asm
-        {
-            mov eax, pAddr;
-            mov eax, [eax + 0x0c];
-            mov eax, [eax + 0x87e];
-
-            mov Adress, eax;
+            mov dwRet, eax;
         }
     }
     __except(1)
@@ -3164,7 +2984,7 @@ DWORD Gamecall::Getcanshu4(DWORD pAddr)  //²ÎÊý4
         TRACE(FUNCNAME);
     }
 
-    return Adress;
+    return dwRet;
 }
 
 
@@ -3607,7 +3427,6 @@ void Gamecall::Pickup2(ObjectNode* pObj)
     }
 }
 
-
 //±³°üÂúÁË
 BOOL Gamecall::isBagFull()
 {
@@ -3720,15 +3539,12 @@ BOOL Gamecall::isLoots(DWORD pAddr)  //TODO
 }
 
 //×ª×ø±ê2µ½×ø±ê1
-fPosition Gamecall::ShortPosToFloatPos(sPosition& spos)
+void Gamecall::ShortPosToFloatPos(sPosition& spos, fPosition& fpos)
 {
-    fPosition fpos;
 
     fpos.x = (float)(spos.x * 4);
     fpos.y = (float)(spos.y * 4);
     fpos.z = (float)(spos.z * 4);
-
-    return fpos;
 }
 
 
@@ -4051,33 +3867,6 @@ void Gamecall::_PickupTask(ObjectNode* pObj)
 }
 
 
-//È¡½ÇÉ«ÐÅÏ¢
-PCHARACTER Gamecall::GetCharacter(int index)
-{
-    int temp = index * 4;
-    PCHARACTER lpret = NULL;
-
-    __try
-    {
-        __asm
-        {
-            mov eax, eax;
-            mov eax, [eax];
-            mov eax, [eax + 0x30];
-            mov eax, [eax + 0x10];
-            mov ebx, temp;
-            mov eax, [eax + ebx];
-            mov lpret, eax;
-        }
-    }
-    __except(1)
-    {
-        TRACE(_T("%s"), FUNCNAME);
-    }
-    return lpret;
-}
-
-
 //5 ±íÊ¾¶ÁÌõ 1 ¸Õ½øÓÎÏ· 2 Ñ¡Ôñ½ÇÉ«½çÃæ 3ÓÎÏ·ÄÚ
 //µ±Ç°¶ÁÌõ×´Ì¬
 int Gamecall::isLoadingMap()
@@ -4334,6 +4123,7 @@ DWORD Gamecall::GetPlayerQuestUIStatus()
 //Í¨¹ýÀàÐÍÈ¡µÃË÷Òý
 DWORD Gamecall::GetIndexByType(DWORD pObjAddress)
 {
+    _ASSERTE(pObjAddress != NULL);
     DWORD index = UINT_MAX;
     TCHAR type = GetObjectType(pObjAddress);
     __try
@@ -5011,19 +4801,18 @@ UCHAR Gamecall::GetPlayerLevel() //»ñµÃ½ÇÉ«µÈ¼¶
 //È¡µÃ¶ÔÏóÃû×Ö
 wchar_t* Gamecall::GetObjectName(DWORD pObjAddress)
 {
+    _ASSERTE(pObjAddress != NULL);
+
     DWORD type = GetObjectType(pObjAddress);
     if(type == 1 || type == 2)
     {
         return (wchar_t*)ReadDWORD(pObjAddress + 0x8c);
     }
-    else if(type < 1)
-    {
-        _ASSERTE(FALSE);
-    }
-    else
+    else if(type > 2)
     {
         return GetObjectNameByIndex(GetIndexByType(pObjAddress));
     }
+
     return NULL;
 }
 
@@ -5177,11 +4966,13 @@ void Gamecall::GetAllObjectToVector(ObjectNode* pNote, ObjectVector& RangeObject
 {
     __try
     {
-        if(pNote->end == 1)
-            return;
+        if(pNote->end == 1) return;
 
         //¼Óµ½vectorÖÐ
         RangeObject.push_back(pNote);
+
+
+
         GetAllObjectToVector(pNote->left, RangeObject);
         GetAllObjectToVector(pNote->right, RangeObject);
     }
@@ -5377,7 +5168,9 @@ void Gamecall::GetRangeLootObjectToVector(DWORD range, ObjectVector& LootVec)
                 {
                     DWORD dis = (DWORD)CalcC(fpos, fmypos);
                     if(dis <= range)
+                    {
                         LootVec.push_back(pNode);
+                    }
                 }
             }
         }
@@ -5414,6 +5207,8 @@ void Gamecall::OverShunyi(BOOL bEnable) //¹ýÍ¼
     {
         TRACE(_T("¹ýÍ¼³ö´í"));
     }
+
+
     TRACE1("Ö´ÐÐË²ÒÆHOOKÍê±Ï,²ÎÊý:%d", bEnable);
 }
 
@@ -5422,11 +5217,17 @@ ObjectNode* Gamecall::GetObjectByName(const wchar_t szName[], DWORD range)
 {
     try
     {
+
+
         ObjectVector RangeObject;
         if(range == 0)
+        {
             GetAllObjectToVector(GetObjectBinTreeBaseAddr(), RangeObject);
+        }
         else
+        {
             GetRangeObjectToVector(GetObjectBinTreeBaseAddr(), range, RangeObject);
+        }
 
         std::sort(RangeObject.begin(), RangeObject.end(), UDgreater);
 
@@ -5444,8 +5245,7 @@ ObjectNode* Gamecall::GetObjectByName(const wchar_t szName[], DWORD range)
 
             //¹ýÂËµôÃ»Ãû×ÖµÄ
             wchar_t* name = GetObjectName(RangeObject[i]->ObjAddress);
-            if(name == NULL)
-                continue;
+            if(name == NULL) continue;
 
             if(wcscmp(name, szName) == 0)
                 return RangeObject[i];
@@ -5760,35 +5560,23 @@ BOOL Gamecall::FillGoods(_BAGSTU& BagBuff)
     BagBuff.m_NameID  =   GetGoodsNameID(BagBuff.m_Base);            //»ñÈ¡ÎïÆ·µÄÃû×ÖID
 
 
-    //BagBuff.name   =    (wchar_t *)sendcall(id_msg_GatBagGoodrName, (LPVOID)BagBuff.m_NameID);
-    BagBuff.name   =      GatBagGoodrName(BagBuff.m_NameID);
-    if(BagBuff.name == NULL)
-        return FALSE;
+    BagBuff.name   =    GetObjectNameByIndex(BagBuff.m_NameID);
+    if(BagBuff.name == NULL) return FALSE;
+
 
     BagBuff.m_Type    =   GetGoodsType(BagBuff.m_Base);              //»ñÈ¡ÎïÆ·µÄÀàÐÍ
-    BagBuff.m_Info    =   GetGoodsInfo(BagBuff.m_Base);              //»ñÈ¡ÎïÆ·µÄËùÔÚ¸ñ×ÓÊý
+    BagBuff.m_Info    =   GetGoodsPos(BagBuff.m_Base);              //»ñÈ¡ÎïÆ·µÄËùÔÚ¸ñ×ÓÊý
     BagBuff.m_Num     =   GetGoodsNum(BagBuff.m_Base);               //»ñÈ¡ÎïÆ·µÄÊýÁ¿
-    BagBuff.m_Lasting =   GetGoodsLasting(BagBuff.m_Base);           //»ñÈ¡ÎïÆ·µÄ³Ö¾Ã
-    BagBuff.m_LV      =   GetGoodsLLV(BagBuff.m_Base);               //»ñÈ¡ÎïÆ·µÄµÈ¼¶
-    //BagBuff.m_Site      =   GetCanshu_a(BagBuff.m_Base);               //³ÔÒ©ºÍ´©×°±¸ÐèÒªµÄÒ»¸ö²ÎÊý
+    BagBuff.CurDur =   GetGoodsDur(BagBuff.m_Base);           //»ñÈ¡ÎïÆ·µÄ³Ö¾Ã
+    BagBuff.m_LV      =   GetGoodsLV(BagBuff.m_Base);               //»ñÈ¡ÎïÆ·µÄµÈ¼¶
 
 
-
-    BagBuff.canshu1 = Getcanshu1(BagBuff.m_Base);  //²ÎÊý1
-    BagBuff.canshu2 = Getcanshu2(BagBuff.m_Base);  //²ÎÊý2
-    BagBuff.canshu3 = Getcanshu3(BagBuff.m_Base);  //²ÎÊý3
-    BagBuff.canshu4 = Getcanshu4(BagBuff.m_Base);  //²ÎÊý4
 
     BagBuff.m_BagLeiXing = GetGoodsBagInfo(BagBuff.m_Base);  //»ñÈ¡ÎïÆ·µÄ±³°üÀàÐÍ
-
-
-
-
-
     BagBuff.m_CaoZuoType  = GetGoodsYouJianType(BagBuff.m_BagLeiXing, BagBuff.m_Info); //»ñÈ¡±³°üÎïÆ·ÓÒ¼ü²Ù×÷ÀàÐÍ
 
 
-    BagBuff.m_YanSe      =   GetGoodsYanSe(BagBuff.m_Base);  //»ñÈ¡ÎïÆ·µÄÑÕÉ«
+    BagBuff.m_YanSe      =   GetGoodsColor(BagBuff.m_Base);  //»ñÈ¡ÎïÆ·µÄÑÕÉ«
     BagBuff.m_IsFengYin  =   0;//GetGoodsIsFengYin(BagBuff.m_Base);  //»ñÈ¡ÎïÆ·ÊÇ·ñ·âÓ¡
     if(BagBuff.m_YanSe == 5)
     {
@@ -5857,14 +5645,12 @@ void Gamecall::_GetAllGoodsToVector(BagVector& RangeObject)
     DWORD BagbodyAdress = 0;
     DWORD BagAdress = 0;
     int GridNum = 0;
-    _BAGSTU aGoods;
+    BAGSTU aGoods;
 
     BagbodyAdress = GetBagbodyInfoBase();                                 //»ñÈ¡±³°üÉíÉÏ×°±¸²Ö¿â±éÀúBase
     BagAdress = GetBagInfoBase(BagbodyAdress);                        //»ñÈ¡±³°ü±éÀúBase
     GridNum = GetBagGridNumber();                        //µ±Ç°±³°üµÄ×ÜµÄ¸ñ×ÓÊý
 
-    //TRACE1("±³°ü¸ñ×Ó×ÜÊý:%d",GridNum);
-    //ÏÈÕûÀíÒ»ÏÂ±³°ü
     for(int i = 0; i < GridNum; i++)
     {
         ZeroMemory(&aGoods, sizeof(aGoods));
@@ -5881,7 +5667,7 @@ void Gamecall::_GetAllGoodsToVector(BagVector& RangeObject)
                     RangeObject.push_back(aGoods);
                 }
             }
-            //Sleep(10);
+
         }
         __except(1)
         {
@@ -6566,7 +6352,7 @@ BOOL Gamecall::PickupDeadbody(DWORD range)
             return false;
         }
 
-        PARAM_GUANSHANGDIAN temp;
+        PARAM_2 temp;
         temp.argv1 = pMaxNode->id;
         temp.argv2 = pMaxNode->id2;
         sendcall(id_msg_PickupDeadbody, &temp);
@@ -7682,7 +7468,7 @@ DWORD Gamecall::GetBiJiaoShu(int i, DWORD m_adress) //»ñÈ¡±È½ÏÊýÖµ
 
 DWORD Gamecall::_IsCanShu(DWORD adress, DWORD adress1) //ÊÇ·ñÊÇÕâ¸ö²ÎÊý
 {
-    byte is = 0;
+    BYTE is = 0;
     if(adress == 0 || adress1 == 0)
         return -1;
     _try
@@ -7714,7 +7500,7 @@ DWORD Gamecall::_IsCanShu(DWORD adress, DWORD adress1) //ÊÇ·ñÊÇÕâ¸ö²ÎÊý
 
 DWORD Gamecall::IsCanShu(DWORD adress, DWORD adress1) //ÊÇ·ñÊÇÕâ¸ö²ÎÊý
 {
-    PARAM_JIEFENGZHUANGBEI temp;
+    PARAM_2 temp;
     temp.argv1 = adress;
     temp.argv2 = adress1;
     return (DWORD)sendcall(id_msg_IsCanShu, &temp);
@@ -8283,17 +8069,17 @@ BOOL Gamecall::IsPlayerSkillStatus(DWORD pObjAddress)
 
 DWORD Gamecall::GetPlarerRedHeart()
 {
-	DWORD pAddr = GetPlayerDataAddr();
-	BYTE Rh = 0;
-	_try
-	{
-		Rh = ReadByte(pAddr + 0x1AA);
-	}
-	_except(1)
-	{
-		TRACE(_T("»ñµÃ½ÇÉ«ºìÐÄ³ö´í"));
-	}
-	return Rh;
+    DWORD pAddr = GetPlayerDataAddr();
+    BYTE Rh = 0;
+    _try
+    {
+        Rh = ReadByte(pAddr + 0x1AA);
+    }
+    _except(1)
+    {
+        TRACE(_T("»ñµÃ½ÇÉ«ºìÐÄ³ö´í"));
+    }
+    return Rh;
 }
 
 

@@ -10,9 +10,7 @@
 #include "settingdlg.h"
 #include "ConfigMgr.h"
 
-
-
-using namespace Gdiplus;
+#include <afximpl.h>
 
 
 #ifdef _DEBUG
@@ -31,13 +29,13 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
     ON_WM_CREATE()
     ON_WM_CLOSE()
     ON_WM_TIMER()
-	ON_CBN_SELCHANGE(ID_COMBO2, OnCombo2)
-	ON_CBN_SELCHANGE(ID_COMBO1, OnCombo1)
+    ON_CBN_SELCHANGE(ID_COMBO2, OnCombo2)
+    ON_CBN_SELCHANGE(ID_COMBO1, OnCombo1)
     ON_WM_DROPFILES()
     ON_WM_ACTIVATE()
     ON_WM_PAINT()
-	ON_WM_SIZE()
-	//}}AFX_MSG_MAP
+    ON_WM_SIZE()
+    //}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
 
@@ -57,6 +55,10 @@ static UINT BASED_CODE indicators[] =
 
 CMainFrame::CMainFrame()
 {
+    
+    afxData.cxBorder2=0;
+    afxData.cyBorder2=0;
+    afxData.bWin4 = FALSE;
 }
 
 
@@ -246,7 +248,8 @@ void CMainFrame::OnClose()
 BOOL CMainFrame::PreCreateWindow(CREATESTRUCT& cs)
 {
 
-    if(!CFrameWnd::PreCreateWindow(cs)) return FALSE;
+    if(!CFrameWnd::PreCreateWindow(cs)) 
+        return FALSE;
 
     static TCHAR szClassName[] = JLKITCLASSNAME;
     WNDCLASS wndc;
@@ -262,6 +265,7 @@ BOOL CMainFrame::PreCreateWindow(CREATESTRUCT& cs)
 
     cs.cx = 600;
     cs.cy = 400;
+
     return TRUE;
 }
 
@@ -281,14 +285,14 @@ void CMainFrame::OnTimer(UINT nIDEvent)
 }
 
 
-void CMainFrame::OnCombo2() 
+void CMainFrame::OnCombo2()
 {
 
     CString strSel;
-	m_cbScript.GetLBText(m_cbScript.GetCurSel(), strSel);
+    m_cbScript.GetLBText(m_cbScript.GetCurSel(), strSel);
 
 
-    CListCtrl &list = ((CJLkitView *)GetActiveView())->GetListCtrl();
+    CListCtrl& list = ((CJLkitView*)GetActiveView())->GetListCtrl();
     int inCount = list.GetItemCount();
     for(int i = 0; i < inCount; i++)
     {
@@ -296,12 +300,12 @@ void CMainFrame::OnCombo2()
     }
 }
 
-void CMainFrame::OnCombo1() 
+void CMainFrame::OnCombo1()
 {
     CString strSel;
     m_cbConfig.GetLBText(m_cbConfig.GetCurSel(), strSel);
-    
-    CListCtrl &list = ((CJLkitView *)GetActiveView())->GetListCtrl();
+
+    CListCtrl& list = ((CJLkitView*)GetActiveView())->GetListCtrl();
     int inCount = list.GetItemCount();
     for(int i = 0; i < inCount; i++)
     {
@@ -309,10 +313,10 @@ void CMainFrame::OnCombo1()
     }
 }
 
-void CMainFrame::OnSize(UINT nType, int cx, int cy) 
+void CMainFrame::OnSize(UINT nType, int cx, int cy)
 {
-	CFrameWnd::OnSize(nType, cx, cy);
-	
-	// TODO: Add your message handler code here
-	RepositionBars(AFX_IDW_CONTROLBAR_FIRST, AFX_IDW_CONTROLBAR_LAST, ID_INDICATOR_VALIDKEY);
+    CFrameWnd::OnSize(nType, cx, cy);
+
+    // TODO: Add your message handler code here
+    RepositionBars(AFX_IDW_CONTROLBAR_FIRST, AFX_IDW_CONTROLBAR_LAST, ID_INDICATOR_VALIDKEY);
 }
