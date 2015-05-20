@@ -452,7 +452,6 @@ DWORD Gamecall::call(DWORD id, LPVOID pParam)
 
     case id_msg_ChiYao:
         {
-
             ChiYao(*(_BAGSTU*)pParam);
         }
         break;
@@ -1462,6 +1461,7 @@ BOOL Gamecall::GetObjectPos(ObjectNode* pNode, fPosition* fpos)
 {
 
     DWORD type = (DWORD)GetObjectType(pNode->ObjAddress);
+
     if(type == 0x20)
     {
         GetObjectPos2_0x20(pNode->ObjAddress, fpos);
@@ -1484,24 +1484,29 @@ BOOL Gamecall::GetObjectPos(ObjectNode* pNode, fPosition* fpos)
     }
     else if(type == 1 || type == 2)
     {
-        __asm
+        _try
         {
-            mov eax, pNode;
-            mov edx, [eax]ObjectNode.ObjAddress;
-            mov edx, [edx+0x14]
+            __asm
+            {
+                mov eax, pNode;
+                mov edx, [eax]ObjectNode.ObjAddress;
+                mov edx, [edx+0x14]
 
+                mov eax, [edx + 0x1A8];
 
-            mov eax, [edx + 0x1A8];
+                mov ebx, fpos;
+                mov [ebx]fpos.x, eax;
 
-            mov ebx, fpos;
-            mov [ebx]fpos.x, eax;
+                mov eax, [edx + 0x1ac];
+                mov [ebx]fpos.y, eax;
 
-            mov eax, [edx + 0x1ac];
-            mov [ebx]fpos.y, eax;
-
-
-            mov eax, [edx + 0x1b0];
-            mov [ebx]fpos.z, eax;
+                mov eax, [edx + 0x1b0];
+                mov [ebx]fpos.z, eax;
+            }
+        }
+        __except(1)
+        {
+            TRACE(_T("获取玩家坐标失败"));
         }
     }
     else
@@ -5109,8 +5114,8 @@ void Gamecall::_GetRangeObjectToVector(ObjectNode* pNote, DWORD range, ObjectVec
             else if((DWORD)CalcC(fmypos, fpos) <= range)
                 RangeObject.push_back(pNote);
         }
-        else
-            RangeObject.push_back(pNote);
+        //else
+        //    RangeObject.push_back(pNote);
 
 
         GetRangeObjectToVector(pNote->left, range, RangeObject);
@@ -5230,19 +5235,15 @@ ObjectNode* Gamecall::GetObjectByName(const wchar_t szName[], DWORD range)
         }
 
         std::sort(RangeObject.begin(), RangeObject.end(), UDgreater);
-
         fPosition tarpos;
         for(DWORD i = 0; i < RangeObject.size(); i++)
         {
-
             //过滤掉没坐标的
             if(GetObjectPos(RangeObject[i], &tarpos) == FALSE)
                 continue;
-
             //过滤掉坐标是0的
             if(tarpos.x == 0 || tarpos.y == 0 || tarpos.z == 0)
                 continue;
-
             //过滤掉没名字的
             wchar_t* name = GetObjectName(RangeObject[i]->ObjAddress);
             if(name == NULL) continue;
@@ -5251,11 +5252,10 @@ ObjectNode* Gamecall::GetObjectByName(const wchar_t szName[], DWORD range)
                 return RangeObject[i];
         }
     }
-    catch(...)
+	catch(...)
     {
         TRACE(FUNCNAME);
     }
-
     return NULL;
 }
 
@@ -5693,7 +5693,7 @@ void Gamecall::_GetAllBodyEquipToVector(BagVector& RangeObject)
 
     BagbodyAdress = GetBagbodyInfoBase();
     BagAdress = GetBodyInfoBase(BagbodyAdress);
-    Gridnum = 0x10;//GetBagGridNumber();
+    Gridnum = GetBagGridNumber();//0x10;//
     //当前背包的总的格子数
     for(int i = 0; i < Gridnum; i++)
     {
@@ -6402,7 +6402,7 @@ void Gamecall::DeleteItem(_BAGSTU& bag)
     }
     __except(1)
     {
-
+		TRACE(_T("销毁物品时发生错误"));
     }
 
 
@@ -6742,19 +6742,20 @@ void Gamecall::Attack(int id)
     int flag = 0;
     while(flag == 0)
     {
-        Sleep(100);
-        if(cs > 6)
+        if(cs > 10)
         {
             break;
         }
         flag = sendcall(id_msg_attack, (LPVOID)id);
         if(flag)
         {
-            TRACE(_T("技能ID:%d,技能执行返回%d"), id, flag);
+            //TRACE(_T("技能ID:%d,技能执行返回%d"), id, flag);
             break;
         }
         //TRACE(_T("技能ID:%d,技能执行返回%d"), id, flag);
         cs++;
+		Sleep(100);
+
     }
 }
 
@@ -7779,7 +7780,7 @@ DWORD Gamecall::DuiWu_StartAdress()
     return Adress;
 }
 
-void Gamecall::GetPartyInfo(TeamVector& TeamInfo)
+BOOL Gamecall::GetPartyInfo(TeamVector& TeamInfo)
 {
     DWORD StartAdress  = DuiWu_StartAdress(); //遍历队伍的开始地址
     DWORD EndAdress  = DuiWu_EndAdress(); //遍历队伍的结束地址
@@ -7787,8 +7788,8 @@ void Gamecall::GetPartyInfo(TeamVector& TeamInfo)
     DWORD C_Address;
     fPosition fmypos;
     Team team;
-    ZeroMemory(&team, sizeof(Team));
-    ZeroMemory(&fmypos, sizeof(fPosition));
+    //ZeroMemory(&team, sizeof(Team));
+    //ZeroMemory(&fmypos, sizeof(fPosition));
     C_Address = 0;
 
     count = (EndAdress - StartAdress) / 4;
@@ -7812,12 +7813,9 @@ void Gamecall::GetPartyInfo(TeamVector& TeamInfo)
             TeamInfo.push_back(team);
             //TRACE(_T("地址:%x,人名:%s,频道:%d,当前生命:%d,最大生命:%d,ID:%x,ID2%x,面向%d,距离:%d,坐标:%d,%d,%d"),team.PAddress,team.name,team.Channel,team.CurrLife,team.MaxLife,team.ID,team.ID2,team.Angle,team.Range,team.Pos.x,team.Pos.y,team.Pos.z);
         }
+		return TRUE;
     }
-    else
-    {
-        TRACE(_T("未组队"));
-    }
-
+	return FALSE;
 }
 
 wchar_t* Gamecall::GetPartyName(DWORD PartyAddress)
@@ -7925,34 +7923,38 @@ fPosition Gamecall::GetPartyPos(DWORD PartyAddress)
     ZeroMemory(&pos, sizeof(fPosition));
     _try
     {
-        pos.x = (ReadWORD(PartyAddress + 0x1C) - 0x10000) * 4;
-        pos.y = (ReadWORD(PartyAddress + 0x1E) - 0x10000) * 4;
-        pos.z = (ReadWORD(PartyAddress + 0x20) - 0x10000) * 4;
+		pos.x = (ReadWORD(PartyAddress + 0x1C) - 0x10000) * 4;
+		pos.y = (ReadWORD(PartyAddress + 0x1E) - 0x10000) * 4;
+		pos.z = (ReadWORD(PartyAddress + 0x20) - 0x10000) * 4;
 
-        if(abs(pos.x) > 0xFFFF)
+
+
+        if(abs(pos.x) > 0x1FFFF)
         {
-            pos.x = ReadWORD(PartyAddress + 0x1C) * 4;
+			pos.x = ReadWORD(PartyAddress + 0x1C) * 4;
+
         }
-        if(abs(pos.y) > 0xFFFF)
+        if(abs(pos.y) > 0x1FFFF)
         {
-            pos.y = ReadWORD(PartyAddress + 0x1E) * 4;
+			pos.y = ReadWORD(PartyAddress + 0x1E) * 4;
+
         }
-        if(abs(pos.z) > 0xFFFF)
+        if(abs(pos.z) > 0x1FFFF)
         {
-            pos.z = ReadWORD(PartyAddress + 0x20) * 4;
+			pos.z = ReadWORD(PartyAddress + 0x20) * 4;
         }
 
-        if(abs(pos.x) > 0xFFFF)
+        if(abs(pos.x) > 0x1FFFF)
         {
-            pos.x = (0xFFFF - ReadWORD(PartyAddress + 0x1C)) * 4 * -1;
+            pos.x = (0x1FFFF - ReadWORD(PartyAddress + 0x1C)) * 4 * -1;
         }
-        if(abs(pos.y) > 0xFFFF)
+        if(abs(pos.y) > 0x1FFFF)
         {
-            pos.y = (0xFFFF - ReadWORD(PartyAddress + 0x1E)) * 4 * -1;
+            pos.y = (0x1FFFF - ReadWORD(PartyAddress + 0x1E)) * 4 * -1;
         }
-        if(abs(pos.z) > 0xFFFF)
+        if(abs(pos.z) > 0x1FFFF)
         {
-            pos.z = (0xFFFF - ReadWORD(PartyAddress + 0x20)) * 4 * -1;
+            pos.z = (0x1FFFF - ReadWORD(PartyAddress + 0x20)) * 4 * -1;
         }
     }
     _except(1)
@@ -8080,6 +8082,47 @@ DWORD Gamecall::GetPlarerRedHeart()
         TRACE(_T("获得角色红心出错"));
     }
     return Rh;
+}
+
+BOOL Gamecall::IsObjectControl(DWORD pObjAddress)
+{
+	BOOL value = FALSE;
+	__try
+	{
+		value = ReadDWORD(ReadDWORD(pObjAddress + 708) + 0x5C);
+		if (value == 2)
+		{
+			return TRUE;
+		}
+	}
+	__except(1)
+	{
+		TRACE(_T("获得控制状态出错"));
+	}
+	return FALSE;
+}
+
+BOOL Gamecall::isStrkeId(DWORD id)
+{
+	if(GetPlayerDeadStatus() == 0)
+	{
+		std::vector<STRIKEINFO> StrikeVec;
+		//sendcall(id_msg_GetStrikeToVector, &StrikeVec);
+		GetStrikeToVector(StrikeVec);
+
+		for(int i = 0; i < StrikeVec.size(); i++)
+		{
+			if(StrikeVec[i].id1 == id)
+			{
+				return TRUE;
+			}
+		}
+	}
+	else
+	{
+		TRACE(_T("人物死亡，不遍历。"));
+	}
+	return FALSE;
 }
 
 

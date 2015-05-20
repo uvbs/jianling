@@ -144,7 +144,7 @@ CDataDlg::CDataDlg(CWnd* pParent /*=NULL*/)
 
     m_pLuaPage = NULL;
     m_pDbgPage = NULL;
-    hand = INVALID_HANDLE_VALUE;
+    //hand = INVALID_HANDLE_VALUE;
 }
 
 CDataDlg::~CDataDlg()
@@ -1302,7 +1302,6 @@ void CDataDlg::OnHookstrike()
                 }
             }
         }
-
         GameHook::GetInstance()->m_ObjAddrVec.push_back(pNode);
     }
     else
@@ -1421,44 +1420,45 @@ void CDataDlg::PrintfTeaminfo()
     //获取游戏外挂功能
     GamecallEx& gcall = *GamecallEx::GetInstance();
     TeamVector tv;
-    gcall.GetPartyInfo(tv);
-    int size = tv.size();
-    CString strTemp;
-    for(int i = 0; i < size; i++)
+    BOOL flag = gcall.GetPartyInfo(tv);
+    if(flag)
     {
-        m_ListCtrl.InsertItem(i, tv[i].name);
+        int size = tv.size();
+        CString strTemp;
+        for(int i = 0; i < size; i++)
+        {
+            m_ListCtrl.InsertItem(i, tv[i].name);
 
-        strTemp.Format(_T("%x"), tv[i].PAddress);
-        m_ListCtrl.SetItemText(i, 1, strTemp);
+            strTemp.Format(_T("%x"), tv[i].PAddress);
+            m_ListCtrl.SetItemText(i, 1, strTemp);
 
-        strTemp.Format(_T("%d"), tv[i].CurrLife);
-        m_ListCtrl.SetItemText(i, 2, strTemp);
+            strTemp.Format(_T("%d"), tv[i].CurrLife);
+            m_ListCtrl.SetItemText(i, 2, strTemp);
 
-        strTemp.Format(_T("%d"), tv[i].MaxLife);
-        m_ListCtrl.SetItemText(i, 3, strTemp);
+            strTemp.Format(_T("%d"), tv[i].MaxLife);
+            m_ListCtrl.SetItemText(i, 3, strTemp);
 
-        strTemp.Format(_T("%x"), tv[i].ID);
-        m_ListCtrl.SetItemText(i, 4, strTemp);
+            strTemp.Format(_T("%x"), tv[i].ID);
+            m_ListCtrl.SetItemText(i, 4, strTemp);
 
-        strTemp.Format(_T("%x"), tv[i].ID2);
-        m_ListCtrl.SetItemText(i, 5, strTemp);
+            strTemp.Format(_T("%x"), tv[i].ID2);
+            m_ListCtrl.SetItemText(i, 5, strTemp);
 
-        strTemp.Format(_T("%d,%d,%d"), (int)tv[i].Pos.y, (int)tv[i].Pos.x, (int)tv[i].Pos.z);
-        m_ListCtrl.SetItemText(i, 6, strTemp);
+            strTemp.Format(_T("%d,%d,%d"), (int)tv[i].Pos.y, (int)tv[i].Pos.x, (int)tv[i].Pos.z);
+            m_ListCtrl.SetItemText(i, 6, strTemp);
 
-        strTemp.Format(_T("%d"), tv[i].Angle);
-        m_ListCtrl.SetItemText(i, 7, strTemp);
+            strTemp.Format(_T("%d"), tv[i].Angle);
+            m_ListCtrl.SetItemText(i, 7, strTemp);
 
-        strTemp.Format(_T("%d"), tv[i].Range);
-        m_ListCtrl.SetItemText(i, 8, strTemp);
+            strTemp.Format(_T("%d"), tv[i].Range);
+            m_ListCtrl.SetItemText(i, 8, strTemp);
 
-        strTemp.Format(_T("%d"), tv[i].LV);
-        m_ListCtrl.SetItemText(i, 9, strTemp);
+            strTemp.Format(_T("%d"), tv[i].LV);
+            m_ListCtrl.SetItemText(i, 9, strTemp);
 
-        strTemp.Format(_T("%d"), tv[i].Channel);
-        m_ListCtrl.SetItemText(i, 10, strTemp);
-
-
+            strTemp.Format(_T("%d"), tv[i].Channel);
+            m_ListCtrl.SetItemText(i, 10, strTemp);
+        }
     }
 }
 
@@ -1472,12 +1472,16 @@ void CDataDlg::OnBnClickedFindthenkill2()
     // TODO: 在此添加控件通知处理程序代码
 }
 
+HANDLE hand = INVALID_HANDLE_VALUE;
+
+
 UINT testThread(LPVOID ll)
 {
-    CDataDlg* dlg = (CDataDlg*)ll;
+    //CDataDlg* dlg = (CDataDlg*)ll;
     GamecallEx& gcall = *GamecallEx::GetInstance();
     gcall.Party_KillObject();
-    dlg->hand = INVALID_HANDLE_VALUE;
+    //dlg->hand = INVALID_HANDLE_VALUE;
+	hand = INVALID_HANDLE_VALUE;
     return 0;
 }
 void CDataDlg::OnBnClickedButton1()

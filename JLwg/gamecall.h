@@ -134,10 +134,11 @@ public:
     DWORD GetObjectSy_90(DWORD pObjAddress);        //取90的索引
     DWORD GetIndexByType(DWORD pObjAddress);        //通过类型取得索引
     DWORD GetObjectView(DWORD pObjAddress);         //获取对象角度
-    DWORD GetObjectTargetId(DWORD pObjAddress);     //获取对象目标
-    ObjectNode* GetObjectById(DWORD Id);            //根据ID获取二叉地址
-    BOOL IsObjectFightStatus(DWORD pObjAddress);   //获取对象战斗状态
-    BOOL IsPlayerSkillStatus(DWORD pObjAddress);    //获得对象是否正在使用技能状态
+	DWORD GetObjectTargetId(DWORD pObjAddress);     //获取对象目标
+	ObjectNode* GetObjectById(DWORD Id);            //根据ID获取二叉地址
+	BOOL IsObjectFightStatus(DWORD pObjAddress);   //获取对象战斗状态
+	BOOL IsPlayerSkillStatus(DWORD pObjAddress);    //获得对象是否正在使用技能状态
+	BOOL IsObjectControl(DWORD pObjAddress);        //获得对象是否可以双控
 
 
 
@@ -146,6 +147,7 @@ public:
     BOOL        isConfirmDeleteTalnetPanelShow();
     BOOL        isTalentPanelShow();
     BOOL        isStrikeCd(DWORD id);  //判断技能cd
+	BOOL        isStrkeId(DWORD id);   //判断是否遍历出此技能
     BOOL        isPlayerDaodi();   //倒地状态
     BOOL        isLoots(DWORD pAddr);
     BOOL        isLoading(); //判断角色是否在打开任务物品的读条状态
@@ -252,7 +254,7 @@ public:
     void        SellItem(_BAGSTU& bag, DWORD adress);
     BOOL        OpenShangDian(wchar_t* name, DWORD* pUiAddr); //打开商品对话框
     void        CloseShangDian();
-    void        DeleteItem(_BAGSTU& bag);   //摧毁一个物品
+    void        DeleteItem(_BAGSTU* bag);   //摧毁一个物品
 
     //背包
     void        _GetAllGoodsToVector(BagVector& RangeObject);
@@ -374,20 +376,18 @@ public:
     void TuiChuDuiWu(); //退出队伍
     void YaoQingZuDui(DWORD ID, DWORD Info); /*邀请组队 参数1是对象ID 参数2 就是10000数值 */;
     DWORD DuiWu_EndAdress() /*遍历队伍的结束地址 */;
-    DWORD DuiWu_StartAdress();//队伍开始地址
-    void GetPartyInfo(TeamVector& TeamInfo);//获取队伍信息
-    DWORD GetPartyByAddress(DWORD PartyAddress, int i); //获取当前角色地址
-    wchar_t* GetPartyName(DWORD PartyAddress);//获取队伍角色名
-    DWORD GetPartyChannel(DWORD PartyAddress);//获取角色当前频道
-    DWORD GetPartyCurrlife(DWORD PartyAddress);//获取角色当前血值
-    DWORD GetPartyMaxlife(DWORD PartyAddress);//获取角色最大血值
-    DWORD GetPartyId(DWORD PartyAddress);//获取角色id
-    DWORD GetPartyId2(DWORD PartyAddress);//获取角色id2
-    fPosition GetPartyPos(DWORD PartyAddress);//获取角色x坐标
-    DWORD GetPartyAngle(DWORD PartyAddress);//获取角色面向
-    DWORD GetPartyLv(DWORD PartyAddress);//获取角色等级
-
-
+	DWORD DuiWu_StartAdress();//队伍开始地址
+	BOOL GetPartyInfo(TeamVector& TeamInfo);//获取队伍信息
+	DWORD GetPartyByAddress(DWORD PartyAddress,int i);//获取当前角色地址
+	wchar_t* GetPartyName(DWORD PartyAddress);//获取队伍角色名
+	DWORD GetPartyChannel(DWORD PartyAddress);//获取角色当前频道
+	DWORD GetPartyCurrlife(DWORD PartyAddress);//获取角色当前血值
+	DWORD GetPartyMaxlife(DWORD PartyAddress);//获取角色最大血值
+	DWORD GetPartyId(DWORD PartyAddress);//获取角色id
+	DWORD GetPartyId2(DWORD PartyAddress);//获取角色id2
+	fPosition GetPartyPos(DWORD PartyAddress);//获取角色x坐标
+	DWORD GetPartyAngle(DWORD PartyAddress);//获取角色面向
+	DWORD GetPartyLv(DWORD PartyAddress);//获取角色等级
 private:
     HANDLE m_hModuleBsEngine;
 };

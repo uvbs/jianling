@@ -180,7 +180,14 @@ void __stdcall GameHook::myCombatFilter()
 
             if(GameHook::GetInstance()->m_sink != NULL)
             {
-                GameHook::GetInstance()->m_sink->ShowHook(_T("怪物: %08x, 技能: %d"), objAddr, id);
+				//if (id == 5902318)
+				//{
+				//	SYSTEMTIME sys; 
+				//	GetLocalTime( &sys );
+					//GameHook::GetInstance()->m_sink->ShowHook(_T("怪物: %08x, 技能: %d"), objAddr, id);
+				TRACE(_T("怪物: %08x, 技能: %d"), objAddr, id);
+					//GameHook::GetInstance()->m_sink->ShowHook(_T("时间秒:%d,时间毫秒:%d, 技能: %d"), sys.wSecond,sys.wMilliseconds, id);
+				//}
             }
 
             if(GameHook::GetInstance()->m_pCombatSink != NULL)

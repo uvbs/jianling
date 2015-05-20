@@ -33,6 +33,7 @@
 #define RESULT_KILL_PLAYDEAD    1
 #define RESULT_KILL_TIMEOUT     2
 #define RESULT_KILL_FAIL        3
+#define RESULT_KILL_No          4
 
 //杀怪模式, 默认只Normal
 //可以应用多个杀怪模式, 比如 modeNormal | modeSpend | modeTask | modeAoe
@@ -218,7 +219,11 @@ const wchar_t nLess10[] = L"覆盆子恢復藥";
 const wchar_t nSpec1[] = L"恢復藥";
 const wchar_t nSpec2[] = L"百年人參秘藥";
 
-
+//武器修理
+const wchar_t fTo20[] = L"御龍修理工具";
+const wchar_t fTo36[] = L"沙漠修理工具";
+const wchar_t fTo45[] = L"水月修理工具";
+const wchar_t fTo50[] = L"修理道具";
 #else
 //药水, 变量名标识等级
 const wchar_t nBig50[] = L"\xd070\x0020\xbc31\xb144\xc0bc\x0020\xd68c\xbcf5\xc57d";
@@ -230,17 +235,18 @@ const wchar_t nLess10[] = L"\xc57d\xc218\x0020\xd68c\xbcf5\xc57d";
 const wchar_t nSpec1[] = L"\xd68c\xbcf5\xc57d";
 const wchar_t nSpec2[] = L"\xd589\xc6b4\xc758\x0020\xbe44\xc57d";
 
+//武器修理
+const wchar_t fTo20[] = L"\xc81c\xb8e1\x0020\xc218\xb9ac\xb3c4\xad6c";
+const wchar_t fTo36[] = L"\xc0ac\xb9c9\x0020\xc218\xb9ac\xb3c4\xad6c";
+const wchar_t fTo45[] = L"\xc218\xc6d4\x0020\xc218\xb9ac\xb3c4\xad6c";
+const wchar_t fTo50[] = L"\xbc31\xccad\x0020\xc218\xb9ac\xb3c4\xad6c";
 
 #endif
 
 
 
 
-//附魔
-const wchar_t fTo20[] = L"\xc81c\xb8e1\x0020\xc218\xb9ac\xb3c4\xad6c";
-const wchar_t fTo36[] = L"\xc0ac\xb9c9\x0020\xc218\xb9ac\xb3c4\xad6c";
-const wchar_t fTo45[] = L"\xc218\xc6d4\x0020\xc218\xb9ac\xb3c4\xad6c";
-const wchar_t fTo50[] = L"\xbc31\xccad\x0020\xc218\xb9ac\xb3c4\xad6c";
+
 
 //四个首饰的魂名字
 //1~36
