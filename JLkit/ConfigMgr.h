@@ -6,8 +6,6 @@
 #define AFX_CONFIGMGR_H__C394F572_EBDE_49C2_BF9A_7295A576D6D5__INCLUDED_
 
 
-
-//≈‰÷√π‹¿Ì∆˜
 class CConfigMgr: public CSimpleIni
 {
 public:

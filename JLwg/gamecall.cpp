@@ -1092,7 +1092,7 @@ DWORD Gamecall::GetPlayerID()
 //取得玩家数据地址的辅助函数
 DWORD Gamecall::GetPlayerDataAddr()
 {
-    DWORD PlayerInfo = UINT_MAX;
+    DWORD PlayerInfo = 0;
 
     __try
     {
@@ -1118,6 +1118,9 @@ DWORD Gamecall::GetPlayerDataAddr()
 //取得玩家坐标
 BOOL Gamecall::GetPlayerPos(fPosition* fpos)
 {
+    _ASSERTE(fpos != NULL);
+
+
     DWORD PlayerInfo = GetPlayerDataAddr();
 
     __try
@@ -1159,6 +1162,9 @@ BOOL Gamecall::GetPlayerPos(fPosition* fpos)
 //取得玩家坐标
 BOOL Gamecall::GetPlayerPos2(sPosition* spos)
 {
+
+    _ASSERTE(spos != NULL);
+
     DWORD PlayerInfo = GetPlayerDataAddr();
 
 
@@ -1761,6 +1767,8 @@ DWORD Gamecall::GetObjectHP(DWORD pObjAddress)
 //固定偏移
 DWORD Gamecall::GetObject_0x14(DWORD pObjAddress)
 {
+    _ASSERTE(pObjAddress != NULL);
+
     DWORD temp;
     temp = 0;
 
@@ -1779,6 +1787,8 @@ DWORD Gamecall::GetObject_0x14(DWORD pObjAddress)
 //对象等级
 DWORD Gamecall::GetObjectLevel(DWORD pObjAddress)
 {
+    _ASSERTE(pObjAddress != NULL);
+
     DWORD level;
 
     __asm
@@ -1825,6 +1835,9 @@ void Gamecall::TiaoYue()
 //瞬移
 void Gamecall::ZOULUSHUNYI(DWORD* adress, DWORD adrewss)
 {
+    _ASSERTE(adress != NULL);
+    _ASSERTE(adrewss != 0);
+
     __try
     {
         _asm
@@ -1864,8 +1877,10 @@ void Gamecall::ZOULUSHUNYI(DWORD* adress, DWORD adrewss)
 //参数1: 技能id
 int Gamecall::_Attack(int id)  //技能攻击  传入的是技能ID
 {
-    char c_ret;
-    //DWORD rs;
+    _ASSERTE(id != 0);
+
+
+    char bRet;
     __try
     {
         __asm
@@ -1879,16 +1894,14 @@ int Gamecall::_Attack(int id)  //技能攻击  传入的是技能ID
             push esi;
             mov eax, attack_call;
             call eax;
-            mov c_ret, al;
-            //mov rs,eax;
+            mov bRet, al;
         }
-        //TRACE("rs:%x",rs);
     }
     __except(1)
     {
         TRACE(FUNCNAME);
     }
-    return c_ret;
+    return bRet;
 }
 
 //取得技能基地址
@@ -1916,12 +1929,16 @@ Tree* Gamecall::GetUIBinTreeBaseAddr()
         TRACE(FUNCNAME);
     }
 
+    _ASSERTE(Addr != NULL);
     return Addr;
 }
 
 //当前线路是否有效
 BOOL Gamecall::isHaveXianlu(int index)
 {
+    _ASSERTE(index != 0);
+
+
     int value = index * xianlu_count_array_size;
     int result = -1;
 
@@ -1961,6 +1978,9 @@ BOOL Gamecall::isHaveXianlu(int index)
 
 void Gamecall::GuanBiDuiHuaKuangChuanKou(DWORD adress, DWORD adress1)
 {
+    _ASSERTE(adress != 0);
+    _ASSERTE(adress1 != 0);
+
 
     KONGJ kj;
     kj.canshu1 = GUANBICHUANGKOUCALL_JIEGOUTOU;
@@ -2026,6 +2046,9 @@ DWORD Gamecall::GetXianluNums()
 //参数1: 面板的地址
 wchar_t* Gamecall::GetUIName(DWORD pBarAddr)
 {
+    _ASSERTE(pBarAddr != 0);
+
+
     if(pBarAddr == NULL)
     {
         TRACE(_T("GetUIName: 参数 = NULL"));
@@ -2109,6 +2132,9 @@ UCHAR Gamecall::GetPlayerXianlu()
 //返回值: ItemStorePanel ui地址
 BOOL Gamecall::OpenShangDian(wchar_t* name, DWORD* pUiAddr)
 {
+
+    _ASSERTE(name != NULL);
+
 
     //先判断打开没有
     BOOL bOpen = FALSE;
@@ -2261,13 +2287,15 @@ BOOL Gamecall::ClickUI(UIOperator uiOp)
     return bRet;
 }
 
-/*
-取得攻击面板的地址
-参数1: bar的二叉树起始节点地址
-参数2, 传出 攻击栏 的地址
-*/
+//取得攻击面板的地址
+//参数1: bar的二叉树起始节点地址
+//参数2, 传出 攻击栏 的地址
 void Gamecall::GetStrikeBarBaseAddr(Tree* pBaseAddr, DWORD* pStrikeBarBaseAddr)
 {
+    _ASSERTE(pBaseAddr != NULL);
+    _ASSERTE(pStrikeBarBaseAddr != NULL);
+
+
     if(pBaseAddr->p2 == 1)
         return;
 
@@ -2301,6 +2329,9 @@ void Gamecall::GetStrikeBarBaseAddr(Tree* pBaseAddr, DWORD* pStrikeBarBaseAddr)
 //参数2: 未知
 void Gamecall::GetStrikeName(DWORD ID, DWORD IDD, STRIKENAME* pName)
 {
+    _ASSERTE(pName != NULL);
+
+
     pName->canshu7 = 0x07;
 
     __try
@@ -2570,11 +2601,15 @@ DWORD Gamecall::GetBagbodyInfoBase()
     {
         TRACE(FUNCNAME);
     }
+
+
     return addr;
 }
 
 int Gamecall::GetGoodsColor(DWORD m_Adress)  //获取物品的颜色
 {
+    _ASSERTE(m_Adress != 0);
+
     DWORD Adress = 0;
     __try
     {
@@ -2591,6 +2626,8 @@ int Gamecall::GetGoodsColor(DWORD m_Adress)  //获取物品的颜色
 
 DWORD Gamecall::GetGoodsBiDui(DWORD m_Adress)  //获取物品的比对
 {
+    _ASSERTE(m_Adress != 0);
+
     DWORD Adress = 0;
     __try
     {
@@ -2606,6 +2643,8 @@ DWORD Gamecall::GetGoodsBiDui(DWORD m_Adress)  //获取物品的比对
 
 DWORD Gamecall::GetGoodsBiDui_A(DWORD m_Adress)  //获取物品的比对A
 {
+    _ASSERTE(m_Adress != 0);
+
     DWORD Adress = 0;
     __try
     {
@@ -2622,6 +2661,8 @@ DWORD Gamecall::GetGoodsBiDui_A(DWORD m_Adress)  //获取物品的比对A
 
 DWORD Gamecall::GetGoodsWuQiPingJi(DWORD m_Adress)  //获取武器的评级
 {
+    _ASSERTE(m_Adress != 0);
+
     DWORD Adress = 0;
     __try
     {
@@ -2638,21 +2679,25 @@ DWORD Gamecall::GetGoodsWuQiPingJi(DWORD m_Adress)  //获取武器的评级
 
 DWORD Gamecall::GetGoodsWuQiDangQianJingYan(DWORD m_Adress)  //获取武器当前的经验
 {
-    DWORD Adress = 0;
+    _ASSERTE(m_Adress != 0);
+
+    DWORD dwRet = 0;
     __try
     {
-        Adress = (DWORD)ReadWORD(m_Adress + wuqi_xp_cur_offset);
+        dwRet = (DWORD)ReadWORD(m_Adress + wuqi_xp_cur_offset);
     }
     __except(1)
     {
-        TRACE(_T("获取武器当前的经验错误"));
-        return -1;
+        TRACE(FUNCNAME);
+        return 0;
     }
-    return Adress;
+    return dwRet;
 }
 
 char Gamecall::GetGoodsIsFengYin(DWORD m_Adress)  //获取物品是否封印
 {
+    _ASSERTE(m_Adress != 0);
+
     char Adress = 0;
     __try
     {
@@ -2660,7 +2705,7 @@ char Gamecall::GetGoodsIsFengYin(DWORD m_Adress)  //获取物品是否封印
     }
     __except(1)
     {
-        TRACE(_T("获取物品是否封印错误"));
+        TRACE(FUNCNAME);
         return -1;
     }
     return Adress;
@@ -2669,17 +2714,20 @@ char Gamecall::GetGoodsIsFengYin(DWORD m_Adress)  //获取物品是否封印
 
 DWORD Gamecall::GetBaGuaGeZiShu(DWORD m_Adress)  //获取八卦格子数
 {
-    DWORD Adress = 0;
+    _ASSERTE(m_Adress != 0);
+
+
+    DWORD dwRet = 0;
     __try
     {
-        Adress = (DWORD)ReadByte(ReadDWORD(m_Adress + bag_item_bagua_pos_offset1) + bag_item_bagua_pos_offset2);
+        dwRet = (DWORD)ReadByte(ReadDWORD(m_Adress + bag_item_bagua_pos_offset1) + bag_item_bagua_pos_offset2);
     }
     __except(1)
     {
-        TRACE(_T("获取八卦格子数错误"));
+        TRACE(FUNCNAME);
         return -1;
     }
-    return Adress;
+    return dwRet;
 }
 
 
@@ -2688,8 +2736,9 @@ DWORD Gamecall::GetBaGuaGeZiShu(DWORD m_Adress)  //获取八卦格子数
 //获取角色装备遍历Base
 DWORD Gamecall::GetBodyInfoBase(DWORD pBase)
 {
-    DWORD addr = NULL;
+    _ASSERTE(pBase != 0);
 
+    DWORD addr = NULL;
     DWORD temp = body * 0x10;
     __try
     {
@@ -2714,8 +2763,9 @@ DWORD Gamecall::GetBodyInfoBase(DWORD pBase)
 
 DWORD Gamecall::GetBagInfoBase(DWORD pBase)  //获取背包遍历Base
 {
-    DWORD addr = NULL;
+    _ASSERTE(pBase != 0);
 
+    DWORD addr = NULL;
     DWORD temp = package * 0x10;
     __try
     {
@@ -2760,6 +2810,8 @@ BOOL Gamecall::GetAllBaGuaToVector(BagVector& BaGuaVec)
 
 BOOL Gamecall::GetSpecBaGuaToVector(wchar_t* name, BagVector& BaGuaVec)
 {
+    _ASSERTE(name != 0);
+
     BagVector AllGoods;
     GetAllGoodsToVector(AllGoods);
 
@@ -2801,8 +2853,10 @@ DWORD Gamecall::GetBagGridNumber()
 
 DWORD Gamecall::GetGoodsBase(DWORD pAddr, int index)  //获取物品的首地址
 {
-    DWORD addr = 0;
 
+    _ASSERTE(pAddr != 0);
+
+    DWORD addr = 0;
     int temp = index * 4;
 
     __try
@@ -2826,8 +2880,10 @@ DWORD Gamecall::GetGoodsBase(DWORD pAddr, int index)  //获取物品的首地址
 
 DWORD Gamecall::GetGoodsID(DWORD pAddr)  //获取物品的ID
 {
-    DWORD id = UINT_MAX;
 
+    _ASSERTE(pAddr != 0);
+
+    DWORD id = UINT_MAX;
     __try
     {
         __asm
@@ -2849,8 +2905,9 @@ DWORD Gamecall::GetGoodsID(DWORD pAddr)  //获取物品的ID
 
 DWORD Gamecall::GetGoodsNameID(DWORD pAddr)  //获取物品的名字ID
 {
-    DWORD id = UINT_MAX;
+    _ASSERTE(pAddr != 0);
 
+    DWORD id = UINT_MAX;
     __try
     {
         __asm
@@ -2872,8 +2929,10 @@ DWORD Gamecall::GetGoodsNameID(DWORD pAddr)  //获取物品的名字ID
 
 DWORD Gamecall::GetGoodsType(DWORD pAddr)  //获取物品的类型
 {
-    DWORD goodstype = UINT_MAX;
 
+    _ASSERTE(pAddr != 0);
+
+    DWORD goodstype = UINT_MAX;
     __try
     {
         __asm
@@ -2896,8 +2955,10 @@ DWORD Gamecall::GetGoodsType(DWORD pAddr)  //获取物品的类型
 //获取物品的所在格子数
 DWORD Gamecall::GetGoodsPos(DWORD pAddr)
 {
-    DWORD nums = UINT_MAX;
 
+    _ASSERTE(pAddr != 0);
+
+    DWORD nums = UINT_MAX;
     __try
     {
         __asm
@@ -2920,8 +2981,9 @@ DWORD Gamecall::GetGoodsPos(DWORD pAddr)
 //获取物品的数量
 DWORD Gamecall::GetGoodsNum(DWORD pAddr)
 {
-    DWORD nums = 0;
+    _ASSERTE(pAddr != 0);
 
+    DWORD nums = 0;
     __try
     {
         __asm
@@ -2943,8 +3005,9 @@ DWORD Gamecall::GetGoodsNum(DWORD pAddr)
 
 DWORD Gamecall::GetGoodsDur(DWORD pAddr)  //获取物品的持久
 {
-    DWORD dwRet = 0;
+    _ASSERTE(pAddr != 0);
 
+    DWORD dwRet = 0;
     __try
     {
         __asm
@@ -2966,6 +3029,8 @@ DWORD Gamecall::GetGoodsDur(DWORD pAddr)  //获取物品的持久
 
 DWORD Gamecall::GetGoodsLV(DWORD pAddr)  //获取物品的等级
 {
+    _ASSERTE(pAddr != 0);
+
     DWORD dwRet;
     __try
     {
@@ -3006,8 +3071,9 @@ DWORD Gamecall::CalcC(fPosition& p1, fPosition& p2)
 
 DWORD Gamecall::GetObjectSY(DWORD pObjAddress)  // 环境对象的索引1
 {
-    DWORD Adress = UINT_MAX;
+    _ASSERTE(pObjAddress != 0);
 
+    DWORD Adress = UINT_MAX;
     __try
     {
         if(!IsBadReadPtr((void*)pObjAddress, sizeof(DWORD)))
@@ -3033,22 +3099,24 @@ DWORD Gamecall::GetObjectSY(DWORD pObjAddress)  // 环境对象的索引1
 //参数对象  objadress
 DWORD Gamecall::m_Get11C(DWORD m_Adress)
 {
+
+    _ASSERTE(m_Adress != 0);
+
+
     BYTE jd = 0;
     __try
     {
-        if(!IsBadReadPtr((void*)m_Adress, sizeof(DWORD)))
+        _asm
         {
-            _asm
-            {
-                mov eax, m_Adress;
-                mov eax, [eax+obj_type4_youshan_offset1];
-                mov eax, [eax+obj_type4_youshan_offset2];
-                mov jd, al;
-            }
+            mov eax, m_Adress;
+            mov eax, [eax+obj_type4_youshan_offset1];
+            mov eax, [eax+obj_type4_youshan_offset2];
+            mov jd, al;
         }
     }
     __except(1)
     {
+        TRACE(FUNCNAME);
     }
 
 
@@ -3059,24 +3127,23 @@ DWORD Gamecall::m_Get11C(DWORD m_Adress)
 //ojb_type20_nameid_offset1
 DWORD Gamecall::GetObjectSY12(DWORD pAddr)  // 环境对象的索引12
 {
+    _ASSERTE(pAddr != 0);
+
+
     DWORD Adress;
     __try
     {
-        if(!IsBadReadPtr((void*)pAddr, sizeof(DWORD)))
+        _asm
         {
-            _asm
-            {
-                mov eax, pAddr;
-                mov eax, [eax + ojb_type20_nameid_offset1 ];
-                mov eax, [eax + 0x1c];
-                mov Adress, eax;
-            }
+            mov eax, pAddr;
+            mov eax, [eax + ojb_type20_nameid_offset1 ];
+            mov eax, [eax + 0x1c];
+            mov Adress, eax;
         }
     }
     __except(1)
     {
         TRACE(FUNCNAME);
-        Adress = UINT_MAX;
     }
 
     return Adress;
@@ -3086,7 +3153,7 @@ DWORD Gamecall::GetObjectSY12(DWORD pAddr)  // 环境对象的索引12
 //获取任务开始地址
 DWORD Gamecall::GetTaskStartAddr()
 {
-    DWORD value;
+    DWORD value = NULL;
     __try
     {
         __asm
@@ -3104,15 +3171,17 @@ DWORD Gamecall::GetTaskStartAddr()
     __except(1)
     {
         TRACE(FUNCNAME);
-        value = NULL;
     }
 
+    _ASSERTE(value != NULL);
     return value;
 }
 
 //获得当前任务ID
 DWORD Gamecall::GetTaskID(int i, DWORD pAddr)
 {
+    _ASSERTE(pAddr != 0);
+
     DWORD id = UINT_MAX;
     __try
     {
@@ -3130,17 +3199,20 @@ DWORD Gamecall::GetTaskID(int i, DWORD pAddr)
     }
     __except(1)
     {
-        TRACE(_T("%s"), FUNCNAME);
+        TRACE(FUNCNAME);
     }
 
+    _ASSERTE(id != 0);
     return id;
 }
 
 //获得当前任务名字ID
 DWORD Gamecall::GetTaskNameID(int i, DWORD pAddr)
 {
-    DWORD id = UINT_MAX;
+    _ASSERTE(pAddr != 0);
 
+
+    DWORD id = UINT_MAX;
     __try
     {
         int temp = i * quest_struct_size;
@@ -3157,16 +3229,19 @@ DWORD Gamecall::GetTaskNameID(int i, DWORD pAddr)
     }
     __except(1)
     {
-        TRACE(_T("%s"), FUNCNAME);
+        TRACE(FUNCNAME);
     }
 
+    _ASSERTE(id != 0);
     return id;
 }
 
 //获得当前任务地址
 DWORD Gamecall::GetTaskPresentAddr(int i, DWORD pAddr)
 {
-    DWORD value;
+    _ASSERTE(pAddr != 0);
+
+    DWORD value = NULL;
     __try
     {
         int temp = i * 0x58;
@@ -3183,15 +3258,18 @@ DWORD Gamecall::GetTaskPresentAddr(int i, DWORD pAddr)
     __except(1)
     {
         TRACE(FUNCNAME);
-        value = NULL;
     }
+
+    _ASSERTE(value != 0);
     return value;
 }
 
 //获得当前做到第几个小任务
 DWORD Gamecall::GetPresentTaskIndexes(int i, DWORD pAddr)
 {
-    DWORD value;
+    _ASSERTE(pAddr != 0);
+
+    DWORD value = NULL;
     __try
     {
         int temp = i * 0x58;
@@ -3210,16 +3288,18 @@ DWORD Gamecall::GetPresentTaskIndexes(int i, DWORD pAddr)
     __except(1)
     {
         TRACE(FUNCNAME);
-        value = UINT_MAX;
     }
-
+    _ASSERTE(value != 0);
     return value;
 }
 
 //获得当前小任务结束标志
 DWORD Gamecall::GetPresentTaskEndFlag(int i, DWORD pAddr, DWORD info)
 {
-    DWORD value;
+    _ASSERTE(pAddr != 0);
+
+
+    DWORD value = NULL;
     __try
     {
         int temp = i * 0x58 + 0x9 + (info - 1) * 1 * 2;
@@ -3238,14 +3318,17 @@ DWORD Gamecall::GetPresentTaskEndFlag(int i, DWORD pAddr, DWORD info)
     __except(1)
     {
         TRACE(FUNCNAME);
-        value = UINT_MAX;
     }
+
+    _ASSERTE(value != NULL);
     return value;
 }
 
 //获得当前小任务已经打的怪数量
 DWORD Gamecall::GetPresentTaskNum(int i, DWORD pAddr, DWORD info)
 {
+    _ASSERTE(pAddr != 0);
+
     DWORD value = UINT_MAX;
     __try
     {
@@ -3265,8 +3348,10 @@ DWORD Gamecall::GetPresentTaskNum(int i, DWORD pAddr, DWORD info)
     }
     __except(1)
     {
-        TRACE(_T("%s"), FUNCNAME);
+        TRACE(FUNCNAME);
     }
+
+    _ASSERTE(value != 0);
     return value;
 }
 
@@ -3293,7 +3378,7 @@ wchar_t* Gamecall::GatTaskName(DWORD ID)
     }
     __except(1)
     {
-        TRACE(_T("%s"), FUNCNAME);
+        TRACE(FUNCNAME);
     }
 
     return name;
@@ -4114,7 +4199,7 @@ DWORD Gamecall::GetPlayerQuestUIStatus()
     }
     __except(1)
     {
-        TRACE(_T("%s"), FUNCNAME);
+        TRACE(FUNCNAME);
     }
 
     return value;
@@ -4151,20 +4236,16 @@ DWORD Gamecall::m_Get2E4(DWORD m_Adress)
     BYTE jd = 0;
     __try
     {
-        if(!IsBadReadPtr((void*)m_Adress, sizeof(DWORD)))
+        _asm
         {
-            _asm
-            {
-                mov eax, m_Adress;
-                mov eax, [eax+obj_type4_youshan_offset4]; //1是怪物 0是NPC
-                mov jd, al;
-            }
+            mov eax, m_Adress;
+            mov eax, [eax+obj_type4_youshan_offset4]; //1是怪物 0是NPC
+            mov jd, al;
         }
     }
     __except(1)
     {
         TRACE(FUNCNAME);
-        return 0;
     }
 
 
@@ -4178,20 +4259,17 @@ DWORD Gamecall::m_Get110(DWORD m_Adress)  //对象的110
     BYTE jd = 0;
     __try
     {
-        if(!IsBadReadPtr((void*)m_Adress, sizeof(DWORD)))
+        _asm
         {
-            _asm
-            {
-                mov eax, m_Adress;
-                mov eax, [eax+obj_type4_youshan_offset1];
-                mov eax, [eax+obj_type4_youshan_offset3];
-                mov jd, al;
-            }
+            mov eax, m_Adress;
+            mov eax, [eax+obj_type4_youshan_offset1];
+            mov eax, [eax+obj_type4_youshan_offset3];
+            mov jd, al;
         }
     }
     __except(1)
     {
-
+        TRACE(FUNCNAME);
     }
 
 
@@ -4217,8 +4295,6 @@ BOOL Gamecall::isCityConveyLoadingMap()
             mov bLoading, al;
 
         }
-
-
     }
     __except(1)
     {
@@ -4249,7 +4325,6 @@ BOOL Gamecall::isCityConveying()
 
         }
 
-        TRACE(_T("%d"), bLoading);
     }
     __except(1)
     {
@@ -4262,12 +4337,10 @@ BOOL Gamecall::isCityConveying()
 
 void Gamecall::FenJie(_BAGSTU& bag)
 {
-    //TRACE(_T("格子数:%d"),bag.m_Info);
     int value = bag.m_Info;
     value <<= 16;
     value += package;
 
-    //TRACE(_T("fenjie.value:%d"),value);
     try
     {
         __asm
@@ -4585,16 +4658,7 @@ BOOL Gamecall::CloseAttendance()
 //默认经典模式. 当前已经是经典就不切换了
 void Gamecall::SetMouseMode()
 {
-    //"OptionPanel" 这个名字的控件
-    //  1:进入游戏后判断是经典模式还是键盘模式[["OptionPanel" 首地址 + 0x36D1C] + 0x1C]  等于 1  是经典模式  等于0是键盘模式
-    //  2 : [0xFE3280] 等于 1  是经典模式  等于0是键盘模式
-    //  二种方法判断经典模式的状态都可以
-    //  参数5是 控件的首地址 + 0x36F28
 
-    //判断当前模式
-    //UCHAR isClass = *(UCHAR *)0xfe3280;
-    //if(isClass == 0)
-    //{
     DWORD addr = 0;
     GetUIAddrByName(L"OptionPanel", &addr);
     _ASSERTE(addr != 0);
@@ -4635,6 +4699,8 @@ BYTE Gamecall::GetPlayerDeadStatus()
 
     BYTE value = UCHAR_MAX;
     DWORD playerdata = GetPlayerDataAddr();
+    _ASSERTE(playerdata != 0);
+
     __try
     {
         __asm
@@ -4645,7 +4711,7 @@ BYTE Gamecall::GetPlayerDeadStatus()
             mov value, al;
 
         }
-        //TRACE(_T("死亡状态:%d"),value);
+
     }
     __except(1)
     {

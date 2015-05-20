@@ -96,6 +96,7 @@ BOOL CJLkitView::PreCreateWindow(CREATESTRUCT& cs)
 
     cs.dwExStyle &= ~WS_EX_CLIENTEDGE;
     cs.style |= WS_BORDER;
+
     return TRUE;
 }
 

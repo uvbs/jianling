@@ -9,9 +9,9 @@
 
 
 #ifdef _DEBUG
-    #define new DEBUG_NEW
-    #undef THIS_FILE
-    static char THIS_FILE[] = __FILE__;
+#define new DEBUG_NEW
+#undef THIS_FILE
+static char THIS_FILE[] = __FILE__;
 #endif
 
 /////////////////////////////////////////////////////////////////////////////
@@ -23,8 +23,8 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
     //{{AFX_MSG_MAP(CMainFrame)
     ON_WM_CREATE()
     ON_WM_TIMER()
-	ON_WM_CLOSE()
-	//}}AFX_MSG_MAP
+    ON_WM_CLOSE()
+    //}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
 static UINT indicators[] =
@@ -76,6 +76,9 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
         return -1;      // fail to create
     }
 
+    m_wndStatusBar.SetPaneInfo(ID_SEPARATOR, ID_SEPARATOR, SBPS_STRETCH, 10);
+
+    //´¦ÀíÐÄÌø
     SetTimer(IDT_CLEAR, 20000, NULL);
     return 0;
 }
@@ -111,8 +114,23 @@ void CMainFrame::OnTimer(UINT nIDEvent)
     CFrameWnd::OnTimer(nIDEvent);
 }
 
-void CMainFrame::OnClose() 
+void CMainFrame::OnClose()
 {
-	KillTimer(IDT_CLEAR);
-	CFrameWnd::OnClose();
+    KillTimer(IDT_CLEAR);
+    CFrameWnd::OnClose();
+}
+
+BOOL CMainFrame::PreCreateWindow(CREATESTRUCT& cs) 
+{
+	// TODO: Add your specialized code here and/or call the base class
+
+	if(!CFrameWnd::PreCreateWindow(cs))
+        return FALSE;
+
+
+    cs.cx = 600;
+    cs.cy = 400;
+    cs.dwExStyle &= ~WS_EX_CLIENTEDGE;
+
+    return TRUE;
 }

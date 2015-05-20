@@ -267,7 +267,7 @@ bool CJLkitDoc::OnEventTCPSocketLink(CJLkitSocket* pSocket, INT nErrorCode)
 
 
 //¹Ø±ÕÊÂ¼þ
-bool CJLkitDoc::OnEventTCPSocketShut(CJLkitSocket* pSocket, BYTE cbShutReason)
+bool CJLkitDoc::OnEventTCPSocketShut(CJLkitSocket* pSocket, INT nErrorCode)
 {
 
     pSocket->Close();
@@ -429,7 +429,7 @@ void CJLkitDoc::OnLookkey()
 {
 
     if(m_pKeyDlg == NULL)
-        m_pKeyDlg = new CDlgKeyView(AfxGetMainWnd());
+        m_pKeyDlg = new CDlgKey(AfxGetMainWnd());
 
     m_pKeyDlg->DoModal();
     SafeDelete(m_pKeyDlg);

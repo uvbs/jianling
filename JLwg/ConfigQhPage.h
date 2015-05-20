@@ -140,10 +140,10 @@ public:
     
     // Dialog Data
     //{{AFX_DATA(CConfigItemPage)
-    enum { IDD = IDD_SETINI_ITEMFILTER };
+	enum { IDD = IDD_SETINI_ITEMFILTER };
     CListCtrl   m_FilterList;
     CListCtrl   m_BagList;
-    //}}AFX_DATA
+	//}}AFX_DATA
     
     
     void GetSelToFilterList(TCHAR szName[]);

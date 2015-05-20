@@ -2,7 +2,7 @@
 #define AFX_BINDKEYDLG_H__80DB6E3E_0BC5_4171_A55D_CB86A4F8B20E__INCLUDED_
 
 
-//°ó¶¨key¶Ô»°¿ò
+
 class CDlgBindKey : public CDialog
 {
 // Construction

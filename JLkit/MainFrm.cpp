@@ -10,7 +10,9 @@
 #include "settingdlg.h"
 #include "ConfigMgr.h"
 
+
 #include <afximpl.h>
+
 
 
 #ifdef _DEBUG
@@ -55,10 +57,7 @@ static UINT BASED_CODE indicators[] =
 
 CMainFrame::CMainFrame()
 {
-    
-    afxData.cxBorder2=0;
-    afxData.cyBorder2=0;
-    afxData.bWin4 = FALSE;
+
 }
 
 
@@ -184,6 +183,9 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
     m_wndToolBar.SetButtonInfo(nIndex2, ID_COMBO2, TBBS_SEPARATOR, 150);
 
 
+
+    m_wndStatusBar.SetPaneInfo(ID_SEPARATOR, ID_SEPARATOR, SBPS_STRETCH, 10);
+
     //获取工具栏大小
     CRect rect;
     CRect rect2;
@@ -248,7 +250,7 @@ void CMainFrame::OnClose()
 BOOL CMainFrame::PreCreateWindow(CREATESTRUCT& cs)
 {
 
-    if(!CFrameWnd::PreCreateWindow(cs)) 
+    if(!CFrameWnd::PreCreateWindow(cs))
         return FALSE;
 
     static TCHAR szClassName[] = JLKITCLASSNAME;
@@ -265,7 +267,7 @@ BOOL CMainFrame::PreCreateWindow(CREATESTRUCT& cs)
 
     cs.cx = 600;
     cs.cy = 400;
-
+    cs.dwExStyle &= ~WS_EX_CLIENTEDGE;
     return TRUE;
 }
 

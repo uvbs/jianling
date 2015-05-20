@@ -771,6 +771,8 @@ void CDataDlg::PrintfRangeMonster(BOOL bApplyConfig)
     {
         gcall.Kill_ApplyConfig(RangeObject);
     }
+
+
     //判续对象, 根据距离
     std::sort(RangeObject.begin(), RangeObject.end(), GamecallEx::UDgreater);
 
@@ -834,6 +836,7 @@ void CDataDlg::PrintfRangeMonster(BOOL bApplyConfig)
         //怪物面向
         strTemp.Format(_T("%d"), gcall.GetObjectView(pNode->ObjAddress));
         m_ListCtrl.SetItemText(index, 10, strTemp);
+
 
 
         m_ListCtrl.SetItemData(index, (DWORD)pNode);

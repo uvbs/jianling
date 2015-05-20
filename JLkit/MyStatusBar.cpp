@@ -26,9 +26,18 @@ CMyStatusBar::~CMyStatusBar()
 BEGIN_MESSAGE_MAP(CMyStatusBar, CStatusBar)
 	//{{AFX_MSG_MAP(CMyStatusBar)
 	ON_WM_PAINT()
+	ON_WM_SIZE()
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
 // CMyStatusBar message handlers
 
+
+void CMyStatusBar::OnSize(UINT nType, int cx, int cy) 
+{
+	CStatusBar::OnSize(nType, cx, cy);
+	
+	// TODO: Add your message handler code here
+	
+}

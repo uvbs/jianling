@@ -189,7 +189,7 @@ bool CJLSrvrDoc::OnEventTCPSocketLink(CJLkitSocket* pSocket, INT nErrorCode)
     return false;
 }
 
-bool CJLSrvrDoc::OnEventTCPSocketShut(CJLkitSocket* pSocket, BYTE cbShutReason)
+bool CJLSrvrDoc::OnEventTCPSocketShut(CJLkitSocket* pSocket, INT nErrorCode)
 {
     DeleteClient(pSocket);
     return false;
@@ -436,13 +436,23 @@ bool CJLSrvrDoc::AddClient(CJLkitSocket* pSocket)
 
 bool CJLSrvrDoc::DeleteClient(CJLkitSocket* pSocket)
 {
+
+    //从客户端列表删除
     _client.remove(pSocket);
+
+
+    //从心跳列表删除
     _heart.erase(pSocket);
+
+
+    //数据库
     m_db.UserExit(_userdata[pSocket].name);
 
-    TRACE(_T("_heart: %d"), _heart.size());
-    TRACE(_T("_client: %d"), _client.size());
 
+    //从客户数据列表删除
+    _userdata.erase(pSocket);
+
+    //释放资源
     pSocket->Close();
     SafeDelete(pSocket);
 
@@ -462,6 +472,8 @@ void CJLSrvrDoc::OnKeyAdd()
     dlg.DoModal();
 }
 
+
+//清理无效连接
 void CJLSrvrDoc::DeadSocketClear()
 {
 

@@ -24,7 +24,7 @@ class CJLkitSocket;
 struct ITCPSocketSink
 {
     virtual bool OnEventTCPSocketLink(CJLkitSocket* pSocket, INT nErrorCode) = 0;
-    virtual bool OnEventTCPSocketShut(CJLkitSocket* pSocket, BYTE cbShutReason) = 0;
+    virtual bool OnEventTCPSocketShut(CJLkitSocket* pSocket, INT nErrorCode) = 0;
     virtual bool OnEventTCPSocketRead(CJLkitSocket* pSocket, const Tcp_Head &stTcpHead, void* pData, WORD wDataSize) = 0;
 };
 

@@ -45,7 +45,7 @@ public:
 
     CDlgLogin* m_pLoginDlg;
     CDlgRegist* m_pRegisterDlg;
-    CDlgKeyView* m_pKeyDlg;
+    CDlgKey* m_pKeyDlg;
 
 
     CStatusBox* m_pStatusBox;
@@ -58,7 +58,7 @@ public:
     //ÍøÂç»Øµ÷
 public:
     virtual bool OnEventTCPSocketLink(CJLkitSocket* pSocket, INT nErrorCode);
-    virtual bool OnEventTCPSocketShut(CJLkitSocket* pSocket, BYTE cbShutReason);
+    virtual bool OnEventTCPSocketShut(CJLkitSocket* pSocket, INT nErrorCode);
     virtual bool OnEventTCPSocketRead(CJLkitSocket* pSocket, const Tcp_Head& stTcpHead, VOID* pData, WORD wDataSize);
 
 

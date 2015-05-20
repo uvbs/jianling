@@ -8,6 +8,8 @@
 #include "JLkitSocket.h"
 #include "configmgr.h"
 
+
+
 #ifdef _DEBUG
     #define new DEBUG_NEW
 #endif
@@ -30,6 +32,7 @@ END_MESSAGE_MAP()
 
 CJLkitApp::CJLkitApp()
 {
+
 }
 
 

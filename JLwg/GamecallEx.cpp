@@ -2559,7 +2559,7 @@ bool GamecallEx::OnEventTCPSocketLink(CJLkitSocket* pSocket, INT nErrorCode)
     return true;
 }
 
-bool GamecallEx::OnEventTCPSocketShut(CJLkitSocket* pSocket, BYTE cbShutReason)
+bool GamecallEx::OnEventTCPSocketShut(CJLkitSocket* pSocket, INT nErrorCode)
 {
     return true;
 }

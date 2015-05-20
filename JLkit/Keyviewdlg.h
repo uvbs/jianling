@@ -4,15 +4,15 @@
 
 #include "BindKeyDlg.h"
 
-// CDlgKeyView dialog
-class CDlgKeyView : public CDialog
+// CDlgKey dialog
+class CDlgKey : public CDialog
 {
-    DECLARE_DYNAMIC(CDlgKeyView)
+    DECLARE_DYNAMIC(CDlgKey)
     DECLARE_MESSAGE_MAP()
 
 public:
-    CDlgKeyView(CWnd* pParent = NULL);   // standard constructor
-    virtual ~CDlgKeyView();
+    CDlgKey(CWnd* pParent = NULL);   // standard constructor
+    virtual ~CDlgKey();
 
 
     void Querykey();

@@ -21,7 +21,7 @@ public:
     //ÍøÂç»Øµ÷
 private:
     virtual bool OnEventTCPSocketLink(CJLkitSocket* pSocket, INT nErrorCode) ;
-    virtual bool OnEventTCPSocketShut(CJLkitSocket* pSocket, BYTE cbShutReason);
+    virtual bool OnEventTCPSocketShut(CJLkitSocket* pSocket, INT nErrorCode);
     virtual bool OnEventTCPSocketRead(CJLkitSocket* pSocket, const Tcp_Head& stTcpHead, void* pData, WORD wDataSize);
 
     CJLkitSocket sock;

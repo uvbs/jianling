@@ -16,21 +16,21 @@
 
 // CDlgKeyView dialog
 
-IMPLEMENT_DYNAMIC(CDlgKeyView, CDialog)
-CDlgKeyView::CDlgKeyView(CWnd* pParent)
-    : CDialog(CDlgKeyView::IDD, pParent)
+IMPLEMENT_DYNAMIC(CDlgKey, CDialog)
+CDlgKey::CDlgKey(CWnd* pParent)
+    : CDialog(CDlgKey::IDD, pParent)
 {
     m_pBindDlg = NULL;
 }
 
-CDlgKeyView::~CDlgKeyView()
+CDlgKey::~CDlgKey()
 {
     SafeDelete(m_pBindDlg);
 }
 
 
 
-void CDlgKeyView::DoDataExchange(CDataExchange* pDX)
+void CDlgKey::DoDataExchange(CDataExchange* pDX)
 {
     CDialog::DoDataExchange(pDX);
 
@@ -40,7 +40,7 @@ void CDlgKeyView::DoDataExchange(CDataExchange* pDX)
 }
 
 
-BEGIN_MESSAGE_MAP(CDlgKeyView, CDialog)
+BEGIN_MESSAGE_MAP(CDlgKey, CDialog)
     //{{AFX_MSG_MAP(CDlgKeyView)
     ON_COMMAND(ID_BINDKEY, OnBinkey)
     ON_COMMAND(ID_UNBIND, OnUnbindkey)
@@ -52,7 +52,7 @@ END_MESSAGE_MAP()
 
 // CDlgKeyView message handlers
 
-BOOL CDlgKeyView::OnInitDialog()
+BOOL CDlgKey::OnInitDialog()
 {
     CDialog::OnInitDialog();
 
@@ -67,21 +67,13 @@ BOOL CDlgKeyView::OnInitDialog()
 
     m_ListCtrl.SetExtendedStyle(LVS_EX_FULLROWSELECT);
 
-
-    CRect rect;
-    GetClientRect(&rect);
-
-    m_ListCtrl.MoveWindow(&rect, FALSE);
-
-
-
     Querykey();
 
     return TRUE;  // return TRUE unless you set the focus to a control
     // EXCEPTION: OCX Property Pages should return FALSE
 }
 
-void CDlgKeyView::OnNMRClickListkey(NMHDR* pNMHDR, LRESULT* pResult)
+void CDlgKey::OnNMRClickListkey(NMHDR* pNMHDR, LRESULT* pResult)
 {
 
     POINT point;
@@ -94,7 +86,7 @@ void CDlgKeyView::OnNMRClickListkey(NMHDR* pNMHDR, LRESULT* pResult)
     *pResult = 0;
 }
 
-void CDlgKeyView::OnBinkey()
+void CDlgKey::OnBinkey()
 {
 
     if(m_pBindDlg == NULL)
@@ -103,7 +95,7 @@ void CDlgKeyView::OnBinkey()
     m_pBindDlg->DoModal();
 }
 
-void CDlgKeyView::Querykey()
+void CDlgKey::Querykey()
 {
     CMainFrame* pFrame = (CMainFrame*)AfxGetMainWnd();
     CJLkitDoc* pDoc = (CJLkitDoc*)pFrame->GetActiveDocument();
@@ -125,7 +117,7 @@ void CDlgKeyView::Querykey()
 }
 
 
-void CDlgKeyView::OnUnbindkey()
+void CDlgKey::OnUnbindkey()
 {
 
     CMainFrame* pFrame = (CMainFrame*)AfxGetMainWnd();
@@ -148,7 +140,7 @@ void CDlgKeyView::OnUnbindkey()
 }
 
 
-void CDlgKeyView::OnQuery()
+void CDlgKey::OnQuery()
 {
 
     Querykey();

@@ -76,11 +76,13 @@ void CJLSrvrView::Dump(CDumpContext& dc) const
 
 void CJLSrvrView::AutoColumnWidth()
 {
-    for(int i = 0; i++;)
+    int i = 0;
+    do
     {
         if(!GetListCtrl().SetColumnWidth(i, LVSCW_AUTOSIZE_USEHEADER))
             break;
     }
+    while(++i);
 }
 
 void CJLSrvrView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
