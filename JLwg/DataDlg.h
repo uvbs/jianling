@@ -31,9 +31,7 @@ public:
     BOOL    m_bHook_Accquest;
     BOOL    m_bHook_Combat;
 	//}}AFX_DATA
-	HANDLE hand;
-
-
+	
     //
     CLuaPage *m_pLuaPage;
     CDbgPage *m_pDbgPage;

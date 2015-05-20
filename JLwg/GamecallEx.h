@@ -74,7 +74,7 @@ public:
     static UINT CALLBACK KeepAliveThread(LPVOID pParam);
 
     //杀怪
-    int KillObject(DWORD range, ObjectNode* pNode, DWORD mode, DWORD canKillRange = CAN_OPERATOR); //杀死这个对象
+    int KillObject(DWORD range, ObjectNode* pNode, DWORD mode, DWORD canKillRange = CAN_OPERATOR,BOOL Rush = FALSE); //杀死这个对象
     void AddCustomKill(wchar_t* name, CUSTOMTYPE type);
 	void Party_KillObject();
 
