@@ -560,3 +560,23 @@
 
 #define Offset_Item_PHead 0x4;
 #define Offset_Item_PEnd 0x8;
+
+
+//技能的遍历
+#define Offset_Skill_Offset1     Offset_ShorCutPanel_Offset1
+#define Offset_Skill_Offset2     Offset_ShorCutPanel_Offset2 + Offset_ShorCutPanel_Offset3
+#define Offset_Skill_Offset3     Offset_ShorCutPanel_Offset4
+#define Offset_Skill_Offset4     Offset_ShorCutPanel_Offset5
+#define Offset_Skill_Offset5     Offset_ShorCutPanel_Offset6
+#define Offset_Skill_Skill     0x20+ 4+ 4
+#define Offset_Skill_ASkill     0x1C+ 4+ 4
+#define Offset_Skill_PBSkill     0x28
+#define Offset_Skill_PESkill     0x2C
+#define Offset_Skill_PBASkill     0x30
+#define Offset_Skill_PEASkill     0x34
+#define Offset_Skill_Name     0x320
+#define Offset_Skill_NameLen     0x334
+#define Offset_Skill_Id     0x10
+#define Offset_Skill_Type     0x14
+#define Offset_Skill_CD     0xC0
+#define Offset_Skill_AState     0x30

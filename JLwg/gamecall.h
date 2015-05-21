@@ -146,8 +146,11 @@ public:
     //判断
     BOOL        isConfirmDeleteTalnetPanelShow();
     BOOL        isTalentPanelShow();
+
+
     BOOL        isStrikeCd(DWORD id);  //判断技能cd
-	BOOL        isStrkeId(DWORD id);   //判断是否遍历出此技能
+
+
     BOOL        isPlayerDaodi();   //倒地状态
     BOOL        isLoots(DWORD pAddr);
     BOOL        isLoading(); //判断角色是否在打开任务物品的读条状态
@@ -166,10 +169,13 @@ public:
     BOOL        isDeadBody(DWORD pAddr);
     BOOL        isCanFenjie(DWORD pAddr); //可以分解
     BOOL        isFuhuoing();
+
+
+
     DWORD       isYaoPingCD(_BAGSTU& goods); //药瓶cd
-    DWORD       isStrikeLocked(int index, DWORD pAddr);
-    DWORD       isStrikeCanUse(int index, DWORD pAddr);
-    BOOL        isBagFull();
+
+
+
     BOOL        isCanKill(ObjectNode* pNode);
     BOOL        isCanLook(DWORD pAddr);    //可以看到的
 
@@ -209,24 +215,19 @@ public:
     void        GetUIAddrByName(wchar_t* name, DWORD* pUIAddr);
     void        GetUiAddrByName(KONGJIAN_JIEGOU& jiegou);
     void        _GetUiAddrByName(Tree* Addr, wchar_t* name, DWORD& reAddr);
+
+
+
     void        GetStrikeToVector(std::vector<STRIKEINFO>& RangeObject);
-    void        GetStrikeBarBaseAddr(Tree* pBaseAddr, DWORD* pStrikeBarBaseAddr);
-    void        GetStrikeName(DWORD ID, DWORD IDD, STRIKENAME* pName);
-    DWORD       GetStrikeStartAddr();                               //获取技能开始地址
-    DWORD       GetStrike_R_id(int index, DWORD p_R_addr);
-    DWORD       GetStrike_R_addr(DWORD pStrikeStartAddr);
-    DWORD       GetStrikeId1(int index, DWORD pStrikeStartAddr);  //取技能ID
-    DWORD       GetStrikeId2(int index, DWORD pStrikeStartAddr);  //取技能ID
-    DWORD       GetStrikeCD(int index, DWORD pAddr);
-    BOOL        GetStrikeByName(const wchar_t* name, STRIKEINFO* pStrikeInfo);
-    DWORD       GetRJianSkill(DWORD m_adress);  //取技能R键攻击的数组开始地址
-    DWORD       GetRJSkillIDDD(int i, DWORD m_adress);  //取R键数组技能ID
-    DWORD       GetRJSkillIDDD2(int i, DWORD m_adress);  //取R键技能数组ID2
-    DWORD       GetRJSkillIsJieSuo(int i, DWORD m_adress);  //取R键技能是否已经解锁
-    DWORD       GetRJSkillISShiYong(int i, DWORD m_adress);  //取R键技能是否可以使用
-    DWORD       GetRJSkillCD(int i, DWORD m_adress);  //取R键技能是否冷却
+
+    
+    
+    
     void        Fuhuo(DWORD uiAddr);
     void        DaKaiJiNengMianBan(DWORD adress, DWORD adress1); //打开技能面板
+
+
+
 
 
     //加点

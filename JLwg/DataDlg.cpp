@@ -710,48 +710,17 @@ void CDataDlg::PrintfStrike()
     CString strTemp;
     for(DWORD i = 0; i < RangeObject.size(); i++)
     {
-        int id1 = RangeObject[i].id1;
-        int id2 = RangeObject[i].id2;
 
-        wchar_t* name = RangeObject[i].stName.name;
+        m_ListCtrl.InsertItem(i, RangeObject[i].name);
 
-        //地址
-        m_ListCtrl.InsertItem(i, name);
-
-        strTemp.Format(_T("%d"), RangeObject[i].cd);
+        strTemp = RangeObject[i].bCD == true ? _T("冷却中"):_T("冷却完毕");
         m_ListCtrl.SetItemText(i, 1, strTemp);
 
+        strTemp = RangeObject[i].bAviable == true ? _T("可用"):_T("不可用");
+        m_ListCtrl.SetItemText(i, 2, strTemp);
 
-
-        if(RangeObject[i].isBlock == 0)
-        {
-
-            strTemp.Format(_T("不可用"));
-            m_ListCtrl.SetItemText(i, 2, strTemp);
-            strTemp.Format(_T("未解锁"));
-        }
-        else
-        {
-            if(RangeObject[i].canUse == 0)
-            {
-                strTemp.Format(_T("可使用"));
-            }
-            else
-            {
-                strTemp.Format(_T("不可用"));
-            }
-            //strTemp.Format(_T("%d"), RangeObject[i].canUse);
-            m_ListCtrl.SetItemText(i, 2, strTemp);
-            strTemp.Format(_T("已解锁"));
-        }
-        //strTemp.Format(_T("%d"), RangeObject[i].isBlock);
+        strTemp.Format(_T("%d"), RangeObject[i].id);
         m_ListCtrl.SetItemText(i, 3, strTemp);
-
-        strTemp.Format(_T("%d"), id1);
-        m_ListCtrl.SetItemText(i, 4, strTemp);
-
-        strTemp.Format(_T("%d"), id2);
-        m_ListCtrl.SetItemText(i, 5, strTemp);
 
     }
 

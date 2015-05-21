@@ -114,12 +114,13 @@ typedef struct _STRIKENAME
 //技能数据结构
 typedef struct _STRIKEINFO
 {
-    int         id1;
-    int         id2;
-    STRIKENAME  stName;
-    DWORD       cd;
-    DWORD       canUse;
-    DWORD       isBlock;
+    wchar_t* name;
+    int id;
+    int iIndex;
+    char iType;
+    int iKeyCode;
+    bool bCD;
+    bool bAviable;  //能用
 } STRIKEINFO, PSTRIKEINFO;
 
 #pragma pack(push)

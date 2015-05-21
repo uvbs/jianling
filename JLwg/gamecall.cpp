@@ -2292,297 +2292,7 @@ BOOL Gamecall::ClickUI(UIOperator uiOp)
     return bRet;
 }
 
-//取得攻击面板的地址
-//参数1: bar的二叉树起始节点地址
-//参数2, 传出 攻击栏 的地址
-void Gamecall::GetStrikeBarBaseAddr(Tree* pBaseAddr, DWORD* pStrikeBarBaseAddr)
-{
-    _ASSERTE(pBaseAddr != NULL);
-    _ASSERTE(pStrikeBarBaseAddr != NULL);
 
-
-    if(pBaseAddr->p2 == 1)
-        return;
-
-    __try
-    {
-        wchar_t* name = GetUIName(pBaseAddr->Adress);
-        if(name != NULL)
-        {
-            if(wcscmp(name, L"SkillBarPanel") == 0)
-            {
-                *pStrikeBarBaseAddr = (DWORD)pBaseAddr->Adress;
-                return;
-            }
-        }
-
-
-
-    }
-    __except(EXCEPTION_EXECUTE_HANDLER)
-    {
-
-    }
-
-
-    GetStrikeBarBaseAddr(pBaseAddr->Right, pStrikeBarBaseAddr);
-    GetStrikeBarBaseAddr(pBaseAddr->Left, pStrikeBarBaseAddr);
-}
-
-//获取技能名字
-//参数1: 技能id
-//参数2: 未知
-void Gamecall::GetStrikeName(DWORD ID, DWORD IDD, STRIKENAME* pName)
-{
-    _ASSERTE(pName != NULL);
-
-
-    pName->canshu7 = 0x07;
-
-    __try
-    {
-        __asm
-        {
-            mov ecx, obj_name_call_base;
-            mov ecx, [ecx];
-            mov ecx, [ecx + nums_strike_call_offset1];
-            mov edx, [ecx];
-            mov edx, [edx + nums_strike_call_offset2];
-            mov eax, IDD;
-            push eax;
-            mov eax, ID;
-            push eax;
-            call edx;
-
-            mov edi, eax;
-            mov edx, [edi + 0x18];   //TODO 固定
-            mov ecx, [edi + 0x1C];  //TODO 固定
-            mov eax, IDD;
-            push eax;
-
-            mov eax, ID;
-            push ID;
-            push ecx;
-            push edx;
-            mov eax, pName;
-            push eax;
-            mov eax, nums_strike_call;
-            call eax;
-            add esp, 0x14;
-        }
-    }
-    __except(1)
-    {
-        TRACE(FUNCNAME);
-    }
-}
-
-
-
-//取技能是否冷却  等于2 说明在冷却中 或者说明是一个持续技能在发招
-DWORD Gamecall::GetStrikeCD(int index, DWORD pAddr)
-{
-    DWORD value = UINT_MAX;
-    __try
-    {
-        int temp = index * nums_strike_strcut_size;
-        int temp2 = nums_strike_cd + 0x10;
-        __asm
-        {
-            mov eax, pAddr;
-            add eax, temp;
-            add eax, temp2;
-
-            mov eax, [eax];
-            mov value, eax;
-        }
-    }
-    __except(1)
-    {
-        TRACE(FUNCNAME);
-    }
-    return value;
-}
-
-//取技能是否已经解锁  这个是0说明是没有解锁的技能  1 说明是已经解锁了
-DWORD Gamecall::isStrikeLocked(int index, DWORD pAddr)
-{
-    DWORD value = UINT_MAX;
-    __try
-    {
-        int temp = index * nums_strike_strcut_size;
-        int temp2 = nums_strike_islock + 0x10;
-        __asm
-        {
-            mov eax, pAddr;
-            add eax, temp;
-            add eax, temp2;
-
-            mov eax, [eax];
-            mov value, eax;
-        }
-    }
-    __except(1)
-    {
-        TRACE(FUNCNAME);
-    }
-    return value;
-}
-
-//取技能是否可以使用 这个是0说明这个技能是可以使用的  2 说明这个技能虽然已经解锁 但是是灰名的
-DWORD Gamecall::isStrikeCanUse(int index, DWORD pAddr)
-{
-    DWORD value = UINT_MAX;
-    __try
-    {
-        if(pAddr != 0)
-            value = ReadDWORD(pAddr + index * nums_strike_strcut_size + (nums_strike_canuse + 0x10));
-        /*int temp = index * nums_strike_strcut_size;
-        int temp2 = (nums_strike_canuse + 0x10);
-        __asm
-        {
-        mov eax, pAddr;
-        add eax, temp;
-        add eax, temp2;
-
-        mov eax, [eax];
-        mov value, eax;
-        }*/
-    }
-    __except(1)
-    {
-        TRACE(FUNCNAME);
-    }
-    return value;
-}
-
-//根据攻击栏的地址取得技能数据的开始地址
-DWORD Gamecall::GetStrikeStartAddr()
-{
-    DWORD StartAddr = 0;
-
-    __try
-    {
-        DWORD StrikeStartAddr = 0;
-        GetStrikeBarBaseAddr(GetUIBinTreeBaseAddr(), &StrikeStartAddr);
-
-        //_ASSERTE(StrikeStartAddr != 0);
-        if(StrikeStartAddr == NULL)
-        {
-            return 0;
-        }
-
-        __asm
-        {
-            mov eax, StrikeStartAddr;
-            //add eax, 0x44;
-            //mov eax, [eax];
-            //mov eax, [eax + 0x24];
-            add eax, 0x40;
-
-            mov StartAddr, eax;
-        }
-
-    }
-
-    __except(1)
-    {
-        TRACE(FUNCNAME);
-    }
-
-    return StartAddr;
-}
-
-//取技能id1
-//参数1: 技能的索引, 应该是游戏界面中的排列顺序
-//参数2: 技能数据开始地址
-//
-DWORD Gamecall::GetStrikeId1(int index, DWORD pStrikeStartAddr)
-{
-    DWORD id = UINT_MAX;
-    int temp = index * nums_strike_strcut_size;
-
-    __try
-    {
-        __asm
-        {
-            mov eax, pStrikeStartAddr;
-            add eax, temp;
-            add eax, nums_strike_strcut_id;
-            mov eax, [eax];
-
-            mov id, eax;
-        }
-    }
-    __except(1)
-    {
-        TRACE(FUNCNAME);
-    }
-
-    return id;
-}
-
-/*去技能id2
-参数1: 技能的索引, 应该是游戏界面中的排列顺序
-参数2: 技能数据开始地址
-*/
-DWORD Gamecall::GetStrikeId2(int index, DWORD pStrikeStartAddr)  //取技能ID2
-{
-    DWORD id = UINT_MAX;
-    int temp = index * nums_strike_strcut_size;
-
-    __try
-    {
-        __asm
-        {
-            mov eax, pStrikeStartAddr;
-            add eax, temp;
-            add eax, nums_strike_id2;
-            mov eax, [eax];
-
-            mov id, eax;
-        }
-    }
-    __except(1)
-    {
-        TRACE(FUNCNAME);
-    }
-
-    return id;
-}
-
-DWORD Gamecall::GetStrike_R_id(int index, DWORD p_R_addr)
-{
-    DWORD addr = 0;
-    int temp = index * 0xb88;
-
-    __asm
-    {
-        mov eax, p_R_addr;
-        add eax, temp;
-        add eax, 0x4;
-        mov eax, [eax];
-        mov addr, eax;
-    }
-
-    return addr;
-}
-
-DWORD Gamecall::GetStrike_R_addr(DWORD pStrikeStartAddr)
-{
-    DWORD addr;
-    __asm
-    {
-        mov eax, pStrikeStartAddr;
-        mov eax, [eax + 0x4];
-        mov eax, [eax + 0x20];
-        add eax, 0x68;
-
-        mov addr, eax;
-    }
-
-    return addr;
-}
 
 //获取背包身上装备仓库遍历Base
 DWORD Gamecall::GetBagbodyInfoBase()
@@ -3515,20 +3225,6 @@ void Gamecall::Pickup2(ObjectNode* pObj)
     {
         TRACE(_T("%s"), FUNCNAME);
     }
-}
-
-//背包满了
-BOOL Gamecall::isBagFull()
-{
-    //先判断背包有没有满
-    BagVector GoodsVec;
-    GetAllGoodsToVector(GoodsVec);
-
-    if(GoodsVec.size() == GetBagGridNumber())
-        return TRUE;
-
-
-    return FALSE;
 }
 
 
@@ -5811,256 +5507,79 @@ void Gamecall::GetAllBodyEquipToVector(BagVector& RangeObject)
     sendcall(id_msg_GetAllBodyEquipToVector, &RangeObject);
 }
 
-//通过名字取id
-BOOL Gamecall::GetStrikeByName(const wchar_t* name, STRIKEINFO* pStrikeInfo)
-{
-
-    _ASSERTE(name != NULL);
-    _ASSERTE(pStrikeInfo != NULL);
-
-
-    std::vector<STRIKEINFO> StrikeVec;
-    GetStrikeToVector(StrikeVec);
-
-    try
-    {
-        for(DWORD i = 0; i < StrikeVec.size(); i++)
-        {
-            if(wcscmp(StrikeVec[i].stName.name, name) == 0)
-            {
-                *pStrikeInfo = StrikeVec[i];
-                return TRUE;
-            }
-        }
-    }
-    catch(...)
-    {
-        TRACE(FUNCNAME);
-    }
-
-    TRACE(_T("%s: 没有找到对应技能"), FUNCNAME);
-    return FALSE;
-}
-
 void Gamecall::GetStrikeToVector(std::vector<STRIKEINFO>& RangeObject)
 {
-    int count = 9;
-    int count2 = 6;
-    int index;
+
+    DWORD PPTR = ReadDWORD(Offset_Game_Base);
+    PPTR = ReadDWORD(PPTR + Offset_Skill_Offset1);
+    PPTR = ReadDWORD(PPTR + Offset_Skill_Offset2);
+
+    //{技能指针}
+    PPTR = ReadDWORD(PPTR + Offset_Skill_Offset3 - Offset_Skill_Offset4 + Offset_Skill_Offset5 + Offset_Skill_Skill);
+    _ASSERTE(PPTR != 0);
 
 
-    DWORD pStrikeStart = GetStrikeStartAddr();
+    //{技能首地址}
+    DWORD PSkillBegin = ReadDWORD(PPTR + Offset_Skill_PBSkill);
+    _ASSERTE(PSkillBegin != 0);
 
-    if(pStrikeStart == NULL)
+
+    //{技能尾地址}
+    DWORD PSkillEnd = ReadDWORD(PPTR + Offset_Skill_PESkill);
+    _ASSERTE(PSkillEnd != 0);
+
+    DWORD dwCount = (PSkillEnd - PSkillBegin) / 4;
+
+    if(dwCount < 0 || dwCount > 20)
     {
-        TRACE(_T("未查到技能基址"));
+        _ASSERTE(FALSE);
         return;
     }
 
-    DWORD adress = GetRJianSkill(pStrikeStart);
 
-    STRIKEINFO strike;
+    STRIKEINFO stJn;
 
-
-    for(index = 0; index < count; index++)
+    for(int i = 0; i < dwCount; i++)
     {
-        ZeroMemory(&strike, sizeof(STRIKEINFO));
-        __try
+
+        //{信息指针}
+        DWORD PInfo = ReadDWORD(PSkillBegin + i * 4);
+        _ASSERTE(PInfo != 0);
+
+        stJn.id = ReadDWORD(PInfo + Offset_Skill_Id);
+        if(stJn.id > 0)
         {
-            strike.id1 = GetStrikeId1(index, pStrikeStart);
-            if(strike.id1 != 0)
+            stJn.iType = ReadByte(PInfo + Offset_Skill_Type);
+
+            if(ReadDWORD(PInfo + Offset_Skill_NameLen) >= 0xf)
             {
-                strike.id2 = GetStrikeId2(index, pStrikeStart);
-                GetStrikeName(strike.id1, strike.id2, &strike.stName);
-                strike.cd = GetStrikeCD(index, pStrikeStart);
-                strike.canUse = isStrikeCanUse(index, pStrikeStart);
-                strike.isBlock = isStrikeLocked(index, pStrikeStart);
-                RangeObject.push_back(strike);
+                stJn.name = (wchar_t*)ReadDWORD(ReadDWORD(PInfo + Offset_Skill_Name));
+                _ASSERTE(stJn.name != NULL);
             }
             else
-                continue;
+            {
+                stJn.name = (wchar_t*)ReadDWORD(PInfo + Offset_Skill_Name);
+                _ASSERTE(stJn.name != NULL);
+            }
+
+
+            stJn.bCD = (ReadDWORD(PInfo + Offset_Skill_CD) == 0);
+            stJn.bAviable = (ReadDWORD(PInfo + Offset_Skill_AState) == 0);
+            stJn.iIndex = i;
+            stJn.iKeyCode = 0xff; //暂时没用
+
+            RangeObject.push_back(stJn);
         }
-        __except(1)
+        else
         {
-            TRACE(FUNCNAME);
+            _ASSERTE(FALSE);
         }
+
+
     }
 
-    for(index = 0; index < count2; index++)
-    {
-        ZeroMemory(&strike, sizeof(STRIKEINFO));
-        __try
-        {
-            strike.id1 = GetRJSkillIDDD(index, adress);
-            if(strike.id1 != 0)
-            {
-                strike.id2 = GetRJSkillIDDD2(index, adress);
-                GetStrikeName(strike.id1, strike.id2, &strike.stName);
-                strike.cd = GetRJSkillCD(index, adress);
-                strike.canUse = GetRJSkillISShiYong(index, adress);
-                strike.isBlock = GetRJSkillIsJieSuo(index, adress);
-                RangeObject.push_back(strike);
-            }
-            else
-                continue;
-        }
-        __except(1)
-        {
-            TRACE(FUNCNAME);
-        }
-    }
 }
 
-//取R键技能是否冷却  等于1 说明在冷却中 或者说明是一个持续技能在发招
-DWORD Gamecall::GetRJSkillCD(int i, DWORD m_adress)
-{
-
-    DWORD Adress = UINT_MAX;
-    int temp = i * letter_strike_id + (letter_strike_cd - 0x10) + m_adress;
-
-    __try
-    {
-        if(m_adress != 0)
-        {
-            __asm
-            {
-                mov eax, temp;
-                mov eax, [eax];
-                mov Adress, eax;
-            }
-        }
-    }
-    __except(1)
-    {
-        TRACE(FUNCNAME);
-    }
-    return Adress;
-}
-
-//取R键技能是否已经解锁
-//0 说明是没有解锁的技能
-//1 说明是已经解锁了
-DWORD Gamecall::GetRJSkillIsJieSuo(int i, DWORD m_adress)
-{
-    DWORD Adress = UINT_MAX;
-    int temp = i * letter_strike_id + (letter_strike_islock - 0x10) + m_adress;
-
-    __try
-    {
-        if(m_adress != 0)
-        {
-            __asm
-            {
-                mov eax, temp;
-                mov eax, [eax];
-                mov Adress, eax;
-            }
-        }
-    }
-    __except(1)
-    {
-        TRACE(FUNCNAME);
-    }
-    return Adress;
-}
-
-//取R键技能是否可以使用 这个是0说明这个技能是可以使用的  2 说明这个技能虽然已经解锁 但是是灰名的
-DWORD Gamecall::GetRJSkillISShiYong(int i, DWORD m_adress)
-{
-    DWORD Adress = UINT_MAX;
-    int temp = i * letter_strike_id + (letter_strike_canuse - 0x10) + m_adress;
-
-    __try
-    {
-        if(m_adress != 0)
-        {
-            __asm
-            {
-                mov eax, temp;
-                mov eax, [eax];
-                mov Adress, eax;
-            }
-        }
-    }
-    __except(1)
-    {
-        TRACE(FUNCNAME);
-    }
-    return Adress;
-}
-
-DWORD Gamecall::GetRJSkillIDDD2(int i, DWORD m_adress)  //取R键技能数组ID2
-{
-    DWORD Adress = UINT_MAX;
-    int temp = i * letter_strike_i2 + 0x4 + m_adress;  //TODO:
-
-    __try
-    {
-        if(m_adress != 0)
-        {
-            __asm
-            {
-                mov eax, temp;
-                mov eax, [eax];
-                mov Adress, eax;
-            }
-        }
-    }
-    __except(1)
-    {
-        TRACE(FUNCNAME);
-    }
-    return Adress;
-}
-
-//取技能R键攻击的数组开始地址
-DWORD Gamecall::GetRJianSkill(DWORD m_adress)
-{
-    DWORD Adress = 0;
-    __try
-    {
-        if(m_adress != 0)
-        {
-            __asm
-            {
-                mov eax, m_adress;
-                mov eax, [eax + 0x4];
-                mov eax, [eax + letter_strike_start_offset2];
-                add eax, letter_strike_start_offset3;
-                mov Adress, eax;
-            }
-        }
-    }
-    __except(1)
-    {
-        TRACE(FUNCNAME);
-    }
-    return Adress;
-}
-
-//取R键数组技能ID
-DWORD Gamecall::GetRJSkillIDDD(int i, DWORD m_adress)
-{
-    DWORD Adress = 0;
-    int temp = m_adress + i * letter_strike_id;
-    __try
-    {
-        if(m_adress != 0)
-        {
-            __asm
-            {
-                mov eax, temp;
-                mov eax, [eax];
-                mov Adress, eax;
-            }
-        }
-    }
-    __except(1)
-    {
-        TRACE(FUNCNAME);
-    }
-    return Adress;
-}
 
 //判断是否进入角色选择界面
 BOOL Gamecall::isLoginInSelectPlayer()
@@ -6823,10 +6342,7 @@ void Gamecall::JingDianMoShi(DWORD adress, DWORD c5)
 //参数1: 技能名字
 void Gamecall::Attack(const wchar_t* name)
 {
-    _ASSERTE(name != NULL);
-    STRIKEINFO sinfo;
-    if(GetStrikeByName(name, &sinfo))
-        sendcall(id_msg_attack, (LPVOID)sinfo.id1);
+    _ASSERTE(FALSE);
 }
 
 void Gamecall::Attack(int id)
@@ -6985,39 +6501,6 @@ void Gamecall::_NewSpend(float x)
     {
         pSpender->m_pfnInitSpeed(x);
     }
-}
-
-BOOL Gamecall::isStrikeCd(DWORD id)
-{
-    if(GetPlayerDeadStatus() == 0)
-    {
-        std::vector<STRIKEINFO> StrikeVec;
-        //sendcall(id_msg_GetStrikeToVector, &StrikeVec);
-        GetStrikeToVector(StrikeVec);
-
-        for(int i = 0; i < StrikeVec.size(); i++)
-        {
-            if(StrikeVec[i].id1 == id)
-            {
-                if(StrikeVec[i].isBlock == 1 && StrikeVec[i].canUse == 0)
-                {
-                    //CD= 2是冷却 =1 是释放中
-                    if(StrikeVec[i].cd == 0)
-                        return FALSE;
-                    else
-                        return TRUE;
-                }
-                else
-                    break;
-            }
-        }
-    }
-    else
-    {
-        TRACE(_T("人物死亡，不遍历。"));
-    }
-
-    return TRUE;
 }
 
 wchar_t* Gamecall::GetExperienceName(DWORD ID)
@@ -8192,29 +7675,12 @@ BOOL Gamecall::IsObjectControl(DWORD pObjAddress)
     return FALSE;
 }
 
-BOOL Gamecall::isStrkeId(DWORD id)
+BOOL Gamecall::isStrikeCd(DWORD id)
 {
-    if(GetPlayerDeadStatus() == 0)
-    {
-        std::vector<STRIKEINFO> StrikeVec;
-        //sendcall(id_msg_GetStrikeToVector, &StrikeVec);
-        GetStrikeToVector(StrikeVec);
+    _ASSERTE(FALSE);
 
-        for(int i = 0; i < StrikeVec.size(); i++)
-        {
-            if(StrikeVec[i].id1 == id)
-            {
-                return TRUE;
-            }
-        }
-    }
-    else
-    {
-        TRACE(_T("人物死亡，不遍历。"));
-    }
-    return FALSE;
+    return TRUE;
 }
-
 
 BYTE ReadByte(DWORD addr)
 {
