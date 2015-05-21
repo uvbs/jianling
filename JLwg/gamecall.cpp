@@ -5554,12 +5554,12 @@ void Gamecall::GetStrikeToVector(StrikeVector& RangeObject)
 
             if(ReadDWORD(PInfo + Offset_Skill_NameLen) >= 0xf)
             {
-                stJn.name = (wchar_t*)ReadDWORD(ReadDWORD(PInfo + Offset_Skill_Name));
+                stJn.name = (wchar_t *)ReadDWORD(PInfo + Offset_Skill_Name);
                 _ASSERTE(stJn.name != NULL);
             }
             else
             {
-                stJn.name = (wchar_t*)ReadDWORD(PInfo + Offset_Skill_Name);
+                stJn.name = (wchar_t *)(PInfo + Offset_Skill_Name);
                 _ASSERTE(stJn.name != NULL);
             }
 
@@ -5571,11 +5571,6 @@ void Gamecall::GetStrikeToVector(StrikeVector& RangeObject)
 
             RangeObject.push_back(stJn);
         }
-        else
-        {
-            _ASSERTE(FALSE);
-        }
-
 
     }
 
@@ -5622,12 +5617,12 @@ void Gamecall::GetStrikeToVector(StrikeVector& RangeObject)
             
             if(ReadDWORD(PInfo + Offset_Skill_NameLen) >= 0xf)
             {
-                stJn.name = (wchar_t*)ReadDWORD(ReadDWORD(PInfo + Offset_Skill_Name));
+                stJn.name = (wchar_t*)ReadDWORD(PInfo + Offset_Skill_Name);
                 _ASSERTE(stJn.name != NULL);
             }
             else
             {
-                stJn.name = (wchar_t*)ReadDWORD(PInfo + Offset_Skill_Name);
+                stJn.name = (wchar_t*)(PInfo + Offset_Skill_Name);
                 _ASSERTE(stJn.name != NULL);
             }
             
@@ -5639,11 +5634,6 @@ void Gamecall::GetStrikeToVector(StrikeVector& RangeObject)
             
             RangeObject.push_back(stJn);
         }
-        else
-        {
-            _ASSERTE(FALSE);
-        }
-        
         
     }
 

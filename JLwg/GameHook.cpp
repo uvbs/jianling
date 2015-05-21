@@ -212,7 +212,7 @@ void __stdcall GameHook::myCombatFilter()
     }
     __except(1)
     {
-        TRACE("hook技能");
+        TRACE(_T("hook技能"));
     }
 }
 
