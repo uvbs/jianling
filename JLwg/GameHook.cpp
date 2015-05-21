@@ -52,7 +52,7 @@ void __stdcall GameHook::ShunyiQietu()
 
 
 //记录走路发包
-void __stdcall GameHook::RecordStepPacket(STEPPACKET *pBuf)
+void __stdcall GameHook::RecordStepPacket(STEPPACKET* pBuf)
 {
     TCHAR szExe[MAX_PATH] = {0};
     GetModuleFileName(AfxGetInstanceHandle(), szExe, MAX_PATH);
@@ -63,7 +63,7 @@ void __stdcall GameHook::RecordStepPacket(STEPPACKET *pBuf)
         _tmkdir(szExe);
     }
 
-    char *backup = (char *)pBuf;
+    char* backup = (char*)pBuf;
     PathAppend(szExe, _T("new.bin"));
 
     //追加
@@ -166,48 +166,54 @@ void __stdcall GameHook::myCombatFilter()
     DWORD id;
 
 
-    __asm
+    _try
     {
-        mov objAddr, ebx;
-        mov eax, [esi+0x10];
-        mov id, eax;
-    }
-
-    for(int i = 0; i < GameHook::GetInstance()->m_ObjAddrVec.size(); i++)
-    {
-        if(objAddr == GameHook::GetInstance()->m_ObjAddrVec[i]->ObjAddress)
+        __asm
         {
+            mov objAddr, ebx;
+            mov eax, [esi+0x10];
+            mov id, eax;
+        }
 
-            if(GameHook::GetInstance()->m_sink != NULL)
+        for(int i = 0; i < GameHook::GetInstance()->m_ObjAddrVec.size(); i++)
+        {
+            if(objAddr == GameHook::GetInstance()->m_ObjAddrVec[i]->ObjAddress)
             {
-				//if (id == 5902318)
-				//{
-				//	SYSTEMTIME sys; 
-				//	GetLocalTime( &sys );
-					//GameHook::GetInstance()->m_sink->ShowHook(_T("怪物: %08x, 技能: %d"), objAddr, id);
-				TRACE(_T("怪物: %08x, 技能: %d"), objAddr, id);
-					//GameHook::GetInstance()->m_sink->ShowHook(_T("时间秒:%d,时间毫秒:%d, 技能: %d"), sys.wSecond,sys.wMilliseconds, id);
-				//}
-            }
 
-            if(GameHook::GetInstance()->m_pCombatSink != NULL)
-            {
-                MONSTERATAACK ma;
-                ma.dwObj = objAddr;
-                ma.dwStrikeId = id;
+                if(GameHook::GetInstance()->m_sink != NULL)
+                {
+                    //if (id == 5902318)
+                    //{
+                    //  SYSTEMTIME sys;
+                    //  GetLocalTime( &sys );
+                    //GameHook::GetInstance()->m_sink->ShowHook(_T("怪物: %08x, 技能: %d"), objAddr, id);
+                    TRACE(_T("怪物: %08x, 技能: %d"), objAddr, id);
+                    //GameHook::GetInstance()->m_sink->ShowHook(_T("时间秒:%d,时间毫秒:%d, 技能: %d"), sys.wSecond,sys.wMilliseconds, id);
+                    //}
+                }
 
-                GameHook::GetInstance()->m_pCombatSink->NotifyMonsterAttack(&ma);
+                if(GameHook::GetInstance()->m_pCombatSink != NULL)
+                {
+                    MONSTERATAACK ma;
+                    ma.dwObj = objAddr;
+                    ma.dwStrikeId = id;
+
+                    GameHook::GetInstance()->m_pCombatSink->NotifyMonsterAttack(&ma);
+                }
             }
         }
-    }
 
-    jmpTo = GameHook::GetInstance()->backupCombat;
-    __asm
+        jmpTo = GameHook::GetInstance()->backupCombat;
+        __asm
+        {
+            leave;
+            jmp jmpTo;
+        }
+    }
+    __except(1)
     {
-        leave;
-        jmp jmpTo;
+        TRACE("hook技能");
     }
-
 }
 
 //交任务钩子函数

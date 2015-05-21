@@ -735,7 +735,10 @@ void CDataDlg::PrintfRangeMonster(BOOL bApplyConfig)
 
     std::vector<ObjectNode*> RangeObject;
     gcall.GetRangeMonsterToVector(m_nRange, RangeObject);
-
+	if (RangeObject.size() < 1)
+	{
+		return;
+	}
     if(bApplyConfig)
     {
         gcall.Kill_ApplyConfig(RangeObject);
@@ -1490,6 +1493,5 @@ void CDataDlg::OnCalltool()
 
 void CDataDlg::OnTimer(UINT nIDEvent)
 {
-
     CDialog::OnTimer(nIDEvent);
 }

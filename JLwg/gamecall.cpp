@@ -2061,7 +2061,7 @@ wchar_t* Gamecall::GetUIName(DWORD pBarAddr)
     }
 
     wchar_t* name;
-    __try
+    _try
     {
         __asm
         {
@@ -2072,8 +2072,9 @@ wchar_t* Gamecall::GetUIName(DWORD pBarAddr)
             mov eax, [eax];  //用来检测是否可读
         }
     }
-    __except(1)
+    _except(1)
     {
+		TRACE(FUNCNAME);
         name = NULL;
     }
 
@@ -4808,7 +4809,6 @@ BOOL Gamecall::isCanKill(ObjectNode* pNode)
             if(m_Get2E4(pNode->ObjAddress) != 0)
                 bCanKill = TRUE;
         }
-
     }
 
     return bCanKill;
@@ -5358,7 +5358,7 @@ BOOL Gamecall::FillGoods(_BAGSTU& BagBuff)
 
 
     BagBuff.m_BagLeiXing = GetGoodsBagInfo(BagBuff.m_Base);  //获取物品的背包类型
-    BagBuff.m_CaoZuoType  = GetGoodsYouJianType(BagBuff.m_BagLeiXing, BagBuff.m_Info); //获取背包物品右键操作类型
+    //BagBuff.m_CaoZuoType  = GetGoodsYouJianType(BagBuff.m_BagLeiXing, BagBuff.m_Info); //获取背包物品右键操作类型
 
 
     BagBuff.m_YanSe      =   GetGoodsColor(BagBuff.m_Base);  //获取物品的颜色
@@ -5379,21 +5379,22 @@ BOOL Gamecall::FillGoods(_BAGSTU& BagBuff)
     {
         //TRACE("此物品是白色   %X",BagBuff.m_CaoZuoType);
     }
-    if(BagBuff.m_CaoZuoType == 0x0E)
-    {
-        //TRACE("此物品是未解封的装备  总各数 %X,首地址 %X 物品右键操作类型  %X",GridNum,BagBuff.m_Base,BagBuff.m_CaoZuoType);
-    }
-    else if(BagBuff.m_CaoZuoType == 0x0F)
-    {
-        //TRACE("此物品是未解封的盒子  总各数 %X,首地址 %X 物品右键操作类型  %X",GridNum,BagBuff.m_Base,BagBuff.m_CaoZuoType);
-    }
+    //if(BagBuff.m_CaoZuoType == 0x0E)
+    //{
+    //    //TRACE("此物品是未解封的装备  总各数 %X,首地址 %X 物品右键操作类型  %X",GridNum,BagBuff.m_Base,BagBuff.m_CaoZuoType);
+    //}
+    //else if(BagBuff.m_CaoZuoType == 0x0F)
+    //{
+    //    //TRACE("此物品是未解封的盒子  总各数 %X,首地址 %X 物品右键操作类型  %X",GridNum,BagBuff.m_Base,BagBuff.m_CaoZuoType);
+    //}
     else
     {
         //TRACE("总各数 %X,首地址 %X 物品右键操作类型  %X",GridNum,BagBuff.m_Base,BagBuff.m_CaoZuoType);
     }
 
 
-
+	/*
+	改个地方,需要强化时再取信息.
     if(BagBuff.m_Type == 1 || BagBuff.m_Type == 5)
     {
         if(BagBuff.m_YanSe == 4 || BagBuff.m_YanSe == 5)
@@ -5413,7 +5414,7 @@ BOOL Gamecall::FillGoods(_BAGSTU& BagBuff)
             BagBuff.m_PingJi = GetGoodsWuQiPingJi(BagBuff.m_Base);  //获取武器的评级
 
         }
-    }
+    }*/
 
 
     if(BagBuff.m_Type == 4)
@@ -6777,11 +6778,11 @@ void Gamecall::_GetUiAddrByName(Tree* Addr, wchar_t* name, DWORD& reAddr)
 wchar_t* Gamecall::GetUiNewName(DWORD pBarAddr)
 {
     wchar_t* name = {0};
-    __try
+    _try
     {
         name = (wchar_t*)ReadDWORD(pBarAddr + 0x94);
     }
-    __except(1)
+    _except(1)
     {
         TRACE(L"获取技能面板名字错误");
     }
