@@ -1759,12 +1759,12 @@ void GamecallEx::DeleteItem(std::wstring name)
     {
         if(wcscmp(GoodsVec[i].name, name.c_str()) == 0)
         {
-        if(GoodsVec[i].name == name) break;
+            if(GoodsVec[i].name == name) break;
             {
                 GoodsVec[i].m_Num = 1;
-    }
+            }
 
-    sendcall(id_msg_DeleteItem, &GoodsVec[i]);
+            sendcall(id_msg_DeleteItem, &GoodsVec[i]);
             //MessageBox(0,L"摇奖完", L"装八卦", MB_OK);
             //TRACE(_T("GoodsVec[i].m_Info:%d,GoodsVec[i].m_Num:%d,--%x"),GoodsVec[i].m_Info,GoodsVec[i].m_Num,&GoodsVec[i]);
             break;
@@ -2135,7 +2135,7 @@ void GamecallEx::Kill_Tab(int id)
 //参数2: 超时
 //补充:参数2, 这个模式影响杀怪的整个过程
 //canKillRange 设定多远距离可直接攻击
-int GamecallEx::KillObject(DWORD range, ObjectNode* pNode, DWORD mode, DWORD canKillRange,BOOL Rush)
+int GamecallEx::KillObject(DWORD range, ObjectNode* pNode, DWORD mode, DWORD canKillRange, BOOL Rush)
 {
     //记录当下状态来判断目标是否死亡或者杀怪超时
     DWORD oriTime = GetTickCount();
@@ -2146,19 +2146,19 @@ int GamecallEx::KillObject(DWORD range, ObjectNode* pNode, DWORD mode, DWORD can
     DWORD Targetid = 0;
     fPosition mypos;
     fPosition targetpos;
-	DWORD MaxHealth = 0;
-	DWORD Health = 0;
-	DWORD percent = 0;
+    DWORD MaxHealth = 0;
+    DWORD Health = 0;
+    DWORD percent = 0;
 
-	if (Rush)
-	{
-		Targetid = GetObjectTargetId(pNode->ObjAddress);
-		if(Targetid != NULL)
-		{
-			TRACE(_T("不属于自己的目标怪物"));
-			return RESULT_KILL_No;
-		}
-	}
+    if(Rush)
+    {
+        Targetid = GetObjectTargetId(pNode->ObjAddress);
+        if(Targetid != NULL)
+        {
+            TRACE(_T("不属于自己的目标怪物"));
+            return RESULT_KILL_No;
+        }
+    }
 
     for(;;)
     {
@@ -2175,23 +2175,23 @@ int GamecallEx::KillObject(DWORD range, ObjectNode* pNode, DWORD mode, DWORD can
         }
 
 
-		MaxHealth = GetPlayerMaxHealth();
-		Health = GetPlayerHealth();
-		percent = Health * 100 / MaxHealth;
+        MaxHealth = GetPlayerMaxHealth();
+        Health = GetPlayerHealth();
+        percent = Health * 100 / MaxHealth;
 
-		if (percent < 70)
-		{
-			if (isStrikeCd(0x5dca) == FALSE)
-			{
-				Attack(0x5dca);
-				TurnTo(pNode);
-				Sleep(500);
-				while (isStrikeCd(0x5dc1) == FALSE)
-				{
-					Attack(0x5ECE);
-				}
-			}
-		}
+        if(percent < 70)
+        {
+            if(isStrikeCd(0x5dca) == FALSE)
+            {
+                Attack(0x5dca);
+                TurnTo(pNode);
+                Sleep(500);
+                while(isStrikeCd(0x5dc1) == FALSE)
+                {
+                    Attack(0x5ECE);
+                }
+            }
+        }
 
         if(GetObjectHP(pNode->ObjAddress) == -1 || GetObjectHP(pNode->ObjAddress) == 0)
         {
@@ -2250,35 +2250,38 @@ int GamecallEx::KillObject(DWORD range, ObjectNode* pNode, DWORD mode, DWORD can
             }
             else
             {
-				DWORD MonsterCount = 0;
-				int mana = GetPlayerMana();
-				MonsterCount = GetRangeMonsterCount();
+                DWORD MonsterCount = 0;
+                int mana = GetPlayerMana();
+                MonsterCount = GetRangeMonsterCount();
                 if(mode & modeAoe)
                 {
-					
-                    if (MonsterCount > 3)
+
+                    if(MonsterCount > 3)
                     {
-						if (mana >= 60)
-						{
-							if (isStrikeCd(0x5E06) == FALSE)
-							{
-								Kill_Tab(0x5DE8);
-								Kill_Tab(0x5E06);
-								Kill_Tab(0x5dca);
-								Kill_Tab(0x5e74);
-							}else
-							{
-								Kill_Tab(0x5dca);
-							}
-							
-						}else
-						{
-							sendcall(id_msg_attack, (LPVOID)0x5dc1);
-						}
-                    }else if(MonsterCount > 1)
+                        if(mana >= 60)
+                        {
+                            if(isStrikeCd(0x5E06) == FALSE)
+                            {
+                                Kill_Tab(0x5DE8);
+                                Kill_Tab(0x5E06);
+                                Kill_Tab(0x5dca);
+                                Kill_Tab(0x5e74);
+                            }
+                            else
+                            {
+                                Kill_Tab(0x5dca);
+                            }
+
+                        }
+                        else
+                        {
+                            sendcall(id_msg_attack, (LPVOID)0x5dc1);
+                        }
+                    }
+                    else if(MonsterCount > 1)
                     {
                         //TRACE(_T("执行AEO"));
-                        
+
                         if(mana >= 60)
                         {
                             Kill_Tab(0x5dca);
@@ -2733,9 +2736,9 @@ UINT GamecallEx::KeepAliveThread(LPVOID pParam)
 
         if(pCall->isLoadingMap() == 3)
         {
-			
+
             //if(pCall->GetPlayerHealth() > 0)
-			if (pCall->GetPlayerDeadStatus() == 0)
+            if(pCall->GetPlayerDeadStatus() == 0)
             {
                 rs = pCall->GetHealth(60);
                 if(rs == 4)
@@ -2746,15 +2749,17 @@ UINT GamecallEx::KeepAliveThread(LPVOID pParam)
                 {
                     Sleep(10000);
                 }
-			}else
-			{
-				Sleep(15000);
-			}
-        }else
-		{
-			Sleep(5000);
-		}
-        
+            }
+            else
+            {
+                Sleep(15000);
+            }
+        }
+        else
+        {
+            Sleep(5000);
+        }
+
         //pCall->CloseXiaoDongHua();
     }
 
@@ -2770,74 +2775,62 @@ BOOL GamecallEx::Kill_ApplyConfig(ObjectVector& ObjectVec)
     ItemVector& DontKill = pConfig->m_DontKill;
     ItemVector& FirstKill = pConfig->m_FirstKill;
 
-
-    ObjectNode* pNode;
-    wchar_t* objName = NULL;
-
-    for(ObjectVector::iterator it = ObjectVec.begin(); it != ObjectVec.end();)
+for_again:
+    for(ObjectVector::iterator it = ObjectVec.begin(); it != ObjectVec.end(); it++)
     {
         //如果名字相同, 放到容器起始
-        pNode = *it;
-        objName = GetObjectName(pNode->ObjAddress);
-        if(objName == NULL)
+        wchar_t* objName = GetObjectName((*it)->ObjAddress);
+        _ASSERTE(objName != NULL);
+
+        if(isCustomKill_HaveName(objName) == FALSE)
         {
-            it = ObjectVec.erase(it);
+
+            if(isCanKill(*it))
+            {
+                if(pConfig->isHave(DontKill, objName))
+                {
+                    ObjectVec.erase(it);
+                    goto for_again;
+                }
+
+                if(pConfig->isHave(FirstKill, objName))
+                {
+                    //开头队列的迭代器
+                    ObjectNode* pback = ObjectVec[0];
+                    ObjectVec[0] = *it;
+
+                    *it = pback;
+                }
+
+            }
         }
         else
         {
 
-            if(!isCustomKill_HaveName(objName))
+            for(int i = 0; i < CustomName.size(); i++)
             {
 
-                if(isCanKill(pNode) == FALSE)
+                //从自定义的列表中匹配
+                //根据名字来匹配, 匹配到一个
+                if(wcscmp(CustomName[i].name, objName) == 0)
                 {
-                    if(pConfig->isHave(DontKill, objName) == FALSE)
+                    //开始根据设置的类型分别处理
+                    if(CustomName[i].type == DONTKILL)
                     {
                         it = ObjectVec.erase(it);
+                        goto for_again;
                     }
-
-                    if(pConfig->isHave(FirstKill, objName))
+                    else if(CustomName[i].type == KILLFIRST)
                     {
-                        //开头队列的迭代器
-                        ObjectVector::iterator b = ObjectVec.begin();
-                        ObjectNode* pB = *b;
-    
-                        *b = *it;
-                        *it = pB;
-                    }
 
-                }
-            }
-            else
-            {
+                        ObjectNode* pback = ObjectVec[0];
+                        ObjectVec[0] = *it;
 
-                for(int i = 0; i < CustomName.size(); i++)
-                {
-
-                    //从自定义的列表中匹配
-                    //根据名字来匹配, 匹配到一个
-                    if(wcscmp(CustomName[i].name, objName) == 0)
-                    {
-                        //开始根据设置的类型分别处理
-                        if(CustomName[i].type == DONTKILL)
-                        {
-                            it = ObjectVec.erase(it);
-                        }
-                        else if(CustomName[i].type == KILLFIRST)
-                        {
-                            ObjectNode* pBack = pNode;
-
-                            it = ObjectVec.erase(it);
-                            it = ObjectVec.insert(ObjectVec.begin(), pBack);
-                        }
+                        *it = pback;
                     }
                 }
-
-
             }
         }
-
-        it++;
     }
 
     return TRUE;
@@ -2951,10 +2944,10 @@ void GamecallEx::SteptoBack(ObjectNode* pObj)
     }
 
 
-	NewSpend(2.5);
+    NewSpend(2.5);
     //sendcall(id_msg_step,(LPVOID)&rpos);
     Stepto(rpos.y, rpos.x, rpos.z, 10, 20, 1000, FALSE);
-	NewSpend(1);
+    NewSpend(1);
 }
 
 wchar_t* GamecallEx::SteptoParty()
@@ -2986,41 +2979,45 @@ void GamecallEx::Party_KillObject()
         name = SteptoParty();
         if(name != NULL)
         {
-			//
+            //
             Party_Node = GetObjectByName(name, 5000); //玩家的二叉
             if(Party_Node != NULL)
             {
                 /*if(IsObjectFightStatus(Party_Node->ObjAddress))
                 {*/
-                    if(IsPlayerSkillStatus(Party_Node->ObjAddress))
+                if(IsPlayerSkillStatus(Party_Node->ObjAddress))
+                {
+                    s_Id = GetObjectTargetId(Party_Node->ObjAddress);
+                    if(s_Id != NULL)
                     {
-                        s_Id = GetObjectTargetId(Party_Node->ObjAddress);
-						if (s_Id != NULL)
-						{
-							Monster = GetObjectById(s_Id);
-							if (Monster != NULL)
-							{
-								KillObject(3000, Monster, modeNormal | modeAoe, 155);
-							}else
-							{
-								TRACE(_T("获取玩家目标怪物ID%d"),GetObjectTargetId(Party_Node->ObjAddress));
-							}
-						}else
-						{
-							TRACE(_T("获取目标ID%d"),GetObjectTargetId(Party_Node->ObjAddress));
-						}
-                    }else
-					{
-						TRACE(_T("释放技能状态:%d"),IsPlayerSkillStatus(Party_Node->ObjAddress));
-					}
-              /*  }else
-				{
-					TRACE(_T("获取战斗状态:%d"),IsPlayerSkillStatus(Party_Node->ObjAddress));
-				}*/
-            }else
-			{
-				TRACE(_T("玩家的二叉错误"));
-			}
+                        Monster = GetObjectById(s_Id);
+                        if(Monster != NULL)
+                        {
+                            KillObject(3000, Monster, modeNormal | modeAoe, 155);
+                        }
+                        else
+                        {
+                            TRACE(_T("获取玩家目标怪物ID%d"), GetObjectTargetId(Party_Node->ObjAddress));
+                        }
+                    }
+                    else
+                    {
+                        TRACE(_T("获取目标ID%d"), GetObjectTargetId(Party_Node->ObjAddress));
+                    }
+                }
+                else
+                {
+                    TRACE(_T("释放技能状态:%d"), IsPlayerSkillStatus(Party_Node->ObjAddress));
+                }
+                /*  }else
+                {
+                  TRACE(_T("获取战斗状态:%d"),IsPlayerSkillStatus(Party_Node->ObjAddress));
+                }*/
+            }
+            else
+            {
+                TRACE(_T("玩家的二叉错误"));
+            }
         }
         else
         {

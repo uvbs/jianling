@@ -1068,6 +1068,8 @@ void CDataDlg::OnBtnConfig()
 {
     ShowWindow(SW_HIDE);
 
+    GameConfig *pConfig = GameConfig::GetInstance();
+
     //配置对话框
     CPropertySheet sheet(_T("配置文件"), this);
     CConfigQhPage qhpage;
@@ -1083,8 +1085,10 @@ void CDataDlg::OnBtnConfig()
 
     if(sheet.DoModal() == IDOK)
     {
-        TRACE(_T("DoModal Ret = "));
-        GameConfig::GetInstance()->SaveConfig();
+        TRACE(_T("m_DontKill Ret = %d"), pConfig->m_DontKill.size());
+        TRACE(_T("m_FirstKill Ret = %d"), pConfig->m_FirstKill.size());
+        TRACE(_T("m_AlwaysKill Ret = %d"), pConfig->m_AlwaysKill.size());
+        pConfig->SaveConfig();
     }
 
 

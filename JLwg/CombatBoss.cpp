@@ -359,7 +359,7 @@ void CombatBoss::run()
                 }
             case 5902318:
                 {
-                    TRACE("Íò»ê·¶Î§¹¥»÷");
+                    TRACE(_T("Íò»ê·¶Î§¹¥»÷"));
                     pCall->TurnTo(pBossNode);
                     //pCall->Kill_Tab(0x5dc1);
                     if(pCall->isStrikeCd(0x5E1B) == FALSE)
@@ -510,7 +510,7 @@ void CombatBoss::run()
                 {
                     if(pCall->isStrikeCd(0x5DFC) == FALSE)
                     {
-						TRACE("Ö´ÐÐ0x5DFC");
+						TRACE(_T("Ö´ÐÐ0x5DFC"));
                         if(percent < 70)
                         {
                             pCall->Attack(0x5DFC);
@@ -524,7 +524,7 @@ void CombatBoss::run()
                     }
                     else
                     {
-						TRACE("Ö´ÐÐ0x5dca");
+						TRACE(_T("Ö´ÐÐ0x5dca"));
 						if(pCall->GetPlayerMana() < 40)
 						{
 							pCall->sendcall(id_msg_attack, (LPVOID)0x5dc1);
@@ -536,19 +536,19 @@ void CombatBoss::run()
                         pCall->TurnTo(pBossNode);
                         if(pCall->isStrikeCd(0x5E1B) == FALSE)
                         {
-                            TRACE("Ö´ÐÐ0x5E1B");
+                            TRACE(_T("Ö´ÐÐ0x5E1B"));
                             pCall->Kill_Tab(0x5E1B);
                             Sleep(1000);
                         }
                         else if(pCall->isStrikeCd(0x5e74) == FALSE)
                         {
-                            TRACE("Ö´ÐÐ0x5e74");
+                            TRACE(_T("Ö´ÐÐ0x5e74"));
 							Sleep(1000);
                             pCall->Kill_Tab(0x5e74);
                         }
                         else if(pCall->isStrikeCd(0x5DF2) == FALSE)
                         {
-                            TRACE("Ö´ÐÐ0x5DF2");
+                            TRACE(_T("Ö´ÐÐ0x5DF2"));
                             pCall->Kill_Tab(0x5DF2);
                         }
                     }

@@ -460,9 +460,9 @@ static int MsgBox(lua_State* L)
 static int Stepto(lua_State* L)
 {
     //从lua栈中取数据
-    int y = lua_tointeger(L, 1);
-    int x = lua_tointeger(L, 2);
-    int z = lua_tointeger(L, 3);
+    float y = (float)lua_tonumber(L, 1);
+    float x = (float)lua_tonumber(L, 2);
+    float z = (float)lua_tonumber(L, 3);
 
     GamecallEx::GetInstance()->Stepto(y, x, z);
     return 0;
@@ -470,7 +470,7 @@ static int Stepto(lua_State* L)
 
 static int NewSpend(lua_State* L)
 {
-    float x = lua_tonumber(L, 1);
+    float x = (float)lua_tonumber(L, 1);
     GamecallEx::GetInstance()->NewSpend(x);
     return 0;
 }

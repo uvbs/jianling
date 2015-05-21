@@ -18,31 +18,31 @@ static char THIS_FILE[] = __FILE__;
 //x节名
 //key键名
 #define GOTOLIST(sec, key)  \
-    {TNamesDepend items;\
-    GetAllValues(str##sec, str##key, items);\
-    for(TNamesDepend::const_iterator it = items.begin(); it != items.end(); it++){\
+    {CSimpleIniW::TNamesDepend items;\
+    ini.GetAllValues(str##sec, str##key, items);\
+    for(CSimpleIniW::TNamesDepend::const_iterator it = items.begin(); it != items.end(); it++){\
         if(it->pItem[0] != L'\0')\
             m_##key.push_back(it->pItem);\
     }}
 
 
 #define GOTOLIST2(sec, key)  \
-    {TNamesDepend items;\
-    GetAllValues(str##sec, str##key, items);\
-    for(TNamesDepend::const_iterator it = items.begin(); it != items.end(); it++){\
+    {CSimpleIniW::TNamesDepend items;\
+    ini.GetAllValues(str##sec, str##key, items);\
+    for(CSimpleIniW::TNamesDepend::const_iterator it = items.begin(); it != items.end(); it++){\
         if(it->pItem[0] != L'\0')\
             m_##sec.push_back(it->pItem);\
     }}
 
 #define GOTODATA(sec, key)  \
     {for(ItemIterator it = m_##sec.begin(); it != m_##sec.end(); it++) {\
-        this->SetValue(str##sec, str##key, (*it).c_str());\
+        ini.SetValue(str##sec, str##key, (*it).c_str());\
         TRACE(_T("%s"), (*it).c_str());\
     }}
 
 #define GOTODATA2(sec, key)  \
     {for(ItemIterator it = m_##key.begin(); it != m_##key.end(); it++) {\
-        this->SetValue(str##sec, str##key, (*it).c_str());\
+        ini.SetValue(str##sec, str##key, (*it).c_str());\
         TRACE(_T("%s"), (*it).c_str());\
     }}
 
@@ -76,7 +76,7 @@ BOOL GameConfig::LoadConfig()
 
 
     PathAppend(szExe, theApp.m_stData.szConfig);
-
+    TRACE(szExe);
 
     //不存在, 新建
     if(!PathFileExists(szExe))
@@ -89,32 +89,31 @@ BOOL GameConfig::LoadConfig()
 
 
     //打开配置文件
-    SetUnicode();
-    if(LoadFile(szExe) < 0)
-    {
-        return FALSE;
-    }
-
+    
+    CSimpleIni ini;
+    ini.SetUnicode();
+    if(ini.LoadFile(szExe) < 0) return FALSE;
+    
 
     //清空配置
     ClearConfig();
 
     //喝药百分比
-    m_HealthPercent = GetLongValue(strCombat, strYaoPecent, 60);
-    m_szQHColor = GetValue(strCombat, strQhColor, _T("绿色"));
+    m_HealthPercent = ini.GetLongValue(strCombat, strYaoPecent, 60);
+    m_szQHColor = ini.GetValue(strCombat, strQhColor, _T("绿色"));
 
     //组队
-    m_bInvite_Auto = GetLongValue(strTeam, strInvite_Auto, 0);
-    m_bInvite_ALL = GetLongValue(strTeam, strInvite_All, 0);
-    m_bInvite_INMAP = GetLongValue(strTeam, strInvite_InMap, 0);
-    m_bInvite_Range = GetLongValue(strTeam, strInvite_Range, 0);
-    m_nInvite_Range = GetLongValue(strTeam, strInvite_RangeValue, 0);
+    m_bInvite_Auto = ini.GetLongValue(strTeam, strInvite_Auto, 0);
+    m_bInvite_ALL = ini.GetLongValue(strTeam, strInvite_All, 0);
+    m_bInvite_INMAP = ini.GetLongValue(strTeam, strInvite_InMap, 0);
+    m_bInvite_Range = ini.GetLongValue(strTeam, strInvite_Range, 0);
+    m_nInvite_Range = ini.GetLongValue(strTeam, strInvite_RangeValue, 0);
 
-    m_bAccept_INMAP = GetLongValue(strTeam, strAcpt_InMap, 0);
-    m_bAccept_Auto = GetLongValue(strTeam, strAcpt_Auto, 0);
-    m_bAccept_ALL = GetLongValue(strTeam, strAcpt_All, 0);
-    m_bAccept_Range = GetLongValue(strTeam, strAcpt_Range, 0);
-    m_nAccept_Range = GetLongValue(strTeam, strAcpt_RangeValue, 0);
+    m_bAccept_INMAP = ini.GetLongValue(strTeam, strAcpt_InMap, 0);
+    m_bAccept_Auto = ini.GetLongValue(strTeam, strAcpt_Auto, 0);
+    m_bAccept_ALL = ini.GetLongValue(strTeam, strAcpt_All, 0);
+    m_bAccept_Range = ini.GetLongValue(strTeam, strAcpt_Range, 0);
+    m_nAccept_Range = ini.GetLongValue(strTeam, strAcpt_RangeValue, 0);
 
 
     GOTOLIST(Combat, DontKill);
@@ -135,25 +134,28 @@ BOOL GameConfig::LoadConfig()
 void GameConfig::SaveConfig()
 {
 
-    SetMultiKey(false);
+    CSimpleIniW ini;
+    ini.SetMultiKey(false);
+
+
     //喝药百分比
-    SetLongValue(strCombat, strYaoPecent, m_HealthPercent);
-    SetValue(strQhColor, strQhColor, m_szQHColor.c_str());
+    ini.SetLongValue(strCombat, strYaoPecent, m_HealthPercent);
+    ini.SetValue(strQhColor, strQhColor, m_szQHColor.c_str());
 
     //组队
-    SetLongValue(strTeam, strInvite_Auto, m_bInvite_Auto);
-    SetLongValue(strTeam, strInvite_All, m_bInvite_ALL);
-    SetLongValue(strTeam, strInvite_InMap, m_bInvite_INMAP);
-    SetLongValue(strTeam, strInvite_Range, m_bInvite_Range);
-    SetLongValue(strTeam, strInvite_RangeValue, m_nInvite_Range);
+    ini.SetLongValue(strTeam, strInvite_Auto, m_bInvite_Auto);
+    ini.SetLongValue(strTeam, strInvite_All, m_bInvite_ALL);
+    ini.SetLongValue(strTeam, strInvite_InMap, m_bInvite_INMAP);
+    ini.SetLongValue(strTeam, strInvite_Range, m_bInvite_Range);
+    ini.SetLongValue(strTeam, strInvite_RangeValue, m_nInvite_Range);
 
-    SetLongValue(strTeam, strAcpt_InMap, m_bAccept_INMAP);
-    SetLongValue(strTeam, strAcpt_Auto, m_bAccept_Auto);
-    SetLongValue(strTeam, strAcpt_All, m_bAccept_ALL);
-    SetLongValue(strTeam, strAcpt_Range, m_bAccept_Range);
-    SetLongValue(strTeam, strAcpt_RangeValue, m_nAccept_Range);
+    ini.SetLongValue(strTeam, strAcpt_InMap, m_bAccept_INMAP);
+    ini.SetLongValue(strTeam, strAcpt_Auto, m_bAccept_Auto);
+    ini.SetLongValue(strTeam, strAcpt_All, m_bAccept_ALL);
+    ini.SetLongValue(strTeam, strAcpt_Range, m_bAccept_Range);
+    ini.SetLongValue(strTeam, strAcpt_RangeValue, m_nAccept_Range);
 
-    SetMultiKey(true);
+    ini.SetMultiKey(true);
     GOTODATA(TradeItem, ItemName);
     GOTODATA(BankItem, ItemName);
     GOTODATA(DelItem, ItemName);
@@ -165,7 +167,7 @@ void GameConfig::SaveConfig()
     GOTODATA2(Combat, FirstKill);
     GOTODATA2(Combat, DontKill);
     GOTODATA2(Combat, AlwaysKill);
-    
+    ini.SetMultiKey(false);
 
     TCHAR szExe[MAX_PATH] = {0};
     GetModuleFileName(AfxGetInstanceHandle(), szExe, MAX_PATH);
@@ -177,8 +179,9 @@ void GameConfig::SaveConfig()
     }
 
 
+    ini.SetMultiKey();
     PathAppend(szExe, theApp.m_stData.szConfig);
-    SaveFile(szExe);
+    ini.SaveFile(szExe);
 }
 
 void GameConfig::ClearConfig()

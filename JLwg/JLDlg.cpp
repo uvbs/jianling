@@ -87,12 +87,8 @@ void CJLDlg::OnWgdata()
 {
     ShowWindow(SW_HIDE);
 
-    if(m_DataDlg == NULL)
-    {
-        m_DataDlg = new CDataDlg(this);
-    }
-
-    m_DataDlg->DoModal();
+	CDataDlg dlg(this);
+	dlg.DoModal();
 
     ShowWindow(SW_SHOW);
 }

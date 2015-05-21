@@ -9,8 +9,10 @@
 typedef std::vector<std::wstring> ItemVector;
 typedef std::vector<std::wstring>::iterator ItemIterator;
 
+
+
 //”Œœ∑≈‰÷√
-class GameConfig: public CSimpleIniW
+class GameConfig
 {
 protected:
     GameConfig();
@@ -90,6 +92,7 @@ public:
 
     //«Âø’≈‰÷√
     void ClearConfig();
+
 };
 
 #endif // !defined(AFX_GAMECONFIG_H__F88A8AE2_C451_47B0_A88C_A933A4EAE5E1__INCLUDED_)

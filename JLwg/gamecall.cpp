@@ -4429,8 +4429,9 @@ BOOL Gamecall::NewBag()
 //吃药
 void Gamecall::ChiYao(const wchar_t* name)
 {
-    BagVector BagVector;
+    _ASSERTE(name != NULL);
 
+    BagVector BagVector;
     if(GetGoodsFromBagByName(name, BagVector))
     {
         sendcall(id_msg_ChiYao, &BagVector[0]);
@@ -4510,7 +4511,6 @@ BOOL Gamecall::ConfirmAgreement()
 
         Sleep(1000);
     }
-
 
     if(bUiok == FALSE)
     {
@@ -4946,6 +4946,9 @@ void Gamecall::ChiYao(_BAGSTU& goods)  //吃药
 
 void Gamecall::PickupDeadbody(DWORD id1, DWORD id2)
 {
+    _ASSERTE(id1 != 0);
+    _ASSERTE(id2 != 0);
+
     __try
     {
         __asm
@@ -5035,6 +5038,11 @@ float Gamecall::GetPlayerViewPoint()
 //遍历周围所有的对象到容器
 void Gamecall::GetAllObjectToVector(ObjectNode* pNote, ObjectVector& RangeObject)
 {
+
+    _ASSERTE(pNote != NULL);
+
+
+
     __try
     {
         if(pNote->end == 1) return;
@@ -5086,6 +5094,7 @@ void Gamecall::GetRangeTaskItemToVectr(ObjectVector& TastItemVector, DWORD range
 //判断是否可以杀
 BOOL Gamecall::isCanKill(ObjectNode* pNode)
 {
+    _ASSERTE(pNode != NULL);
 
     //再加一个类型是4的过滤
     if(GetObjectType(pNode->ObjAddress) != 0x4) return FALSE;
@@ -5199,6 +5208,8 @@ void Gamecall::_GetRangeObjectToVector(ObjectNode* pNote, DWORD range, ObjectVec
 //比如遍历任务物品的那个过滤
 void Gamecall::GetRangeObjectToVector(ObjectNode* pNode, DWORD range, ObjectVector& RangeObject)
 {
+    _ASSERTE(pNode != NULL);
+
 //     PARAM_GETUIADDRBYNAME temp;
 //     temp.argv1 = (DWORD)pNode;
 //     temp.argv2 = range;
@@ -5286,6 +5297,9 @@ void Gamecall::OverShunyi(BOOL bEnable) //过图
 
 ObjectNode* Gamecall::GetObjectByName(const wchar_t szName[], DWORD range)
 {
+
+    _ASSERTE(szName != NULL);
+
     try
     {
 
@@ -5318,7 +5332,7 @@ ObjectNode* Gamecall::GetObjectByName(const wchar_t szName[], DWORD range)
                 return RangeObject[i];
         }
     }
-	catch(...)
+    catch(...)
     {
         TRACE(FUNCNAME);
     }
@@ -5327,6 +5341,9 @@ ObjectNode* Gamecall::GetObjectByName(const wchar_t szName[], DWORD range)
 
 void Gamecall::_GetUItoVector(Tree* Base, std::vector<Tree*>& Allui)
 {
+
+    _ASSERTE(Base != NULL);
+
     //这里我优化一下, 我看到数据遍历出来很多地址相同但是id不同的数据
     //因此滤掉那些地址相同的
     __try
@@ -5382,6 +5399,8 @@ void Gamecall::_GetUItoVector(Tree* Base, std::vector<Tree*>& Allui)
 //取得所有ui对象到容器
 void Gamecall::GetUItoVector(Tree* Base, std::vector<Tree*>& Allui)
 {
+    _ASSERTE(Base != NULL);
+
     //PARAM_GUANSHANGDIAN temp;
     //temp.argv1 = (DWORD)Base;
     //temp.argv2 = (DWORD)&Allui;
@@ -5399,6 +5418,7 @@ void Gamecall::GetUItoVector(Tree* Base, std::vector<Tree*>& Allui)
 void Gamecall::GetUIAddrByName(wchar_t* name, DWORD* pUIAddr)
 {
     _ASSERTE(name != NULL);
+    _ASSERTE(pUIAddr != NULL);
 
     std::vector<Tree*> AllUI;
     GetUItoVector(GetUIBinTreeBaseAddr(), AllUI);
@@ -5479,6 +5499,8 @@ DWORD Gamecall::GetMuQianJingYanZongZhi(DWORD Adress)
 // 获取当前武器经验总值A
 DWORD Gamecall::GetMuQianJingYanZongZhi_A(DWORD Adress)
 {
+    _ASSERTE(Adress != 0);
+
     DWORD JingYan;
     __try
     {
@@ -5519,6 +5541,7 @@ DWORD Gamecall::GetMuQianJingYanZongZhi_A(DWORD Adress)
 // 获取背包物品右键操作类型
 DWORD Gamecall::GetBagYouJianCaoZuoType(DWORD Adress, DWORD argv2)
 {
+    _ASSERTE(Adress != 0);
 
     YouJianLeiXing LeiXing;
     LeiXing.canshu1 = Adress;
@@ -5793,6 +5816,8 @@ BOOL Gamecall::GetStrikeByName(const wchar_t* name, STRIKEINFO* pStrikeInfo)
 {
 
     _ASSERTE(name != NULL);
+    _ASSERTE(pStrikeInfo != NULL);
+
 
     std::vector<STRIKEINFO> StrikeVec;
     GetStrikeToVector(StrikeVec);
@@ -5889,6 +5914,7 @@ void Gamecall::GetStrikeToVector(std::vector<STRIKEINFO>& RangeObject)
 //取R键技能是否冷却  等于1 说明在冷却中 或者说明是一个持续技能在发招
 DWORD Gamecall::GetRJSkillCD(int i, DWORD m_adress)
 {
+
     DWORD Adress = UINT_MAX;
     int temp = i * letter_strike_id + (letter_strike_cd - 0x10) + m_adress;
 
@@ -6468,7 +6494,7 @@ void Gamecall::DeleteItem(_BAGSTU& bag)
     }
     __except(1)
     {
-		TRACE(_T("销毁物品时发生错误"));
+        TRACE(_T("销毁物品时发生错误"));
     }
 
 
@@ -6797,6 +6823,7 @@ void Gamecall::JingDianMoShi(DWORD adress, DWORD c5)
 //参数1: 技能名字
 void Gamecall::Attack(const wchar_t* name)
 {
+    _ASSERTE(name != NULL);
     STRIKEINFO sinfo;
     if(GetStrikeByName(name, &sinfo))
         sendcall(id_msg_attack, (LPVOID)sinfo.id1);
@@ -6820,7 +6847,7 @@ void Gamecall::Attack(int id)
         }
         //TRACE(_T("技能ID:%d,技能执行返回%d"), id, flag);
         cs++;
-		Sleep(100);
+        Sleep(100);
 
     }
 }
@@ -6829,7 +6856,7 @@ void Gamecall::Attack(int id)
 //走向某个对象
 BOOL Gamecall::Step(ObjectNode* pNode)
 {
-
+    _ASSERTE(pNode != NULL);
     fPosition fpos;
     if(GetObjectPos(pNode, &fpos))
     {
@@ -6867,7 +6894,7 @@ DWORD Gamecall::GetCityID()
 //一层封装, 加入等待, 读条后才返回
 BOOL Gamecall::PickupTask(ObjectNode* pNode)
 {
-
+    _ASSERTE(pNode != NULL);
     sendcall(id_msg_PickupTask, pNode);
 
     Sleep(1000);
@@ -6905,13 +6932,9 @@ BOOL Gamecall::isCanLook(DWORD pAddr)
 
     __try
     {
-
-        if(IsBadStringPtr(name, MAX_PATH) == FALSE)
+        if(wcsstr(name, L"Dummy") != NULL)
         {
-            if(wcsstr(name, L"Dummy") != NULL)
-            {
-                return FALSE;
-            }
+            return FALSE;
         }
     }
     __except(1)
@@ -6999,7 +7022,7 @@ BOOL Gamecall::isStrikeCd(DWORD id)
 
 wchar_t* Gamecall::GetExperienceName(DWORD ID)
 {
-    wchar_t* name = {0};
+    wchar_t* name = NULL;
     _try
     {
         __asm
@@ -7020,8 +7043,9 @@ wchar_t* Gamecall::GetExperienceName(DWORD ID)
     _except(1)
     {
         TRACE(_T("获取经验名字错误"));
-        return NULL;
     }
+
+
     return name;
 }
 
@@ -7029,7 +7053,7 @@ wchar_t* Gamecall::GetExperienceName(DWORD ID)
 DWORD Gamecall::GetExperienceNameID(DWORD ID)
 {
     DWORD ID1 = 0;
-    _try
+    __try
     {
         __asm
         {
@@ -7046,7 +7070,7 @@ DWORD Gamecall::GetExperienceNameID(DWORD ID)
             mov ID1, eax;
         }
     }
-    _except(1)
+    __except(1)
     {
         TRACE(_T("获取经验名字ID错误"));
         return NULL;
@@ -7879,9 +7903,9 @@ BOOL Gamecall::GetPartyInfo(TeamVector& TeamInfo)
             TeamInfo.push_back(team);
             //TRACE(_T("地址:%x,人名:%s,频道:%d,当前生命:%d,最大生命:%d,ID:%x,ID2%x,面向%d,距离:%d,坐标:%d,%d,%d"),team.PAddress,team.name,team.Channel,team.CurrLife,team.MaxLife,team.ID,team.ID2,team.Angle,team.Range,team.Pos.x,team.Pos.y,team.Pos.z);
         }
-		return TRUE;
+        return TRUE;
     }
-	return FALSE;
+    return FALSE;
 }
 
 wchar_t* Gamecall::GetPartyName(DWORD PartyAddress)
@@ -7989,25 +8013,25 @@ fPosition Gamecall::GetPartyPos(DWORD PartyAddress)
     ZeroMemory(&pos, sizeof(fPosition));
     _try
     {
-		pos.x = (ReadWORD(PartyAddress + 0x1C) - 0x10000) * 4;
-		pos.y = (ReadWORD(PartyAddress + 0x1E) - 0x10000) * 4;
-		pos.z = (ReadWORD(PartyAddress + 0x20) - 0x10000) * 4;
+        pos.x = (ReadWORD(PartyAddress + 0x1C) - 0x10000) * 4;
+        pos.y = (ReadWORD(PartyAddress + 0x1E) - 0x10000) * 4;
+        pos.z = (ReadWORD(PartyAddress + 0x20) - 0x10000) * 4;
 
 
 
         if(abs(pos.x) > 0x1FFFF)
         {
-			pos.x = ReadWORD(PartyAddress + 0x1C) * 4;
+            pos.x = ReadWORD(PartyAddress + 0x1C) * 4;
 
         }
         if(abs(pos.y) > 0x1FFFF)
         {
-			pos.y = ReadWORD(PartyAddress + 0x1E) * 4;
+            pos.y = ReadWORD(PartyAddress + 0x1E) * 4;
 
         }
         if(abs(pos.z) > 0x1FFFF)
         {
-			pos.z = ReadWORD(PartyAddress + 0x20) * 4;
+            pos.z = ReadWORD(PartyAddress + 0x20) * 4;
         }
 
         if(abs(pos.x) > 0x1FFFF)
@@ -8152,43 +8176,43 @@ DWORD Gamecall::GetPlarerRedHeart()
 
 BOOL Gamecall::IsObjectControl(DWORD pObjAddress)
 {
-	BOOL value = FALSE;
-	__try
-	{
-		value = ReadDWORD(ReadDWORD(pObjAddress + 708) + 0x5C);
-		if (value == 2)
-		{
-			return TRUE;
-		}
-	}
-	__except(1)
-	{
-		TRACE(_T("获得控制状态出错"));
-	}
-	return FALSE;
+    BOOL value = FALSE;
+    __try
+    {
+        value = ReadDWORD(ReadDWORD(pObjAddress + 708) + 0x5C);
+        if(value == 2)
+        {
+            return TRUE;
+        }
+    }
+    __except(1)
+    {
+        TRACE(_T("获得控制状态出错"));
+    }
+    return FALSE;
 }
 
 BOOL Gamecall::isStrkeId(DWORD id)
 {
-	if(GetPlayerDeadStatus() == 0)
-	{
-		std::vector<STRIKEINFO> StrikeVec;
-		//sendcall(id_msg_GetStrikeToVector, &StrikeVec);
-		GetStrikeToVector(StrikeVec);
+    if(GetPlayerDeadStatus() == 0)
+    {
+        std::vector<STRIKEINFO> StrikeVec;
+        //sendcall(id_msg_GetStrikeToVector, &StrikeVec);
+        GetStrikeToVector(StrikeVec);
 
-		for(int i = 0; i < StrikeVec.size(); i++)
-		{
-			if(StrikeVec[i].id1 == id)
-			{
-				return TRUE;
-			}
-		}
-	}
-	else
-	{
-		TRACE(_T("人物死亡，不遍历。"));
-	}
-	return FALSE;
+        for(int i = 0; i < StrikeVec.size(); i++)
+        {
+            if(StrikeVec[i].id1 == id)
+            {
+                return TRUE;
+            }
+        }
+    }
+    else
+    {
+        TRACE(_T("人物死亡，不遍历。"));
+    }
+    return FALSE;
 }
 
 

@@ -254,7 +254,7 @@ public:
     void        SellItem(_BAGSTU& bag, DWORD adress);
     BOOL        OpenShangDian(wchar_t* name, DWORD* pUiAddr); //打开商品对话框
     void        CloseShangDian();
-    void        DeleteItem(_BAGSTU* bag);   //摧毁一个物品
+    void        DeleteItem(_BAGSTU& bag);   //摧毁一个物品
 
     //背包
     void        _GetAllGoodsToVector(BagVector& RangeObject);
