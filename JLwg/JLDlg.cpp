@@ -70,7 +70,6 @@ void CJLDlg::OnGotask()
 
 BOOL CJLDlg::OnInitDialog()
 {
-
     if(!CDialog::OnInitDialog())
         return FALSE;
 

@@ -180,11 +180,11 @@ DWORD CALLBACK CJLwgApp::WorkThread(LPVOID pParam)
         theApp.wpOrigGameProc = (WNDPROC)::SetWindowLong(theApp.m_hGameWnd, GWL_WNDPROC, (LONG)theApp.GameWndProc);
         ::SetWindowText(theApp.m_hGameWnd, theApp.m_stData.szAccount);
 
-        CFrameWnd a;   //生成一个框架窗口对象
-        a.Create(NULL, _T("HideTaskBar")); //生成窗口,不带ws_visible
+        //CFrameWnd a;   //生成一个框架窗口对象
+        //a.Create(NULL, _T("HideTaskBar")); //生成窗口,不带ws_visible
 
         //主对话框
-        theApp.m_pWgDlg = new CJLDlg(&a);
+        theApp.m_pWgDlg = new CJLDlg();
         theApp.m_pWgDlg->DoModal();
 
     }

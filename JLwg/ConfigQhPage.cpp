@@ -427,18 +427,17 @@ void CConfigObjPage::RefreshObj()
 
     fPosition fmypos;
     gcall.GetPlayerPos(&fmypos);
-    TRACE1("GetRangeMonsterToVector:%d", RangeObject.size());
     for(unsigned i = 0; i < RangeObject.size(); i++)
     {
         ObjectNode* pNode = RangeObject[i];
-
+		_ASSERTE(pNode!=NULL);
         wchar_t* pName = gcall.GetObjectName(pNode->ObjAddress);
+		_ASSERTE(pName!=NULL);
         m_ObjList.InsertItem(i, pName);
 
         fPosition tarpos;
         if(gcall.GetObjectPos(pNode, &tarpos))
         {
-
             CString strDis;
             strDis.Format(_T("%d"), gcall.CalcC(fmypos, tarpos));
             m_ObjList.SetItemText(i, 1, strDis);
