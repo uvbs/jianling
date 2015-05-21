@@ -211,7 +211,7 @@ DWORD Gamecall::call(DWORD id, LPVOID pParam)
         break;
     case id_msg_GetStrikeToVector:
         {
-            GetStrikeToVector(*(std::vector<STRIKEINFO>*)pParam);
+            GetStrikeToVector(*(StrikeVector*)pParam);
         }
         break;
     case id_msg__GetUiAddrByName:
@@ -239,12 +239,6 @@ DWORD Gamecall::call(DWORD id, LPVOID pParam)
     case id_msg_GetAcceptedQuestToVector:
         {
             _GetAcceptedQuestToVector(*(std::vector<Quest>*)pParam);
-        }
-        break;
-    case id_msg_GetRangeObjectToVector:
-        {
-            PARAM_3* temp = (PARAM_3*)pParam;
-            _GetRangeObjectToVector((ObjectNode*)temp->argv1, temp->argv2, *(ObjectVector*)temp->argv3);
         }
         break;
 
@@ -1119,18 +1113,18 @@ BOOL Gamecall::GetPlayerPos(fPosition* fpos)
 {
     _ASSERTE(fpos != NULL);
 
-
-    DWORD PlayerInfo = GetPlayerDataAddr();
+    BOOL bRet = FALSE;
+    DWORD dwPlayer = GetPlayerDataAddr();
 
     __try
     {
         __asm
         {
-            mov eax, PlayerInfo;
+            mov eax, dwPlayer;
             mov eax, [eax + player_steppos_x_offset1];
             add eax, player_steppos_x_offset2;
 
-            mov edx, eax; /*保存一下*/
+            mov edx, eax;
             mov eax, [edx];
 
             mov ebx, fpos;
@@ -1145,16 +1139,14 @@ BOOL Gamecall::GetPlayerPos(fPosition* fpos)
             mov[ebx]fpos.z, eax; //0x3cec
         }
 
-        return TRUE;
+        bRet = TRUE;
     }
     __except(1)
     {
         TRACE(FUNCNAME);
     }
 
-
-
-    return FALSE;
+    return bRet;
 }
 
 
@@ -1434,14 +1426,15 @@ void Gamecall::Turn(int angle)
 }
 
 //获得对象类型
-//type = 0x20 任务物品
+//1 or 2 = 玩家 宠物
+//type = 0x20 任务物品(资源)
 //type = 0x4  怪物 npc
 //type = 0xb0 尸体和掉落物品,
 //type = 0x90 特殊任务物品
-BYTE Gamecall::GetObjectType(DWORD pObjAddress)
+byte Gamecall::GetObjectType(DWORD pObjAddress)
 {
     _ASSERTE(pObjAddress != NULL);
-    DWORD Objtype = 0;
+    byte objtype = 0;
 
     __try
     {
@@ -1449,16 +1442,15 @@ BYTE Gamecall::GetObjectType(DWORD pObjAddress)
         {
             mov eax, pObjAddress;
             mov eax, [eax + obj_type_offset];
-            mov Objtype, eax;
+            mov objtype, al;
         }
     }
     __except(1)
     {
         TRACE(FUNCNAME);
-        return 0;
     }
 
-    return (BYTE)Objtype;
+    return objtype;
 }
 
 
@@ -1704,7 +1696,7 @@ BOOL Gamecall::GetObjectPos_0xb(DWORD pObjAddress, sPosition* spos)
 
 //获得对象的名字
 //参数1: 对象的索引
-wchar_t* Gamecall::GetObjectNameByIndex(DWORD index)
+wchar_t* Gamecall::GetObjectNameByIndex(int index)
 {
     return _GetObjectNameByIndex(index);
     //return (wchar_t*)sendcall(id_msg_GetObjectNameByIndex, (LPVOID)index);
@@ -1713,10 +1705,10 @@ wchar_t* Gamecall::GetObjectNameByIndex(DWORD index)
 
 //获得对象的名字
 //参数1: 对象的索引
-wchar_t* Gamecall::_GetObjectNameByIndex(DWORD index)
+wchar_t* Gamecall::_GetObjectNameByIndex(int index)
 {
 
-    if(index == 0) return NULL;
+    if(index == -1) return NULL;
 
     wchar_t* name = NULL;
     __try
@@ -1746,7 +1738,7 @@ wchar_t* Gamecall::_GetObjectNameByIndex(DWORD index)
 
 //获取对象的血量
 //参数1: 对象地址
-DWORD Gamecall::GetObjectHP(DWORD pObjAddress)
+int Gamecall::GetObjectHP(DWORD pObjAddress)
 {
     _ASSERTE(pObjAddress != NULL);
     DWORD hp;
@@ -1770,7 +1762,7 @@ DWORD Gamecall::GetObjectHP(DWORD pObjAddress)
 
 
 //固定偏移
-DWORD Gamecall::GetObject_0x14(DWORD pObjAddress)
+int Gamecall::GetObject_0x14(DWORD pObjAddress)
 {
     _ASSERTE(pObjAddress != NULL);
 
@@ -1790,7 +1782,7 @@ DWORD Gamecall::GetObject_0x14(DWORD pObjAddress)
 }
 
 //对象等级
-DWORD Gamecall::GetObjectLevel(DWORD pObjAddress)
+int Gamecall::GetObjectLevel(DWORD pObjAddress)
 {
     _ASSERTE(pObjAddress != NULL);
 
@@ -2074,7 +2066,7 @@ wchar_t* Gamecall::GetUIName(DWORD pBarAddr)
     }
     _except(1)
     {
-		TRACE(FUNCNAME);
+        TRACE(FUNCNAME);
         name = NULL;
     }
 
@@ -2785,7 +2777,7 @@ DWORD Gamecall::CalcC(fPosition& p1, fPosition& p2)
 }
 
 
-DWORD Gamecall::GetObjectSY(DWORD pObjAddress)  // 环境对象的索引1
+int Gamecall::GetObjectSY(DWORD pObjAddress)  // 环境对象的索引1
 {
     _ASSERTE(pObjAddress != 0);
 
@@ -2840,8 +2832,7 @@ DWORD Gamecall::m_Get11C(DWORD m_Adress)
 }
 
 
-//ojb_type20_nameid_offset1
-DWORD Gamecall::GetObjectSY12(DWORD pAddr)  // 环境对象的索引12
+int Gamecall::GetObjectSY12(DWORD pAddr)  // 环境对象的索引12
 {
     _ASSERTE(pAddr != 0);
 
@@ -3908,19 +3899,31 @@ DWORD Gamecall::GetPlayerQuestUIStatus()
 }
 
 //通过类型取得索引
-DWORD Gamecall::GetIndexByType(DWORD pObjAddress)
+int Gamecall::GetIndexByType(DWORD pObjAddress)
 {
     _ASSERTE(pObjAddress != NULL);
-    DWORD index = UINT_MAX;
-    TCHAR type = GetObjectType(pObjAddress);
+
+
+    int index = -1;
+
     __try
     {
+        BYTE type = GetObjectType(pObjAddress);
+
         if(type == 0x4)
+        {
             index = GetObjectSY(pObjAddress);
-        else if(type == 0x20)
+        }
+        else if(type == 0x20)  //资源
+        {
             index = GetObjectSY12(pObjAddress);
-        else if(type == 0x90)
+        }
+        else if(type == 0x90)   //尸体
+        {
             index = GetObjectSy_90(pObjAddress);
+        }
+
+        //B0:{地面物品}
     }
     __except(1)
     {
@@ -4735,10 +4738,7 @@ float Gamecall::GetPlayerViewPoint()
 //遍历周围所有的对象到容器
 void Gamecall::GetAllObjectToVector(ObjectNode* pNote, ObjectVector& RangeObject)
 {
-
     _ASSERTE(pNote != NULL);
-
-
 
     __try
     {
@@ -4789,12 +4789,15 @@ void Gamecall::GetRangeTaskItemToVectr(ObjectVector& TastItemVector, DWORD range
 }
 
 //判断是否可以杀
+//类型是4 并且有名字 并且xxx
 BOOL Gamecall::isCanKill(ObjectNode* pNode)
 {
     _ASSERTE(pNode != NULL);
 
     //再加一个类型是4的过滤
     if(GetObjectType(pNode->ObjAddress) != 0x4) return FALSE;
+
+    if(GetObjectName(pNode->ObjAddress) == FALSE) return FALSE;
 
     //过滤
     BOOL bCanKill = FALSE;
@@ -4815,104 +4818,88 @@ BOOL Gamecall::isCanKill(ObjectNode* pNode)
 }
 
 //遍历距离范围内的所有怪物到容器中
-//参数1: 范围, 单位: 游戏内的 米
-void Gamecall::GetRangeMonsterToVector(DWORD range, ObjectVector& MonsterVec)
+//有坐标 有名字 能杀
+void Gamecall::GetRangeMonsterToVector(ObjectNode* pNode, DWORD range, ObjectVector& MonsterVec)
 {
-    try
+    __try
     {
-        //这个函数简写了,  直接从范围对象中遍历的过滤
-        ObjectVector RangeObject;
-        GetRangeObjectToVector(GetObjectBinTreeBaseAddr(), range, RangeObject);
+        _ASSERTE(pNode != NULL);
 
-        fPosition fmypos;
-        GetPlayerPos(&fmypos);
-        //TRACE1("RangeObject.size():%d",RangeObject.size());
-        for(DWORD i = 0; i < RangeObject.size(); i++)
+
+        if(pNode->end == 1) return;
+
+        //有坐标就比对坐标, 没有坐标就直接放进去
+        if(GetObjectName(pNode->ObjAddress))
         {
-            ObjectNode* pNode = RangeObject[i];
-            //TRACE(_T("执行GetObjectName"));
+            if(isCanKill(pNode))
+            {
+                static fPosition fpos;
+                if(GetObjectPos(pNode, &fpos))
+                {
+                    static fPosition fmypos = {0, 0, 0};
+                    if(fmypos.x == 0)
+                    {
+                        GetPlayerPos(&fmypos);
+                    }
 
-
-            fPosition fpos;
-            //过滤掉距离远的和没距离的
-            //TRACE(_T("执行GetObjectPos"));
-            if(GetObjectPos(RangeObject[i], &fpos) == FALSE)
-                continue;
-
-            if(fpos.x == 0 || fpos.y == 0 || fpos.z == 0)
-                continue;
-
-            if(CalcC(fpos, fmypos) > range)
-                continue;
-            wchar_t* objName = GetObjectName(pNode->ObjAddress);
-            if(objName == NULL)
-                continue;
-            //TRACE(_T("执行isCanLook"));
-            if(isCanLook(pNode->ObjAddress) == FALSE)
-                continue;
-
-            //上面几个过滤是强制的, 不管配置文件有没有
-            //比如: 如果配置文件强制杀一个怪物, 但是这个怪物
-            //是没有坐标的, 这肯定是无法杀的
-            //TRACE(_T("push_back"));
-            MonsterVec.push_back(pNode);
-            //TRACE1("当前循环:%d",i);
+                    if(fpos.x != 0 && fpos.y != 0 && fpos.z != 0)
+                    {
+                        if((DWORD)CalcC(fmypos, fpos) <= range)
+                        {
+                            MonsterVec.push_back(pNode);
+                        }
+                    }
+                }
+            }
         }
-        //TRACE1("MonsterVec:%d",MonsterVec.size());
+
+
+        GetRangeMonsterToVector(pNode->left, range, MonsterVec);
+        GetRangeMonsterToVector(pNode->right, range, MonsterVec);
     }
-    catch(...)
+    __except(1)
     {
         TRACE(FUNCNAME);
     }
 }
 
-
-void Gamecall::_GetRangeObjectToVector(ObjectNode* pNote, DWORD range, ObjectVector& RangeObject)
+//所有遍历都只会遍历到有坐标的和有名字的
+//有坐标
+void Gamecall::GetRangeObjectToVector(ObjectNode* pNote, DWORD range, ObjectVector& RangeObject)
 {
-    if(pNote->end == 1)
-        return;
-
-    try
+    __try
     {
+        if(pNote->end == 1) return;
+
         //有坐标就比对坐标, 没有坐标就直接放进去
         fPosition fpos;
         if(GetObjectPos(pNote, &fpos))
         {
-            fPosition fmypos;
-            GetPlayerPos(&fmypos);
-            if(fpos.x == 0 || fpos.y == 0 || fpos.z  == 0)
-                RangeObject.push_back(pNote);
-            else if((DWORD)CalcC(fmypos, fpos) <= range)
-                RangeObject.push_back(pNote);
+            static fPosition fmypos = {0, 0, 0};
+            if(fmypos.x == 0)
+            {
+                GetPlayerPos(&fmypos);
+            }
+
+            if(fpos.x != 0 && fpos.y != 0 && fpos.z != 0)
+            {
+                if((DWORD)CalcC(fmypos, fpos) <= range)
+                {
+                    RangeObject.push_back(pNote);
+                }
+            }
         }
-        //else
-        //    RangeObject.push_back(pNote);
 
 
         GetRangeObjectToVector(pNote->left, range, RangeObject);
         GetRangeObjectToVector(pNote->right, range, RangeObject);
     }
-    catch(...)
+    __except(1)
     {
         TRACE(FUNCNAME);
     }
 }
-//遍历距离范围内的所有对象到容器中
-//参数1: 范围, 单位: 游戏内的 米
-//这个函数现在会将没有坐标和坐标是0的都遍历进去
-//保证都会遍历到, 更多的过滤在单独的函数里加
-//比如遍历任务物品的那个过滤
-void Gamecall::GetRangeObjectToVector(ObjectNode* pNode, DWORD range, ObjectVector& RangeObject)
-{
-    _ASSERTE(pNode != NULL);
 
-//     PARAM_GETUIADDRBYNAME temp;
-//     temp.argv1 = (DWORD)pNode;
-//     temp.argv2 = range;
-//     temp.argv3 = (DWORD)&RangeObject;
-//     sendcall(id_msg_GetRangeObjectToVector, &temp);
-    _GetRangeObjectToVector(pNode, range, RangeObject);
-}
 
 //遍历距离范围内掉落的战利品对象到容器中
 //参数1: 范围, 单位: 游戏内的 米
@@ -5017,15 +5004,18 @@ ObjectNode* Gamecall::GetObjectByName(const wchar_t szName[], DWORD range)
             //过滤掉没坐标的
             if(GetObjectPos(RangeObject[i], &tarpos) == FALSE)
                 continue;
+
+
             //过滤掉坐标是0的
             if(tarpos.x == 0 || tarpos.y == 0 || tarpos.z == 0)
                 continue;
+
+
             //过滤掉没名字的
             wchar_t* name = GetObjectName(RangeObject[i]->ObjAddress);
             if(name == NULL) continue;
 
-            if(wcscmp(name, szName) == 0)
-                return RangeObject[i];
+            if(wcscmp(name, szName) == 0) return RangeObject[i];
         }
     }
     catch(...)
@@ -5393,8 +5383,8 @@ BOOL Gamecall::FillGoods(_BAGSTU& BagBuff)
     }
 
 
-	/*
-	改个地方,需要强化时再取信息.
+    /*
+    改个地方,需要强化时再取信息.
     if(BagBuff.m_Type == 1 || BagBuff.m_Type == 5)
     {
         if(BagBuff.m_YanSe == 4 || BagBuff.m_YanSe == 5)
@@ -5554,12 +5544,12 @@ void Gamecall::GetStrikeToVector(StrikeVector& RangeObject)
 
             if(ReadDWORD(PInfo + Offset_Skill_NameLen) >= 0xf)
             {
-                stJn.name = (wchar_t *)ReadDWORD(PInfo + Offset_Skill_Name);
+                stJn.name = (wchar_t*)ReadDWORD(PInfo + Offset_Skill_Name);
                 _ASSERTE(stJn.name != NULL);
             }
             else
             {
-                stJn.name = (wchar_t *)(PInfo + Offset_Skill_Name);
+                stJn.name = (wchar_t*)(PInfo + Offset_Skill_Name);
                 _ASSERTE(stJn.name != NULL);
             }
 
@@ -5579,42 +5569,42 @@ void Gamecall::GetStrikeToVector(StrikeVector& RangeObject)
     PPTR = ReadDWORD(Offset_Game_Base);
     PPTR = ReadDWORD(PPTR + Offset_Skill_Offset1);
     PPTR = ReadDWORD(PPTR + Offset_Skill_Offset2);
-    
+
     //{技能指针}
     PPTR = ReadDWORD(PPTR + Offset_Skill_Offset3 - Offset_Skill_Offset4 + Offset_Skill_Offset5 + Offset_Skill_ASkill);
     _ASSERTE(PPTR != 0);
-    
-    
+
+
     //{技能首地址}
     PSkillBegin = ReadDWORD(PPTR + Offset_Skill_PBASkill);
     _ASSERTE(PSkillBegin != 0);
-    
-    
+
+
     //{技能尾地址}
     PSkillEnd = ReadDWORD(PPTR + Offset_Skill_PEASkill);
     _ASSERTE(PSkillEnd != 0);
-    
+
     dwCount = (PSkillEnd - PSkillBegin) / 4;
-    
+
     if(dwCount < 0 || dwCount > 20)
     {
         _ASSERTE(FALSE);
         return;
     }
-    
-    
+
+
     for(i = 0; i < dwCount; i++)
     {
-        
+
         //{信息指针}
         DWORD PInfo = ReadDWORD(PSkillBegin + i * 4);
         _ASSERTE(PInfo > 0);
-        
+
         stJn.id = ReadDWORD(PInfo + Offset_Skill_Id);
         if(stJn.id > 0)
         {
             stJn.iType = ReadByte(PInfo + Offset_Skill_Type);
-            
+
             if(ReadDWORD(PInfo + Offset_Skill_NameLen) >= 0xf)
             {
                 stJn.name = (wchar_t*)ReadDWORD(PInfo + Offset_Skill_Name);
@@ -5625,16 +5615,16 @@ void Gamecall::GetStrikeToVector(StrikeVector& RangeObject)
                 stJn.name = (wchar_t*)(PInfo + Offset_Skill_Name);
                 _ASSERTE(stJn.name != NULL);
             }
-            
-            
+
+
             stJn.bCD = (ReadDWORD(PInfo + Offset_Skill_CD) == 0);
             stJn.bAviable = (ReadDWORD(PInfo + Offset_Skill_AState) == 0);
             stJn.iIndex = i;
             stJn.iKeyCode = 0xff; //暂时没用
-            
+
             RangeObject.push_back(stJn);
         }
-        
+
     }
 
 
@@ -6928,7 +6918,7 @@ void Gamecall::ChangeHeight(float how)
     }
 }
 
-DWORD Gamecall::GetObjectSy_90(DWORD pObjAddress)
+int Gamecall::GetObjectSy_90(DWORD pObjAddress)
 {
     DWORD result;
     result = 0;
@@ -7325,7 +7315,7 @@ void Gamecall::YaoQingZuDui(DWORD ID, DWORD Info) //邀请组队 参数1是对象ID  参数
     }
 }
 
-DWORD Gamecall::GetObjectView(DWORD pObjAddress)
+int Gamecall::GetObjectView(DWORD pObjAddress)
 {
     WORD jd = 0;
     _try
@@ -7642,7 +7632,7 @@ DWORD Gamecall::GetPartyByAddress(DWORD PartyAddress, int i)
     return NewAddress;
 }
 
-DWORD Gamecall::GetObjectTargetId(DWORD pObjAddress)
+int Gamecall::GetObjectTargetId(DWORD pObjAddress)
 {
     DWORD TargetId;
     TargetId = NULL;
@@ -7739,10 +7729,10 @@ BOOL Gamecall::isStrikeCd(DWORD id)
 {
     _ASSERTE(FALSE);
 
-    std::vector<STRIKEINFO> JnVec;
+    StrikeVector JnVec;
     GetStrikeToVector(JnVec);
 
-    for(std::vector<STRIKEINFO>::iterator it = JnVec.begin(); it != JnVec.end(); it++)
+    for(StrikeVector::iterator it = JnVec.begin(); it != JnVec.end(); it++)
     {
         if((*it).id == id)
         {

@@ -732,11 +732,10 @@ void CDataDlg::PrintfRangeMonster(BOOL bApplyConfig)
     GamecallEx& gcall = *GamecallEx::GetInstance();
 
     std::vector<ObjectNode*> RangeObject;
-    gcall.GetRangeMonsterToVector(m_nRange, RangeObject);
-	if (RangeObject.size() < 1)
-	{
-		return;
-	}
+    gcall.GetRangeMonsterToVector(gcall.GetObjectBinTreeBaseAddr(), m_nRange, RangeObject);
+    if(RangeObject.size() < 1) return;
+
+
     if(bApplyConfig)
     {
         gcall.Kill_ApplyConfig(RangeObject);
@@ -747,33 +746,33 @@ void CDataDlg::PrintfRangeMonster(BOOL bApplyConfig)
     std::sort(RangeObject.begin(), RangeObject.end(), GamecallEx::UDgreater);
 
     CString strTemp;
-    for(DWORD index = 0; index < RangeObject.size(); index++)
+    for(int i = 0; i < RangeObject.size(); i++)
     {
-        ObjectNode* pNode = RangeObject[index];
+        ObjectNode* pNode = RangeObject[i];
 
         //地址
         strTemp.Format(_T("%08x"), pNode->ObjAddress);
-        m_ListCtrl.InsertItem(index, strTemp);
+        m_ListCtrl.InsertItem(i, strTemp);
 
         //名称
         TCHAR* pText = (LPTSTR)gcall.GetObjectName(pNode->ObjAddress);
-        m_ListCtrl.SetItemText(index, 1, pText);
+        m_ListCtrl.SetItemText(i, 1, pText);
 
         strTemp.Format(_T("%d"), pNode->id);
-        m_ListCtrl.SetItemText(index, 2, strTemp);
+        m_ListCtrl.SetItemText(i, 2, strTemp);
 
         strTemp.Format(_T("%d"), pNode->id2);
-        m_ListCtrl.SetItemText(index, 3, strTemp);
+        m_ListCtrl.SetItemText(i, 3, strTemp);
 
         UCHAR type = gcall.GetObjectType(pNode->ObjAddress);
         strTemp.Format(_T("%d"), type);
-        m_ListCtrl.SetItemText(index, 4, strTemp);
+        m_ListCtrl.SetItemText(i, 4, strTemp);
 
-        //hp
-        if(type == 0x4)
+ 
+        if(type == 0x4 || type == 1 || type == 2)
         {
             strTemp.Format(_T("%d"), gcall.GetObjectHP(pNode->ObjAddress));
-            m_ListCtrl.SetItemText(index, 5, strTemp);
+            m_ListCtrl.SetItemText(i, 5, strTemp);
         }
 
         //坐标和距离
@@ -784,32 +783,28 @@ void CDataDlg::PrintfRangeMonster(BOOL bApplyConfig)
             gcall.GetPlayerPos(&mypos);
 
             strTemp.Format(_T("%d"), (DWORD)gcall.CalcC(pos, mypos));
-            m_ListCtrl.SetItemText(index, 6, strTemp);
+            m_ListCtrl.SetItemText(i, 6, strTemp);
+
+
             strTemp.Format(_T("x:%d y:%d z:%d"), (int)pos.x, (int)pos.y, (int)pos.z);
-            m_ListCtrl.SetItemText(index, 7, strTemp);
+            m_ListCtrl.SetItemText(i, 7, strTemp);
         }
 
 
-
-
-        //是否是怪物
-        m_ListCtrl.SetItemText(index, 8, L"是");
 
         //索引
         int suoyin = gcall.GetIndexByType(pNode->ObjAddress);
-        if(suoyin != -1)
-        {
-            strTemp.Format(_T("%d"), suoyin);
-            m_ListCtrl.SetItemText(index, 9, strTemp);
-        }
+        strTemp.Format(_T("%d"), suoyin == -1 ? -1 : suoyin);
+        m_ListCtrl.SetItemText(i, 9, strTemp);
+
 
         //怪物面向
         strTemp.Format(_T("%d"), gcall.GetObjectView(pNode->ObjAddress));
-        m_ListCtrl.SetItemText(index, 10, strTemp);
+        m_ListCtrl.SetItemText(i, 10, strTemp);
 
 
 
-        m_ListCtrl.SetItemData(index, (DWORD)pNode);
+        m_ListCtrl.SetItemData(i, (DWORD)pNode);
     }
 
 }

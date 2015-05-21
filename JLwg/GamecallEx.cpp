@@ -631,7 +631,7 @@ int GamecallEx::FindThenKill(int pos, DWORD range, DWORD mode, DWORD MyQuestStep
 startKiLL:
     //TRACE(_T("遍历怪物"));
     std::vector<ObjectNode*> RangeObject;
-    GetRangeMonsterToVector(range, RangeObject);
+    GetRangeMonsterToVector(GetObjectBinTreeBaseAddr(), range, RangeObject);
 
 
     //排序
@@ -2083,7 +2083,7 @@ void GamecallEx::DelAllTalent()
 void GamecallEx::TurnToNear(DWORD range)
 {
     std::vector<ObjectNode*> RangeObject;
-    GetRangeMonsterToVector(range, RangeObject);
+    GetRangeMonsterToVector(GetObjectBinTreeBaseAddr(), range, RangeObject);
     //排序
     //TRACE(_T("怪物排序"));
     std::sort(RangeObject.begin(), RangeObject.end(), UDgreater);
@@ -2705,16 +2705,14 @@ BOOL GamecallEx::isCustomKill_HaveName(wchar_t* name)
     return FALSE;
 }
 
-
-
+//这个函数不用
 DWORD GamecallEx::GetRangeMonsterCount(DWORD range)
 {
     //判断是否用aoe
     std::vector<ObjectNode*> RangeObject;
-    GetRangeMonsterToVector(range, RangeObject);
+    GetRangeMonsterToVector(GetObjectBinTreeBaseAddr(), range, RangeObject);
 
     Kill_ApplyConfig(RangeObject);
-
     return RangeObject.size();
 }
 
@@ -2782,26 +2780,28 @@ for_again:
         wchar_t* objName = GetObjectName((*it)->ObjAddress);
         _ASSERTE(objName != NULL);
 
+        //这里应该不可能运行进去
+        if(objName == NULL)
+        {
+            ObjectVec.erase(it);
+            goto for_again;
+        }
+
         if(isCustomKill_HaveName(objName) == FALSE)
         {
-
-            if(isCanKill(*it))
+            if(pConfig->isHave(DontKill, objName))
             {
-                if(pConfig->isHave(DontKill, objName))
-                {
-                    ObjectVec.erase(it);
-                    goto for_again;
-                }
+                ObjectVec.erase(it);
+                goto for_again;
+            }
 
-                if(pConfig->isHave(FirstKill, objName))
-                {
-                    //开头队列的迭代器
-                    ObjectNode* pback = ObjectVec[0];
-                    ObjectVec[0] = *it;
+            if(pConfig->isHave(FirstKill, objName))
+            {
+                //开头队列的迭代器
+                ObjectNode* pback = ObjectVec[0];
+                ObjectVec[0] = *it;
 
-                    *it = pback;
-                }
-
+                *it = pback;
             }
         }
         else

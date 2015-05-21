@@ -11,8 +11,6 @@
 #include "ConfigMgr.h"
 
 
-#include <afximpl.h>
-
 
 
 #ifdef _DEBUG
@@ -267,7 +265,6 @@ BOOL CMainFrame::PreCreateWindow(CREATESTRUCT& cs)
 
     cs.cx = 600;
     cs.cy = 400;
-    cs.dwExStyle &= ~WS_EX_CLIENTEDGE;
     return TRUE;
 }
 

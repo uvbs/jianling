@@ -110,31 +110,34 @@ public:
 
     //对象
     ObjectNode* GetObjectBinTreeBaseAddr();
-    void GetAllObjectToVector(ObjectNode* pNode, ObjectVector& RangeObject);
-    void _GetRangeObjectToVector(ObjectNode* pNode, DWORD range, ObjectVector& RangeObject);
-    void GetRangeMonsterToVector(DWORD range, ObjectVector& MonsterVec);
+    void GetAllObjectToVector(ObjectNode* pNode, ObjectVector& AllObject);
+    void GetRangeMonsterToVector(ObjectNode* pNode, DWORD range, ObjectVector& RangeObject);
     void GetRangeObjectToVector(ObjectNode* pNode, DWORD range, ObjectVector& RangeObject);
+
+
     void GetRangeLootObjectToVector(DWORD range, ObjectVector& LootVec);
     void GetRangeTaskItemToVectr(ObjectVector& TastItemVector, DWORD range);
+
+
     ObjectNode* GetObjectByName(const wchar_t szName[], DWORD range = 500);
-    BYTE GetObjectType(DWORD pObjAddress);                          //对象类型
+    byte GetObjectType(DWORD pObjAddress);                          //对象类型
     BOOL _GetObjectPos(DWORD pObjAddress, fPosition* pos);          //取对象坐标
     BOOL GetObjectPos(ObjectNode* pNode, fPosition* fpos);
     BOOL GetObjectPos_0xb(DWORD pObjAddress, sPosition* spos);      //对象short类型坐标
     BOOL GetObjectPos2_0x20(DWORD pObjAddress, fPosition* fpos);    //0x20对象使用这个取坐标
     BOOL GetObjectPos2_0x90(DWORD pObjAddress, sPosition* spos);    //0x90对象使用这个取坐标
-    wchar_t* GetObjectNameByIndex(DWORD index);                     //对象名
-    wchar_t* _GetObjectNameByIndex(DWORD index);
+    wchar_t* GetObjectNameByIndex(int index);                     //对象名
+    wchar_t* _GetObjectNameByIndex(int index);
     wchar_t* GetObjectName(DWORD pObjAddress);
-    DWORD GetObjectHP(DWORD pObjAddress);            //获取类型为4的对象血量
-    DWORD GetObject_0x14(DWORD pObjAddress);
-    DWORD GetObjectLevel(DWORD pObjAddress);        //取对象等级
-    DWORD GetObjectSY12(DWORD pObjAddress);
-    DWORD GetObjectSY(DWORD pObjAddress);
-    DWORD GetObjectSy_90(DWORD pObjAddress);        //取90的索引
-    DWORD GetIndexByType(DWORD pObjAddress);        //通过类型取得索引
-    DWORD GetObjectView(DWORD pObjAddress);         //获取对象角度
-	DWORD GetObjectTargetId(DWORD pObjAddress);     //获取对象目标
+    int GetObjectHP(DWORD pObjAddress);            //获取类型为4的对象血量
+    int GetObject_0x14(DWORD pObjAddress);
+    int GetObjectLevel(DWORD pObjAddress);        //取对象等级
+    int GetObjectSY12(DWORD pObjAddress);
+    int GetObjectSY(DWORD pObjAddress);
+    int GetObjectSy_90(DWORD pObjAddress);        //取90的索引
+    int GetIndexByType(DWORD pObjAddress);        //通过类型取得索引
+    int GetObjectView(DWORD pObjAddress);         //获取对象角度
+	int GetObjectTargetId(DWORD pObjAddress);     //获取对象目标
 	ObjectNode* GetObjectById(DWORD Id);            //根据ID获取二叉地址
 	BOOL IsObjectFightStatus(DWORD pObjAddress);   //获取对象战斗状态
 	BOOL IsPlayerSkillStatus(DWORD pObjAddress);    //获得对象是否正在使用技能状态

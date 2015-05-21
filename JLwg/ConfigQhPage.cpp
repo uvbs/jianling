@@ -423,7 +423,7 @@ void CConfigObjPage::RefreshObj()
     m_ObjList.DeleteAllItems();
     ObjectVector RangeObject;
 
-    gcall.GetRangeMonsterToVector(10000, RangeObject);
+    gcall.GetRangeMonsterToVector(gcall.GetObjectBinTreeBaseAddr(), 10000, RangeObject);
 
     fPosition fmypos;
     gcall.GetPlayerPos(&fmypos);
