@@ -5507,7 +5507,7 @@ void Gamecall::GetAllBodyEquipToVector(BagVector& RangeObject)
     sendcall(id_msg_GetAllBodyEquipToVector, &RangeObject);
 }
 
-void Gamecall::GetStrikeToVector(std::vector<STRIKEINFO>& RangeObject)
+void Gamecall::GetStrikeToVector(StrikeVector& RangeObject)
 {
 
     DWORD PPTR = ReadDWORD(Offset_Game_Base);
@@ -5544,7 +5544,7 @@ void Gamecall::GetStrikeToVector(std::vector<STRIKEINFO>& RangeObject)
 
         //{信息指针}
         DWORD PInfo = ReadDWORD(PSkillBegin + i * 4);
-        _ASSERTE(PInfo != 0);
+        _ASSERTE(PInfo > 0);
 
         stJn.id = ReadDWORD(PInfo + Offset_Skill_Id);
         if(stJn.id > 0)
@@ -5577,6 +5577,75 @@ void Gamecall::GetStrikeToVector(std::vector<STRIKEINFO>& RangeObject)
 
 
     }
+
+
+
+    PPTR = ReadDWORD(Offset_Game_Base);
+    PPTR = ReadDWORD(PPTR + Offset_Skill_Offset1);
+    PPTR = ReadDWORD(PPTR + Offset_Skill_Offset2);
+    
+    //{技能指针}
+    PPTR = ReadDWORD(PPTR + Offset_Skill_Offset3 - Offset_Skill_Offset4 + Offset_Skill_Offset5 + Offset_Skill_ASkill);
+    _ASSERTE(PPTR != 0);
+    
+    
+    //{技能首地址}
+    PSkillBegin = ReadDWORD(PPTR + Offset_Skill_PBASkill);
+    _ASSERTE(PSkillBegin != 0);
+    
+    
+    //{技能尾地址}
+    PSkillEnd = ReadDWORD(PPTR + Offset_Skill_PEASkill);
+    _ASSERTE(PSkillEnd != 0);
+    
+    dwCount = (PSkillEnd - PSkillBegin) / 4;
+    
+    if(dwCount < 0 || dwCount > 20)
+    {
+        _ASSERTE(FALSE);
+        return;
+    }
+    
+    
+    for(i = 0; i < dwCount; i++)
+    {
+        
+        //{信息指针}
+        DWORD PInfo = ReadDWORD(PSkillBegin + i * 4);
+        _ASSERTE(PInfo > 0);
+        
+        stJn.id = ReadDWORD(PInfo + Offset_Skill_Id);
+        if(stJn.id > 0)
+        {
+            stJn.iType = ReadByte(PInfo + Offset_Skill_Type);
+            
+            if(ReadDWORD(PInfo + Offset_Skill_NameLen) >= 0xf)
+            {
+                stJn.name = (wchar_t*)ReadDWORD(ReadDWORD(PInfo + Offset_Skill_Name));
+                _ASSERTE(stJn.name != NULL);
+            }
+            else
+            {
+                stJn.name = (wchar_t*)ReadDWORD(PInfo + Offset_Skill_Name);
+                _ASSERTE(stJn.name != NULL);
+            }
+            
+            
+            stJn.bCD = (ReadDWORD(PInfo + Offset_Skill_CD) == 0);
+            stJn.bAviable = (ReadDWORD(PInfo + Offset_Skill_AState) == 0);
+            stJn.iIndex = i;
+            stJn.iKeyCode = 0xff; //暂时没用
+            
+            RangeObject.push_back(stJn);
+        }
+        else
+        {
+            _ASSERTE(FALSE);
+        }
+        
+        
+    }
+
 
 }
 
@@ -7679,7 +7748,19 @@ BOOL Gamecall::isStrikeCd(DWORD id)
 {
     _ASSERTE(FALSE);
 
-    return TRUE;
+    std::vector<STRIKEINFO> JnVec;
+    GetStrikeToVector(JnVec);
+
+    for(std::vector<STRIKEINFO>::iterator it = JnVec.begin(); it != JnVec.end(); it++)
+    {
+        if((*it).id == id)
+        {
+            return (*it).bCD;
+        }
+    }
+
+
+    return FALSE;
 }
 
 BYTE ReadByte(DWORD addr)

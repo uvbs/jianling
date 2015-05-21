@@ -18,7 +18,7 @@ typedef std::vector<CUSTOMKILL> CustKillVector;
 typedef std::vector<ObjectNode*> ObjectVector;
 typedef std::vector<BAGSTU> BagVector;
 typedef std::vector<Team> TeamVector;
-
+typedef std::vector<STRIKEINFO> StrikeVector;
 
 class Gamecall
 {
@@ -218,7 +218,7 @@ public:
 
 
 
-    void        GetStrikeToVector(std::vector<STRIKEINFO>& RangeObject);
+    void        GetStrikeToVector(StrikeVector& RangeObject);
 
     
     

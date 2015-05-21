@@ -704,22 +704,22 @@ void CDataDlg::PrintfStrike()
     GamecallEx& gcall = *GamecallEx::GetInstance();
 
 
-    std::vector<STRIKEINFO> RangeObject;
-    gcall.GetStrikeToVector(RangeObject);
+    StrikeVector JnVec;
+    gcall.GetStrikeToVector(JnVec);
 
     CString strTemp;
-    for(DWORD i = 0; i < RangeObject.size(); i++)
+    for(int i = 0; i < JnVec.size(); i++)
     {
 
-        m_ListCtrl.InsertItem(i, RangeObject[i].name);
+        m_ListCtrl.InsertItem(i, JnVec[i].name);
 
-        strTemp = RangeObject[i].bCD == true ? _T("冷却中"):_T("冷却完毕");
+        strTemp = JnVec[i].bCD == true ? _T("冷却中") : _T("冷却完毕");
         m_ListCtrl.SetItemText(i, 1, strTemp);
 
-        strTemp = RangeObject[i].bAviable == true ? _T("可用"):_T("不可用");
+        strTemp = JnVec[i].bAviable == true ? _T("可用") : _T("不可用");
         m_ListCtrl.SetItemText(i, 2, strTemp);
 
-        strTemp.Format(_T("%d"), RangeObject[i].id);
+        strTemp.Format(_T("%d"), JnVec[i].id);
         m_ListCtrl.SetItemText(i, 3, strTemp);
 
     }
@@ -1037,7 +1037,7 @@ void CDataDlg::OnBtnConfig()
 {
     ShowWindow(SW_HIDE);
 
-    GameConfig *pConfig = GameConfig::GetInstance();
+    GameConfig* pConfig = GameConfig::GetInstance();
 
     //配置对话框
     CPropertySheet sheet(_T("配置文件"), this);
@@ -1457,7 +1457,7 @@ UINT testThread(LPVOID ll)
     GamecallEx& gcall = *GamecallEx::GetInstance();
     gcall.Party_KillObject();
     //dlg->hand = INVALID_HANDLE_VALUE;
-	hand = INVALID_HANDLE_VALUE;
+    hand = INVALID_HANDLE_VALUE;
     return 0;
 }
 void CDataDlg::OnBnClickedButton1()
