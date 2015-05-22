@@ -2146,12 +2146,12 @@ int GamecallEx::KillObject(DWORD range, ObjectNode* pNode, DWORD mode, DWORD can
 
         if(percent < 70)
         {
-            if(isStrikeCd(0x5dca) == FALSE)
+            if(isStrikeCd(0x5dca))
             {
                 Attack(0x5dca);
                 TurnTo(pNode);
                 Sleep(500);
-                while(isStrikeCd(0x5dc1) == FALSE)
+                while(isStrikeCd(0x5dc1))
                 {
                     Attack(0x5ECE);
                 }
@@ -2225,7 +2225,7 @@ int GamecallEx::KillObject(DWORD range, ObjectNode* pNode, DWORD mode, DWORD can
                     {
                         if(mana >= 60)
                         {
-                            if(isStrikeCd(0x5E06) == FALSE)
+                            if(isStrikeCd(0x5E06))
                             {
                                 Kill_Tab(0x5DE8);
                                 Kill_Tab(0x5E06);
@@ -2236,7 +2236,6 @@ int GamecallEx::KillObject(DWORD range, ObjectNode* pNode, DWORD mode, DWORD can
                             {
                                 Kill_Tab(0x5dca);
                             }
-
                         }
                         else
                         {
@@ -2273,14 +2272,12 @@ int GamecallEx::KillObject(DWORD range, ObjectNode* pNode, DWORD mode, DWORD can
                     if(mana >= 60)
                     {
                         sendcall(id_msg_attack, (LPVOID)0x5dde);
-                        //Attack(0x5dde);
                     }
                     sendcall(id_msg_attack, (LPVOID)0x5dc1);
-                    //Attack(0x5dc1);
                 }
             }
 
-            if(isStrikeCd(0x5E24) == FALSE)
+            if(isStrikeCd(0x5E24))
             {
                 Attack(0x5E24);
             }
@@ -2677,15 +2674,15 @@ DWORD GamecallEx::GetRangeMonsterCount(DWORD range)
     std::vector<ObjectNode*> RangeObject;
     GetRangeMonsterToVector(GetObjectBinTreeBaseAddr(), range, RangeObject);
     Kill_ApplyConfig(RangeObject);
-	if (RangeObject.size() > 0)
-	{
-		int size = RangeObject.size() ;
-			for (int i = 0;i < size; i++)
-			{
-TRACE("怪物地址:%x",RangeObject[0]->ObjAddress);
-			}
-			
-	}
+//	if (RangeObject.size() > 0)
+//	{
+//		int size = RangeObject.size() ;
+//			for (int i = 0;i < size; i++)
+//			{
+//TRACE("怪物地址:%x",RangeObject[0]->ObjAddress);
+//			}
+//			
+//	}
 	
     return RangeObject.size();
 }

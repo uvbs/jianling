@@ -156,10 +156,10 @@ void CombatBoss::run()
                         {
                             pCall->Attack(0x5DFC);
                             pCall->TurnTo(pBossNode);
-                            pCall->Attack(0x5ECE);
+                            Sleep(800);
                             while(pCall->isStrikeCd(0x1F5))
                             {
-                                pCall->Attack(0x5ECE);
+                                pCall->sendcall(id_msg_attack, (LPVOID)0x5ECE);
                             }
                         }
                     }
@@ -243,9 +243,10 @@ void CombatBoss::run()
                         {
                             pCall->Attack(0x5DFC);
                             pCall->TurnTo(pBossNode);
+							Sleep(800);
                             while(pCall->isStrikeCd(0x1F5))
                             {
-                                pCall->Attack(0x5ECE);
+                                pCall->sendcall(id_msg_attack, (LPVOID)0x5ECE);
                             }
                         }
                     }
@@ -273,10 +274,10 @@ void CombatBoss::run()
                         {
                             pCall->Attack(0x5DFC);
                             pCall->TurnTo(pBossNode);
-                            Sleep(500);
+                            Sleep(800);
                             while(pCall->isStrikeCd(0x1F5))
                             {
-                                pCall->Attack(0x5ECE);
+                                pCall->sendcall(id_msg_attack, (LPVOID)0x5ECE);
                             }
                         }
                     }
@@ -290,8 +291,8 @@ void CombatBoss::run()
                             }
                             else
                             {
-                                pCall->Kill_Tab(0x5dc1);
                                 pCall->Kill_Tab(0x5dca);
+								pCall->sendcall(id_msg_attack, (LPVOID)0x5dc1);
                             }
                         }
                         else
@@ -310,9 +311,10 @@ void CombatBoss::run()
                         {
                             pCall->Attack(0x5DFC);
                             pCall->TurnTo(pBossNode);
+							Sleep(800);
                             while(pCall->isStrikeCd(0x1F5))
                             {
-                                pCall->Attack(0x5ECE);
+                                pCall->sendcall(id_msg_attack, (LPVOID)0x5ECE);
                             }
                         }
                     }
@@ -326,8 +328,8 @@ void CombatBoss::run()
                             }
                             else
                             {
-                                pCall->Kill_Tab(0x5dc1);
                                 pCall->Kill_Tab(0x5dca);
+								pCall->sendcall(id_msg_attack, (LPVOID)0x5dc1);
                             }
                         }
                         else
@@ -345,9 +347,10 @@ void CombatBoss::run()
                         {
                             pCall->Attack(0x5DFC);
                             pCall->TurnTo(pBossNode);
+							Sleep(800);
                             while(pCall->isStrikeCd(0x1F5))
                             {
-                                pCall->Attack(0x5ECE);
+                                pCall->sendcall(id_msg_attack, (LPVOID)0x5ECE);
                             }
                         }
                     }
@@ -361,8 +364,8 @@ void CombatBoss::run()
                             }
                             else
                             {
-                                pCall->Kill_Tab(0x5dc1);
                                 pCall->Kill_Tab(0x5dca);
+								pCall->sendcall(id_msg_attack, (LPVOID)0x5dc1);
                             }
 
                         }
@@ -381,9 +384,10 @@ void CombatBoss::run()
                         {
                             pCall->Attack(0x5DFC);
                             pCall->TurnTo(pBossNode);
+							Sleep(800);
                             while(pCall->isStrikeCd(0x1F5))
                             {
-                                pCall->Attack(0x5ECE);
+                                pCall->sendcall(id_msg_attack, (LPVOID)0x5ECE);
                             }
                         }
                     }
@@ -397,8 +401,8 @@ void CombatBoss::run()
                             }
                             else
                             {
-                                pCall->Kill_Tab(0x5dc1);
                                 pCall->Kill_Tab(0x5dca);
+								pCall->sendcall(id_msg_attack, (LPVOID)0x5dc1);
                             }
                         }
                         else
@@ -417,8 +421,8 @@ void CombatBoss::run()
                     }
                     else
                     {
-                        pCall->Kill_Tab(0x5dc1);
                         pCall->Kill_Tab(0x5dca);
+						pCall->sendcall(id_msg_attack, (LPVOID)0x5dc1);
                     }
                     break;
                 }
@@ -435,9 +439,10 @@ void CombatBoss::run()
                         {
                             pCall->Attack(0x5DFC);
                             pCall->TurnTo(pBossNode);
+							Sleep(800);
                             while(pCall->isStrikeCd(0x1F5))
                             {
-                                pCall->Attack(0x5ECE);
+                                pCall->sendcall(id_msg_attack, (LPVOID)0x5ECE);
                             }
                         }
                     }
@@ -451,8 +456,8 @@ void CombatBoss::run()
                             }
                             else
                             {
-                                pCall->Kill_Tab(0x5dc1);
                                 pCall->Kill_Tab(0x5dca);
+								pCall->sendcall(id_msg_attack, (LPVOID)0x5dc1);
                             }
                         }
                         else
@@ -470,9 +475,10 @@ void CombatBoss::run()
                         {
                             pCall->Attack(0x5DFC);
                             pCall->TurnTo(pBossNode);
+							Sleep(800);
                             while(pCall->isStrikeCd(0x1F5))
                             {
-                                pCall->Attack(0x5ECE);
+                                pCall->sendcall(id_msg_attack, (LPVOID)0x5ECE);
                             }
                         }
                     }
@@ -480,15 +486,14 @@ void CombatBoss::run()
                     {
                         TRACE(_T("万魂范围攻击"));
                         pCall->TurnTo(pBossNode);
-                        //pCall->Kill_Tab(0x5dc1);
+                        pCall->sendcall(id_msg_attack, (LPVOID)0x5DC1);
                         if(pCall->isStrikeCd(0x5E1B))
                         {
-                            Sleep(500);
                             pCall->Kill_Tab(0x5E1B);
                         }
                         else if(pCall->isStrikeCd(0x5DF2))
                         {
-                            Sleep(500);
+                            Sleep(800);
                             pCall->Kill_Tab(0x5DF2);
                         }
                         else
@@ -507,9 +512,10 @@ void CombatBoss::run()
                         {
                             pCall->Attack(0x5DFC);
                             pCall->TurnTo(pBossNode);
+							Sleep(800);
                             while(pCall->isStrikeCd(0x1F5))
                             {
-                                pCall->Attack(0x5ECE);
+                                pCall->sendcall(id_msg_attack, (LPVOID)0x5ECE);
                             }
                         }
                     }
@@ -523,8 +529,9 @@ void CombatBoss::run()
                             }
                             else
                             {
-                                pCall->Kill_Tab(0x5dc1);
                                 pCall->Kill_Tab(0x5dca);
+								pCall->Kill_Tab(0x5dc1);
+
                             }
                         }
                         else
@@ -574,11 +581,11 @@ void CombatBoss::run()
                         if(pCall->isStrikeCd(0x5DFC))
                         {
                             pCall->Attack(0x5DFC);
-                            Sleep(500);
                             pCall->TurnTo(pBossNode);
+							Sleep(800);
                             while(pCall->isStrikeCd(0x1F5))
                             {
-                                pCall->Attack(0x5ECE);
+                                pCall->sendcall(id_msg_attack, (LPVOID)0x5ECE);
                             }
                         }
                     }
@@ -702,10 +709,10 @@ void CombatBoss::run()
                         {
                             pCall->Attack(0x5DFC);
                             pCall->TurnTo(pBossNode);
-                            Sleep(500);
+                            Sleep(800);
                             while(pCall->isStrikeCd(0x1F5))
                             {
-                                pCall->Attack(0x5ECE);
+                                pCall->sendcall(id_msg_attack, (LPVOID)0x5ECE);
                             }
                         }
                     }
@@ -761,11 +768,12 @@ void CombatBoss::run()
                         if(pCall->isStrikeCd(0x5DFC))
                         {
                             pCall->Attack(0x5DFC);
-                            Sleep(500);
                             pCall->TurnTo(pBossNode);
+							Sleep(800);
+
                             while(pCall->isStrikeCd(0x1F5))
                             {
-                                pCall->Attack(0x5ECE);
+                                pCall->sendcall(id_msg_attack, (LPVOID)0x5ECE);
                             }
                         }
                     }
@@ -881,15 +889,14 @@ void CombatBoss::run()
                             if(pCall->isStrikeCd(0x5DFC))
                             {
                                 pCall->Attack(0x5DFC);
+								pCall->TurnTo(pBossNode);
+								Sleep(800);
                                 while(pCall->isStrikeCd(0x1F5))
                                 {
-                                    pCall->TurnTo(pBossNode);
-                                    pCall->Attack(0x5ECE);
+                                    pCall->sendcall(id_msg_attack, (LPVOID)0x5ECE);
                                 }
                             }
                         }
-
-
                     }
 
                     if(pCall->GetRangeMonsterCount() > 1)
@@ -918,16 +925,7 @@ void CombatBoss::run()
             //5E60->5EA6->5EB0->5E9C
             if(pCall->isStrikeCd(0x5e60))
             {
-                pCall->Attack(0x5e60);
-                //Sleep(1000);
-            }
-            else if(pCall->isStrikeCd(0x5EA6))
-            {
-                pCall->Attack(0x5EA6);
-            }
-            else if(pCall->isStrikeCd(0x5E9C))
-            {
-                pCall->Attack(0x5E9C);
+                pCall->sendcall(id_msg_attack, (LPVOID)0x5e60);
             }
 
             pCall->TurnTo(pBossNode);
@@ -936,7 +934,7 @@ void CombatBoss::run()
             {
                 if(pCall->isStrikeCd(0x5E24))
                 {
-                    pCall->Attack(0x5E24);
+                    pCall->sendcall(id_msg_attack, (LPVOID)0x5E24);
                 }
             }
 
@@ -945,12 +943,12 @@ void CombatBoss::run()
             {
                 if(pCall->isStrikeCd(0x5DE8))
                 {
-                    pCall->Kill_Tab(0x5DE8);
+                    pCall->sendcall(id_msg_attack, (LPVOID)0x5DE8);
                 }
             }
             if(pCall->isStrikeCd(0x5E06))
             {
-                pCall->Attack(0x5E06);
+                pCall->sendcall(id_msg_attack, (LPVOID)0x5E06);
             }
 
             //事件发送过快导致执行对应动作时为时已晚怎么办, 这个暂时不考虑
@@ -958,8 +956,13 @@ void CombatBoss::run()
             //Sleep(10);
             if(pCall->GetPlayerMana() > 70)
             {
-                //pCall->Attack(0x5dde);
-                pCall->sendcall(id_msg_attack, (LPVOID)0x5dde);
+				if(pCall->GetObjectTargetId(pBossNode->ObjAddress) == My_id)
+				{
+					pCall->Kill_Tab(0x5dca);
+				}else
+				{
+					pCall->sendcall(id_msg_attack, (LPVOID)0x5dde);
+				}
             }
             //pCall->Attack(0x5dc1);
             pCall->sendcall(id_msg_attack, (LPVOID)0x5dc1);

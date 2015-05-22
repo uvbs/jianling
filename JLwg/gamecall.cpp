@@ -4537,8 +4537,6 @@ ObjectNode* Gamecall::GetObjectByName(const wchar_t szName[], DWORD range)
 
     try
     {
-
-
         ObjectVector RangeObject;
         if(range == 0)
         {
@@ -7306,7 +7304,7 @@ BOOL Gamecall::isStrikeCd(DWORD id)
         {
             if((*it).bAviable)
             {
-				return (*it).bCD;
+                return (*it).bCD;
             }
         }
     }

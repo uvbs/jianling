@@ -1192,8 +1192,11 @@ void CDataDlg::OnFindthenkill()
 {
     //获取游戏外挂功能
     GamecallEx& gcall = *GamecallEx::GetInstance();
-gcall.FindThenKill(0, 300, modeNormal | modePickup);
-return;
+
+	gcall.AddCustomKill(L"幻魔",KILLFIRST);
+	gcall.AddCustomKill(L"飛魔",KILLFIRST);
+	gcall.FindThenKill(0, 1500, modeAoe | modeNormal | modePickup);
+
     while(1)
     {
         gcall.Stepto(47820, -27420, -4818, 10, 10, 3000);
