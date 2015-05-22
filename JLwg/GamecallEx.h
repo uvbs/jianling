@@ -33,12 +33,16 @@ public:
 
 
     //拾取, UI
-    void Pickup(int pos, DWORD range);        //捡起范围内掉落
+    void Pickup(int range);        //捡起范围内掉落
+
     BOOL PickupTask(DWORD range = CAN_OPERATOR);    //打开任务物品, 这个范围取值是游戏内能看到f键亮的距离
     BOOL PickupTaskts(DWORD range = CAN_OPERATOR);  //打开任务物品, 这个范围取值是游戏内能看到f键亮的距离
+
     BOOL PickupSpecTypeTask(DWORD range, DWORD type, wchar_t* name = NULL, BOOL flag = FALSE);
     BOOL PickupSpecTypeTaskts(DWORD range, DWORD type, wchar_t* name = NULL);
     void PickupTask(DWORD range, DWORD taskid, DWORD taskstep);
+
+
     void Pickdown();    //这个当前用来一个任务中放尸体到火堆中, 暂时不知能不能通用
     void LinQuJiangLi();
 
@@ -53,7 +57,7 @@ public:
 
 
 
-	
+
     //打怪
     void KillBoss(const wchar_t* name);
     int FindThenKill(int pos, DWORD range, DWORD mode, DWORD MyQuestStep = 0, DWORD MyQuestID = 0, DWORD canKillRange = CAN_OPERATOR);    //找到杀掉
@@ -74,17 +78,19 @@ public:
     static UINT CALLBACK KeepAliveThread(LPVOID pParam);
 
     //杀怪
-    int KillObject(DWORD range, ObjectNode* pNode, DWORD mode, DWORD canKillRange = CAN_OPERATOR,BOOL Rush = FALSE); //杀死这个对象
+    int KillObject(DWORD range, ObjectNode* pNode, DWORD mode, DWORD canKillRange = CAN_OPERATOR, BOOL Rush = FALSE); //杀死这个对象
     void AddCustomKill(wchar_t* name, CUSTOMTYPE type);
-	void Party_KillObject();
+    void Party_KillObject();
 
 
     //控制
     BOOL Stepto(float y, float x, float z, double timeout = 10, DWORD OkRange = CAN_OPERATOR, DWORD toolong = 1000, BOOL sp3x = FALSE);
-    void Stepto(wchar_t* name);
-    void Stepto(ObjectNode* pNode);
-    void SteptoBack(ObjectNode *pObj);
-	wchar_t* SteptoParty();//跟随组队玩家
+    void Stepto(wchar_t* name, int timeout, int OkRange, int maxlong);
+    void Stepto(ObjectNode* pNode, int timeout = 10, int OkRange = CAN_OPERATOR, int maxlong = 3000);
+
+
+    void SteptoBack(ObjectNode* pObj);
+    wchar_t* SteptoParty();//跟随组队玩家
 
     void FollowNpc(wchar_t* name, DWORD range = 1000);
     void FuHuo();

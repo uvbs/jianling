@@ -751,6 +751,14 @@ static int NPCJieRenWu(lua_State* L)
     return 0;
 }
 
+static int Pickup(lua_State* L)
+{
+    int iRange = lua_tointeger(L, 1);
+    GamecallEx::GetInstance()->Pickup(iRange);
+    return 0;
+}
+
+
 static int HeChengWuQiByHun(lua_State* L)
 {
     int pos = lua_tointeger(L, 1);
@@ -813,6 +821,7 @@ void CJLwgApp::RegGameLib(lua_State* L)
     REGLUAFUN(ChiYao);
     REGLUAFUN(MsgBox);
     REGLUAFUN(PickupTask);
+    REGLUAFUN(Pickup);
     REGLUAFUN(WearEquipment);
     REGLUAFUN(WaitPlans);
     REGLUAFUN(randXianlu);

@@ -86,7 +86,7 @@ void CombatBoss::run()
             break;
         }
 
-        if(pCall->_GetObjectPos(pBossNode->ObjAddress, &tarpos) == FALSE)
+        if(pCall->GetObjectPos(pBossNode, &tarpos) == FALSE)
         {
             TRACE(_T("%s: ◊¯±Í≈–∂œπ÷À¿¡À"), FUNCNAME);
             break;

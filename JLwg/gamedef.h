@@ -189,7 +189,8 @@ enum CUSTOMMSGID
     id_msg_DaKaiHeChengJieMian,
     id_msg_IsCanShu,
     id_msg_XieZhuangBei,
-    id_msg_GetPlayExperienceStatusName
+    id_msg_GetPlayExperienceStatusName,
+    id_msg_Operation
 };
 
 

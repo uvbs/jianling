@@ -327,56 +327,22 @@ void GamecallEx::FuHuo()
 }
 
 
-//捡东西
-//参数1: 坐标
-//参数2: 范围
-//捡 参数1 范围 内的掉落
-void GamecallEx::Pickup(int pos, DWORD range)
+//捡东西, 用的call应该能拿游戏中任何按F键能拾取的东西
+void GamecallEx::Pickup(int range)
 {
+    ObjectVector loot;
+    GetRangeLootObjectToVector(range, loot);
 
-//startLoot:
-
-    //走到了, 遍历周围范围的可拾取对象
-    std::vector<ObjectNode*> RangeObject;
-    GetRangeLootObjectToVector(range, RangeObject);
-
-    if(RangeObject.size() == 0)
+    //一个一个捡
+    for(int i = 0; i < loot.size(); i++)
     {
-        TRACE(_T("没有东西可捡"));
-        return;
+        Stepto(loot[i], 10, 1);
+
+        TurnTo(loot[i]);
+
+        Sleep(250);
+        Gamecall::Pickup();
     }
-
-    std::sort(RangeObject.begin(), RangeObject.end(), UDgreater);
-    for(DWORD i = 0; i < RangeObject.size(); i++)
-    {
-        ObjectNode* pNode = RangeObject[i];
-
-        fPosition fpos;
-        if(GetObjectPos(pNode, &fpos))
-        {
-            fPosition fmypos;
-            GetPlayerPos(&fmypos);
-
-            //如果在距离内就不要走过去捡
-            //距离游戏内测试165以内会出现 f 按钮
-            if(CalcC(fpos, fmypos) >= CAN_OPERATOR)
-            {
-                Gamecall::Stepto(fpos, 10, 50, range * 2);
-                Sleep(300);
-            }
-        }
-
-        if(Gamecall::Pickup(pNode))
-        {
-            Sleep(100);
-        }
-        else
-        {
-            KeyPress(70);
-            TRACE(_T("没有成功捡起来"));
-        }
-    }
-
 }
 
 
@@ -388,8 +354,8 @@ void GamecallEx::Pickdown()
     DWORD info;
     DWORD info1;
     Pos = ReadDWORD(ReadDWORD(ReadDWORD(ReadDWORD(obj_enum_base) + huohua_offset1)  + huohua_offset2) + 0x14);
-    info  = ReadDWORD(Pos + huohua_offset4); //火化尸体4级偏移
-    info1 = ReadDWORD(Pos + huohua_offset5); //火化尸体5级偏移
+    info  = ReadDWORD(Pos + huohua_offset4);    //火化尸体4级偏移
+    info1 = ReadDWORD(Pos + huohua_offset5);    //火化尸体5级偏移
 
     ObjectNode Node;
     Node.id = info;
@@ -681,7 +647,7 @@ startKiLL:
         if(mode & modePickupOnce)
         {
             TRACE(_T("执行modePickupOnce"));
-            Pickup(0, 170);
+            Pickup(170);
         }
 
 
@@ -723,7 +689,7 @@ exitfun:
         Sleep(500);
         TRACE(_T("执行modePickup"));
         //杀完捡起掉落, 此时的范围为了更可靠写改成x2
-        Pickup(0, range);
+        Pickup(range);
     }
 
     if(mode & modeGoback)
@@ -920,9 +886,7 @@ BOOL GamecallEx::PickupSpecTypeTask(DWORD range, DWORD type, wchar_t* name, BOOL
             if(flag)
             {
                 fPosition fpos;
-                sPosition spos;
-                GetObjectPos2_0x90(RangeObject[i]->ObjAddress, &spos);
-                ShortPosToFloatPos(spos, fpos);
+                GetObjectPos(RangeObject[i], &fpos);
                 Stepto(fpos.y, fpos.x, fpos.z, 20, 10, range + 100);
             }
 
@@ -1128,8 +1092,7 @@ BOOL Gamecall::Stepto(fPosition& tarpos, double timeOut, DWORD okRange, DWORD to
 
 
     //首先, 人得是活的
-    if(GetPlayerDeadStatus() == 1 ||
-            GetPlayerDeadStatus() == 2)
+    if(GetPlayerDeadStatus() == 1 || GetPlayerDeadStatus() == 2)
     {
         TRACE(_T("走路时人物死亡"));
         return FALSE;
@@ -1234,7 +1197,7 @@ BOOL GamecallEx::Stepto(float y, float x, float z, double timeOut, DWORD okRange
 
 
 //走路的外层封装函数
-void GamecallEx::Stepto(wchar_t* name)
+void GamecallEx::Stepto(wchar_t* name, int timeout, int OkRange, int maxlong)
 {
     ObjectNode* pNode = NULL;
 
@@ -1245,21 +1208,23 @@ void GamecallEx::Stepto(wchar_t* name)
         return;
     }
 
-    fPosition fpos;
-    if(GetObjectPos(pNode, &fpos))
-    {
-        Stepto3x();
-        Gamecall::Stepto(fpos, 10, CAN_OPERATOR, 3000);
-    }
+    Stepto(pNode, timeout, OkRange, maxlong);
 }
 
-void GamecallEx::Stepto(ObjectNode* pNode)
+void GamecallEx::Stepto(ObjectNode* pNode, int timeout, int OkRange, int maxlong)
 {
     fPosition fpos;
     if(GetObjectPos(pNode, &fpos))
     {
         Stepto3x();
-        Gamecall::Stepto(fpos, 10, CAN_OPERATOR, 3000);
+        if(Gamecall::Stepto(fpos, timeout, OkRange, maxlong) == FALSE)
+        {
+            _ASSERTE(FALSE);
+        }
+    }
+    else
+    {
+        _ASSERTE(FALSE);
     }
 }
 
@@ -2207,7 +2172,7 @@ int GamecallEx::KillObject(DWORD range, ObjectNode* pNode, DWORD mode, DWORD can
         }
 
 
-        if(_GetObjectPos(pNode->ObjAddress, &targetpos) == FALSE)
+        if(GetObjectPos(pNode, &targetpos) == FALSE)
         {
             TRACE(_T("%s: 坐标判断怪死了"), FUNCNAME);
             return RESULT_KILL_OK;
