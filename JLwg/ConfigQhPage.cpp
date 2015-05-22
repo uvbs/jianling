@@ -465,13 +465,13 @@ BOOL CConfigObjPage::OnInitDialog()
 
     GameConfig* pConfig = GameConfig::GetInstance();
 
-    //战斗优先
+    //优先
     ItemVector& FirstKill = pConfig->m_FirstKill;
 
-    //战斗不杀
+    //不杀
     ItemVector& DontKill = pConfig->m_DontKill;
 
-    //战斗必杀
+    //必杀
     ItemVector& AlwaysKill = pConfig->m_AlwaysKill;
 
     int i;

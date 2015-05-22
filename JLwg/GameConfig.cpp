@@ -37,13 +37,11 @@ static char THIS_FILE[] = __FILE__;
 #define GOTODATA(sec, key)  \
     {for(ItemIterator it = m_##sec.begin(); it != m_##sec.end(); it++) {\
         ini.SetValue(str##sec, str##key, (*it).c_str());\
-        TRACE(_T("%s"), (*it).c_str());\
     }}
 
 #define GOTODATA2(sec, key)  \
     {for(ItemIterator it = m_##key.begin(); it != m_##key.end(); it++) {\
         ini.SetValue(str##sec, str##key, (*it).c_str());\
-        TRACE(_T("%s"), (*it).c_str());\
     }}
 
 
@@ -90,11 +88,14 @@ BOOL GameConfig::LoadConfig()
     //打开配置文件
     CSimpleIni ini;
     ini.SetUnicode();
+    ini.SetMultiKey();
     if(ini.LoadFile(szExe) < 0) return FALSE;
 
     //清空配置
     ClearConfig();
 
+    
+    ini.SetMultiKey(false);
     //喝药百分比
     m_HealthPercent = ini.GetLongValue(strCombat, strYaoPecent, 60);
     m_szQHColor = ini.GetValue(strCombat, strQhColor, _T("绿色"));
@@ -113,6 +114,7 @@ BOOL GameConfig::LoadConfig()
     m_nAccept_Range = ini.GetLongValue(strTeam, strAcpt_RangeValue, 0);
 
 
+    ini.SetMultiKey();
     GOTOLIST(Combat, DontKill);
     GOTOLIST(Combat, AlwaysKill);
     GOTOLIST(Combat, FirstKill);
@@ -132,7 +134,7 @@ BOOL GameConfig::LoadConfig()
 void GameConfig::SaveConfig()
 {
 
-    CSimpleIniW ini;
+    CSimpleIni ini;
     ini.SetUnicode();
     ini.SetMultiKey(false);
 
@@ -166,7 +168,7 @@ void GameConfig::SaveConfig()
     GOTODATA2(Combat, FirstKill);
     GOTODATA2(Combat, DontKill);
     GOTODATA2(Combat, AlwaysKill);
-    ini.SetMultiKey(false);
+
 
     TCHAR szExe[MAX_PATH] = {0};
     GetModuleFileName(AfxGetInstanceHandle(), szExe, MAX_PATH);
