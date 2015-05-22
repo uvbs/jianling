@@ -68,11 +68,6 @@ void CombatBoss::run()
     while(1)
     {
 
-        //退出条件
-        //boss 死
-
-        //pCall->KeyPress(82);
-        //玩家死
         if(pCall->GetPlayerHealth() <= 0)
         {
             TRACE(_T("%s: 人物死亡了"), FUNCNAME);
@@ -111,28 +106,15 @@ void CombatBoss::run()
 
 
         //事件列表空?
-        if(_event.size() > 0)
+
+
+        //这里需要同步
+        if(m_event.dwStrikeId != 0)
         {
 
+            TRACE(_T("-----技能ID:%d"), m_event.dwStrikeId);
 
-            MONSTERATAACK ma;
-
-
-            //这里需要同步
-            m_Mutex.Lock();
-            std::list<MONSTERATAACK>::iterator it = _event.begin();
-
-            ma = (*it);
-
-            //处理了这个事件, 从队列删掉
-            //_event.erase(it);
-            _event.clear();
-            m_Mutex.Unlock();
-
-            TRACE(_T("-----技能ID:%d"), ma.dwStrikeId);
-
-
-            switch(ma.dwStrikeId)
+            switch(m_event.dwStrikeId)
             {
             //对应boss技能
 
@@ -243,7 +225,7 @@ void CombatBoss::run()
                         {
                             pCall->Attack(0x5DFC);
                             pCall->TurnTo(pBossNode);
-							Sleep(800);
+                            Sleep(800);
                             while(pCall->isStrikeCd(0x1F5))
                             {
                                 pCall->sendcall(id_msg_attack, (LPVOID)0x5ECE);
@@ -292,7 +274,7 @@ void CombatBoss::run()
                             else
                             {
                                 pCall->Kill_Tab(0x5dca);
-								pCall->sendcall(id_msg_attack, (LPVOID)0x5dc1);
+                                pCall->sendcall(id_msg_attack, (LPVOID)0x5dc1);
                             }
                         }
                         else
@@ -311,7 +293,7 @@ void CombatBoss::run()
                         {
                             pCall->Attack(0x5DFC);
                             pCall->TurnTo(pBossNode);
-							Sleep(800);
+                            Sleep(800);
                             while(pCall->isStrikeCd(0x1F5))
                             {
                                 pCall->sendcall(id_msg_attack, (LPVOID)0x5ECE);
@@ -329,7 +311,7 @@ void CombatBoss::run()
                             else
                             {
                                 pCall->Kill_Tab(0x5dca);
-								pCall->sendcall(id_msg_attack, (LPVOID)0x5dc1);
+                                pCall->sendcall(id_msg_attack, (LPVOID)0x5dc1);
                             }
                         }
                         else
@@ -347,7 +329,7 @@ void CombatBoss::run()
                         {
                             pCall->Attack(0x5DFC);
                             pCall->TurnTo(pBossNode);
-							Sleep(800);
+                            Sleep(800);
                             while(pCall->isStrikeCd(0x1F5))
                             {
                                 pCall->sendcall(id_msg_attack, (LPVOID)0x5ECE);
@@ -365,7 +347,7 @@ void CombatBoss::run()
                             else
                             {
                                 pCall->Kill_Tab(0x5dca);
-								pCall->sendcall(id_msg_attack, (LPVOID)0x5dc1);
+                                pCall->sendcall(id_msg_attack, (LPVOID)0x5dc1);
                             }
 
                         }
@@ -384,7 +366,7 @@ void CombatBoss::run()
                         {
                             pCall->Attack(0x5DFC);
                             pCall->TurnTo(pBossNode);
-							Sleep(800);
+                            Sleep(800);
                             while(pCall->isStrikeCd(0x1F5))
                             {
                                 pCall->sendcall(id_msg_attack, (LPVOID)0x5ECE);
@@ -402,7 +384,7 @@ void CombatBoss::run()
                             else
                             {
                                 pCall->Kill_Tab(0x5dca);
-								pCall->sendcall(id_msg_attack, (LPVOID)0x5dc1);
+                                pCall->sendcall(id_msg_attack, (LPVOID)0x5dc1);
                             }
                         }
                         else
@@ -422,7 +404,7 @@ void CombatBoss::run()
                     else
                     {
                         pCall->Kill_Tab(0x5dca);
-						pCall->sendcall(id_msg_attack, (LPVOID)0x5dc1);
+                        pCall->sendcall(id_msg_attack, (LPVOID)0x5dc1);
                     }
                     break;
                 }
@@ -439,7 +421,7 @@ void CombatBoss::run()
                         {
                             pCall->Attack(0x5DFC);
                             pCall->TurnTo(pBossNode);
-							Sleep(800);
+                            Sleep(800);
                             while(pCall->isStrikeCd(0x1F5))
                             {
                                 pCall->sendcall(id_msg_attack, (LPVOID)0x5ECE);
@@ -457,7 +439,7 @@ void CombatBoss::run()
                             else
                             {
                                 pCall->Kill_Tab(0x5dca);
-								pCall->sendcall(id_msg_attack, (LPVOID)0x5dc1);
+                                pCall->sendcall(id_msg_attack, (LPVOID)0x5dc1);
                             }
                         }
                         else
@@ -475,7 +457,7 @@ void CombatBoss::run()
                         {
                             pCall->Attack(0x5DFC);
                             pCall->TurnTo(pBossNode);
-							Sleep(800);
+                            Sleep(800);
                             while(pCall->isStrikeCd(0x1F5))
                             {
                                 pCall->sendcall(id_msg_attack, (LPVOID)0x5ECE);
@@ -512,7 +494,7 @@ void CombatBoss::run()
                         {
                             pCall->Attack(0x5DFC);
                             pCall->TurnTo(pBossNode);
-							Sleep(800);
+                            Sleep(800);
                             while(pCall->isStrikeCd(0x1F5))
                             {
                                 pCall->sendcall(id_msg_attack, (LPVOID)0x5ECE);
@@ -530,7 +512,7 @@ void CombatBoss::run()
                             else
                             {
                                 pCall->Kill_Tab(0x5dca);
-								pCall->Kill_Tab(0x5dc1);
+                                pCall->Kill_Tab(0x5dc1);
 
                             }
                         }
@@ -582,7 +564,7 @@ void CombatBoss::run()
                         {
                             pCall->Attack(0x5DFC);
                             pCall->TurnTo(pBossNode);
-							Sleep(800);
+                            Sleep(800);
                             while(pCall->isStrikeCd(0x1F5))
                             {
                                 pCall->sendcall(id_msg_attack, (LPVOID)0x5ECE);
@@ -769,7 +751,7 @@ void CombatBoss::run()
                         {
                             pCall->Attack(0x5DFC);
                             pCall->TurnTo(pBossNode);
-							Sleep(800);
+                            Sleep(800);
 
                             while(pCall->isStrikeCd(0x1F5))
                             {
@@ -879,7 +861,7 @@ void CombatBoss::run()
             default:
                 {
                     //杀怪
-                    TRACE(_T("attack id: %d"), ma.dwStrikeId);
+                    TRACE(_T("attack id: %d"), m_event.dwStrikeId);
                     if(wcscmp(m_name.c_str(), L"馬柴達") == 0  //1层小怪
                             || wcscmp(m_name.c_str(), L"舒藝") == 0 //1层小怪
                             || wcscmp(m_name.c_str(), L"無名") == 0) //3层BOSS
@@ -889,8 +871,8 @@ void CombatBoss::run()
                             if(pCall->isStrikeCd(0x5DFC))
                             {
                                 pCall->Attack(0x5DFC);
-								pCall->TurnTo(pBossNode);
-								Sleep(800);
+                                pCall->TurnTo(pBossNode);
+                                Sleep(800);
                                 while(pCall->isStrikeCd(0x1F5))
                                 {
                                     pCall->sendcall(id_msg_attack, (LPVOID)0x5ECE);
@@ -915,7 +897,7 @@ void CombatBoss::run()
                     break;
                 }
             }
-            ZeroMemory(&_event, sizeof(MONSTERATAACK));
+
         }
         else
         {
@@ -956,17 +938,20 @@ void CombatBoss::run()
             //Sleep(10);
             if(pCall->GetPlayerMana() > 70)
             {
-				if(pCall->GetObjectTargetId(pBossNode->ObjAddress) == My_id)
-				{
-					pCall->Kill_Tab(0x5dca);
-				}else
-				{
-					pCall->sendcall(id_msg_attack, (LPVOID)0x5dde);
-				}
+                if(pCall->GetObjectTargetId(pBossNode->ObjAddress) == My_id)
+                {
+                    pCall->Kill_Tab(0x5dca);
+                }
+                else
+                {
+                    pCall->sendcall(id_msg_attack, (LPVOID)0x5dde);
+                }
             }
             //pCall->Attack(0x5dc1);
             pCall->sendcall(id_msg_attack, (LPVOID)0x5dc1);
         }
+
+        m_event.dwStrikeId = 0;
     }
 
 //取消回调
@@ -991,20 +976,8 @@ void CombatBoss::NotifyMonsterAttack(MONSTERATAACK* pAttack)
         if(pAttack->dwStrikeId != old1.dwStrikeId)
         {
 
-            //if (_event.size() != 0)
-            //{
-            //  TRACE("_event.size()");
-            //}
-            //可以有个优先级, 放到队列前还是队列后
-            //现实优先处理还是顺序处理.需要同步
-            m_Mutex.Lock();
-            _event.push_front(*pAttack);
-            m_Mutex.Unlock();
-
-            //这优先级没意义吧, 这个队列一般都是空的情况
-            //空表示事件被处理掉了, 如果还有队列的话, 只能说明事件已经在排队了.
-            //处理排了队的事件就没意义啦, 事件应该被及时处理
-            //比如一个灭团技能被排队处理了, 还排了1秒. 这时候再被处理已经没意义了.
+            m_event.dwObj = pAttack->dwObj;
+            m_event.dwStrikeId = pAttack->dwStrikeId;
 
             old1 = *pAttack;
             dwEnd = GetTickCount(); //记录这次处理技能的时间
@@ -1013,11 +986,10 @@ void CombatBoss::NotifyMonsterAttack(MONSTERATAACK* pAttack)
         {
             //技能相等， 因为确实有两个连续释放的技能， 但是间隔2秒左右
             //也需要应对， 所以判断， 如果相等并且和上次释放间隔2秒也处理
-            if((dwStart - dwEnd) > 3000)
+            if((dwStart - dwEnd) > 10000)
             {
-                m_Mutex.Lock();
-                _event.push_front(*pAttack);
-                m_Mutex.Unlock();
+                m_event.dwObj = pAttack->dwObj;
+                m_event.dwStrikeId = pAttack->dwStrikeId;
             }
         }
     }

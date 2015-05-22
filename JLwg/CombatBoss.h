@@ -20,8 +20,7 @@ public:
 
 private:
     CMutex m_Mutex;
-    std::list<MONSTERATAACK> _event;
-	//MONSTERATAACK _event;
+	MONSTERATAACK m_event;
     std::wstring m_name;
 };
 

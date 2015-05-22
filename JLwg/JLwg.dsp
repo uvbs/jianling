@@ -45,7 +45,7 @@ RSC=rc.exe
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /MDd /W3 /GX /Zi /Od /Gf /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_UNICODE" /D "UNICODE" /D "_WINDLL" /D "_AFXDLL" /D "_USRDLL" /D "JLTW" /FA /Yu"stdafx.h" /FD /c
 # SUBTRACT BASE CPP /Fr
-# ADD CPP /nologo /MDd /W3 /GX /Zi /Gf /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_UNICODE" /D "UNICODE" /D "_WINDLL" /D "_AFXDLL" /D "_USRDLL" /D "JLTW" /FA /Yu"stdafx.h" /FD /c
+# ADD CPP /nologo /MD /W3 /GX /Zi /Gf /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_UNICODE" /D "UNICODE" /D "_WINDLL" /D "_AFXDLL" /D "_USRDLL" /D "JLTW" /FA /Yu"stdafx.h" /FD /c
 # ADD BASE MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0x804 /d "NDEBUG" /d "_AFXDLL"

@@ -86,8 +86,8 @@ void CJLDlg::OnWgdata()
 {
     ShowWindow(SW_HIDE);
 
-	CDataDlg dlg(this);
-	dlg.DoModal();
+    CDataDlg dlg(this);
+    dlg.DoModal();
 
     ShowWindow(SW_SHOW);
 }
@@ -164,91 +164,83 @@ UINT CJLDlg::WorkThread(LPVOID pParam)
         GetMessage(&msg, NULL, 0, 0);
         pDlg->m_bWorking = true;
 
-        try
+        switch(msg.message)
         {
-
-            switch(msg.message)
+        case WM_QUIT:
             {
-            case WM_QUIT:
+                return 1;
+            }
+
+        case WM_WORKTHREAD_TESTCOMBATBOSS:
+            {
+                CDataDlg* pDlg = (CDataDlg*)msg.wParam;
+
+                if(pDlg->m_ListCtrl.GetSelectedCount() == 0)
                 {
-                    return 1;
+                    AfxMessageBox(_T("选个对象测试"));
+                    return 0;
                 }
 
-            case WM_WORKTHREAD_TESTCOMBATBOSS:
+                POSITION rpos = pDlg->m_ListCtrl.GetFirstSelectedItemPosition();
+                if(rpos)
                 {
-                    CDataDlg* pDlg = (CDataDlg*)msg.wParam;
+                    int inItem  = pDlg->m_ListCtrl.GetNextSelectedItem(rpos);
+                    TCHAR szName[MAX_PATH] = {0};
+                    pDlg->m_ListCtrl.GetItemText(inItem, 1, szName, sizeof(szName));
+                    GamecallEx::GetInstance()->KillBoss(szName);
+                }
 
-                    if(pDlg->m_ListCtrl.GetSelectedCount() == 0)
-                    {
-                        AfxMessageBox(_T("选个对象测试"));
-                        return 0;
-                    }
+                break;
+            }
 
-                    POSITION rpos = pDlg->m_ListCtrl.GetFirstSelectedItemPosition();
-                    if(rpos)
-                    {
-                        int inItem  = pDlg->m_ListCtrl.GetNextSelectedItem(rpos);
-                        TCHAR szName[MAX_PATH] = {0};
-                        pDlg->m_ListCtrl.GetItemText(inItem, 1, szName, sizeof(szName));
-                        GamecallEx::GetInstance()->KillBoss(szName);
-                    }
 
+        case WM_WORKTHREAD_EXCULUA:
+            {
+
+                //获得模块当前路径
+                TCHAR szExe[MAX_PATH] = {0};
+                GetModuleFileName(theApp.m_hInstance, szExe, MAX_PATH);
+                PathRemoveFileSpec(szExe);
+                PathAppend(szExe, _T("脚本"));
+                PathAppend(szExe, theApp.m_stData.szScript);
+
+                if(!PathFileExists(szExe))
+                {
+                    AfxMessageBox(_T("脚本不存在"));
                     break;
                 }
 
-
-            case WM_WORKTHREAD_EXCULUA:
-                {
-
-                    //获得模块当前路径
-                    TCHAR szExe[MAX_PATH] = {0};
-                    GetModuleFileName(theApp.m_hInstance, szExe, MAX_PATH);
-                    PathRemoveFileSpec(szExe);
-                    PathAppend(szExe, _T("脚本"));
-                    PathAppend(szExe, theApp.m_stData.szScript);
-
-                    if(!PathFileExists(szExe))
-                    {
-                        AfxMessageBox(_T("脚本不存在"));
-                        break;
-                    }
-
-                    LPCSTR pszPath;
+                LPCSTR pszPath;
 #ifdef _UNICODE
-                    USES_CONVERSION;
-                    pszPath = T2A(szExe);
+                USES_CONVERSION;
+                pszPath = T2A(szExe);
 #else
-                    pszPath = szExe;
+                pszPath = szExe;
 #endif
 
-                    //加载lua脚本
-                    if(luaL_dofile(pL, pszPath) != LUA_OK)
-                    {
-                        MessageBoxA(NULL, lua_tostring(pL, -1), "脚本", MB_OK);
-                        lua_pop(pL, 1);
-                    }
-
-
-                    break;
-                }
-
-            case WM_WORKTHREAD_EXCUTASK:
+                //加载lua脚本
+                if(luaL_dofile(pL, pszPath) != LUA_OK)
                 {
-                    //TaskScript task;
-                    //task.BeginTask();
-                    break;
+                    MessageBoxA(NULL, lua_tostring(pL, -1), "脚本", MB_OK);
+                    lua_pop(pL, 1);
                 }
 
-            default:
-                {
-                    _ASSERTE(FALSE);
-                    break;
-                }
+
+                break;
             }
-        }
-        catch(...)
-        {
-            AfxMessageBox(_T("执行任务异常!"));
+
+        case WM_WORKTHREAD_EXCUTASK:
+            {
+                //TaskScript task;
+                //task.BeginTask();
+                break;
+            }
+
+        default:
+            {
+                _ASSERTE(FALSE);
+                break;
+            }
         }
 
     }//while
