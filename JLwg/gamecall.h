@@ -19,7 +19,9 @@ typedef std::vector<ObjectNode*> ObjectVector;
 typedef std::vector<BAGSTU> BagVector;
 typedef std::vector<Team> TeamVector;
 typedef std::vector<STRIKEINFO> StrikeVector;
+typedef std::vector<TASK> TaskVector;
 
+ 
 class Gamecall
 {
 protected:
@@ -88,8 +90,11 @@ public:
     BOOL GetPlayerPos(fPosition* fpos);   //float坐标
     BOOL GetPlayerPos2(sPosition* spos);            //short型坐标
     float GetPlayerViewPoint();         //角色面向
+
     DWORD GetPlayerQuestUIStatus();     //判断角色任务相关ui状态是否弹出
     DWORD GetPlayerQuestUIStatusts();   //判断角色任务相关ui状态是否弹出
+
+
     BYTE GetPlayerDeadStatus();         //死亡状态
     DWORD GetCityID();
     BOOL GetPlayExperienceStatus();     //获得经验药状态
@@ -184,19 +189,13 @@ public:
 
 
     //任务
-    void        _GetAcceptedQuestToVector(std::vector<Quest>& QuestVec);
-    void        GetAcceptedQuestToVector(std::vector<Quest>& QuestVec);
+    void        GetAcceptedQuestToVector(TaskVector& QuestVec);
+
+
+
+
     void        DeliverQuests(DWORD id, DWORD step, DWORD questtype, DWORD ff, DWORD npcid1, DWORD npcid2, DWORD unknow, DWORD mianban);     //交任务
-    DWORD       GetTaskStartAddr();  //获取任务开始地址
-    DWORD       GetTaskID(int i, DWORD pAddr);  //获得当前任务ID
-    wchar_t*    GatTaskName(DWORD ID); //获取当前已接任务名字
-    DWORD       GetTaskNameID(int i, DWORD pAddr);  //获得当前任务名字ID
-    DWORD       GetTaskPresentAddr(int i, DWORD pAddr);  //获得当前任务地址
-    DWORD       GetPresentTaskIndexes(int i, DWORD pAddr);  //获得当前做到第几个小任务
-    DWORD       GetPresentTaskEndFlag(int i, DWORD pAddr , DWORD info); //获得当前小任务结束标志
-    DWORD       GetPresentTaskNum(int i, DWORD pAddr , DWORD info);  //获得当前小任务已经打的怪数量
     void        OpenQuestItem(DWORD ID, DWORD ID2);   //打开任务物品
-    DWORD       GetTaskStepById(DWORD id);
     void        _NPCJieRenWu(DWORD canshu1, DWORD canshu2, DWORD canshu3, DWORD canshu4, DWORD canshu5);//NPC接任务
 
 

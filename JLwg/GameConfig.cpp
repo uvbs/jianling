@@ -18,7 +18,7 @@ static char THIS_FILE[] = __FILE__;
 //x节名
 //key键名
 #define GOTOLIST(sec, key)  \
-    {CSimpleIniW::TNamesDepend items;\
+    {CSimpleIni::TNamesDepend items;\
     ini.GetAllValues(str##sec, str##key, items);\
     for(CSimpleIniW::TNamesDepend::const_iterator it = items.begin(); it != items.end(); it++){\
         if(it->pItem[0] != L'\0')\
@@ -27,9 +27,9 @@ static char THIS_FILE[] = __FILE__;
 
 
 #define GOTOLIST2(sec, key)  \
-    {CSimpleIniW::TNamesDepend items;\
+    {CSimpleIni::TNamesDepend items;\
     ini.GetAllValues(str##sec, str##key, items);\
-    for(CSimpleIniW::TNamesDepend::const_iterator it = items.begin(); it != items.end(); it++){\
+    for(CSimpleIni::TNamesDepend::const_iterator it = items.begin(); it != items.end(); it++){\
         if(it->pItem[0] != L'\0')\
             m_##sec.push_back(it->pItem);\
     }}
@@ -53,7 +53,6 @@ IMPLEMENT_SINGLETON(GameConfig)
 //构造函数
 GameConfig::GameConfig()
 {
-    ClearConfig();
 }
 
 GameConfig::~GameConfig()
@@ -76,7 +75,7 @@ BOOL GameConfig::LoadConfig()
 
 
     PathAppend(szExe, theApp.m_stData.szConfig);
-    TRACE(szExe);
+
 
     //不存在, 新建
     if(!PathFileExists(szExe))
@@ -89,11 +88,9 @@ BOOL GameConfig::LoadConfig()
 
 
     //打开配置文件
-    
     CSimpleIni ini;
     ini.SetUnicode();
     if(ini.LoadFile(szExe) < 0) return FALSE;
-    
 
     //清空配置
     ClearConfig();
@@ -120,6 +117,7 @@ BOOL GameConfig::LoadConfig()
     GOTOLIST(Combat, AlwaysKill);
     GOTOLIST(Combat, FirstKill);
 
+
     GOTOLIST2(SellItem, ItemName);
     GOTOLIST2(DelItem, ItemName);
     GOTOLIST2(BankItem, ItemName);
@@ -135,6 +133,7 @@ void GameConfig::SaveConfig()
 {
 
     CSimpleIniW ini;
+    ini.SetUnicode();
     ini.SetMultiKey(false);
 
 

@@ -236,11 +236,6 @@ DWORD Gamecall::call(DWORD id, LPVOID pParam)
 
         }
         break;
-    case id_msg_GetAcceptedQuestToVector:
-        {
-            _GetAcceptedQuestToVector(*(std::vector<Quest>*)pParam);
-        }
-        break;
 
     case id_msg_GetUItoVector:
         {
@@ -374,12 +369,6 @@ DWORD Gamecall::call(DWORD id, LPVOID pParam)
             ZOULUSHUNYI((DWORD*)temp->argv1, temp->argv2);
         }
         break;
-
-
-    case id_msg_GatTaskName:
-        {
-            return (DWORD)GatTaskName((DWORD)pParam);
-        }
 
     case id_msg_DunDi:
         {
@@ -969,39 +958,86 @@ void Gamecall::HeChengWuQi_Po5(_BAGSTU& zhu, _BAGSTU& fu) //合成武器破5
 
 
 
-void Gamecall::_GetAcceptedQuestToVector(std::vector<Quest>& QuestVec)
+void Gamecall::GetAcceptedQuestToVector(TaskVector& QuestVec)
 {
-    int TaskNum = 53;
 
-    DWORD pStartAddr = GetTaskStartAddr();  //获取任务开始地址
-    Quest qst;
+    //最大任务数量
+    int MaxNums = 53;
 
-    for(int i = 0; i < TaskNum; i++)
+
+    DWORD PPTR = ReadDWORD(Offset_Game_Base);
+    PPTR = ReadDWORD(PPTR + Offset_Game_Offset);
+    PPTR = ReadDWORD(PPTR + Offset_Role_Offset);
+    PPTR = ReadDWORD(PPTR + Offset_Quest_Offset);
+
+    _ASSERTE(PPTR != 0);
+
+    TASK task;
+    for(int i = 0; i < MaxNums; i++)
     {
-        //DWORD *pAddr        =     gcall.GetTaskPresentAddr(i, pStartAddr);  //获得当前任务地址
-        qst.id = GetTaskID(i, pStartAddr);  //获得当前任务ID
-        qst.name_id = GetTaskNameID(i, pStartAddr);  //获得当前任务名字ID
-        qst.step = GetPresentTaskIndexes(i, pStartAddr);  //获得当前做到第几个小任务
-        qst.endflag = GetPresentTaskEndFlag(i, pStartAddr, qst.step);  //获得当前小任务结束标志
-        qst.num = GetPresentTaskNum(i, pStartAddr, qst.step);  //获得当前小任务已经打的怪数量
-        qst.name = GatTaskName(qst.name_id);//获取当前已接任务名字
+        //信息指针
+        DWORD PInfo = PPTR + i * 0x58 + Offset_Quest_PInfo;
 
-        if(qst.name)
+        if(ReadDWORD(PInfo) > 0)
         {
-            QuestVec.push_back(qst);
-        }
-        else
-        {
-            //遍历完成
-            break;
+            //{当前步骤}
+            task.Step = ReadByte(PInfo + Offset_Quest_Step);
+
+            //{当前步骤目标完成1}
+            task.bStepTagDone1 = ReadByte(PInfo + Offset_Quest_StepTagDone1) == 1;
+            //{当前步骤目标完成数1}
+            task.StepTagCount1 = ReadByte(PInfo + Offset_Quest_StepTagCount1);
+
+            //{当前步骤目标完成2}
+            task.bStepTagDone2 = ReadByte(PInfo + Offset_Quest_StepTagDone2) == 1;
+            //{当前步骤目标完成数2}
+            task.StepTagCount2 = ReadByte(PInfo + Offset_Quest_StepTagCount2);
+
+            //{当前步骤目标完成3}
+            task.bStepTagDone3 = ReadByte(PInfo + Offset_Quest_StepTagDone3) == 1;
+            //{当前步骤目标完成数3}
+            task.StepTagCount3 = ReadByte(PInfo + Offset_Quest_StepTagCount3);
+
+            //{当前步骤目标完成2}
+            task.bStepTagDone4 = ReadByte(PInfo + Offset_Quest_StepTagDone4) == 1;
+            //{当前步骤目标完成数2}
+            task.StepTagCount4 = ReadByte(PInfo + Offset_Quest_StepTagCount4);
+
+            //{信息指针}
+            PInfo = ReadDWORD(PInfo);
+
+            // {步骤指针}
+            DWORD PStep = ReadDWORD(PInfo + (task.Step - 1) * 0x4 + Offset_Quest_PStep);
+            if(PStep > 0)
+            {
+                //{步骤Id}
+                PStep = ReadDWORD(PStep);
+                task.StepNameId = ReadDWORD(PStep + Offset_Quest_StepId);
+                // {步骤名}
+                task.StepName = GetObjectNameByIndex(task.StepNameId);
+            }
+
+
+            //{信息指针}
+            DWORD PPInfo = ReadDWORD(PInfo);
+
+            if(PPInfo > 0)
+            {
+                // {任务Id}
+                task.id = ReadDWORD(PPInfo + Offset_Quest_QuestId);
+                //{名字Id}
+                DWORD NameId = ReadDWORD(PPInfo + Offset_Quest_NameId);
+                //{名字}
+                task.nName = GetObjectNameByIndex(NameId);
+            }
+
+
+            QuestVec.push_back(task);
         }
     }
+
 }
 
-void Gamecall::GetAcceptedQuestToVector(std::vector<Quest>& QuestVec)
-{
-    sendcall(id_msg_GetAcceptedQuestToVector, &QuestVec);
-}
 
 
 /*周围环境对象二叉树的基地址*/
@@ -1482,7 +1518,7 @@ BOOL Gamecall::GetObjectPos(ObjectNode* pNode, fPosition* fpos)
     }
     else if(type == 1 || type == 2)
     {
-        _try
+        __try
         {
             __asm
             {
@@ -2045,15 +2081,13 @@ wchar_t* Gamecall::GetUIName(DWORD pBarAddr)
 {
     _ASSERTE(pBarAddr != 0);
 
-
     if(pBarAddr == NULL)
     {
-        TRACE(_T("GetUIName: 参数 = NULL"));
         return NULL;
     }
 
-    wchar_t* name;
-    _try
+    wchar_t* name = NULL;
+    __try
     {
         __asm
         {
@@ -2064,10 +2098,9 @@ wchar_t* Gamecall::GetUIName(DWORD pBarAddr)
             mov eax, [eax];  //用来检测是否可读
         }
     }
-    _except(1)
+    __except(1)
     {
         TRACE(FUNCNAME);
-        name = NULL;
     }
 
     return name;
@@ -2854,256 +2887,6 @@ int Gamecall::GetObjectSY12(DWORD pAddr)  // 环境对象的索引12
     }
 
     return Adress;
-}
-
-
-//获取任务开始地址
-DWORD Gamecall::GetTaskStartAddr()
-{
-    DWORD value = NULL;
-    __try
-    {
-        __asm
-        {
-            mov eax, quest_base;
-            mov eax, [eax];
-            mov eax, [eax + quest_offset1];
-            mov eax, [eax + quest_offset2];
-            mov eax, [eax + quest_offset3];
-            add eax, quest_offset4;
-
-            mov value, eax;
-        }
-    }
-    __except(1)
-    {
-        TRACE(FUNCNAME);
-    }
-
-    _ASSERTE(value != NULL);
-    return value;
-}
-
-//获得当前任务ID
-DWORD Gamecall::GetTaskID(int i, DWORD pAddr)
-{
-    _ASSERTE(pAddr != 0);
-
-    DWORD id = UINT_MAX;
-    __try
-    {
-        int temp = i * quest_struct_size;
-        __asm
-        {
-            mov eax, pAddr;
-            mov ebx, temp;
-            mov eax, [eax + ebx];
-            mov eax, [eax];
-            mov eax, [eax + quest_id_offset3];
-
-            mov id, eax;
-        }
-    }
-    __except(1)
-    {
-        TRACE(FUNCNAME);
-    }
-
-    _ASSERTE(id != 0);
-    return id;
-}
-
-//获得当前任务名字ID
-DWORD Gamecall::GetTaskNameID(int i, DWORD pAddr)
-{
-    _ASSERTE(pAddr != 0);
-
-
-    DWORD id = UINT_MAX;
-    __try
-    {
-        int temp = i * quest_struct_size;
-        __asm
-        {
-            mov eax, pAddr;
-            mov ebx, temp;
-            mov eax, [eax + ebx];
-            mov eax, [eax];
-            mov eax, [eax + quest_nameid_offset3];
-
-            mov id, eax;
-        }
-    }
-    __except(1)
-    {
-        TRACE(FUNCNAME);
-    }
-
-    _ASSERTE(id != 0);
-    return id;
-}
-
-//获得当前任务地址
-DWORD Gamecall::GetTaskPresentAddr(int i, DWORD pAddr)
-{
-    _ASSERTE(pAddr != 0);
-
-    DWORD value = NULL;
-    __try
-    {
-        int temp = i * 0x58;
-        __asm
-        {
-            mov eax, pAddr;
-            mov ebx, temp;
-
-            add eax, ebx;
-
-            mov value, eax
-        }
-    }
-    __except(1)
-    {
-        TRACE(FUNCNAME);
-    }
-
-    _ASSERTE(value != 0);
-    return value;
-}
-
-//获得当前做到第几个小任务
-DWORD Gamecall::GetPresentTaskIndexes(int i, DWORD pAddr)
-{
-    _ASSERTE(pAddr != 0);
-
-    DWORD value = NULL;
-    __try
-    {
-        int temp = i * 0x58;
-        __asm
-        {
-            mov eax, pAddr;
-            mov ebx, temp;
-            add eax, ebx;
-            add eax, 0x8;
-            mov eax, [eax];
-
-            movzx eax, al;
-            mov value, eax;
-        }
-    }
-    __except(1)
-    {
-        TRACE(FUNCNAME);
-    }
-    _ASSERTE(value != 0);
-    return value;
-}
-
-//获得当前小任务结束标志
-DWORD Gamecall::GetPresentTaskEndFlag(int i, DWORD pAddr, DWORD info)
-{
-    _ASSERTE(pAddr != 0);
-
-
-    DWORD value = NULL;
-    __try
-    {
-        int temp = i * 0x58 + 0x9 + (info - 1) * 1 * 2;
-        __asm
-        {
-            mov eax, pAddr;
-            mov ebx, temp;
-            add eax, ebx;
-
-            mov eax, [eax];
-            movzx eax, al;
-
-            mov value, eax;
-        }
-    }
-    __except(1)
-    {
-        TRACE(FUNCNAME);
-    }
-
-    _ASSERTE(value != NULL);
-    return value;
-}
-
-//获得当前小任务已经打的怪数量
-DWORD Gamecall::GetPresentTaskNum(int i, DWORD pAddr, DWORD info)
-{
-    _ASSERTE(pAddr != 0);
-
-    DWORD value = UINT_MAX;
-    __try
-    {
-        int temp = i * 0x58 + 0x9 + (info - 1) * 1 * 2 + 0x1;
-
-        __asm
-        {
-            mov eax, pAddr;
-            mov ebx, temp;
-            add eax, ebx;
-
-            mov eax, [eax];
-            movzx eax, al;
-
-            mov value, eax;
-        }
-    }
-    __except(1)
-    {
-        TRACE(FUNCNAME);
-    }
-
-    _ASSERTE(value != 0);
-    return value;
-}
-
-//获取当前已接任务名字
-wchar_t* Gamecall::GatTaskName(DWORD ID)
-{
-    wchar_t* name = NULL;
-    __try
-    {
-        __asm
-        {
-            mov eax, quest_name_call_base;
-            mov eax, [eax];
-            mov ecx, [eax + quest_name_call_offset1];
-            mov edx, [ecx];
-            mov edx, [edx + quest_name_call_offset2];
-            push 0;
-            mov ebx, ID;
-            push ebx;
-            call edx;
-            mov eax, [eax + 0x18];  //TODO:
-            mov name, eax;
-        }
-    }
-    __except(1)
-    {
-        TRACE(FUNCNAME);
-    }
-
-    return name;
-}
-
-
-DWORD Gamecall::GetTaskStepById(DWORD id)
-{
-    std::vector<Quest> QuestVec;
-    GetAcceptedQuestToVector(QuestVec);
-
-    for(DWORD i = 0; i < QuestVec.size(); i++)
-    {
-        if(QuestVec[i].id == id)
-            return QuestVec[i].step;
-    }
-
-    return UINT_MAX;
 }
 
 

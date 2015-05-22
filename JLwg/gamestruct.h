@@ -59,6 +59,7 @@ typedef struct _YaoPingCD_JG
     DWORD   canshu3;
 } YaoPingCD_JG, *PYaoPingCD_JG;
 
+
 typedef struct _BAGSTU
 {
     char        CanSell; //是否可以出售
@@ -96,6 +97,8 @@ typedef struct _BAGSTU
 
 } BAGSTU, *PBAGSTU;
 
+
+
 typedef struct _YouJianLeiXing
 {
     DWORD   canshu1;
@@ -104,12 +107,6 @@ typedef struct _YouJianLeiXing
     DWORD   canshu4;
 } YouJianLeiXing;
 
-typedef struct _STRIKENAME
-{
-    unsigned    canshu1;
-    wchar_t     name[10];
-    unsigned    canshu7;
-} STRIKENAME, PSTRIKENAME;
 
 //技能数据结构
 typedef struct _STRIKEINFO
@@ -152,24 +149,24 @@ typedef struct _sPosition
     short   z;
 } sPosition;
 
-//任务
-typedef struct _CurrQuest
+typedef struct _TASK
 {
-    char    killed;     //已打
-    char    complete;   //完成标志  = 1完成
-    char    queststep;  //任务第几步 1 开始
-} CurrQuest, *PCurrQuest;
+    wchar_t *nName;
+    wchar_t *StepName;
+    int PInfo;
+    int id;
+    int Step;
+    int StepNameId;
+    int StepTagCount1;
+    int StepTagCount2;
+    int StepTagCount3;
+    int StepTagCount4;
+    bool bStepTagDone1;
+    bool bStepTagDone2;
+    bool bStepTagDone3;
+    bool bStepTagDone4;
+}TASK, *PTASK;
 
-//任务节点
-typedef struct _Quest
-{
-    DWORD       id;
-    DWORD       name_id;
-    DWORD       step;
-    DWORD       endflag;
-    DWORD       num;
-    wchar_t*    name;
-} Quest, *PQuest;
 
 //任务节点
 typedef struct _QuestNode
@@ -199,17 +196,6 @@ typedef struct _ObjectNode
 } ObjectNode, *PObjectNode;
 
 
-typedef struct _SkillM
-{
-    DWORD   ID;
-    DWORD   ID2;
-    DWORD   ISShiYong;
-    DWORD   IsJieSuo;
-    DWORD   CD;
-    wchar_t name[80];
-    char*   nameA;
-} SkillM, *PSkillM;
-
 typedef struct _KONGJIAN_JIEGOU
 {
     DWORD       ID;
@@ -217,7 +203,6 @@ typedef struct _KONGJIAN_JIEGOU
     wchar_t*    name;
     wchar_t*    nm;
     DWORD       ISSHOW;
-
 } KONGJIAN_JIEGOU, *PKONGJIAN_JIEGOU;
 
 //控件

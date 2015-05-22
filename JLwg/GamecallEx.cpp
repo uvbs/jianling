@@ -540,16 +540,16 @@ BOOL GamecallEx::kill_PickupBody()
 //id相同, 步骤不同返回TRUE, 表示任务步骤变了
 BOOL GamecallEx::kill_Task(int MyQuestID, int MyQuestStep)
 {
-    std::vector<Quest> QuestVec;
+    TaskVector QuestVec;
     GetAcceptedQuestToVector(QuestVec);
 
 
     DWORD step;
-    Quest mainCurQuest;
+    TASK mainCurQuest;
     if(MyQuestID == 0)
     {
         mainCurQuest = QuestVec[0];
-        step = mainCurQuest.step;
+        step = mainCurQuest.Step;
     }
     else
     {
@@ -561,7 +561,7 @@ BOOL GamecallEx::kill_Task(int MyQuestID, int MyQuestStep)
             {
                 bFind = TRUE;
                 mainCurQuest = QuestVec[i];
-                step = mainCurQuest.step;
+                step = mainCurQuest.Step;
 
             }
         }
@@ -826,13 +826,13 @@ void GamecallEx::PickupTask(DWORD range, DWORD taskid, DWORD taskstep)
     fPosition fpos;
     GetPlayerPos(&fpos);
 
-    std::vector<Quest> QuestVec;
+    TaskVector QuestVec;
     GetAcceptedQuestToVector(QuestVec);
     for(DWORD i = 0; i < QuestVec.size(); i++)
     {
         if(taskid == QuestVec[i].id)
         {
-            if(taskstep == QuestVec[i].step)
+            if(taskstep == QuestVec[i].Step)
             {
                 bFined = TRUE;
                 break;
@@ -2880,18 +2880,20 @@ void GamecallEx::UnLoad()
     }
 }
 
+int GamecallEx::GetTaskStepById(int id)
+{
+    return 0;
+}
+
+
 int GamecallEx::GetPresentTaskID()
 {
-    DWORD pStartAddr = GetTaskStartAddr();//获取任务开始地址
-    DWORD ID = GetTaskID(0, pStartAddr);//获得当前任务ID
-    return ID;
+    return 0;
 }
 
 int GamecallEx::GetPresentTaskStep()
 {
-    DWORD pStartAddr = GetTaskStartAddr();//获取任务开始地址
-    DWORD dwStep = GetPresentTaskIndexes(0, pStartAddr);//获得当前做到第几个小任务
-    return dwStep;
+    return 0;
 }
 
 void GamecallEx::SteptoBack(ObjectNode* pObj)

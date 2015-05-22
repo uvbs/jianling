@@ -66,11 +66,9 @@ TCHAR* cli_Strike[] =
 
 TCHAR* cli_Quest[] =
 {
-    {_T("任务名称")},
+    {_T("名称")},
     {_T("步骤")},
-    {_T("结束标志")},
-    {_T("任务数量")},
-    {_T("任务ID")},
+    {_T("描述")}
 };
 
 TCHAR* cli_Team[] =
@@ -585,42 +583,22 @@ void CDataDlg::PrintfQuest()
     //获取游戏外挂功能
     GamecallEx& gcall = *GamecallEx::GetInstance();
 
-    int TaskNum = 53;
-    DWORD pStartAddr = gcall.GetTaskStartAddr();  //获取任务开始地址
+    TaskVector task;
+    gcall.GetAcceptedQuestToVector(task);
 
 
     CString strTemp;
-    for(int i = 0; i < TaskNum; i++)
+    for(int i = 0; i < task.size(); i++)
     {
-        //DWORD *pAddr        =     gcall.GetTaskPresentAddr(i, pStartAddr);  //获得当前任务地址
-        DWORD ID = gcall.GetTaskID(i, pStartAddr);  //获得当前任务ID
-        DWORD name_id = gcall.GetTaskNameID(i, pStartAddr);  //获得当前任务名字ID
-        DWORD info = gcall.GetPresentTaskIndexes(i, pStartAddr);  //获得当前做到第几个小任务
-        DWORD endflag = gcall.GetPresentTaskEndFlag(i, pStartAddr, info);  //获得当前小任务结束标志
-        DWORD num = gcall.GetPresentTaskNum(i, pStartAddr, info);  //获得当前小任务已经打的怪数量
 
-        wchar_t* name = (wchar_t*)gcall.sendcall(id_msg_GatTaskName, (LPVOID)name_id);
-        if(name)
-        {
-            m_ListCtrl.InsertItem(i, name);
-        }
-        else
-        {
-            //遍历完成
-            break;
-        }
+        m_ListCtrl.InsertItem(i, task[i].nName);
 
-        strTemp.Format(_T("%d"), info);
+        strTemp.Format(_T("%d"), task[i].Step);
         m_ListCtrl.SetItemText(i, 1, strTemp);
 
-        strTemp.Format(_T("%d"), endflag);
+        strTemp.Format(_T("%s"), task[i].StepName);
         m_ListCtrl.SetItemText(i, 2, strTemp);
 
-        strTemp.Format(_T("%d"), num);
-        m_ListCtrl.SetItemText(i, 3, strTemp);
-
-        strTemp.Format(_T("%d"), ID);
-        m_ListCtrl.SetItemText(i, 4, strTemp);
     }
 
 }
@@ -768,7 +746,7 @@ void CDataDlg::PrintfRangeMonster(BOOL bApplyConfig)
         strTemp.Format(_T("%d"), type);
         m_ListCtrl.SetItemText(i, 4, strTemp);
 
- 
+
         if(type == 0x4 || type == 1 || type == 2)
         {
             strTemp.Format(_T("%d"), gcall.GetObjectHP(pNode->ObjAddress));
@@ -1050,9 +1028,6 @@ void CDataDlg::OnBtnConfig()
 
     if(sheet.DoModal() == IDOK)
     {
-        TRACE(_T("m_DontKill Ret = %d"), pConfig->m_DontKill.size());
-        TRACE(_T("m_FirstKill Ret = %d"), pConfig->m_FirstKill.size());
-        TRACE(_T("m_AlwaysKill Ret = %d"), pConfig->m_AlwaysKill.size());
         pConfig->SaveConfig();
     }
 

@@ -146,7 +146,7 @@ public:
     //任务
     int GetPresentTaskStep();    //获取当前任务步骤
     int GetPresentTaskID();     //当前任务ID;
-
+    int GetTaskStepById(int id);
     //组队
     void AddToPary();
 

@@ -580,3 +580,21 @@
 #define Offset_Skill_Type     0x14
 #define Offset_Skill_CD     0xC0
 #define Offset_Skill_AState     0x30
+
+
+//ÈÎÎñ
+#define Offset_Quest_Offset Offset_Item_Offset+ 0X4
+#define Offset_Quest_PInfo 0x8
+#define Offset_Quest_Step 0x8
+#define Offset_Quest_PStep 0xC8
+#define Offset_Quest_StepId 0x8
+#define Offset_Quest_QuestId 0x8
+#define Offset_Quest_NameId 0x18
+#define Offset_Quest_StepTagDone1 0x9
+#define Offset_Quest_StepTagCount1 0xA
+#define Offset_Quest_StepTagDone2 0xB
+#define Offset_Quest_StepTagCount2 0xC
+#define Offset_Quest_StepTagDone3 0xD
+#define Offset_Quest_StepTagCount3 0xE
+#define Offset_Quest_StepTagDone4 0xF
+#define Offset_Quest_StepTagCount4 0x10
