@@ -2676,8 +2676,17 @@ DWORD GamecallEx::GetRangeMonsterCount(DWORD range)
     //判断是否用aoe
     std::vector<ObjectNode*> RangeObject;
     GetRangeMonsterToVector(GetObjectBinTreeBaseAddr(), range, RangeObject);
-
     Kill_ApplyConfig(RangeObject);
+	if (RangeObject.size() > 0)
+	{
+		int size = RangeObject.size() ;
+			for (int i = 0;i < size; i++)
+			{
+TRACE("怪物地址:%x",RangeObject[0]->ObjAddress);
+			}
+			
+	}
+	
     return RangeObject.size();
 }
 
@@ -2809,6 +2818,8 @@ DWORD GamecallEx::GetRangeLootCount(DWORD range)
     return RangeObject.size();
 }
 
+
+
 BOOL GamecallEx::Init()
 {
 
@@ -2828,6 +2839,8 @@ BOOL GamecallEx::Init()
     //创建辅助线程
     m_hTHelper = (HANDLE)_beginthreadex(0, 0, KeepAliveThread, this, 0, 0);
     SetThreadPriority(m_hTHelper, THREAD_PRIORITY_BELOW_NORMAL);
+
+
 
 
     if(!Gamecall::Init()) return FALSE;

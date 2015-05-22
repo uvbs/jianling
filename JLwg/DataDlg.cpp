@@ -40,10 +40,10 @@ TCHAR* cli_RangeObject[] =
     {_T("ID")},
     {_T("目标ID")},
     {_T("类型")},
+	{_T("对象目标")},
     {_T("血量")},
     {_T("距离")},
     {_T("坐标")},
-    {_T("是否怪物")},
     {_T("名字ID")},
     {_T("面向")}
 };
@@ -400,21 +400,21 @@ void CDataDlg::PrintfAllObject()
         strTemp.Format(_T("%d"), pNode->id);
         m_ListCtrl.SetItemText(i, 2, strTemp);
 
-        DWORD TargetId = gcall.GetObjectTargetId(pNode->ObjAddress);
-        strTemp.Format(_T("%d"), TargetId);
-        m_ListCtrl.SetItemText(i, 3, strTemp);
-
-
+		if (type == 0x4 || type == 1 || type == 2)
+		{
+			DWORD TargetId = gcall.GetObjectTargetId(pNode->ObjAddress);
+			strTemp.Format(_T("%d"), TargetId);
+			m_ListCtrl.SetItemText(i, 3, strTemp);
+		}
+       
         strTemp.Format(_T("%d"), type);
         m_ListCtrl.SetItemText(i, 4, strTemp);
 
-
-        if(type == 0x4)
+        if (type == 0x4 || type == 1 || type == 2)
         {
             strTemp.Format(_T("%d"), gcall.GetObjectHP(pNode->ObjAddress));
             m_ListCtrl.SetItemText(i, 5, strTemp);
         }
-
 
         int suoyin = gcall.GetIndexByType(pNode->ObjAddress);
         if(suoyin != -1)
@@ -689,10 +689,10 @@ void CDataDlg::PrintfStrike()
 
         m_ListCtrl.InsertItem(i, JnVec[i].name);
 
-        strTemp = JnVec[i].bCD == true ? _T("冷却中") : _T("冷却完毕");
+        strTemp = JnVec[i].bCD == TRUE ? _T("冷却完毕" : _T("冷却中"));
         m_ListCtrl.SetItemText(i, 1, strTemp);
 
-        strTemp = JnVec[i].bAviable == true ? _T("可用") : _T("不可用");
+        strTemp = JnVec[i].bAviable == TRUE ? _T("可用") : _T("不可用");
         m_ListCtrl.SetItemText(i, 2, strTemp);
 
         strTemp.Format(_T("%d"), JnVec[i].id);
@@ -712,7 +712,6 @@ void CDataDlg::PrintfRangeMonster(BOOL bApplyConfig)
     std::vector<ObjectNode*> RangeObject;
     gcall.GetRangeMonsterToVector(gcall.GetObjectBinTreeBaseAddr(), m_nRange, RangeObject);
     if(RangeObject.size() < 1) return;
-
 
     if(bApplyConfig)
     {
@@ -746,11 +745,13 @@ void CDataDlg::PrintfRangeMonster(BOOL bApplyConfig)
         strTemp.Format(_T("%d"), type);
         m_ListCtrl.SetItemText(i, 4, strTemp);
 
-
+		strTemp.Format(_T("%x"), gcall.GetObjectTargetId(pNode->ObjAddress));
+		m_ListCtrl.SetItemText(i, 5, strTemp);
+ 
         if(type == 0x4 || type == 1 || type == 2)
         {
             strTemp.Format(_T("%d"), gcall.GetObjectHP(pNode->ObjAddress));
-            m_ListCtrl.SetItemText(i, 5, strTemp);
+            m_ListCtrl.SetItemText(i, 6, strTemp);
         }
 
         //坐标和距离
@@ -761,11 +762,11 @@ void CDataDlg::PrintfRangeMonster(BOOL bApplyConfig)
             gcall.GetPlayerPos(&mypos);
 
             strTemp.Format(_T("%d"), (DWORD)gcall.CalcC(pos, mypos));
-            m_ListCtrl.SetItemText(i, 6, strTemp);
+            m_ListCtrl.SetItemText(i, 7, strTemp);
 
 
             strTemp.Format(_T("x:%d y:%d z:%d"), (int)pos.x, (int)pos.y, (int)pos.z);
-            m_ListCtrl.SetItemText(i, 7, strTemp);
+            m_ListCtrl.SetItemText(i, 8, strTemp);
         }
 
 
@@ -775,12 +776,12 @@ void CDataDlg::PrintfRangeMonster(BOOL bApplyConfig)
         strTemp.Format(_T("%d"), suoyin == -1 ? -1 : suoyin);
         m_ListCtrl.SetItemText(i, 9, strTemp);
 
-
-        //怪物面向
-        strTemp.Format(_T("%d"), gcall.GetObjectView(pNode->ObjAddress));
-        m_ListCtrl.SetItemText(i, 10, strTemp);
-
-
+		if (type == 0x4 || type == 1 || type == 2)
+		{
+			//怪物面向
+			strTemp.Format(_T("%d"), gcall.GetObjectView(pNode->ObjAddress));
+			m_ListCtrl.SetItemText(i, 10, strTemp);
+		}
 
         m_ListCtrl.SetItemData(i, (DWORD)pNode);
     }
@@ -1191,7 +1192,8 @@ void CDataDlg::OnFindthenkill()
 {
     //获取游戏外挂功能
     GamecallEx& gcall = *GamecallEx::GetInstance();
-
+gcall.FindThenKill(0, 300, modeNormal | modePickup);
+return;
     while(1)
     {
         gcall.Stepto(47820, -27420, -4818, 10, 10, 3000);

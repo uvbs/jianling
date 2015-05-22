@@ -206,7 +206,7 @@ void __stdcall GameHook::myCombatFilter()
         jmpTo = GameHook::GetInstance()->backupCombat;
         __asm
         {
-            leave;
+			leave;
             jmp jmpTo;
         }
     }

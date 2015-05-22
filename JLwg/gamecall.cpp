@@ -3208,7 +3208,7 @@ void Gamecall::_PickupTask(ObjectNode* pObj)
 int Gamecall::isLoadingMap()
 {
 
-    DWORD value = UINT_MAX;
+    char value;
 
     try
     {
@@ -3219,16 +3219,15 @@ int Gamecall::isLoadingMap()
             mov eax, [eax + is_logingame_offset1];
             mov eax, [eax + is_logingame_offset2];
             mov eax, [eax + is_logingame_offset3];
-
-            mov value, eax;
+            mov value, al;
         }
     }
     catch(...)
     {
-        TRACE(_T("%s"), FUNCNAME);
+        TRACE(FUNCNAME);
     }
 
-    return value;
+    return (int)value;
 }
 
 
@@ -3486,6 +3485,7 @@ int Gamecall::GetIndexByType(DWORD pObjAddress)
     catch(...)
     {
         TRACE(FUNCNAME);
+        _ASSERTE(index == -1);
     }
 
     return index;
@@ -4359,18 +4359,18 @@ BOOL Gamecall::isCanKill(ObjectNode* pNode)
 
     //过滤
     BOOL bCanKill = FALSE;
-    if(m_Get11C(pNode->ObjAddress) == 1)
-    {
-        bCanKill = TRUE;
-    }
-    else
-    {
-        if(m_Get110(pNode->ObjAddress) == 1)
-        {
-            if(m_Get2E4(pNode->ObjAddress) != 0)
-                bCanKill = TRUE;
-        }
-    }
+    //if(m_Get11C(pNode->ObjAddress) == 1)
+    //{
+    //    bCanKill = TRUE;
+    //}
+    //else
+    //{
+    //if(m_Get110(pNode->ObjAddress) == 1)
+    //{
+    //    if(m_Get2E4(pNode->ObjAddress) != 0)
+    //        bCanKill = TRUE;
+    //}
+    //}
 
     return bCanKill;
 }
@@ -4389,7 +4389,7 @@ void Gamecall::GetRangeMonsterToVector(ObjectNode* pNode, DWORD range, ObjectVec
         //有坐标就比对坐标, 没有坐标就直接放进去
         if(GetObjectName(pNode->ObjAddress))
         {
-            if(isCanKill(pNode))
+            if(GetObjectType(pNode->ObjAddress) == 0x4)
             {
                 static fPosition fpos;
                 if(GetObjectPos(pNode, &fpos))
@@ -4698,6 +4698,7 @@ DWORD Gamecall::GetGoodsBagInfo(DWORD m_Adress)
 DWORD Gamecall::GetMuQianJingYanZongZhi(DWORD Adress)
 {
     DWORD JingYan;
+    DWORD rs;
     try
     {
         _asm
@@ -4720,8 +4721,12 @@ DWORD Gamecall::GetMuQianJingYanZongZhi(DWORD Adress)
             mov edx, [ecx];
             mov eax, [edx+wuqi_xp_all1_offset6];
             call eax;
-            mov eax, [eax+0x10];
-            mov JingYan, eax;
+            mov rs, eax;
+
+        }
+        if(rs > 0)
+        {
+            JingYan = ReadDWORD(rs + 0x10);
         }
     }
     catch(...)
@@ -4740,6 +4745,7 @@ DWORD Gamecall::GetMuQianJingYanZongZhi_A(DWORD Adress)
     _ASSERTE(Adress != 0);
 
     DWORD JingYan;
+    DWORD rs;
     try
     {
         _asm
@@ -4762,8 +4768,12 @@ DWORD Gamecall::GetMuQianJingYanZongZhi_A(DWORD Adress)
             mov edx, [ecx];
             mov eax, [edx+ wuqi_xp_all2_offset6];
             call eax;
-            mov eax, [eax+ 0x24];
-            mov JingYan, eax;
+            mov rs, eax;
+
+        }
+        if(rs > 0)
+        {
+            JingYan = ReadDWORD(rs + 0x24);
         }
     }
     catch(...)
@@ -4802,7 +4812,6 @@ DWORD Gamecall::GetBagYouJianCaoZuoType(DWORD Adress, DWORD argv2)
             call ebx;
             add esp, 0x8;
             mov BBB, eax;
-
         }
     }
     catch(...)
@@ -5075,7 +5084,6 @@ void Gamecall::GetStrikeToVector(StrikeVector& RangeObject)
 
     if(dwCount < 0 || dwCount > 20)
     {
-        _ASSERTE(FALSE);
         return;
     }
 
@@ -5105,12 +5113,13 @@ void Gamecall::GetStrikeToVector(StrikeVector& RangeObject)
                 _ASSERTE(stJn.name != NULL);
             }
 
-
             stJn.bCD = (ReadDWORD(PInfo + Offset_Skill_CD) == 0);
+
             stJn.bAviable = (ReadDWORD(PInfo + Offset_Skill_AState) == 0);
+
+
             stJn.iIndex = i;
             stJn.iKeyCode = 0xff; //暂时没用
-
             RangeObject.push_back(stJn);
         }
 
@@ -5140,12 +5149,11 @@ void Gamecall::GetStrikeToVector(StrikeVector& RangeObject)
 
     if(dwCount < 0 || dwCount > 20)
     {
-        _ASSERTE(FALSE);
         return;
     }
 
 
-    for(i = 0; i < dwCount; i++)
+    for(int i = 0; i < dwCount; i++)
     {
 
         //{信息指针}
@@ -5168,12 +5176,12 @@ void Gamecall::GetStrikeToVector(StrikeVector& RangeObject)
                 _ASSERTE(stJn.name != NULL);
             }
 
-
             stJn.bCD = (ReadDWORD(PInfo + Offset_Skill_CD) == 0);
+
             stJn.bAviable = (ReadDWORD(PInfo + Offset_Skill_AState) == 0);
+
             stJn.iIndex = i;
             stJn.iKeyCode = 0xff; //暂时没用
-
             RangeObject.push_back(stJn);
         }
 
@@ -5407,8 +5415,8 @@ DWORD Gamecall::isYaoPingCD(_BAGSTU& goods)
             mov eax, obj_enum_base;
             mov eax, [eax];
             mov eax, [eax+ yao_cd_offset6];
-            mov eax, [eax+yao_cd_offset7];
-            mov eax, [eax+yao_cd_offset8];
+            mov eax, [eax+ yao_cd_offset7];
+            mov eax, [eax+ yao_cd_offset8];
             mov CD.canshu3, eax;
 
             lea eax, CD;
@@ -6107,6 +6115,7 @@ void Gamecall::_NewSpend(float x)
 wchar_t* Gamecall::GetExperienceName(DWORD ID)
 {
     wchar_t* name = NULL;
+    DWORD rs;
     try
     {
         __asm
@@ -6120,8 +6129,15 @@ wchar_t* Gamecall::GetExperienceName(DWORD ID)
             mov ebx, ID;
             push ebx;
             call edx;
-            mov eax, [eax+0x18];
-            mov name, eax;
+            mov rs, eax;
+        }
+        if(rs>0)
+        {
+            rs = ReadDWORD(rs + 0x18);
+            if(rs > 0)
+            {
+                name = ReadStr(rs);
+            }
         }
     }
     catch(...)
@@ -6137,6 +6153,7 @@ wchar_t* Gamecall::GetExperienceName(DWORD ID)
 DWORD Gamecall::GetExperienceNameID(DWORD ID)
 {
     DWORD ID1 = 0;
+    DWORD rs = 0;
     try
     {
         __asm
@@ -6150,8 +6167,11 @@ DWORD Gamecall::GetExperienceNameID(DWORD ID)
             mov ebx, ID;
             push ebx;
             call edx;
-            mov eax, [eax+0x14];
-            mov ID1, eax;
+            mov rs, eax;
+        }
+        if(rs > 0)
+        {
+            ID1 = ReadDWORD(rs + 0x14);
         }
     }
     catch(...)
@@ -6662,7 +6682,6 @@ DWORD Gamecall::_IsCanShu(DWORD adress, DWORD adress1) //是否是这个参数
             call eax;
             add esp, 0xC;
             mov is, al;
-
         }
     }
     catch(...)
@@ -7278,8 +7297,6 @@ BOOL Gamecall::IsObjectControl(DWORD pObjAddress)
 
 BOOL Gamecall::isStrikeCd(DWORD id)
 {
-    _ASSERTE(FALSE);
-
     StrikeVector JnVec;
     GetStrikeToVector(JnVec);
 
@@ -7287,11 +7304,12 @@ BOOL Gamecall::isStrikeCd(DWORD id)
     {
         if((*it).id == id)
         {
-            return (*it).bCD;
+            if((*it).bAviable)
+            {
+				return (*it).bCD;
+            }
         }
     }
-
-
     return FALSE;
 }
 
