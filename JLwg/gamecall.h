@@ -43,9 +43,9 @@ public:
     BOOL LoginInGame(DWORD index);
 
     //判断对象可杀的数据
-    DWORD m_Get11C(DWORD m_Adress);   //是 ==1 红名
-    DWORD m_Get110(DWORD m_Adress); //==1 进行下面判断, ==2是npc
-    DWORD m_Get2E4(DWORD m_Adress);   //==0 npc, else 黄名
+    DWORD m_Get11C(DWORD m_Adress);     //是 ==1 红名
+    DWORD m_Get110(DWORD m_Adress);     //==1 进行下面判断, ==2是npc
+    DWORD m_Get2E4(DWORD m_Adress);     //==0 npc, else 黄名
 
 
     //工具

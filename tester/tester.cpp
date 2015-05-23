@@ -5,11 +5,12 @@
 #include "Test.h"
 
 #include <vector>
-
-
+#include <fstream>
 
 
 CWinApp theApp;
+
+using namespace std;
 
 int _tmain(int argc, TCHAR* argv[], TCHAR* envp[])
 {
@@ -22,27 +23,29 @@ int _tmain(int argc, TCHAR* argv[], TCHAR* envp[])
         return 1;
     }
 
-    std::vector<int> Vec1;
-    Vec1.push_back(1);
-    Vec1.push_back(2);
-    Vec1.push_back(3);
-    Vec1.push_back(4);
-    Vec1.push_back(5);
-    Vec1.push_back(6);
-    Vec1.push_back(7);
-
-    for(std::vector<int>::iterator it = Vec1.begin(); it != Vec1.end(); it++)
+    try
     {
-        std::cout << *it << std::endl;
+
+        fstream file1;
+        file1.open("test.txt");
+
+        int i;
+        int i1;
+        while(!file1.eof())
+        {
+            file1 >> i;
+            file1 >> i1;
+
+            cout << i << endl;
+            cout << i1 << endl;
+        }
+
+    }
+    catch(...)
+    {
+        cout << "unknow excpetion" << endl;
     }
 
-    std::vector<int>::iterator it1 = Vec1.begin();
-
-    
-        std::vector<int>::iterator it2 = Vec1.erase(it1);
-
-    std::cout << *it1 << std::endl;
-    std::cout << *it2 << std::endl;
 
     getchar();
     return 0;

@@ -7,6 +7,11 @@
 #include "GamecallEx.h"
 #include "CombatBoss.h"
 
+#include <iostream>
+#include <fstream>
+#include <direct.h>
+
+using namespace std;
 
 
 #ifdef _DEBUG
@@ -64,7 +69,7 @@ void CombatBoss::run()
     pCall->Stepto(pBossNode);
     pCall->NewSpend(1);
 
-//攻击循环
+    //攻击循环
     while(1)
     {
 
@@ -969,31 +974,90 @@ void CombatBoss::NotifyMonsterAttack(MONSTERATAACK* pAttack)
     static DWORD dwEnd = GetTickCount();
     DWORD dwStart = GetTickCount();
 
+    static int notProcess = 0; //不处理次数
 
     //先按时间过滤
     if(pAttack->dwStrikeId > 0xffff)
     {
+
         if(pAttack->dwStrikeId != old1.dwStrikeId)
         {
-
             m_event.dwObj = pAttack->dwObj;
             m_event.dwStrikeId = pAttack->dwStrikeId;
 
             old1 = *pAttack;
-            dwEnd = GetTickCount(); //记录这次处理技能的时间
+            notProcess = 0;
         }
         else
         {
-            //技能相等， 因为确实有两个连续释放的技能， 但是间隔2秒左右
-            //也需要应对， 所以判断， 如果相等并且和上次释放间隔2秒也处理
-            if((dwStart - dwEnd) > 10000)
+            //上个id
+            notProcess++;
+
+            if(m_JnCounts[pAttack->dwStrikeId] == notProcess)
             {
                 m_event.dwObj = pAttack->dwObj;
                 m_event.dwStrikeId = pAttack->dwStrikeId;
             }
+            else
+            {
+                //这是没有记录的id
+            }
+
         }
+
     }
 }
+
+void CombatBoss::LoadCountsData()
+{
+    try
+    {
+
+        char szExe[MAX_PATH] = {0};
+        GetModuleFileNameA(AfxGetInstanceHandle(), szExe, MAX_PATH);
+        PathRemoveFileSpecA(szExe);
+        PathAppendA(szExe, "配置");
+        if(!PathFileExistsA(szExe))
+        {
+            TRACE(_T("没有%s"), szExe);
+            return;
+        }
+
+
+        PathAppendA(szExe, "jnCount.txt");
+
+
+        //不存在, 新建
+        if(!PathFileExistsA(szExe))
+        {
+            TRACE(_T("没有%s"), szExe);
+            return;
+        }
+
+
+        fstream file1;
+        file1.open(szExe);
+
+        int i;
+        int i1;
+        while(!file1.eof())
+        {
+            file1 >> i;
+            file1 >> i1;
+
+            m_JnCounts[i] = i1;
+
+        }
+
+        TRACE(_T("技能数量: %d"), m_JnCounts.size());
+    }
+    catch(...)
+    {
+
+    }
+
+}
+
 
 void CombatBoss::SetName(const wchar_t* name)
 {

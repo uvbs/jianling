@@ -9,6 +9,7 @@
 #include "gamestruct.h"
 
 
+
 typedef struct _MONSTERATAACK
 {
     DWORD dwObj;
@@ -33,7 +34,7 @@ protected:
     GameHook();
     virtual ~GameHook();
 
-    DECLARE_SINGLETON(GameHook)
+    DECLARE_SINGLETON(GameHook);
 
 
 private:
@@ -89,6 +90,7 @@ public:
         float y;
         float z;
     } STEPPACKET, PSTEPPACKET;
+
 
     //Hooked Functions!
     static void __stdcall ShunyiQietu();
