@@ -977,40 +977,37 @@ void CombatBoss::NotifyMonsterAttack(MONSTERATAACK* pAttack)
     static int notProcess = 0; //不处理次数
 
     //先按时间过滤
-    if(pAttack->dwStrikeId > 0xffff)
-    {
+    if(pAttack->dwStrikeId <= 0xffff) return;
 
-        if(pAttack->dwStrikeId != old1.dwStrikeId)
+
+    if(pAttack->dwStrikeId != old1.dwStrikeId)
+    {
+        m_event.dwObj = pAttack->dwObj;
+        m_event.dwStrikeId = pAttack->dwStrikeId;
+
+        old1 = *pAttack;
+        notProcess = 0;
+    }
+    else
+    {
+        //上个id
+        notProcess++;
+
+
+        //没找到
+        if(m_JnCounts.find(pAttack->dwStrikeId) == m_JnCounts.end())
+        {
+            //这是没有记录的id
+        }
+        else if(m_JnCounts[pAttack->dwStrikeId] == notProcess)
         {
             m_event.dwObj = pAttack->dwObj;
             m_event.dwStrikeId = pAttack->dwStrikeId;
-
-            old1 = *pAttack;
-            notProcess = 0;
         }
         else
         {
-            //上个id
-            notProcess++;
-            
-            
-            //没找到
-            if(m_JnCounts.find(pAttack->dwStrikeId) == m_JnCounts.end())
-            {
-                //这是没有记录的id
-            }
-            else if(m_JnCounts[pAttack->dwStrikeId] == notProcess)
-            {
-                m_event.dwObj = pAttack->dwObj;
-                m_event.dwStrikeId = pAttack->dwStrikeId;
-            }
-            else
-            {
-                
-            }
 
         }
-
     }
 }
 
