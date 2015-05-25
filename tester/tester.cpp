@@ -6,7 +6,7 @@
 
 #include <vector>
 #include <fstream>
-
+#include <map>
 
 CWinApp theApp;
 
@@ -23,6 +23,7 @@ int _tmain(int argc, TCHAR* argv[], TCHAR* envp[])
         return 1;
     }
 
+    std::map<int, int> data;
     try
     {
 
@@ -36,10 +37,12 @@ int _tmain(int argc, TCHAR* argv[], TCHAR* envp[])
             file1 >> i;
             file1 >> i1;
 
-            cout << i << endl;
-            cout << i1 << endl;
+            data[i] = i1;
         }
 
+        cout << "count: " << data.size() << endl;
+
+        cout << data[13] << endl;
     }
     catch(...)
     {

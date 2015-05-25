@@ -17,6 +17,13 @@ static char THIS_FILE[] = __FILE__;
 /////////////////////////////////////////////////////////////////////////////
 // CMainFrame
 
+static UINT indicators[] =
+{
+    ID_SEPARATOR,           // status line indicator
+    ID_INDICATOR_UPTIME,
+    ID_INDICATOR_CONNECTS   //总连接数
+};
+
 IMPLEMENT_DYNCREATE(CMainFrame, CFrameWnd)
 
 BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
@@ -24,15 +31,12 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
     ON_WM_CREATE()
     ON_WM_TIMER()
     ON_WM_CLOSE()
+    ON_UPDATE_COMMAND_UI(ID_INDICATOR_CONNECTS, OnUpdateConnects)
+    ON_UPDATE_COMMAND_UI(ID_INDICATOR_UPTIME, OnUpdateRunTime)
     //}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
-static UINT indicators[] =
-{
-    ID_SEPARATOR,           // status line indicator
-    ID_INDICATOR_UPTIME,
-    ID_INDICATOR_CONNECTS   //总连接数
-};
+
 
 /////////////////////////////////////////////////////////////////////////////
 // CMainFrame construction/destruction
@@ -64,8 +68,6 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
     //平面风格
     m_wndToolBar.ModifyStyle(0, TBSTYLE_FLAT);
-
-
     m_wndToolBar.LoadToolBar(IDR_MAINFRAME);
 
 
@@ -120,11 +122,11 @@ void CMainFrame::OnClose()
     CFrameWnd::OnClose();
 }
 
-BOOL CMainFrame::PreCreateWindow(CREATESTRUCT& cs) 
+BOOL CMainFrame::PreCreateWindow(CREATESTRUCT& cs)
 {
-	// TODO: Add your specialized code here and/or call the base class
+    // TODO: Add your specialized code here and/or call the base class
 
-	if(!CFrameWnd::PreCreateWindow(cs))
+    if(!CFrameWnd::PreCreateWindow(cs))
         return FALSE;
 
 
@@ -133,4 +135,45 @@ BOOL CMainFrame::PreCreateWindow(CREATESTRUCT& cs)
     cs.dwExStyle &= ~WS_EX_CLIENTEDGE;
 
     return TRUE;
+}
+
+void CMainFrame::OnUpdateConnects(CCmdUI* pCmdUI)
+{
+    CString strNums;
+    strNums.Format(_T("%d"), ((CJLSrvrDoc*)GetActiveDocument())->_client.size());
+    pCmdUI->SetText(strNums);
+}
+
+//运行时间
+void CMainFrame::OnUpdateRunTime(CCmdUI* pCmdUI)
+{
+    CString strNums;
+    strNums.Format(_T("%d"), ((CJLSrvrDoc*)GetActiveDocument())->_client.size());
+    pCmdUI->SetText(strNums);
+}
+
+
+void CMainFrame::CalcUpTime()
+{
+    CString strUpTime;
+    CJLSrvrDoc* pDoc = (CJLSrvrDoc*)GetActiveDocument();
+
+
+    // only canculate if we have a doc and it's listening....
+    if(pDoc && pDoc->m_pListen)
+    {
+        CTime timeNow = CTime::GetCurrentTime();
+
+
+        // calculate uptime and set the status bar....
+        CTimeSpan upTime = timeNow - pDoc->m_timeStarted;
+        UINT uFmt = upTime.GetDays() > 0 ? IDS_UPTIME_DAYS : IDS_UPTIME_DAY;
+        strUpTime = upTime.Format(uFmt);
+    }
+    else
+    {
+        strUpTime.Format(ID_INDICATOR_UPTIME);
+    }
+
+    m_wndStatusBar.SetPaneText(1, strUpTime, TRUE);
 }

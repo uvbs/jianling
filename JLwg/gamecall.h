@@ -71,11 +71,9 @@ public:
 
     //强化
     DWORD GetMuQianJingYanZongZhi(DWORD Adress);
-
     DWORD GetMuQianJingYanZongZhi_A(DWORD Adress);
 
     void XieBaoShi(DWORD canshu1, DWORD canshu2, DWORD canshu3);
-
     void JiaBaoShi(DWORD canshu1, DWORD canshu2, DWORD canshu3, DWORD canshu4, DWORD canshu5);
 
 
@@ -127,14 +125,11 @@ public:
     ObjectNode* GetObjectBinTreeBaseAddr();
 
     void GetAllObjectToVector(ObjectNode* pNode, ObjectVector& AllObject);
-
     void GetRangeMonsterToVector(ObjectNode* pNode, DWORD range, ObjectVector& RangeObject);
-
     void GetRangeObjectToVector(ObjectNode* pNode, DWORD range, ObjectVector& RangeObject);
 
 
     void GetRangeLootObjectToVector(DWORD range, ObjectVector& LootVec);
-
     void GetRangeTaskItemToVectr(ObjectVector& TastItemVector, DWORD range);
 
 
@@ -194,13 +189,9 @@ public:
     BOOL isHaveXianlu(int index);
 
     BOOL isCityConveyLoadingMap();
-
     BOOL isCityConveying();
-
     BOOL isPickupDeadBody();
-
     BOOL isDeadBody(DWORD pAddr);
-
     BOOL isCanFenjie(DWORD pAddr); //可以分解
     BOOL isFuhuoing();
 
@@ -210,7 +201,6 @@ public:
 
 
     BOOL isCanKill(ObjectNode* pNode);
-
     BOOL isCanLook(DWORD pAddr);    //可以看到的
 
 
@@ -218,8 +208,7 @@ public:
     void GetAcceptedQuestToVector(TaskVector& QuestVec);
 
 
-    void DeliverQuests(DWORD id, DWORD step, DWORD questtype, DWORD ff, DWORD npcid1, DWORD npcid2, DWORD unknow,
-                       DWORD mianban);     //交任务
+    void DeliverQuests(DWORD id, DWORD step, DWORD questtype, DWORD ff, DWORD npcid1, DWORD npcid2, DWORD unknow, DWORD mianban);     //交任务
     void OpenQuestItem(DWORD ID, DWORD ID2);   //打开任务物品
     void _NPCJieRenWu(DWORD canshu1, DWORD canshu2, DWORD canshu3, DWORD canshu4, DWORD canshu5);//NPC接任务
 
@@ -239,17 +228,12 @@ public:
     Tree* GetUIBinTreeBaseAddr();
 
     wchar_t* GetUIName(DWORD pBarAddr);
-
     wchar_t* GetUiNewName(DWORD pBarAddr);
 
     void _GetUItoVector(Tree* Base, std::vector<Tree*>& Allui);
-
     void GetUItoVector(Tree* pBaseAddr, std::vector<Tree*>& Allui);
-
     void GetUIAddrByName(wchar_t* name, DWORD* pUIAddr);
-
     void GetUiAddrByName(KONGJIAN_JIEGOU& jiegou);
-
     void _GetUiAddrByName(Tree* Addr, wchar_t* name, DWORD& reAddr);
 
 
@@ -257,10 +241,7 @@ public:
 
 
     void Fuhuo(DWORD uiAddr);
-
     void DaKaiJiNengMianBan(DWORD adress, DWORD adress1); //打开技能面板
-
-
 
 
 
@@ -274,27 +255,18 @@ public:
     void OpenDeleteTalentPanel();
 
     void _OpenDeleteTalentPanel();
-
     void DaKaiQingChuQuanBuJiNengJieMian(DWORD adress, DWORD adress1);
-
     void ConfirmDeletePalentPanelShowOk();
-
     void _ConfirmDeletePalentPanelShowOk();
-
     void QueRenQingChuQuanBuJiNengJieMian(DWORD adress, DWORD adress1);
-
     void OpenTalentUI();
-
     void _OpenTalentUI();
 
 
     //商品
     void DaKaiDuiHuaKuang(DWORD ID, DWORD ID2);
-
     void GuanBiDuiHuaKuangChuanKou(DWORD adress, DWORD adress1);
-
     void GouMaiWuPing(DWORD Num, DWORD Ind, DWORD Adress);
-
     void CunCangku(_BAGSTU& goods);              //放仓库
     void SellItem(_BAGSTU& bag, DWORD adress);
 
@@ -305,14 +277,11 @@ public:
 
     //背包
     void _GetAllGoodsToVector(BagVector& RangeObject);
-
     void GetAllGoodsToVector(BagVector& RangeObject);                // 遍历背包
     void GetAllBodyEquipToVector(BagVector& RangeObject);
 
     void _GetAllBodyEquipToVector(BagVector& RangeObject);
-
     BOOL GetAllBaGuaToVector(BagVector& BaGuaVec);
-
     BOOL GetSpecBaGuaToVector(wchar_t* name, BagVector& BaGuaVec);
 
     DWORD GetBagbodyInfoBase();                   //获取背包身上装备仓库遍历Base
@@ -333,9 +302,7 @@ public:
 
 
     BOOL GetGoodsFromBagByName(std::wstring name, BagVector& GoodsVec);
-
     BOOL GetGoodsFromEquipByName(wchar_t* name, _BAGSTU* goods);
-
     BOOL GetGoodsByEquipPos(DWORD pos, _BAGSTU* goods);      //根据位置取得物品信息
 
 
@@ -363,12 +330,11 @@ public:
     void HeChengWuQi_Po5(_BAGSTU& zhu, _BAGSTU& fu); //合成武器破5
     void HeChengWuQi_Po10(_BAGSTU& zhu, _BAGSTU& fu, DWORD adress); //合成武器破10
     void JieFengZhuangBei(DWORD zhuangbei, DWORD jiefengfu_ID, DWORD num);
-
-    void JieFengZhuangBei(DWORD adress1, DWORD adress2, DWORD adress3, DWORD adress4, DWORD adress5, DWORD adress6,
-                          DWORD adress7); //解封盒子
+    void JieFengZhuangBei(DWORD adress1, DWORD adress2, DWORD adress3, DWORD adress4, DWORD adress5, DWORD adress6, DWORD adress7); //解封盒子
     void FenJie(_BAGSTU& bag);
 
     DWORD GetKaiShiAdress();
+
 
     //获取开始地址
     DWORD GetBiJiaoShu(int i, DWORD m_adress); //获取比较数值
@@ -497,16 +463,10 @@ private:
 
 //辅助函数
 BYTE ReadByte(DWORD addr);
-
 WORD ReadWORD(DWORD addr);
-
 DWORD ReadDWORD(DWORD addr);
-
 int ReadInt(DWORD addr);
-
 float ReadFloat(DWORD addr);
-
 wchar_t* ReadStr(DWORD addr);
-
 
 #endif

@@ -20,10 +20,7 @@ static char THIS_FILE[] = __FILE__;
 #endif
 
 
-
-TCHAR* cli_AllObject[] =
-{
-    {_T("地址")},
+TCHAR* cli_AllObject[] = {{_T("地址")},
     {_T("名字")},
     {_T("ID")},
     {_T("目标ID")},
@@ -33,14 +30,12 @@ TCHAR* cli_AllObject[] =
     {_T("坐标")}
 };
 
-TCHAR* cli_RangeObject[] =
-{
-    {_T("地址")},
+TCHAR* cli_RangeObject[] = {{_T("地址")},
     {_T("名字")},
     {_T("ID")},
     {_T("目标ID")},
     {_T("类型")},
-	{_T("对象目标")},
+    {_T("对象目标")},
     {_T("血量")},
     {_T("距离")},
     {_T("坐标")},
@@ -49,31 +44,23 @@ TCHAR* cli_RangeObject[] =
 };
 
 //技能 需要的控件列
-TCHAR* cli_Bar[] =
-{
-    {_T("名称")},
+TCHAR* cli_Bar[] = {{_T("名称")},
     {_T("地址")},
     {_T("id")}
 };
 
-TCHAR* cli_Strike[] =
-{
-    {_T("技能名")},
+TCHAR* cli_Strike[] = {{_T("技能名")},
     {_T("冷却")},
     {_T("可用")},
     {_T("id")},
 };
 
-TCHAR* cli_Quest[] =
-{
-    {_T("名称")},
+TCHAR* cli_Quest[] = {{_T("名称")},
     {_T("步骤")},
     {_T("描述")}
 };
 
-TCHAR* cli_Team[] =
-{
-    {_T("名字")},
+TCHAR* cli_Team[] = {{_T("名字")},
     {_T("指针")},
     {_T("当前血值")},
     {_T("最大血值")},
@@ -86,18 +73,14 @@ TCHAR* cli_Team[] =
     {_T("线路")}
 };
 
-TCHAR* cli_TaskItem[] =
-{
-    {_T("名称")},
+TCHAR* cli_TaskItem[] = {{_T("名称")},
     {_T("距离")},
     {_T("坐标")},
     {_T("类型")}
 };
 
 
-TCHAR* cli_Bag[] =
-{
-    {_T("名称")},
+TCHAR* cli_Bag[] = {{_T("名称")},
     {_T("耐久")},
     {_T("等级")},
     {_T("数量")},
@@ -114,9 +97,7 @@ TCHAR* cli_Bag[] =
 
 };
 
-TCHAR* cli_Loots[] =
-{
-    {_T("地址")},
+TCHAR* cli_Loots[] = {{_T("地址")},
     {_T("名称")},
     {_T("坐标")},
     {_T("距离")}
@@ -168,8 +149,9 @@ void CDataDlg::DoDataExchange(CDataExchange* pDX)
 }
 
 
-BEGIN_MESSAGE_MAP(CDataDlg, CDialog)
-    //{{AFX_MSG_MAP(CDataDlg)
+BEGIN_MESSAGE_MAP(CDataDlg, CDialog
+                     )
+//{{AFX_MSG_MAP(CDataDlg)
     ON_BN_CLICKED(ID_GETPALYERINFO, OnGetpalyerinfo)
     ON_BN_CLICKED(IDC_SPEEDX, OnSpeedx)
     ON_CBN_SELCHANGE(IDC_COMBO_DATATYPE, OnSelchangeComboDatatype)
@@ -183,13 +165,15 @@ BEGIN_MESSAGE_MAP(CDataDlg, CDialog)
     ON_BN_CLICKED(ID_CLR, OnClr)
     ON_COMMAND(IDC_TURNTO, OnTurnto)
     ON_COMMAND(ID_STEPTOOBJET, OnSteptoobjet)
-    ON_NOTIFY(NM_RCLICK, IDC_LIST, OnRclickList)
+    ON_NOTIFY(NM_RCLICK,
+              IDC_LIST, OnRclickList)
     ON_BN_CLICKED(ID_FINDTHENKILL, OnFindthenkill)
     ON_BN_CLICKED(IDC_HOOK_ACCEPTQUEST, OnHookAcceptquest)
     ON_COMMAND(ID_HOOKSTRIKE, OnHookstrike)
     ON_BN_CLICKED(IDC_HOOK_COMBAT, OnHookCombat)
     ON_BN_CLICKED(IDC_BOSSCOMBAT, OnBossBombat)
-    ON_NOTIFY(TCN_SELCHANGE, IDC_TAB1, OnSelchangeTab1)
+    ON_NOTIFY(TCN_SELCHANGE,
+              IDC_TAB1, OnSelchangeTab1)
     ON_COMMAND(ID_GOTOBACK, OnGotoback)
     ON_UPDATE_COMMAND_UI(ID_HOOKSTRIKE, OnUpdateHookstrike)
     ON_BN_CLICKED(IDC_CALLTOOL, OnCalltool)
@@ -197,7 +181,7 @@ BEGIN_MESSAGE_MAP(CDataDlg, CDialog)
     ON_BN_CLICKED(IDC_BUTTON1, OnBnClickedButton1)
     ON_BN_CLICKED(IDC_BUTTON2, OnBnClickedButton2)
     ON_WM_TIMER()
-    //}}AFX_MSG_MAP
+//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
 
@@ -208,25 +192,39 @@ void CDataDlg::CheckHook()
 {
 
     if(m_bHook_Combat)
+    {
         GameHook::GetInstance()->CombatHook.unhook();
+    }
 
     if(m_bHook_Accquest)
+    {
         GameHook::GetInstance()->aeQuestHook.unhook();
+    }
 
     if(m_bHook_Dundi)
+    {
         GameHook::GetInstance()->DundiHook.unhook();
+    }
 
     if(m_bHook_Pickup1)
+    {
         GameHook::GetInstance()->Yicjw.unhook();
+    }
 
     if(m_bHook_quest)
+    {
         GameHook::GetInstance()->deQuestHook.unhook();
+    }
 
     if(m_bHook_Weaquit)
+    {
         GameHook::GetInstance()->WearHook.unhook();
+    }
 
     if(m_bHook_step)
+    {
         GameHook::GetInstance()->stepHook.unhook();
+    }
 
 }
 
@@ -247,7 +245,6 @@ void CDataDlg::AddInfo(const TCHAR szFormat[], ...)
     pEdit->ReplaceSel(buffer);
 
 }
-
 
 
 BOOL CDataDlg::OnInitDialog()
@@ -352,7 +349,7 @@ void CDataDlg::OnGetpalyerinfo()
     AddInfo(_T("角色内力: %d"), gcall.GetPlayerMana());
     AddInfo(_T("角色红心数量: %d"), gcall.GetPlarerRedHeart());
     AddInfo(_T("角色最大体力: %d"), (int)gcall.GetPlayerMaxVit());
-    AddInfo(_T("角色体力: %d"), (int) gcall.GetPlayerVit());
+    AddInfo(_T("角色体力: %d"), (int)gcall.GetPlayerVit());
     AddInfo(_T("角色视角: %d"), (int)gcall.GetPlayerViewPoint());
     AddInfo(_T("角色释放技能状态: %d"), gcall.GetPlayerSkillStatus());
     AddInfo(_T("角色是否忙碌: %d"), gcall.GetPlayerBusy());
@@ -388,7 +385,6 @@ void CDataDlg::PrintfAllObject()
         m_ListCtrl.InsertItem(i, strAddr);
 
 
-
         DWORD type = gcall.GetObjectType(pNode->ObjAddress);
 
 
@@ -400,17 +396,17 @@ void CDataDlg::PrintfAllObject()
         strTemp.Format(_T("%d"), pNode->id);
         m_ListCtrl.SetItemText(i, 2, strTemp);
 
-		if (type == 0x4 || type == 1 || type == 2)
-		{
-			DWORD TargetId = gcall.GetObjectTargetId(pNode->ObjAddress);
-			strTemp.Format(_T("%d"), TargetId);
-			m_ListCtrl.SetItemText(i, 3, strTemp);
-		}
-       
+        if(type == 0x4 || type == 1 || type == 2)
+        {
+            DWORD TargetId = gcall.GetObjectTargetId(pNode->ObjAddress);
+            strTemp.Format(_T("%d"), TargetId);
+            m_ListCtrl.SetItemText(i, 3, strTemp);
+        }
+
         strTemp.Format(_T("%d"), type);
         m_ListCtrl.SetItemText(i, 4, strTemp);
 
-        if (type == 0x4 || type == 1 || type == 2)
+        if(type == 0x4 || type == 1 || type == 2)
         {
             strTemp.Format(_T("%d"), gcall.GetObjectHP(pNode->ObjAddress));
             m_ListCtrl.SetItemText(i, 5, strTemp);
@@ -490,7 +486,7 @@ void CDataDlg::PrintfPlayerEquip()
     BagVector BagVec;
     gcall.GetAllBodyEquipToVector(BagVec);
 
-    for(DWORD i = 0; i < BagVec.size() ; i++)
+    for(DWORD i = 0; i < BagVec.size(); i++)
     {
         InertBagItem(i, BagVec[i]);
 
@@ -504,7 +500,7 @@ void CDataDlg::PrintfRangeTaskItem()
     GamecallEx& gcall = *GamecallEx::GetInstance();
 
 
-    std::vector<ObjectNode*> RangeObject;
+    std::vector < ObjectNode* > RangeObject;
     gcall.GetRangeTaskItemToVectr(RangeObject, m_nRange);
 
     std::sort(RangeObject.begin(), RangeObject.end(), GamecallEx::UDgreater);
@@ -553,7 +549,7 @@ void CDataDlg::PrintfAllUI()
     //获取游戏外挂功能
     GamecallEx& gcall = *GamecallEx::GetInstance();
 
-    std::vector<Tree*> AllUI;
+    std::vector < Tree* > AllUI;
     gcall.sendcall(id_msg_vector_ui, &AllUI);
 
     CString strTemp;
@@ -610,7 +606,7 @@ void CDataDlg::PrintfBag()
     //获取游戏外挂功能
     GamecallEx& gcall = *GamecallEx::GetInstance();
 
-    std::vector<_BAGSTU> RangeObject;
+    std::vector <_BAGSTU> RangeObject;
     gcall.GetAllGoodsToVector(RangeObject);
 
     CString strTemp;
@@ -627,7 +623,7 @@ void CDataDlg::PrintfRangeLoot()
     GamecallEx& gcall = *GamecallEx::GetInstance();
 
 
-    std::vector<ObjectNode*> RangeObject;
+    ObjectVector RangeObject;
     gcall.GetRangeLootObjectToVector(m_nRange, RangeObject);
 
     CString strTemp;
@@ -655,7 +651,6 @@ void CDataDlg::PrintfRangeLoot()
 
         strTemp.Format(_T("%d"), (DWORD)gcall.CalcC(tarpos, mypos));
         m_ListCtrl.SetItemText(index, 2, strTemp);
-
 
 
         strTemp.Format(_T("x:%d y:%d z:%d"), (int)tarpos.x, (int)tarpos.y, (int)tarpos.z);
@@ -689,7 +684,7 @@ void CDataDlg::PrintfStrike()
 
         m_ListCtrl.InsertItem(i, JnVec[i].name);
 
-        strTemp = JnVec[i].bCD == TRUE ? _T("冷却完毕" : _T("冷却中"));
+        strTemp = JnVec[i].bCD == TRUE ? _T("冷却完毕") : _T("冷却中");
         m_ListCtrl.SetItemText(i, 1, strTemp);
 
         strTemp = JnVec[i].bAviable == TRUE ? _T("可用") : _T("不可用");
@@ -709,9 +704,12 @@ void CDataDlg::PrintfRangeMonster(BOOL bApplyConfig)
     //获取游戏外挂功能
     GamecallEx& gcall = *GamecallEx::GetInstance();
 
-    std::vector<ObjectNode*> RangeObject;
+    ObjectVector RangeObject;
     gcall.GetRangeMonsterToVector(gcall.GetObjectBinTreeBaseAddr(), m_nRange, RangeObject);
-    if(RangeObject.size() < 1) return;
+    if(RangeObject.size() < 1)
+    {
+        return;
+    }
 
     if(bApplyConfig)
     {
@@ -745,9 +743,9 @@ void CDataDlg::PrintfRangeMonster(BOOL bApplyConfig)
         strTemp.Format(_T("%d"), type);
         m_ListCtrl.SetItemText(i, 4, strTemp);
 
-		strTemp.Format(_T("%x"), gcall.GetObjectTargetId(pNode->ObjAddress));
-		m_ListCtrl.SetItemText(i, 5, strTemp);
- 
+        strTemp.Format(_T("%x"), gcall.GetObjectTargetId(pNode->ObjAddress));
+        m_ListCtrl.SetItemText(i, 5, strTemp);
+
         if(type == 0x4 || type == 1 || type == 2)
         {
             strTemp.Format(_T("%d"), gcall.GetObjectHP(pNode->ObjAddress));
@@ -776,19 +774,17 @@ void CDataDlg::PrintfRangeMonster(BOOL bApplyConfig)
         strTemp.Format(_T("%d"), suoyin == -1 ? -1 : suoyin);
         m_ListCtrl.SetItemText(i, 9, strTemp);
 
-		if (type == 0x4 || type == 1 || type == 2)
-		{
-			//怪物面向
-			strTemp.Format(_T("%d"), gcall.GetObjectView(pNode->ObjAddress));
-			m_ListCtrl.SetItemText(i, 10, strTemp);
-		}
+        if(type == 0x4 || type == 1 || type == 2)
+        {
+            //怪物面向
+            strTemp.Format(_T("%d"), gcall.GetObjectView(pNode->ObjAddress));
+            m_ListCtrl.SetItemText(i, 10, strTemp);
+        }
 
         m_ListCtrl.SetItemData(i, (DWORD)pNode);
     }
 
 }
-
-
 
 
 //遍历范围内的对象
@@ -801,7 +797,7 @@ void CDataDlg::PrintfRangeObject()
     GamecallEx& gcall = *GamecallEx::GetInstance();
 
 
-    std::vector<ObjectNode*> RangeObject;
+    ObjectVector RangeObject;
     gcall.GetRangeObjectToVector(gcall.GetObjectBinTreeBaseAddr(), m_nRange, RangeObject);
 
     fPosition mypos;
@@ -879,7 +875,6 @@ void CDataDlg::PrintfRangeObject()
         }
 
 
-
         m_ListCtrl.SetItemData(index, (DWORD)pNode);
 
     }
@@ -907,20 +902,26 @@ void CDataDlg::OnSpeedx()
 }
 
 
-void CDataDlg::InsertColumnHelper(TCHAR* column[], int count)
+void CDataDlg::InsertColumnHelper(TCHAR* column[], int
+                                  count)
 {
 
-    for(int i = 0; i < count; i++)
+    for(
+        int i = 0;
+        i < count;
+        i++)
     {
-        m_ListCtrl.DeleteColumn(i);
-        m_ListCtrl.InsertColumn(i, column[i]);
+        m_ListCtrl.
+        DeleteColumn(i);
+        m_ListCtrl.
+        InsertColumn(i, column[i]
+                    );
     }
 }
 
 
 void CDataDlg::OnSelchangeComboDatatype()
 {
-    // TODO: Add your control notification handler code here
     UpdateData(TRUE);
 
 
@@ -928,9 +929,12 @@ void CDataDlg::OnSelchangeComboDatatype()
     m_ComBox.GetLBText(m_ComBox.GetCurSel(), strSel);
 
     m_ListCtrl.DeleteAllItems();
-    for(;;)
+    for(; ;)
     {
-        if(m_ListCtrl.DeleteColumn(0) == FALSE) break;
+        if(m_ListCtrl.DeleteColumn(0) == FALSE)
+        {
+            break;
+        }
     }
 
     if(strSel == _T("背包"))
@@ -998,7 +1002,7 @@ void CDataDlg::OnSelchangeComboDatatype()
 
 
     int i = 0;
-    for(;;)
+    for(; ;)
     {
         if(m_ListCtrl.SetColumnWidth(i++, LVSCW_AUTOSIZE_USEHEADER) == FALSE)
         {
@@ -1033,7 +1037,6 @@ void CDataDlg::OnBtnConfig()
     }
 
 
-
     ShowWindow(SW_SHOW);
 }
 
@@ -1061,42 +1064,50 @@ void CDataDlg::OnHookSendstep()
 
 void CDataDlg::OnHookYicijianwu()
 {
-    // TODO: Add your control notification handler code here
     UpdateData(TRUE);
     if(m_bHook_Pickup1)
+    {
         GameHook::GetInstance()->backupYiciJianWu = GameHook::GetInstance()->Yicjw.hook();
 
+    }
     else
+    {
         GameHook::GetInstance()->Yicjw.unhook();
+    }
 }
 
 //npc接任务
 void CDataDlg::OnHookDequest()
 {
-    // TODO: Add your control notification handler code here
     UpdateData(TRUE);
     if(m_bHook_quest)
+    {
         GameHook::GetInstance()->backupQuest = GameHook::GetInstance()->deQuestHook.hook();
 
+    }
     else
+    {
         GameHook::GetInstance()->deQuestHook.unhook();
+    }
 }
 
 void CDataDlg::OnHookChuanzhuangbei()
 {
-    // TODO: Add your control notification handler code here
     UpdateData(TRUE);
     if(m_bHook_Weaquit)
+    {
         GameHook::GetInstance()->backupWearEquipment = GameHook::GetInstance()->WearHook.hook();
 
+    }
     else
+    {
         GameHook::GetInstance()->WearHook.unhook();
+    }
 
 }
 
 void CDataDlg::OnHookDundi()
 {
-    // TODO: Add your control notification handler code here
     UpdateData(TRUE);
     if(m_bHook_Dundi)
     {
@@ -1193,9 +1204,9 @@ void CDataDlg::OnFindthenkill()
     //获取游戏外挂功能
     GamecallEx& gcall = *GamecallEx::GetInstance();
 
-	gcall.AddCustomKill(L"幻魔",KILLFIRST);
-	gcall.AddCustomKill(L"飛魔",KILLFIRST);
-	gcall.FindThenKill(0, 1500, modeAoe | modeNormal | modePickup);
+    gcall.AddCustomKill(L"幻魔", KILLFIRST);
+    gcall.AddCustomKill(L"飛魔", KILLFIRST);
+    gcall.FindThenKill(0, 1500, modeAoe | modeNormal | modePickup);
 
     while(1)
     {
@@ -1216,16 +1227,19 @@ void CDataDlg::OnFindthenkill()
     }
 
 
-
 }
 
 void CDataDlg::OnHookAcceptquest()
 {
     UpdateData(TRUE);
     if(m_bHook_Accquest)
+    {
         GameHook::GetInstance()->aeQuestHook.hook();
+    }
     else
+    {
         GameHook::GetInstance()->aeQuestHook.unhook();
+    }
 }
 
 
@@ -1235,7 +1249,7 @@ void CDataDlg::OnHookstrike()
     POSITION pos = m_ListCtrl.GetFirstSelectedItemPosition();
     if(pos)
     {
-        std::vector<ObjectNode*>& HookVec = GameHook::GetInstance()->m_ObjAddrVec;
+        ObjectVector& HookVec = GameHook::GetInstance()->m_ObjAddrVec;
         int nItem = m_ListCtrl.GetNextSelectedItem(pos);
         ObjectNode* pNode = (ObjectNode*)m_ListCtrl.GetItemData(nItem);
 
@@ -1421,7 +1435,7 @@ void CDataDlg::OnBnClickedFindthenkillaa()
 
 void CDataDlg::OnBnClickedFindthenkill2()
 {
-    // TODO: 在此添加控件通知处理程序代码
+
 }
 
 HANDLE hand = INVALID_HANDLE_VALUE;

@@ -38,10 +38,12 @@ public:
     //删除一个客户端
     bool DeleteClient(CJLkitSocket* pSocket);
 
+
+    //清理无效连接
     void DeadSocketClear();
 
     //客户端列表
-private:
+public:
     std::list<CJLkitSocket*> _client;
     std::map<CJLkitSocket*, LOGIN_BUF> _userdata;
     std::map<CJLkitSocket*, time_t> _heart;

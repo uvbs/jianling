@@ -236,10 +236,8 @@ bool CJLSrvrDoc::ProcessLogin(CJLkitSocket* pSocket, const Tcp_Head& stTcpHead, 
             int inResult;
             int inDbRet;
 
-            //保存用户登陆数据
-            LOGIN_BUF* pLogin = (LOGIN_BUF*)pData;
-            _userdata[pSocket] = *pLogin;
 
+            LOGIN_BUF* pLogin = (LOGIN_BUF*)pData;
 
             try
             {
@@ -264,6 +262,8 @@ bool CJLSrvrDoc::ProcessLogin(CJLkitSocket* pSocket, const Tcp_Head& stTcpHead, 
                 }
             case 1:
                 {
+                    //保存用户登陆数据
+                    _userdata[pSocket] = *pLogin;
                     _tcscpy(des.szDescribe, _T("登陆完成"));
                     break;
                 }
@@ -336,7 +336,7 @@ bool CJLSrvrDoc::ProcessLogin(CJLkitSocket* pSocket, const Tcp_Head& stTcpHead, 
                 _tcscpy(des.szDescribe, _T("注册失败"));
             }
 
-            TRACE(_T("发送注册结果"));
+
             pSocket->Send(M_LOGIN, inRet, &des, sizeof(PROCESS_DESCRIBE));
 
             break;
@@ -446,11 +446,13 @@ bool CJLSrvrDoc::DeleteClient(CJLkitSocket* pSocket)
 
 
     //数据库
-    m_db.UserExit(_userdata[pSocket].name);
+    if(_userdata.find(pSocket) != _userdata.end())
+    {
+        m_db.UserExit(_userdata[pSocket].name);
 
-
-    //从客户数据列表删除
-    _userdata.erase(pSocket);
+        //从客户数据列表删除
+        _userdata.erase(pSocket);
+    }
 
     //释放资源
     pSocket->Close();
