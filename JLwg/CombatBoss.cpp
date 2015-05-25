@@ -192,7 +192,7 @@ void CombatBoss::run()
             case 5511314:
                 {
                     pCall->sendcall(id_msg_attack, (LPVOID)0x5dc1);
-                    pCall->Attack(0x5E1B);
+                    pCall->Kill_Tab(0x5E1B,25);
                     break;
                 }
 
@@ -476,7 +476,7 @@ void CombatBoss::run()
                         pCall->sendcall(id_msg_attack, (LPVOID)0x5DC1);
                         if(pCall->isStrikeCd(0x5E1B))
                         {
-                            pCall->Kill_Tab(0x5E1B);
+                            pCall->Kill_Tab(0x5E1B,25);
                         }
                         else if(pCall->isStrikeCd(0x5DF2))
                         {
@@ -660,7 +660,7 @@ void CombatBoss::run()
             case 5902382:
                 {
                     pCall->TurnTo(pBossNode);
-                    //pCall->Kill_Tab(0x5dc1);
+                    pCall->Kill_Tab(0x5dc1);
                     if(pCall->isStrikeCd(0x5E1B))
                     {
                         Sleep(2000);
@@ -668,7 +668,7 @@ void CombatBoss::run()
                     }
                     else if(pCall->isStrikeCd(0x5DF2))
                     {
-                        Sleep(2200);
+                        Sleep(2500);
                         pCall->Kill_Tab(0x5DF2);
                     }
                     else
@@ -813,47 +813,55 @@ void CombatBoss::run()
                 }
             case 5902389:
                 {
-                    pCall->Kill_Tab(0x5dca);
-                    if(pCall->GetPlayerMana() < 20)
-                    {
-                        pCall->sendcall(id_msg_attack, (LPVOID)0x5dc1);//r
-                    }
-                    pCall->Kill_Tab(0x5dca);
+                    pCall->Stepto(pBossNode);
+                    pCall->Kill_Tab(0x5dc1);
+                    pCall->Stepto(pBossNode);
+                    pCall->Kill_Tab(0x5dc1);
                     break;
                 }
             case 5902391:
                 {
-                    pCall->TurnTo(pBossNode);
-                    if(pCall->GetPlayerMana() > 60)
+                    pCall->Kill_Tab(0x5dc1);
+                    pCall->Kill_Tab(0x5dc1);
+                    pCall->Kill_Tab(0x5dc1);
+                    if(pCall->isStrikeCd(0x5E1B))
                     {
-                        if(pCall->isStrikeCd(0x5E1B))
-                        {
-                            pCall->Kill_Tab(0x5E1B);
-                        }
-                        else
-                        {
-                            pCall->Kill_Tab(0x5dca);
-                        }
+						TRACE("准备使用C");
+                        pCall->Kill_Tab(0x5E1B,25);
                     }
-                    else
-                    {
-                        if(pCall->isStrikeCd(0x5e74))
-                        {
-                            pCall->Kill_Tab(0x5e74);
-                        }
-                        else if(pCall->isStrikeCd(0x5DF2))
-                        {
-                            pCall->Kill_Tab(0x5DF2);
-                        }
-                        else
-                        {
-                            pCall->Kill_Tab(0x5dca);
-                        }
-                    }
-                    if(pCall->GetPlayerMana() < 20)
-                    {
-                        pCall->sendcall(id_msg_attack, (LPVOID)0x5dc1);//r
-                    }
+					if (pCall->isStrikeCd(0x5DF2))
+					{
+						TRACE("准备使用2");
+						Sleep(1500);
+						pCall->Kill_Tab(0x5DF2);
+						Sleep(1500);
+						TRACE("准备使用e");
+						pCall->Kill_Tab(0x5E1A);
+						Sleep(1000);
+						TRACE("准备使用SS");
+						pCall->Kill_Tab(0x5e6a);
+					}else
+					{
+						TRACE("没其他技能可用，准备使用tab");
+						if (pCall->isStrikeCd(0x5e60))
+						{
+							pCall->Kill_Tab(0x5e60);
+						}
+						TRACE("tab1");
+						pCall->Kill_Tab(0x5dca);
+						if (pCall->isStrikeCd(0x5e60))
+						{
+							pCall->Kill_Tab(0x5e60);
+						}
+						TRACE("tab2");
+						pCall->Kill_Tab(0x5dca);
+						if (pCall->isStrikeCd(0x5e60))
+						{
+							pCall->Kill_Tab(0x5e60);
+						}
+						TRACE("tab3");
+						pCall->Kill_Tab(0x5dca);
+					}
                     break;
                 }
             //鬼门关最终BOSS
@@ -977,37 +985,41 @@ void CombatBoss::NotifyMonsterAttack(MONSTERATAACK* pAttack)
     static int notProcess = 0; //不处理次数
 
     //先按时间过滤
-    if(pAttack->dwStrikeId <= 0xffff) return;
-
-
-    if(pAttack->dwStrikeId != old1.dwStrikeId)
+    if(pAttack->dwStrikeId > 0xffff && pAttack->dwStrikeId < 0x10000000)
     {
-        m_event.dwObj = pAttack->dwObj;
-        m_event.dwStrikeId = pAttack->dwStrikeId;
 
-        old1 = *pAttack;
-        notProcess = 0;
-    }
-    else
-    {
-        //上个id
-        notProcess++;
-
-
-        //没找到
-        if(m_JnCounts.find(pAttack->dwStrikeId) == m_JnCounts.end())
-        {
-            //这是没有记录的id
-        }
-        else if(m_JnCounts[pAttack->dwStrikeId] == notProcess)
+        if(pAttack->dwStrikeId != old1.dwStrikeId)
         {
             m_event.dwObj = pAttack->dwObj;
             m_event.dwStrikeId = pAttack->dwStrikeId;
+
+            old1 = *pAttack;
+            notProcess = 0;
         }
         else
         {
+            //上个id
+            notProcess++;
+
+
+            //没找到
+            if(m_JnCounts.find(pAttack->dwStrikeId) == m_JnCounts.end())
+            {
+                //这是没有记录的id
+				TRACE("没有记录的技能ID,%d",pAttack->dwStrikeId);
+            }
+            else if(m_JnCounts[pAttack->dwStrikeId] == notProcess)
+            {
+                m_event.dwObj = pAttack->dwObj;
+                m_event.dwStrikeId = pAttack->dwStrikeId;
+            }
+            else
+            {
+				TRACE("notProcess,%d",notProcess);
+            }
 
         }
+
     }
 }
 

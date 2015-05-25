@@ -1464,7 +1464,10 @@ void Gamecall::Turn(int angle)
 //type = 0x90 特殊任务物品
 byte Gamecall::GetObjectType(DWORD pObjAddress)
 {
-    _ASSERTE(pObjAddress != NULL);
+    if(pObjAddress < 0x7FFFFFF)
+    {
+        return 0;
+    }
     byte objtype = 0;
 
     __try
@@ -1492,102 +1495,108 @@ BOOL Gamecall::GetObjectPos(ObjectNode* pNode, fPosition* fpos)
     DWORD type = (DWORD)GetObjectType(pNode->ObjAddress);
     DWORD pInfo = pNode->ObjAddress;
 
-    if(type == 0x20)
+	if (type == 0)
+	{
+		TRACE("未能获取类型");
+		return FALSE;
+	}
+    __try
     {
-        __asm
+        if(type == 0x20)
         {
-            mov edx, pInfo;
-            mov eax, [edx + 0x28];
+            __asm
+            {
+                mov edx, pInfo;
+                mov eax, [edx + 0x28];
 
-            mov ebx, fpos;
-            mov[ebx]fpos.x, eax;
+                mov ebx, fpos;
+                mov[ebx]fpos.x, eax;
 
-            mov eax, [edx + 0x2c];
-            mov[ebx]fpos.y, eax;
+                mov eax, [edx + 0x2c];
+                mov[ebx]fpos.y, eax;
 
-            mov eax, [edx + 0x30];
-            mov[ebx]fpos.z, eax;
+                mov eax, [edx + 0x30];
+                mov[ebx]fpos.z, eax;
+            }
+
+            //*4后和 角色坐标是相同的
+            fpos->x = fpos->x * 4;
+            fpos->y = fpos->y * 4;
+            fpos->z = fpos->z * 4;
+
         }
-
-        //*4后和 角色坐标是相同的
-        fpos->x = fpos->x * 4;
-        fpos->y = fpos->y * 4;
-        fpos->z = fpos->z * 4;
-
-    }
-    else if(type == 0xb0)
-    {
-        sPosition spos;
-        __asm
+        else if(type == 0xb0)
         {
-            mov edx, pInfo;
-            mov eax, [edx +  ojb_typeb0_pos2_x];
+            sPosition spos;
+            __asm
+            {
+                mov edx, pInfo;
+                mov eax, [edx +  ojb_typeb0_pos2_x];
 
-            lea ebx, spos;
-            mov [ebx]spos.x, ax;
+                lea ebx, spos;
+                mov [ebx]spos.x, ax;
 
-            mov eax, [edx + ojb_typeb0_pos2_x + 2];
-            mov [ebx]spos.y, ax;
+                mov eax, [edx + ojb_typeb0_pos2_x + 2];
+                mov [ebx]spos.y, ax;
 
-            mov eax, [edx + ojb_typeb0_pos2_x + 4];
-            mov [ebx]spos.z, ax;
+                mov eax, [edx + ojb_typeb0_pos2_x + 4];
+                mov [ebx]spos.z, ax;
+            }
+
+            ShortPosToFloatPos(spos, *fpos);
         }
-
-        ShortPosToFloatPos(spos, *fpos);
-    }
-    else if(type == 0x4)
-    {
-
-        int temp1 = obj_type4_pos_x_offset2 + 4;
-        int temp2 = obj_type4_pos_x_offset2 + 8;
-
-        __asm
+        else if(type == 0x4)
         {
-            mov eax, pInfo;
-            mov eax, [eax + obj_type4_pos_x_offset1];
-            mov ecx, eax;
 
-            mov eax, [ecx + obj_type4_pos_x_offset2];
+            int temp1 = obj_type4_pos_x_offset2 + 4;
+            int temp2 = obj_type4_pos_x_offset2 + 8;
+
+            __asm
+            {
+                mov eax, pInfo;
+                mov eax, [eax + obj_type4_pos_x_offset1];
+                mov ecx, eax;
+
+                mov eax, [ecx + obj_type4_pos_x_offset2];
 
 
-            mov ebx, fpos;
-            mov [ebx]fpos.x, eax;
+                mov ebx, fpos;
+                mov [ebx]fpos.x, eax;
 
-            mov eax, temp1;
-            mov eax, [ecx + eax];
-            mov [ebx]fpos.y, eax;
+                mov eax, temp1;
+                mov eax, [ecx + eax];
+                mov [ebx]fpos.y, eax;
 
-            mov eax, temp2;
-            mov eax, [ecx + eax];
-            mov [ebx]fpos.z, eax;
+                mov eax, temp2;
+                mov eax, [ecx + eax];
+                mov [ebx]fpos.z, eax;
+            }
+
+
         }
-
-
-    }
-    else if(type == 0x90)
-    {
-        sPosition spos;
-        __asm
+        else if(type == 0x90)
         {
-            mov edx, pInfo;
-            mov eax, [edx + 0x2A];
+            sPosition spos;
+            __asm
+            {
+                mov edx, pInfo;
+                mov eax, [edx + 0x2A];
 
-            lea ebx, spos;
-            mov [ebx]spos.x, ax;
+                lea ebx, spos;
+                mov [ebx]spos.x, ax;
 
-            mov eax, [edx + 0x2c];
-            mov [ebx]spos.y, ax;
+                mov eax, [edx + 0x2c];
+                mov [ebx]spos.y, ax;
 
-            mov eax, [edx + 0x2e];
-            mov [ebx]spos.z, ax;
+                mov eax, [edx + 0x2e];
+                mov [ebx]spos.z, ax;
+            }
+
+            ShortPosToFloatPos(spos, *fpos);
         }
-
-        ShortPosToFloatPos(spos, *fpos);
-    }
-    else if(type == 1 || type == 2)
-    {
-        __try
+        else if(type == 1 || type == 2)
         {
+
             __asm
             {
                 mov eax, pNode;
@@ -1605,15 +1614,13 @@ BOOL Gamecall::GetObjectPos(ObjectNode* pNode, fPosition* fpos)
                 mov eax, [edx + 0x1b0];
                 mov [ebx]fpos.z, eax;
             }
-        }
-        __except(1)
-        {
-            TRACE(_T("获取玩家坐标失败"));
-        }
+		}
+
     }
-    else
+    __except(1)
     {
-        return FALSE;
+        TRACE(_T("获取玩家坐标失败"));
+		return FALSE;
     }
 
     return TRUE;
@@ -1666,7 +1673,10 @@ wchar_t* Gamecall::_GetObjectNameByIndex(int index)
 //参数1: 对象地址
 int Gamecall::GetObjectHP(DWORD pObjAddress)
 {
-    _ASSERTE(pObjAddress != NULL);
+    if(pObjAddress < 0x7FFFFFF)
+    {
+        return 0;
+    }
     DWORD hp;
 
     __try
@@ -1690,7 +1700,10 @@ int Gamecall::GetObjectHP(DWORD pObjAddress)
 //对象等级
 int Gamecall::GetObjectLevel(DWORD pObjAddress)
 {
-    _ASSERTE(pObjAddress != NULL);
+    if(pObjAddress < 0x7FFFFFF)
+    {
+        return 0;
+    }
 
     DWORD level;
 
@@ -2682,7 +2695,10 @@ DWORD Gamecall::CalcC(fPosition& p1, fPosition& p2)
 
 int Gamecall::GetObjectSY(DWORD pObjAddress)  // 环境对象的索引1
 {
-    _ASSERTE(pObjAddress != 0);
+    if(pObjAddress < 0x7FFFFFF)
+    {
+        return 0;
+    }
 
     DWORD Adress = UINT_MAX;
     __try
@@ -2737,7 +2753,10 @@ DWORD Gamecall::m_Get11C(DWORD m_Adress)
 
 int Gamecall::GetObjectSY12(DWORD pAddr)  // 环境对象的索引12
 {
-    _ASSERTE(pAddr != 0);
+    if(pAddr < 0x7FFFFFF)
+    {
+        return 0;
+    }
 
 
     DWORD Adress;
@@ -3458,7 +3477,10 @@ DWORD Gamecall::GetPlayerQuestUIStatus()
 //通过类型取得索引
 int Gamecall::GetIndexByType(DWORD pObjAddress)
 {
-    _ASSERTE(pObjAddress != NULL);
+    if(pObjAddress < 0x7FFFFFF)
+    {
+        return 0;
+    }
 
 
     int index = -1;
@@ -4126,7 +4148,10 @@ UCHAR Gamecall::GetPlayerLevel() //获得角色等级
 //取得对象名字
 wchar_t* Gamecall::GetObjectName(DWORD pObjAddress)
 {
-    _ASSERTE(pObjAddress != NULL);
+    if(pObjAddress < 0x7FFFFFF)
+    {
+        return 0;
+    }
 
     DWORD type = GetObjectType(pObjAddress);
     if(type == 1 || type == 2)
@@ -5134,7 +5159,7 @@ void Gamecall::GetStrikeToVector(StrikeVector& RangeObject)
     }
 
 
-    for(i = 0; i < dwCount; i++)
+    for(int i = 0; i < dwCount; i++)
     {
 
         //{信息指针}
@@ -6467,6 +6492,10 @@ void Gamecall::ChangeHeight(float how)
 
 int Gamecall::GetObjectSy_90(DWORD pObjAddress)
 {
+    if(pObjAddress < 0x7FFFFFF)
+    {
+        return 0;
+    }
     DWORD result;
     result = 0;
     __try
@@ -6863,6 +6892,10 @@ void Gamecall::YaoQingZuDui(DWORD ID, DWORD Info) //邀请组队 参数1是对象ID  参数
 
 int Gamecall::GetObjectView(DWORD pObjAddress)
 {
+    if(pObjAddress < 0x7FFFFFF)
+    {
+        return 0;
+    }
     WORD jd = 0;
     __try
     {
@@ -7180,6 +7213,10 @@ DWORD Gamecall::GetPartyByAddress(DWORD PartyAddress, int i)
 
 int Gamecall::GetObjectTargetId(DWORD pObjAddress)
 {
+    if(pObjAddress < 0x7FFFFFF)
+    {
+        return 0;
+    }
     DWORD TargetId;
     TargetId = NULL;
     __try
@@ -7211,6 +7248,10 @@ ObjectNode* Gamecall::GetObjectById(DWORD Id)
 
 BOOL Gamecall::IsObjectFightStatus(DWORD pObjAddress)
 {
+    if(pObjAddress < 0x7FFFFFF)
+    {
+        return 0;
+    }
     BOOL value = FALSE;
     __try
     {
@@ -7226,6 +7267,10 @@ BOOL Gamecall::IsObjectFightStatus(DWORD pObjAddress)
 
 BOOL Gamecall::IsPlayerSkillStatus(DWORD pObjAddress)
 {
+    if(pObjAddress < 0x7FFFFFF)
+    {
+        return 0;
+    }
     WORD value = 0;
     __try
     {
@@ -7255,6 +7300,10 @@ DWORD Gamecall::GetPlarerRedHeart()
 
 BOOL Gamecall::IsObjectControl(DWORD pObjAddress)
 {
+    if(pObjAddress < 0x7FFFFFF)
+    {
+        return 0;
+    }
     BOOL value = FALSE;
     __try
     {

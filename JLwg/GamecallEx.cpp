@@ -705,6 +705,7 @@ exitfun:
 void GamecallEx::KillBoss(const wchar_t* name)
 {
     CombatBoss Combat;
+	Combat.LoadCountsData();
     Combat.SetName(name);
     Combat.run();
 
@@ -2061,7 +2062,7 @@ void GamecallEx::TurnToNear(DWORD range)
     }
 }
 
-void GamecallEx::Kill_Tab(int id)
+void GamecallEx::Kill_Tab(int id,int WaitCount)
 {
     int cs;
     cs = 0;
@@ -2075,7 +2076,7 @@ void GamecallEx::Kill_Tab(int id)
             //TRACE(_T("TAB释放时倒地跳出"));
             break;
         }
-        if(cs > 20)
+        if(cs >= WaitCount)
         {
             //TRACE(_T("cs退出"));
             return;
@@ -2881,25 +2882,25 @@ void GamecallEx::SteptoBack(ObjectNode* pObj)
     DWORD objview = GetObjectView(pObj->ObjAddress);
     if(objview < 360 && objview > 270) //西北
     {
-        TRACE(_T("西北"));
+        //TRACE(_T("西北"));
         rpos.x -= CAN_OPERATOR / 2;
         rpos.y += CAN_OPERATOR / 2;
     }
     else if(objview < 270 && objview > 180) //西南
     {
-        TRACE(_T("西南"));
+        //TRACE(_T("西南"));
         rpos.y += CAN_OPERATOR / 2;
         rpos.x += CAN_OPERATOR / 2;
     }
     else if(objview > 90 && objview < 180)  //东南
     {
-        TRACE(_T("东南"));
+        //TRACE(_T("东南"));
         rpos.x += CAN_OPERATOR / 2;
         rpos.y -= CAN_OPERATOR / 2;
     }
     else if(objview > 0 && objview < 90) //东北
     {
-        TRACE(_T("东北"));
+        //TRACE(_T("东北"));
         rpos.y -= CAN_OPERATOR / 2;
         rpos.x -= CAN_OPERATOR / 2;
     }
@@ -2921,7 +2922,7 @@ void GamecallEx::SteptoBack(ObjectNode* pObj)
     }
 
 
-    NewSpend(2.5);
+    NewSpend(2);
     //sendcall(id_msg_step,(LPVOID)&rpos);
     Stepto(rpos.y, rpos.x, rpos.z, 10, 20, 1000, FALSE);
     NewSpend(1);

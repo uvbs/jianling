@@ -436,12 +436,16 @@ void CConfigObjPage::RefreshObj()
         m_ObjList.InsertItem(i, pName);
 
         fPosition tarpos;
+		CString strDis;
         if(gcall.GetObjectPos(pNode, &tarpos))
         {
-            CString strDis;
             strDis.Format(_T("%d"), gcall.CalcC(fmypos, tarpos));
             m_ObjList.SetItemText(i, 1, strDis);
-        }
+        }else
+		{
+			strDis.Format(_T("%d"), 0);
+			m_ObjList.SetItemText(i, 1, strDis);
+		}
     }
 
 }

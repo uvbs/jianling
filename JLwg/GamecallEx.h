@@ -63,7 +63,7 @@ public:
     int FindThenKill(int pos, DWORD range, DWORD mode, DWORD MyQuestStep = 0, DWORD MyQuestID = 0, DWORD canKillRange = CAN_OPERATOR);    //找到杀掉
     BOOL kill_PickupBody();
     BOOL kill_Task(int MyQuestID, int MyQuestStep);
-    void Kill_Tab(int id);//tab释放等待
+    void Kill_Tab(int id,int WaitCount = 20);//tab释放等待
 
     //自定义杀怪过滤
     BOOL isCustomKill_DontKill(wchar_t* name);
