@@ -60,7 +60,8 @@ public:
 
     //¥Úπ÷
     void KillBoss(const wchar_t* name);
-    int FindThenKill(int pos, DWORD range, DWORD mode, DWORD MyQuestStep = 0, DWORD MyQuestID = 0, DWORD canKillRange = CAN_OPERATOR);    //’“µΩ…±µÙ
+    int FindThenKill(int pos, DWORD range, DWORD mode, DWORD MyQuestStep = 0, DWORD MyQuestID = 0, DWORD canKillRange = CAN_OPERATOR,BOOL Rush = FALSE);    //’“µΩ…±µÙ
+	int FindThenKill_S(DWORD range, DWORD mode, DWORD canKillRange = CAN_OPERATOR,BOOL Rush = FALSE,BOOL One_Kill = FALSE);    //’“µΩ…±µÙ
     BOOL kill_PickupBody();
     BOOL kill_Task(int MyQuestID, int MyQuestStep);
     void Kill_Tab(int id,int WaitCount = 20);//tab Õ∑≈µ»¥˝

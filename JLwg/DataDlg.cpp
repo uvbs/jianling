@@ -182,6 +182,7 @@ BEGIN_MESSAGE_MAP(CDataDlg, CDialog
     ON_BN_CLICKED(IDC_BUTTON2, OnBnClickedButton2)
     ON_WM_TIMER()
 //}}AFX_MSG_MAP
+ON_BN_CLICKED(IDC_BUTTON3, &CDataDlg::OnBnClickedButton3)
 END_MESSAGE_MAP()
 
 
@@ -351,6 +352,7 @@ void CDataDlg::OnGetpalyerinfo()
     AddInfo(_T("角色最大体力: %d"), (int)gcall.GetPlayerMaxVit());
     AddInfo(_T("角色体力: %d"), (int)gcall.GetPlayerVit());
     AddInfo(_T("角色视角: %d"), (int)gcall.GetPlayerViewPoint());
+    AddInfo(_T("角色战斗状态: %d"), (int)gcall.GetPlayerFightingStatus());
     AddInfo(_T("角色释放技能状态: %d"), gcall.GetPlayerSkillStatus());
     AddInfo(_T("角色是否忙碌: %d"), gcall.GetPlayerBusy());
     AddInfo(_T("人物UI状态: %d"), gcall.GetPlayerQuestUIStatus());
@@ -1203,11 +1205,190 @@ void CDataDlg::OnFindthenkill()
 {
     //获取游戏外挂功能
     GamecallEx& gcall = *GamecallEx::GetInstance();
+    DWORD Kill_Result = 0;
 
-    gcall.AddCustomKill(L"幻魔", KILLFIRST);
-    gcall.AddCustomKill(L"飛魔", KILLFIRST);
-    gcall.FindThenKill(0, 1500, modeAoe | modeNormal | modePickup);
 
+    while(gcall.GetObjectByName(L"咒術師", 3000) != NULL)
+    {
+        gcall.NewSpend(2.5);
+        gcall.Stepto(-4057, -51895, 4653, 10, 10, 3000); //啊胶
+        gcall.Stepto(6609, -42911, 5433, 10, 10, 3000); //赤胶
+        gcall.Stepto(15200, -55500, 5620, 10, 10, 3000); //太尚
+        gcall.NewSpend(1);
+
+
+        //如果范围内找到幻魔先打
+        if(gcall.GetObjectByName(L"幻魔", 900))
+        {
+            gcall.ClearCustom();
+            gcall.AddCustomKill(L"幻魔", KILLFIRST);
+            gcall.AddCustomKill(L"飛魔", DONTKILL);
+            gcall.AddCustomKill(L"戮魔", DONTKILL);
+            gcall.AddCustomKill(L"骨魔", DONTKILL);
+            gcall.AddCustomKill(L"悍魔", DONTKILL);
+            gcall.AddCustomKill(L"咒術師", DONTKILL);
+            gcall.AddCustomKill(L"封魔核", DONTKILL);
+            gcall.AddCustomKill(L"邵俊喜", DONTKILL);
+            gcall.AddCustomKill(L"邵俊方", DONTKILL);
+            gcall.AddCustomKill(L"方玉蘭", DONTKILL);
+            gcall.AddCustomKill(L"克克爆", DONTKILL);
+            gcall.AddCustomKill(L"熱風", DONTKILL);
+            gcall.AddCustomKill(L"戰無懼", DONTKILL);
+            gcall.AddCustomKill(L"西風", DONTKILL);
+            gcall.AddCustomKill(L"克克爆", DONTKILL);
+            gcall.AddCustomKill(L"克克擊", DONTKILL);
+            gcall.AddCustomKill(L"克克焰", DONTKILL);
+            gcall.AddCustomKill(L"鱷鮫天王", DONTKILL);
+            gcall.AddCustomKill(L"馬塔", DONTKILL);
+            gcall.AddCustomKill(L"馬杜", DONTKILL);
+            gcall.AddCustomKill(L"克克焰", DONTKILL);
+            Kill_Result = gcall.FindThenKill_S(500, modeAoe | modeNormal);
+            if(Kill_Result == RESULT_KILL_PLAYDEAD)
+            {
+                TRACE(_T("人物死亡"));
+                return;
+            }
+        }
+        else if(gcall.GetObjectByName(L"飛魔", 1500))
+        {
+            gcall.ClearCustom();
+            gcall.AddCustomKill(L"幻魔", DONTKILL);
+            gcall.AddCustomKill(L"飛魔", KILLFIRST);
+            gcall.AddCustomKill(L"戮魔", DONTKILL);
+            gcall.AddCustomKill(L"骨魔", DONTKILL);
+            gcall.AddCustomKill(L"悍魔", DONTKILL);
+            gcall.AddCustomKill(L"咒術師", DONTKILL);
+            gcall.AddCustomKill(L"封魔核", DONTKILL);
+            gcall.AddCustomKill(L"邵俊喜", DONTKILL);
+            gcall.AddCustomKill(L"邵俊方", DONTKILL);
+            gcall.AddCustomKill(L"方玉蘭", DONTKILL);
+            gcall.AddCustomKill(L"克克爆", DONTKILL);
+            gcall.AddCustomKill(L"熱風", DONTKILL);
+            gcall.AddCustomKill(L"戰無懼", DONTKILL);
+            gcall.AddCustomKill(L"西風", DONTKILL);
+            gcall.AddCustomKill(L"克克爆", DONTKILL);
+            gcall.AddCustomKill(L"克克擊", DONTKILL);
+            gcall.AddCustomKill(L"克克焰", DONTKILL);
+            gcall.AddCustomKill(L"鱷鮫天王", DONTKILL);
+            gcall.AddCustomKill(L"馬塔", DONTKILL);
+            gcall.AddCustomKill(L"馬杜", DONTKILL);
+            gcall.AddCustomKill(L"克克焰", DONTKILL);
+            Kill_Result = gcall.FindThenKill_S(1000, modeNormal);
+            if(Kill_Result == RESULT_KILL_PLAYDEAD)
+            {
+                TRACE(_T("人物死亡"));
+                return;
+            }
+        }
+		else if(gcall.GetObjectByName(L"血魔犬", 1500))
+		{
+			gcall.ClearCustom();
+			gcall.AddCustomKill(L"幻魔", DONTKILL);
+			gcall.AddCustomKill(L"血魔犬", KILLFIRST);
+			gcall.AddCustomKill(L"飛魔", DONTKILL);
+			gcall.AddCustomKill(L"戮魔", DONTKILL);
+			gcall.AddCustomKill(L"骨魔", DONTKILL);
+			gcall.AddCustomKill(L"悍魔", DONTKILL);
+			gcall.AddCustomKill(L"咒術師", DONTKILL);
+			gcall.AddCustomKill(L"封魔核", DONTKILL);
+			gcall.AddCustomKill(L"邵俊喜", DONTKILL);
+			gcall.AddCustomKill(L"邵俊方", DONTKILL);
+			gcall.AddCustomKill(L"方玉蘭", DONTKILL);
+			gcall.AddCustomKill(L"克克爆", DONTKILL);
+			gcall.AddCustomKill(L"熱風", DONTKILL);
+			gcall.AddCustomKill(L"戰無懼", DONTKILL);
+			gcall.AddCustomKill(L"西風", DONTKILL);
+			gcall.AddCustomKill(L"克克爆", DONTKILL);
+			gcall.AddCustomKill(L"克克擊", DONTKILL);
+			gcall.AddCustomKill(L"克克焰", DONTKILL);
+			gcall.AddCustomKill(L"鱷鮫天王", DONTKILL);
+			gcall.AddCustomKill(L"馬塔", DONTKILL);
+			gcall.AddCustomKill(L"馬杜", DONTKILL);
+			gcall.AddCustomKill(L"克克焰", DONTKILL);
+			Kill_Result = gcall.FindThenKill_S(1000, modeNormal);
+			if(Kill_Result == RESULT_KILL_PLAYDEAD)
+			{
+				TRACE(_T("人物死亡"));
+				return;
+			}
+		}
+		
+        else if(gcall.GetObjectByName(L"戮魔", 500))
+        {
+            gcall.ClearCustom();
+            gcall.AddCustomKill(L"幻魔", KILLFIRST);
+            gcall.AddCustomKill(L"飛魔", KILLFIRST);
+			gcall.AddCustomKill(L"血魔犬", KILLFIRST);
+            //gcall.AddCustomKill(L"戮魔", DONTKILL);
+            gcall.AddCustomKill(L"骨魔", DONTKILL);
+            gcall.AddCustomKill(L"悍魔", DONTKILL);
+            gcall.AddCustomKill(L"咒術師", DONTKILL);
+            gcall.AddCustomKill(L"封魔核", DONTKILL);
+            gcall.AddCustomKill(L"邵俊喜", DONTKILL);
+            gcall.AddCustomKill(L"邵俊方", DONTKILL);
+            gcall.AddCustomKill(L"方玉蘭", DONTKILL);
+            gcall.AddCustomKill(L"克克爆", DONTKILL);
+            gcall.AddCustomKill(L"熱風", DONTKILL);
+            gcall.AddCustomKill(L"戰無懼", DONTKILL);
+            gcall.AddCustomKill(L"西風", DONTKILL);
+            gcall.AddCustomKill(L"克克爆", DONTKILL);
+            gcall.AddCustomKill(L"克克擊", DONTKILL);
+            gcall.AddCustomKill(L"克克焰", DONTKILL);
+            gcall.AddCustomKill(L"鱷鮫天王", DONTKILL);
+            gcall.AddCustomKill(L"馬塔", DONTKILL);
+            gcall.AddCustomKill(L"馬杜", DONTKILL);
+            gcall.AddCustomKill(L"克克焰", DONTKILL);
+            Kill_Result = gcall.FindThenKill_S(500,  modeNormal, 155, FALSE, TRUE);
+            if(Kill_Result == RESULT_KILL_PLAYDEAD)
+            {
+                TRACE(_T("人物死亡"));
+                return;
+            }
+        }
+        else 
+        {
+			//if(gcall.GetPlayerFightingStatus() == FALSE)
+			//{
+
+			//}
+            gcall.ClearCustom();
+            gcall.AddCustomKill(L"幻魔", KILLFIRST);
+            gcall.AddCustomKill(L"飛魔", KILLFIRST);
+			gcall.AddCustomKill(L"血魔犬", KILLFIRST);
+            //gcall.AddCustomKill(L"戮魔", DONTKILL);
+            //gcall.AddCustomKill(L"骨魔", DONTKILL);
+            //gcall.AddCustomKill(L"悍魔", DONTKILL);
+            gcall.AddCustomKill(L"咒術師", DONTKILL);
+            gcall.AddCustomKill(L"封魔核", DONTKILL);
+            gcall.AddCustomKill(L"邵俊喜", DONTKILL);
+            gcall.AddCustomKill(L"邵俊方", DONTKILL);
+            gcall.AddCustomKill(L"方玉蘭", DONTKILL);
+            gcall.AddCustomKill(L"克克爆", DONTKILL);
+            gcall.AddCustomKill(L"熱風", DONTKILL);
+            gcall.AddCustomKill(L"戰無懼", DONTKILL);
+            gcall.AddCustomKill(L"西風", DONTKILL);
+            gcall.AddCustomKill(L"克克爆", DONTKILL);
+            gcall.AddCustomKill(L"克克擊", DONTKILL);
+            gcall.AddCustomKill(L"克克焰", DONTKILL);
+            gcall.AddCustomKill(L"鱷鮫天王", DONTKILL);
+            gcall.AddCustomKill(L"馬塔", DONTKILL);
+            gcall.AddCustomKill(L"馬杜", DONTKILL);
+            gcall.AddCustomKill(L"克克焰", DONTKILL);
+            Kill_Result = gcall.FindThenKill_S(600, modeNormal, 155, FALSE, TRUE);
+            if(Kill_Result == RESULT_KILL_PLAYDEAD)
+            {
+                TRACE(_T("人物死亡"));
+                return;
+            }
+        }
+    }
+
+    TRACE(_T("遍历不到咒術師"));
+
+    return;
+
+
+    //彩虹湖
     while(1)
     {
         gcall.Stepto(47820, -27420, -4818, 10, 10, 3000);
@@ -1481,4 +1662,15 @@ void CDataDlg::OnCalltool()
 void CDataDlg::OnTimer(UINT nIDEvent)
 {
     CDialog::OnTimer(nIDEvent);
+}
+
+void CDataDlg::OnBnClickedButton3()
+{
+	GamecallEx& gcall = *GamecallEx::GetInstance();
+	gcall.ChangeZ_Status(TRUE);
+	gcall.ChangeHeight(0);
+	MessageBox(L"摇奖完", L"装八卦", MB_OK);
+	gcall.ChangeZ_Status(FALSE);
+	gcall.ChangeHeight(-1071);
+	//MessageBox(L"摇奖完", L"装八卦", MB_OK);
 }

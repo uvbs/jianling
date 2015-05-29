@@ -135,6 +135,8 @@ public:
 
     ObjectNode* GetObjectByName(const wchar_t szName[], DWORD range = 500);
 
+	DWORD GetObjectCountByName(wchar_t* Name,DWORD Range = 500);
+
     byte GetObjectType(DWORD pObjAddress);                          //对象类型
 
     BOOL GetObjectPos(ObjectNode* pNode, fPosition* fpos);
