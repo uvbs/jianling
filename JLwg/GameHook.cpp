@@ -203,17 +203,23 @@ void __stdcall GameHook::myCombatFilter()
             }
         }
 
-        jmpTo = GameHook::GetInstance()->backupCombat;
-        __asm
-        {
-			leave;
-            jmp jmpTo;
-        }
+   //     jmpTo = GameHook::GetInstance()->backupCombat;
+   //     __asm
+   //     {
+			//leave;
+   //         jmp jmpTo;
+   //     }
     }
     __except(1)
     {
-        TRACE(_T("hook技能"));
+        TRACE(_T("hook技能出错"));
     }
+	jmpTo = GameHook::GetInstance()->backupCombat;
+	__asm
+	{
+		leave;
+		jmp jmpTo;
+	}
 }
 
 //交任务钩子函数

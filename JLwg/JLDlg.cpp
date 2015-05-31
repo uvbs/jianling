@@ -189,7 +189,6 @@ UINT CJLDlg::WorkThread(LPVOID pParam)
                     pDlg->m_ListCtrl.GetItemText(inItem, 1, szName, sizeof(szName));
                     GamecallEx::GetInstance()->KillBoss(szName);
                 }
-
                 break;
             }
 

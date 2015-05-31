@@ -17,7 +17,7 @@ public:
 
     void SetName(const wchar_t *name);
     void LoadCountsData(); //加载技能次数数据
-    void run();
+    int run();
 
 private:
     CMutex m_Mutex;

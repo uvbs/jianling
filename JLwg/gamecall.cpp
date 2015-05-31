@@ -1506,16 +1506,16 @@ BOOL Gamecall::GetObjectPos(ObjectNode* pNode, fPosition* fpos)
     DWORD type = (DWORD)GetObjectType(pNode->ObjAddress);
     DWORD pInfo = pNode->ObjAddress;
 
-	if (pInfo < 0x3000000)
-	{
-		TRACE(_T("传入pInfo小于0x3000000..当前pInfo=%x"),pInfo);
-		return FALSE;
-	}
-	if (pInfo == 0)
-	{
-		TRACE(_T("传入pInfo=0..当前pInfo=%x"),pInfo);
-		return FALSE;
-	}
+    if(pInfo < 0x3000000)
+    {
+        TRACE(_T("传入pInfo小于0x3000000..当前pInfo=%x"), pInfo);
+        return FALSE;
+    }
+    if(pInfo == 0)
+    {
+        TRACE(_T("传入pInfo=0..当前pInfo=%x"), pInfo);
+        return FALSE;
+    }
     if(type == 0)
     {
         TRACE("未能获取类型");
@@ -1530,6 +1530,12 @@ BOOL Gamecall::GetObjectPos(ObjectNode* pNode, fPosition* fpos)
                 mov edx, pInfo;
                 mov eax, [edx + 0x28];
 
+				cmp eax, 0;
+				jnz libJmp20;
+				xor eax, eax;
+				leave;
+				ret;
+libJmp20:
                 mov ebx, fpos;
                 mov[ebx]fpos.x, eax;
 
@@ -1577,12 +1583,12 @@ BOOL Gamecall::GetObjectPos(ObjectNode* pNode, fPosition* fpos)
                 mov eax, [eax + obj_type4_pos_x_offset1];
                 mov ecx, eax;
 
-				cmp ecx,0;
-				jnz libJmp;
-				xor eax,eax;
-				leave;
-				ret;
-				libJmp:
+                cmp ecx, 0;
+                jnz libJmp4;
+                xor eax, eax;
+                leave;
+                ret;
+                libJmp4:
                 mov eax, [ecx + obj_type4_pos_x_offset2];
 
                 mov ebx, fpos;
@@ -1595,7 +1601,7 @@ BOOL Gamecall::GetObjectPos(ObjectNode* pNode, fPosition* fpos)
                 mov eax, temp2;
                 mov eax, [ecx + eax];
                 mov [ebx]fpos.z, eax;
-				
+
             }
         }
         else if(type == 0x90)
@@ -1606,6 +1612,12 @@ BOOL Gamecall::GetObjectPos(ObjectNode* pNode, fPosition* fpos)
                 mov edx, pInfo;
                 mov eax, [edx + 0x2A];
 
+				cmp eax, 0;
+				jnz libJmp90;
+				xor eax, eax;
+				leave;
+				ret;
+libJmp90:
                 lea ebx, spos;
                 mov [ebx]spos.x, ax;
 
@@ -1629,6 +1641,12 @@ BOOL Gamecall::GetObjectPos(ObjectNode* pNode, fPosition* fpos)
 
                 mov eax, [edx + 0x1A8];
 
+				cmp eax, 0;
+				jnz libJmp12;
+				xor eax, eax;
+				leave;
+				ret;
+libJmp12:
                 mov ebx, fpos;
                 mov [ebx]fpos.x, eax;
 
@@ -3256,13 +3274,13 @@ void Gamecall::_PickupTask(ObjectNode* pObj)
 int Gamecall::isLoadingMap()
 {
 
-    char value;
+    char value =0;
 
-	if (ReadDWORD(is_logingame_base) == NULL)
-	{
-		TRACE(_T("is_logingame_base-error"));
-		return 0;
-	}
+    if(ReadDWORD(is_logingame_base) == NULL)
+    {
+        TRACE(_T("is_logingame_base-error"));
+        return 0;
+    }
     _try
     {
         __asm
@@ -3270,7 +3288,20 @@ int Gamecall::isLoadingMap()
             mov eax, is_logingame_base;
             mov eax, [eax];
             mov eax, [eax + is_logingame_offset1];
+			cmp eax, 0;
+			jnz libJmpoffset1;
+			xor eax, eax;
+			leave;
+			ret;
+libJmpoffset1:
+
             mov eax, [eax + is_logingame_offset2];
+			cmp ecx, 0;
+			jnz libJmpoffset2;
+			xor eax, eax;
+			leave;
+			ret;
+libJmpoffset2:
             mov eax, [eax + is_logingame_offset3];
             mov value, al;
         }
@@ -4001,8 +4032,7 @@ bool Gamecall::WaitPlans(int inMaxTime)
             return true;
         }
 
-
-        Sleep(3000);
+        Sleep(1000);
     }
 
     return false;
@@ -4030,9 +4060,7 @@ BYTE Gamecall::GetPlayerDeadStatus()
         {
             mov eax, playerdata;
             mov eax, [eax + player_dead_status_offset3];
-
             mov value, al;
-
         }
 
     }
@@ -4122,17 +4150,16 @@ letsDrike:
         if(GetGoodsFromBagByName(itemName, item))
         {
             //喝
-            if(sendcall(id_msg_isYaoPingCD, &item[0]) == 1)
-            {
-                sendcall(id_msg_ChiYao, &item[0]);
-                return 1;
-            }
-            else
-            {
-                return 4;
-            }
-
-
+            //if(sendcall(id_msg_isYaoPingCD, &item[0]) == 1)
+            //{
+            //    sendcall(id_msg_ChiYao, &item[0]);
+            //    return 1;
+            //}
+            //else
+            //{
+            //    return 4;
+            //}
+			sendcall(id_msg_ChiYao, &item[0]);
         }
         else
         {
@@ -4479,6 +4506,47 @@ void Gamecall::GetRangeMonsterToVector(ObjectNode* pNode, DWORD range, ObjectVec
 
         GetRangeMonsterToVector(pNode->left, range, MonsterVec);
         GetRangeMonsterToVector(pNode->right, range, MonsterVec);
+    }
+    __except(1)
+    {
+        TRACE(FUNCNAME);
+    }
+}
+
+void Gamecall::GetRangeMonsterToVector(ObjectNode* pNode, DWORD range, ObjectVector& MonsterVec, fPosition& fmypos)
+{
+    __try
+    {
+        _ASSERTE(pNode != NULL);
+
+        if(pNode->end == 1) return;
+
+        //有坐标就比对坐标, 没有坐标就直接放进去
+        if(pNode != NULL)
+        {
+
+            if(GetObjectName(pNode->ObjAddress))
+            {
+                if(GetObjectType(pNode->ObjAddress) == 0x4)
+                {
+                    static fPosition fpos;
+                    if(GetObjectPos(pNode, &fpos))
+                    {
+                        if(fpos.x != 0 && fpos.y != 0 && fpos.z != 0)
+                        {
+                            if((DWORD)CalcC(fmypos, fpos) <= range)
+                            {
+                                MonsterVec.push_back(pNode);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+
+        GetRangeMonsterToVector(pNode->left, range, MonsterVec, fmypos);
+        GetRangeMonsterToVector(pNode->right, range, MonsterVec, fmypos);
     }
     __except(1)
     {
@@ -5526,7 +5594,7 @@ void Gamecall::TurnTo(fPosition& pos)
         //return;
     }
 
-	//TRACE(_T("当前怪物坐标,%d,%d,%d"),(int)pos.y,(int)pos.x,(int)pos.z);
+    //TRACE(_T("当前怪物坐标,%d,%d,%d"),(int)pos.y,(int)pos.x,(int)pos.z);
 
 
     double value1;
@@ -5595,7 +5663,7 @@ void Gamecall::TurnTo(fPosition& pos)
         gameangle = SOUTH;
     }
 
-	//TRACE(_T("计算出角度:%d"),(int)gameangle);
+    //TRACE(_T("计算出角度:%d"),(int)gameangle);
 
     Turn((int)gameangle);
 }
@@ -5701,8 +5769,8 @@ void Gamecall::RandomStep(DWORD range)
         fmypos.x -= range;
         fmypos.y -= range;
     }
-	
-    Stepto(fmypos, 10, 10,1000,TRUE);
+
+    Stepto(fmypos, 5, 10, 1000, TRUE);
 }
 
 
@@ -6031,7 +6099,6 @@ void Gamecall::Attack(int id)
         //TRACE(_T("技能ID:%d,技能执行返回%d"), id, flag);
         cs++;
         Sleep(100);
-
     }
 }
 
@@ -6045,10 +6112,11 @@ BOOL Gamecall::Step(ObjectNode* pNode)
     {
         Step(fpos.x, fpos.y, fpos.z);
         return TRUE;
-    }else
-	{
-		TRACE(_T("Gamecall::Step(ObjectNode* pNode)--error"));
-	}
+    }
+    else
+    {
+        TRACE(_T("Gamecall::Step(ObjectNode* pNode)--error"));
+    }
 
     return FALSE;
 }
@@ -6475,16 +6543,16 @@ void Gamecall::ChangeZ_Status(BOOL flag)
     HMODULE hBsengine = ::GetModuleHandle(_T("bsengine_Shipping"));
     unsigned addr = (unsigned)hBsengine;
     unsigned addr1 = (unsigned)hBsengine;
-	unsigned addr2 = (unsigned)hBsengine;
+    unsigned addr2 = (unsigned)hBsengine;
     addr = addr + 0x592D8A;
     addr1 = addr1 + 0xA412B3;//0x0A410FC--
-	//addr2 = addr2 + 0xA412B3;
+    //addr2 = addr2 + 0xA412B3;
     //A410BB
     //A410D3
     //A410C3
     DWORD pi = 0;
     DWORD pi1 = 0;
-	//DWORD pi2 = 0;
+    //DWORD pi2 = 0;
 
     //VirtualProtect((void*)addr,4,PAGE_EXECUTE_READWRITE ,&pi);
     //*(WORD*)(addr) = 0x0EEB;
@@ -6497,40 +6565,40 @@ void Gamecall::ChangeZ_Status(BOOL flag)
             *(WORD*)(addr) = 0x0EEB;//0x05EB
             VirtualProtect((void*)addr, 4, pi , &pi);
         }
-		if(ReadByte(addr1) == 0xD9)
-		{
-			VirtualProtect((void*)addr1, 4, PAGE_EXECUTE_READWRITE , &pi1);
-			*(WORD*)(addr1) = 0x01EB;
-			VirtualProtect((void*)addr1, 4, pi1 , &pi1);
-		}
-		/*if(ReadByte(addr2) == 0xD9)
-		{
-			VirtualProtect((void*)addr2, 4, PAGE_EXECUTE_READWRITE , &pi2);
-			*(WORD*)(addr2) = 0x01EB;
-			VirtualProtect((void*)addr2, 4, pi2 , &pi2);
-		}*/
+        if(ReadByte(addr1) == 0xD9)
+        {
+            VirtualProtect((void*)addr1, 4, PAGE_EXECUTE_READWRITE , &pi1);
+            *(WORD*)(addr1) = 0x01EB;
+            VirtualProtect((void*)addr1, 4, pi1 , &pi1);
+        }
+        /*if(ReadByte(addr2) == 0xD9)
+        {
+            VirtualProtect((void*)addr2, 4, PAGE_EXECUTE_READWRITE , &pi2);
+            *(WORD*)(addr2) = 0x01EB;
+            VirtualProtect((void*)addr2, 4, pi2 , &pi2);
+        }*/
     }
     else
     {
-		if(ReadByte(addr1) == 0xEB)
-		{
-			VirtualProtect((void*)addr1, 4, PAGE_EXECUTE_READWRITE , &pi1);
-			*(WORD*)(addr1) = 0x5ED9;
-			VirtualProtect((void*)addr1, 4, pi1 , &pi1);
-		}
+        if(ReadByte(addr1) == 0xEB)
+        {
+            VirtualProtect((void*)addr1, 4, PAGE_EXECUTE_READWRITE , &pi1);
+            *(WORD*)(addr1) = 0x5ED9;
+            VirtualProtect((void*)addr1, 4, pi1 , &pi1);
+        }
         if(ReadByte(addr) == 0xEB)
         {
             VirtualProtect((void*)addr, 4, PAGE_EXECUTE_READWRITE , &pi);
             *(WORD*)(addr) = 0x0FF3;
             VirtualProtect((void*)addr, 4, pi , &pi);
         }
-		
-		/*if(ReadByte(addr2) == 0xEB)
-		{
-			VirtualProtect((void*)addr1, 4, PAGE_EXECUTE_READWRITE , &pi2);
-			*(WORD*)(addr2) = 0x5ED9;
-			VirtualProtect((void*)addr2, 4, pi2 , &pi2);
-		}*/
+
+        /*if(ReadByte(addr2) == 0xEB)
+        {
+            VirtualProtect((void*)addr1, 4, PAGE_EXECUTE_READWRITE , &pi2);
+            *(WORD*)(addr2) = 0x5ED9;
+            VirtualProtect((void*)addr2, 4, pi2 , &pi2);
+        }*/
     }
 
 }
@@ -7420,41 +7488,72 @@ void Gamecall::Pickup()
     sendcall(id_msg_Operation, &temp);
 }
 
-DWORD Gamecall::GetObjectCountByName(wchar_t* Name,DWORD Range /*= 500*/)
+DWORD Gamecall::GetObjectCountByName(wchar_t* Name, fPosition& pos, DWORD Range)
 {
-	DWORD Rs_Count = 0;
-	ObjectVector RangeObject;
-	if(Range == 0)
+    DWORD Rs_Count = 0;
+    ObjectVector RangeObject;
+    if(pos.x == 0)
+    {
+        if(Range == 0)
+        {
+            GetAllObjectToVector(GetObjectBinTreeBaseAddr(), RangeObject);
+        }
+        else
+        {
+            GetRangeObjectToVector(GetObjectBinTreeBaseAddr(), Range, RangeObject);
+        }
+    }
+    else
+    {
+        //TRACE(_T("进来了GetRangeMonsterToVector"));
+        //TRACE(_T("%d,%d,%d\n"),(int)pos.x,(int)pos.y,(int)pos.z);
+        GetRangeMonsterToVector(GetObjectBinTreeBaseAddr(), Range, RangeObject, pos);
+    }
+    //TRACE(_T("进来了GetRangeMonsterToVector:%d"), RangeObject.size());
+    //std::sort(RangeObject.begin(), RangeObject.end(), UDgreater);
+    fPosition tarpos;
+    for(DWORD i = 0; i < RangeObject.size(); i++)
+    {
+        //过滤掉没坐标的
+        if(GetObjectPos(RangeObject[i], &tarpos) == FALSE)
+            continue;
+
+
+        //过滤掉坐标是0的
+        if(tarpos.x == 0 || tarpos.y == 0 || tarpos.z == 0)
+            continue;
+
+
+        //过滤掉没名字的
+        wchar_t* name = GetObjectName(RangeObject[i]->ObjAddress);
+        if(name == NULL) continue;
+
+        if(wcscmp(name, Name) == 0)
+        {
+            Rs_Count++;
+        }
+   /*     else
+        {
+            TRACE(_T("其他怪物的名字:%s"), name);
+        }*/
+    }
+
+    return Rs_Count;
+}
+
+BOOL Gamecall::isStrikeCan(wchar_t* Name)
+{
+	StrikeVector JnVec;
+	GetStrikeToVector(JnVec);
+
+	for(StrikeVector::iterator it = JnVec.begin(); it != JnVec.end(); it++)
 	{
-		GetAllObjectToVector(GetObjectBinTreeBaseAddr(), RangeObject);
+		if(wcscmp((*it).name,Name )== 0)
+		{
+			return TRUE;
+		}
 	}
-	else
-	{
-		GetRangeObjectToVector(GetObjectBinTreeBaseAddr(), Range, RangeObject);
-	}
-
-	//std::sort(RangeObject.begin(), RangeObject.end(), UDgreater);
-	fPosition tarpos;
-	for(DWORD i = 0; i < RangeObject.size(); i++)
-	{
-		//过滤掉没坐标的
-		if(GetObjectPos(RangeObject[i], &tarpos) == FALSE)
-			continue;
-
-
-		//过滤掉坐标是0的
-		if(tarpos.x == 0 || tarpos.y == 0 || tarpos.z == 0)
-			continue;
-
-
-		//过滤掉没名字的
-		wchar_t* name = GetObjectName(RangeObject[i]->ObjAddress);
-		if(name == NULL) continue;
-
-		if(wcscmp(name, Name) == 0) Rs_Count++;
-	}
-
-	return Rs_Count;
+	return FALSE;
 }
 
 

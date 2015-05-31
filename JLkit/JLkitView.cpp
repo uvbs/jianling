@@ -586,10 +586,11 @@ int CJLkitView::CreateGameProcess(int inItem, bool bInject)
         CInject wgdll(szLibFile);
 #endif
 
-        _tcscpy(_tcsrchr(szLibFile, TEXT('\\')) + 1, TEXT("speedhack-i386.dll"));
-        CInject spdll(szLibFile);
+        //_tcscpy(_tcsrchr(szLibFile, TEXT('\\')) + 1, TEXT("speedhack-i386.dll"));
+        //CInject spdll(szLibFile);
 
-        if(wgdll.InjectTo(pi.dwProcessId) && spdll.InjectTo(pi.dwProcessId))
+        //if(wgdll.InjectTo(pi.dwProcessId) && spdll.InjectTo(pi.dwProcessId))
+		if(wgdll.InjectTo(pi.dwProcessId))
         {
 
             if(ResumeThread(pi.hThread) == 0)

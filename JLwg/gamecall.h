@@ -126,6 +126,7 @@ public:
 
     void GetAllObjectToVector(ObjectNode* pNode, ObjectVector& AllObject);
     void GetRangeMonsterToVector(ObjectNode* pNode, DWORD range, ObjectVector& RangeObject);
+    void GetRangeMonsterToVector(ObjectNode* pNode, DWORD range, ObjectVector& RangeObject, fPosition& fmypos);
     void GetRangeObjectToVector(ObjectNode* pNode, DWORD range, ObjectVector& RangeObject);
 
 
@@ -135,7 +136,7 @@ public:
 
     ObjectNode* GetObjectByName(const wchar_t szName[], DWORD range = 500);
 
-	DWORD GetObjectCountByName(wchar_t* Name,DWORD Range = 500);
+    DWORD GetObjectCountByName(wchar_t* Name, fPosition& Pos, DWORD Range = 500);
 
     byte GetObjectType(DWORD pObjAddress);                          //对象类型
 
@@ -172,6 +173,7 @@ public:
 
 
     BOOL isStrikeCd(DWORD id);  //判断技能cd
+	BOOL isStrikeCan(wchar_t* Name);//判断技能是否存在
 
 
     BOOL isPlayerDaodi();   //倒地状态

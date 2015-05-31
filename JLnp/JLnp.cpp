@@ -304,20 +304,23 @@ void ClearNP(HMODULE hModule)
 
         //处理调试器  多开不需要这些玩意
         hookx64.Initialization();
+		/*
+		處理調試器？
+		可能會引起崩潰問題。
+		*/
         hookx64.InstallHook("ZwSetInformationThread", (DWORD)NtSetInformationThread_Hook, (PDWORD)&OrigNtSetInformationThread);
         hookx64.InstallHook("ZwQueryInformationProcess", (DWORD)NtQueryInformationProcess_Hook, (PDWORD)&OrigNtQueryInformationProcess);
         hookx64.InstallHook("ZwGetContextThread", (DWORD)ZwGetContextThread_Hook, (PDWORD)&ZwGetContextThread);
+		
 
-		hookx64.UnInitialization();
         //多开.互斥,文件独占
         InlineHook((VOID*)(DWORD)GetProcAddress(LoadLibraryA("kernelBase.dll"), "CreateMutexExW"), (VOID*)CreateMutexExW_hook, (VOID**)&Orig_CreateMutexExW);
         InlineHook((VOID*)(DWORD)GetProcAddress(LoadLibraryA("kernelBase.dll"), "CreateFileW"), (VOID*)CreateFileW_Hook, (VOID**)&Orig_CreateFileW);
         InlineHook((VOID*)(DWORD)GetProcAddress(LoadLibraryA("kernel32.dll"), "CreateProcessInternalW"), (VOID*)MyCreateProcessInternalW, (VOID**)&Orig_CreateProcessInternalW);
+		//hookx64.UnInitialization();
     }
     else
     {
-
-
         HMODULE hKer32 = GetModuleHandle(_T("kernel32.dll"));
         if(hKer32 == NULL) return;
 

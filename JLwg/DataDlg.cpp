@@ -33,13 +33,12 @@ TCHAR* cli_AllObject[] = {{_T("地址")},
 TCHAR* cli_RangeObject[] = {{_T("地址")},
     {_T("名字")},
     {_T("ID")},
-    {_T("目标ID")},
-    {_T("类型")},
     {_T("对象目标")},
+    {_T("类型")},
     {_T("血量")},
     {_T("距离")},
     {_T("坐标")},
-    {_T("名字ID")},
+    {_T("怪物")},
     {_T("面向")}
 };
 
@@ -182,7 +181,8 @@ BEGIN_MESSAGE_MAP(CDataDlg, CDialog
     ON_BN_CLICKED(IDC_BUTTON2, OnBnClickedButton2)
     ON_WM_TIMER()
 //}}AFX_MSG_MAP
-ON_BN_CLICKED(IDC_BUTTON3, &CDataDlg::OnBnClickedButton3)
+    ON_BN_CLICKED(IDC_BUTTON3, &CDataDlg::OnBnClickedButton3)
+    ON_BN_CLICKED(IDC_BUTTON4, &CDataDlg::OnBnClickedButton4)
 END_MESSAGE_MAP()
 
 
@@ -818,13 +818,11 @@ void CDataDlg::PrintfRangeObject()
         UCHAR type = gcall.GetObjectType(pNode->ObjAddress);
         strTemp.Format(_T("%d"), type);
 
-
-
         //名称
         wchar_t* pText = gcall.GetObjectName(pNode->ObjAddress);
         m_ListCtrl.SetItemText(index, 1, pText);
 
-        strTemp.Format(_T("%d"), pNode->id);
+        strTemp.Format(_T("%x"), pNode->id);
         m_ListCtrl.SetItemText(index, 2, strTemp);
 
         strTemp.Format(_T("%d"), gcall.GetObjectTargetId(pNode->ObjAddress));
@@ -833,8 +831,7 @@ void CDataDlg::PrintfRangeObject()
         strTemp.Format(_T("%d"), type);
         m_ListCtrl.SetItemText(index, 4, strTemp);
 
-
-        if(type == 0x4)
+        if(type == 0x4 || type == 1 || type == 2)
         {
             strTemp.Format(_T("%d"), gcall.GetObjectHP(pNode->ObjAddress));
             m_ListCtrl.SetItemText(index, 5, strTemp);
@@ -849,10 +846,10 @@ void CDataDlg::PrintfRangeObject()
         if(gcall.GetObjectPos(pNode, &pos))
         {
             strTemp.Format(_T("x:%d y:%d z:%d"), (int)pos.x, (int)pos.y, (int)pos.z);
-            m_ListCtrl.SetItemText(index, 7, strTemp);
+            m_ListCtrl.SetItemText(index, 6, strTemp);
 
             strTemp.Format(_T("%d"), (DWORD)gcall.CalcC(pos, mypos));
-            m_ListCtrl.SetItemText(index, 6, strTemp);
+            m_ListCtrl.SetItemText(index, 7, strTemp);
         }
 
 
@@ -866,15 +863,8 @@ void CDataDlg::PrintfRangeObject()
             m_ListCtrl.SetItemText(index, 8, _T("否"));
         }
 
-
-
-        //索引
-        int suoyin = gcall.GetIndexByType(pNode->ObjAddress);
-        if(suoyin != -1)
-        {
-            strTemp.Format(_T("%d"), suoyin);
-            m_ListCtrl.SetItemText(index, 9, strTemp);
-        }
+        strTemp.Format(_T("%d"), gcall.GetObjectView(pNode->ObjAddress));
+        m_ListCtrl.SetItemText(index, 9, strTemp);
 
 
         m_ListCtrl.SetItemData(index, (DWORD)pNode);
@@ -1218,7 +1208,7 @@ void CDataDlg::OnFindthenkill()
 
 
         //如果范围内找到幻魔先打
-        if(gcall.GetObjectByName(L"幻魔", 900))
+        if(gcall.GetObjectByName(L"幻魔", 1400))
         {
             gcall.ClearCustom();
             gcall.AddCustomKill(L"幻魔", KILLFIRST);
@@ -1242,7 +1232,7 @@ void CDataDlg::OnFindthenkill()
             gcall.AddCustomKill(L"馬塔", DONTKILL);
             gcall.AddCustomKill(L"馬杜", DONTKILL);
             gcall.AddCustomKill(L"克克焰", DONTKILL);
-            Kill_Result = gcall.FindThenKill_S(500, modeAoe | modeNormal);
+            Kill_Result = gcall.FindThenKill_S(1400, modeAoe | modeNormal);
             if(Kill_Result == RESULT_KILL_PLAYDEAD)
             {
                 TRACE(_T("人物死亡"));
@@ -1252,7 +1242,7 @@ void CDataDlg::OnFindthenkill()
         else if(gcall.GetObjectByName(L"飛魔", 1500))
         {
             gcall.ClearCustom();
-            gcall.AddCustomKill(L"幻魔", DONTKILL);
+            gcall.AddCustomKill(L"幻魔", KILLFIRST);
             gcall.AddCustomKill(L"飛魔", KILLFIRST);
             gcall.AddCustomKill(L"戮魔", DONTKILL);
             gcall.AddCustomKill(L"骨魔", DONTKILL);
@@ -1280,45 +1270,45 @@ void CDataDlg::OnFindthenkill()
                 return;
             }
         }
-		else if(gcall.GetObjectByName(L"血魔犬", 1500))
-		{
-			gcall.ClearCustom();
-			gcall.AddCustomKill(L"幻魔", DONTKILL);
-			gcall.AddCustomKill(L"血魔犬", KILLFIRST);
-			gcall.AddCustomKill(L"飛魔", DONTKILL);
-			gcall.AddCustomKill(L"戮魔", DONTKILL);
-			gcall.AddCustomKill(L"骨魔", DONTKILL);
-			gcall.AddCustomKill(L"悍魔", DONTKILL);
-			gcall.AddCustomKill(L"咒術師", DONTKILL);
-			gcall.AddCustomKill(L"封魔核", DONTKILL);
-			gcall.AddCustomKill(L"邵俊喜", DONTKILL);
-			gcall.AddCustomKill(L"邵俊方", DONTKILL);
-			gcall.AddCustomKill(L"方玉蘭", DONTKILL);
-			gcall.AddCustomKill(L"克克爆", DONTKILL);
-			gcall.AddCustomKill(L"熱風", DONTKILL);
-			gcall.AddCustomKill(L"戰無懼", DONTKILL);
-			gcall.AddCustomKill(L"西風", DONTKILL);
-			gcall.AddCustomKill(L"克克爆", DONTKILL);
-			gcall.AddCustomKill(L"克克擊", DONTKILL);
-			gcall.AddCustomKill(L"克克焰", DONTKILL);
-			gcall.AddCustomKill(L"鱷鮫天王", DONTKILL);
-			gcall.AddCustomKill(L"馬塔", DONTKILL);
-			gcall.AddCustomKill(L"馬杜", DONTKILL);
-			gcall.AddCustomKill(L"克克焰", DONTKILL);
-			Kill_Result = gcall.FindThenKill_S(1000, modeNormal);
-			if(Kill_Result == RESULT_KILL_PLAYDEAD)
-			{
-				TRACE(_T("人物死亡"));
-				return;
-			}
-		}
-		
-        else if(gcall.GetObjectByName(L"戮魔", 500))
+        else if(gcall.GetObjectByName(L"血魔犬", 1500))
         {
             gcall.ClearCustom();
             gcall.AddCustomKill(L"幻魔", KILLFIRST);
             gcall.AddCustomKill(L"飛魔", KILLFIRST);
-			gcall.AddCustomKill(L"血魔犬", KILLFIRST);
+            gcall.AddCustomKill(L"血魔犬", KILLFIRST);
+            gcall.AddCustomKill(L"戮魔", DONTKILL);
+            gcall.AddCustomKill(L"骨魔", DONTKILL);
+            gcall.AddCustomKill(L"悍魔", DONTKILL);
+            gcall.AddCustomKill(L"咒術師", DONTKILL);
+            gcall.AddCustomKill(L"封魔核", DONTKILL);
+            gcall.AddCustomKill(L"邵俊喜", DONTKILL);
+            gcall.AddCustomKill(L"邵俊方", DONTKILL);
+            gcall.AddCustomKill(L"方玉蘭", DONTKILL);
+            gcall.AddCustomKill(L"克克爆", DONTKILL);
+            gcall.AddCustomKill(L"熱風", DONTKILL);
+            gcall.AddCustomKill(L"戰無懼", DONTKILL);
+            gcall.AddCustomKill(L"西風", DONTKILL);
+            gcall.AddCustomKill(L"克克爆", DONTKILL);
+            gcall.AddCustomKill(L"克克擊", DONTKILL);
+            gcall.AddCustomKill(L"克克焰", DONTKILL);
+            gcall.AddCustomKill(L"鱷鮫天王", DONTKILL);
+            gcall.AddCustomKill(L"馬塔", DONTKILL);
+            gcall.AddCustomKill(L"馬杜", DONTKILL);
+            gcall.AddCustomKill(L"克克焰", DONTKILL);
+            Kill_Result = gcall.FindThenKill_S(1000, modeNormal);
+            if(Kill_Result == RESULT_KILL_PLAYDEAD)
+            {
+                TRACE(_T("人物死亡"));
+                return;
+            }
+        }
+
+        else if(gcall.GetObjectByName(L"戮魔", 400))
+        {
+            gcall.ClearCustom();
+            gcall.AddCustomKill(L"幻魔", KILLFIRST);
+            gcall.AddCustomKill(L"飛魔", KILLFIRST);
+            gcall.AddCustomKill(L"血魔犬", KILLFIRST);
             //gcall.AddCustomKill(L"戮魔", DONTKILL);
             gcall.AddCustomKill(L"骨魔", DONTKILL);
             gcall.AddCustomKill(L"悍魔", DONTKILL);
@@ -1345,19 +1335,19 @@ void CDataDlg::OnFindthenkill()
                 return;
             }
         }
-        else 
+        else
         {
-			//if(gcall.GetPlayerFightingStatus() == FALSE)
-			//{
+            //if(gcall.GetPlayerFightingStatus() == FALSE)
+            //{
 
-			//}
+            //}
             gcall.ClearCustom();
             gcall.AddCustomKill(L"幻魔", KILLFIRST);
             gcall.AddCustomKill(L"飛魔", KILLFIRST);
-			gcall.AddCustomKill(L"血魔犬", KILLFIRST);
+            gcall.AddCustomKill(L"血魔犬", KILLFIRST);
             //gcall.AddCustomKill(L"戮魔", DONTKILL);
             //gcall.AddCustomKill(L"骨魔", DONTKILL);
-            //gcall.AddCustomKill(L"悍魔", DONTKILL);
+            gcall.AddCustomKill(L"悍魔", DONTKILL);
             gcall.AddCustomKill(L"咒術師", DONTKILL);
             gcall.AddCustomKill(L"封魔核", DONTKILL);
             gcall.AddCustomKill(L"邵俊喜", DONTKILL);
@@ -1666,11 +1656,149 @@ void CDataDlg::OnTimer(UINT nIDEvent)
 
 void CDataDlg::OnBnClickedButton3()
 {
-	GamecallEx& gcall = *GamecallEx::GetInstance();
-	gcall.ChangeZ_Status(TRUE);
-	gcall.ChangeHeight(0);
-	MessageBox(L"摇奖完", L"装八卦", MB_OK);
-	gcall.ChangeZ_Status(FALSE);
-	gcall.ChangeHeight(-1071);
-	//MessageBox(L"摇奖完", L"装八卦", MB_OK);
+    GamecallEx& gcall = *GamecallEx::GetInstance();
+    gcall.ChangeZ_Status(TRUE);
+    gcall.ChangeHeight(0);
+    MessageBox(L"摇奖完", L"装八卦", MB_OK);
+    gcall.ChangeZ_Status(FALSE);
+    gcall.ChangeHeight(-1071);
+    //MessageBox(L"摇奖完", L"装八卦", MB_OK);
+}
+
+void CDataDlg::OnBnClickedButton4()
+{
+    //TRACE(_T("策划"));
+    // TODO: 在此添加控件通知处理程序代码
+    GamecallEx& gcall = *GamecallEx::GetInstance();
+    DWORD cs = 0;
+    int Kill_result = -1;
+    fPosition Mpos;
+    Mpos.y = 24908;
+    Mpos.x = -68282;
+    Mpos.z = 6548;//门口的怪
+
+    fPosition Mpos1;
+    Mpos1.y = 25720;
+    Mpos1.x = -67972;
+    Mpos1.z = 6540;//里面的怪
+
+    fPosition Mpos2;
+    Mpos2.y = 25160;
+    Mpos2.x = -69108;
+    Mpos2.z = 6548;//心里的怪
+
+
+    fPosition NothingPos;
+    NothingPos.y = 24720;
+    NothingPos.x = -68168;
+    NothingPos.z = 6553;//外面的怪
+    fPosition NothingPos1;
+    NothingPos1.y = 25532;
+    NothingPos1.x = -69350;
+    NothingPos1.z = 6556;//里面的怪
+    fPosition NothingPos2;
+    NothingPos2.y = 24435;
+    NothingPos2.x = -68114;
+    NothingPos2.z = 6549;//心里的怪
+
+
+
+
+	//TRACE(_T("NothingPos:%d"),gcall.GetObjectCountByName(L"濁魔血殭屍", NothingPos, 450));
+	//TRACE(_T("NothingPos1:%d"),gcall.GetObjectCountByName(L"濁魔血殭屍", NothingPos1, 450));
+	//TRACE(_T("NothingPos2:%d"),gcall.GetObjectCountByName(L"濁魔血殭屍", NothingPos2, 450));
+	//return;
+
+    while(true)
+    {
+        //1
+        if(gcall.GetObjectCountByName(L"鬼門萬年殭屍", Mpos, 200) >= 1)
+        {
+            gcall.NewSpend(2.5);
+            gcall.Stepto(26814, -67554, 6612, 10, 10, 3000);
+            gcall.Stepto(25847, -67613, 6535, 10, 10, 3000);
+            gcall.NewSpend(1);
+            Kill_result = gcall.FindThenKill(0, 450, modeAoe | modeNormal);
+            TRACE(_T("Mpos,Kill_result:%d"), Kill_result);
+            if(Kill_result == RESULT_KILL_PLAYDEAD)
+            {
+                goto PlayDead;
+            }
+            gcall.NewSpend(2.5);
+            gcall.Stepto(25847, -67613, 6535, 10, 10, 3000);
+            gcall.Stepto(27317, -67795, 6859, 10, 10, 3000);
+            gcall.NewSpend(1);
+        }
+        else if(gcall.GetObjectCountByName(L"鬼門萬年殭屍", Mpos1, 200) >= 1)
+        {
+            gcall.NewSpend(2.5);
+            gcall.Stepto(26582, -68265, 6586, 10, 10, 3000);
+            gcall.Stepto(26466, -68565, 6593, 10, 10, 3000);
+            gcall.Stepto(26135, -69033, 6575, 10, 10, 3000);
+            gcall.Stepto(25532, -69350, 6556, 10, 10, 3000);
+            gcall.NewSpend(1);
+            Kill_result = gcall.FindThenKill(0, 450, modeAoe | modeNormal);
+            TRACE(_T("Mpos1,Kill_result:%d"), Kill_result);
+            if(Kill_result == RESULT_KILL_PLAYDEAD)
+            {
+                goto PlayDead;
+            }
+            gcall.NewSpend(2.5);
+            gcall.Stepto(26135, -69033, 6575, 10, 10, 3000);
+            gcall.Stepto(26466, -68565, 6593, 10, 10, 3000);
+            gcall.Stepto(26582, -68265, 6586, 10, 10, 3000);
+            gcall.Stepto(27317, -67795, 6859, 10, 10, 3000);
+            gcall.NewSpend(1);
+        }
+        else  if(gcall.GetObjectCountByName(L"鬼門萬年殭屍", Mpos2, 200) >= 1)
+        {
+            gcall.NewSpend(2.5);
+            gcall.Stepto(26887, -67459, 6627, 10, 10, 3000);
+            gcall.Stepto(26485, -66968, 6544, 10, 10, 3000);
+            gcall.Stepto(25737, -66641, 6438, 10, 10, 3000);
+            gcall.Stepto(24993, -66721, 6449, 10, 10, 3000);
+            gcall.Stepto(24550, -66912, 6514, 10, 10, 3000);
+            gcall.Stepto(24435, -68114, 6549, 10, 10, 3000);
+            gcall.NewSpend(1);
+            Kill_result = gcall.FindThenKill(0, 450, modeAoe | modeNormal);
+            TRACE(_T("Mpos2,Kill_result:%d"), Kill_result);
+            if(Kill_result == RESULT_KILL_PLAYDEAD)
+            {
+                goto PlayDead;
+            }
+
+            gcall.NewSpend(2.5);
+            gcall.Stepto(24435, -68114, 6549, 10, 10, 3000);
+            gcall.Stepto(24550, -66912, 6514, 10, 10, 3000);
+            gcall.Stepto(24993, -66721, 6449, 10, 10, 3000);
+            gcall.Stepto(25737, -66641, 6438, 10, 10, 3000);
+            gcall.Stepto(26485, -66968, 6544, 10, 10, 3000);
+            gcall.Stepto(27317, -67795, 6859, 10, 10, 3000);
+            gcall.NewSpend(1);
+        }
+
+        if(gcall.GetObjectCountByName(L"濁魔血殭屍", NothingPos, 500) < 1)
+        {
+            if(gcall.GetObjectCountByName(L"濁魔血殭屍", NothingPos1, 500) < 1)
+            {
+                if(gcall.GetObjectCountByName(L"濁魔血殭屍", NothingPos2, 500) < 1)
+                {
+                    TRACE(_T("打完收工"));
+                    break;
+                }
+            }
+        }
+
+PlayDead:
+        if(Kill_result == RESULT_KILL_PLAYDEAD)
+        {
+            Sleep(2000);
+            gcall.FuHuo();
+
+            //执行死亡走路
+        }
+        Sleep(100);
+    }
+
+
 }
