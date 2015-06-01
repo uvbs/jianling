@@ -50,9 +50,6 @@ public:
     //显示结果
     void SetResult(int nResult, int i);
 
-    //设置行颜色
-    void SetItemColor(DWORD iItem, COLORREF color);
-
 
     //工作线程
     int CreateGameProcess(int inItem, bool bInject = true);
@@ -69,7 +66,6 @@ public:
     CVpnFile* m_lpVpnFile;
 
 private:
-    CMap<DWORD, DWORD&, COLORREF, COLORREF&> MapItemColor;
 
     bool ReadLine(std::basic_string<TCHAR>& strLine, CFile* pFile);
 
@@ -86,7 +82,6 @@ protected:
 
 public:
     //{{AFX_MSG(CJLkitView)
-    afx_msg void OnNMCustomdraw(NMHDR* pNMHDR, LRESULT* pResult);
     afx_msg int  OnCreate(LPCREATESTRUCT lpCreateStruct);
     afx_msg void OnRclick(NMHDR* pNMHDR, LRESULT* pResult);
     afx_msg void OnStart();

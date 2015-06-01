@@ -2,7 +2,7 @@
 #define _KEYVIEWDLG_H_
 
 
-#include "BindKeyDlg.h"
+class CDlgBindKey;
 
 // CDlgKey dialog
 class CDlgKey : public CDialog

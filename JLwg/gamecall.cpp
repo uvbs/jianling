@@ -4257,8 +4257,7 @@ BOOL Gamecall::isPlayerChanneling()
     {
         Sleep(200);
         status = GetPlayerQuestUIStatus();
-        if(status == 5)
-            return TRUE;
+        if(status == 5) return TRUE;
     }
 
     return FALSE;
@@ -4290,7 +4289,7 @@ float Gamecall::GetPlayerViewPoint()
 
 
 //遍历周围所有的对象到容器
-void Gamecall::GetAllObjectToVector(ObjectNode* pNote, ObjectVector& RangeObject)
+void Gamecall::GetAllObjectToVector(ObjectNode* pNote, ObjectVector& AllObject)
 {
     _ASSERTE(pNote != NULL);
 
@@ -4299,16 +4298,16 @@ void Gamecall::GetAllObjectToVector(ObjectNode* pNote, ObjectVector& RangeObject
         if(pNote->end == 1) return;
 
         //加到vector中
-        RangeObject.push_back(pNote);
+        AllObject.push_back(pNote);
 
 
 
-        GetAllObjectToVector(pNote->left, RangeObject);
-        GetAllObjectToVector(pNote->right, RangeObject);
+        GetAllObjectToVector(pNote->left, AllObject);
+        GetAllObjectToVector(pNote->right, AllObject);
     }
     __except(1)
     {
-        TRACE1("%s: 遍历异常", FUNCNAME);
+        TRACE(FUNCNAME);
     }
 }
 
@@ -5071,7 +5070,8 @@ void Gamecall::GetStrikeToVector(StrikeVector& RangeObject)
 
     STRIKEINFO stJn;
 
-    for(int i = 0; i < dwCount; i++)
+	int i;
+    for(i = 0; i < dwCount; i++)
     {
 
         //{信息指针}

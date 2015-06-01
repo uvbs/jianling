@@ -9,7 +9,7 @@
 #include "Logindlg.h"
 #include "Registdlg.h"
 #include "ConfigMgr.h"
-
+#include "LoginSheet.h"
 
 #ifdef _DEBUG
     #define new DEBUG_NEW
@@ -97,17 +97,14 @@ void CDlgLogin::OnOK()
     else
     {
         pDoc->m_bRegister = false;
-        pDoc->m_LoginSheet.ShowWindow(SW_HIDE);
         pDoc->PerformLogonMission();
-
+        GetDlgItem(IDOK)->EnableWindow(FALSE);
     }
 }
 
 
 WORD CDlgLogin::ConstructLoginPacket(BYTE cbBuffer[], WORD wBufferSize)
 {
-    ASSERT(this != NULL);
-
 
     LOGIN_BUF* pLoginBuf = (LOGIN_BUF*)cbBuffer;
 

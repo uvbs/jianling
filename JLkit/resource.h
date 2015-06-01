@@ -24,8 +24,6 @@
 #define IDS_STRING131                   170
 #define IDS_STRING132                   171
 #define IDS_STRING133                   172
-#define IDD_MSGBOX                      178
-#define IDD_STATUSBOX                   179
 #define IDC_EDITNAME                    1000
 #define IDC_EDITPASSWORD                1001
 #define IDC_BUTTONREGISTER              1002

@@ -154,15 +154,7 @@ SOURCE=.\MainFrm.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\MsgBox.cpp
-# End Source File
-# Begin Source File
-
 SOURCE=..\common\MSJEXHND.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\MyStatusBar.cpp
 # End Source File
 # Begin Source File
 
@@ -171,10 +163,6 @@ SOURCE=.\registdlg.cpp
 # Begin Source File
 
 SOURCE=.\settingdlg.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\StatusBox.cpp
 # End Source File
 # Begin Source File
 
@@ -243,15 +231,7 @@ SOURCE=.\MainFrm.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\MsgBox.h
-# End Source File
-# Begin Source File
-
 SOURCE=..\common\MSJEXHND.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\MyStatusBar.h
 # End Source File
 # Begin Source File
 
@@ -264,10 +244,6 @@ SOURCE=.\Resource.h
 # Begin Source File
 
 SOURCE=.\settingdlg.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\StatusBox.h
 # End Source File
 # Begin Source File
 

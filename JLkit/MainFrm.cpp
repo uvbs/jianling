@@ -315,7 +315,4 @@ void CMainFrame::OnCombo1()
 void CMainFrame::OnSize(UINT nType, int cx, int cy)
 {
     CFrameWnd::OnSize(nType, cx, cy);
-
-    // TODO: Add your message handler code here
-    RepositionBars(AFX_IDW_CONTROLBAR_FIRST, AFX_IDW_CONTROLBAR_LAST, ID_INDICATOR_VALIDKEY);
 }

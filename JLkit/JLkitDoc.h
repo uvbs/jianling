@@ -2,17 +2,17 @@
 #define AFX_JLKITDOC_H__9C9AD6C5_69D3_45CF_A1E2_27114BFE567F__INCLUDED_
 
 
-#include "Logindlg.h"
-#include "Registdlg.h"
-#include "LoginSheet.h"
-#include "Keyviewdlg.h"
 #include "JLkitSocket.h"
-#include "BindKeyDlg.h"
-#include "MsgBox.h"
-#include "StatusBox.h"
+
 
 //KEY
 typedef std::vector<QUERYKEY_SUCCESS> KeyVec;
+
+
+class CDlgLogin;
+class CDlgRegist;
+class CDlgKey;
+class CLoginSheet;
 
 class CJLkitDoc : public CDocument, public ITCPSocketSink
 {
@@ -36,19 +36,14 @@ public:
     void ShowLogin();
     bool PerformLogonMission();
 
-    void ShowStatus(TCHAR szText[]);
-    void ShowMsg(TCHAR szText[]);
-
 
     //¶Ô»°¿ò
-    CLoginSheet m_LoginSheet;
+    CLoginSheet* m_pLoginSheet;
 
     CDlgLogin* m_pLoginDlg;
     CDlgRegist* m_pRegisterDlg;
     CDlgKey* m_pKeyDlg;
 
-
-    CStatusBox* m_pStatusBox;
 
     //ÍøÂçÌ×½Ó×Ö
     CJLkitSocket m_socket;

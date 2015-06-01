@@ -1,11 +1,7 @@
 #if !defined(AFX_LOGINSHEET_H__770249E6_741A_4E31_9DB5_0EF78BEED519__INCLUDED_)
 #define AFX_LOGINSHEET_H__770249E6_741A_4E31_9DB5_0EF78BEED519__INCLUDED_
 
-#if _MSC_VER > 1000
-#pragma once
-#endif // _MSC_VER > 1000
-// LoginSheet.h : header file
-//
+
 
 /////////////////////////////////////////////////////////////////////////////
 // CLoginSheet
@@ -30,6 +26,10 @@ public:
 	//{{AFX_VIRTUAL(CLoginSheet)
 	//}}AFX_VIRTUAL
 
+
+protected:  // control bar embedded members
+    CStatusBar m_wndStatusBar;
+
 // Implementation
 public:
 	virtual ~CLoginSheet();
@@ -39,6 +39,8 @@ protected:
 	//{{AFX_MSG(CLoginSheet)
 	afx_msg void OnClose();
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
+	afx_msg void OnSize(UINT nType, int cx, int cy);
+	virtual BOOL OnInitDialog();
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 };

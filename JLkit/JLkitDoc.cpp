@@ -5,8 +5,11 @@
 #include "MainFrm.h"
 #include "Settingdlg.h"
 #include "ConfigMgr.h"
-#include "MsgBox.h"
 #include "LoginSheet.h"
+#include "Registdlg.h"
+#include "Logindlg.h"
+#include "Keyviewdlg.h"
+
 
 
 #ifdef _DEBUG
@@ -18,15 +21,13 @@
 // CJLkitDoc
 IMPLEMENT_DYNCREATE(CJLkitDoc, CDocument)
 
-CJLkitDoc::CJLkitDoc():
-    m_LoginSheet(AfxGetApp()->m_pszAppName)
+CJLkitDoc::CJLkitDoc()
 {
 
     m_pRegisterDlg = NULL;
     m_pLoginDlg = NULL;
     m_pKeyDlg = NULL;
-
-    m_pStatusBox = NULL;
+    m_pLoginSheet = NULL;
 
     m_bRegister = false;
 }
@@ -171,9 +172,10 @@ BOOL CJLkitDoc::OnOpenDocument(LPCTSTR lpszPathName)
 void CJLkitDoc::OnCloseDocument()
 {
 
-    SafeDelete(m_pStatusBox);
     SafeDelete(m_pRegisterDlg);
     SafeDelete(m_pLoginDlg);
+    SafeDelete(m_pLoginSheet);
+
 
     CDocument::OnCloseDocument();
 }
@@ -183,6 +185,11 @@ void CJLkitDoc::OnCloseDocument()
 void CJLkitDoc::ShowLogin()
 {
     //创建登陆对话框
+    if(!m_pLoginSheet)
+    {
+        m_pLoginSheet = new CLoginSheet(_T(""));
+    }
+
     if(!m_pLoginDlg)
     {
         m_pLoginDlg = new CDlgLogin();
@@ -195,29 +202,34 @@ void CJLkitDoc::ShowLogin()
 
     m_bRegister = false;
 
-    if(m_LoginSheet.m_hWnd == NULL)
+
+
+    if(m_pLoginSheet->m_hWnd == NULL)
     {
-        m_LoginSheet.AddPage(m_pLoginDlg);
-        m_LoginSheet.AddPage(m_pRegisterDlg);
-        m_LoginSheet.Create(NULL, WS_OVERLAPPED | WS_SYSMENU);
+        m_pLoginSheet->AddPage(m_pLoginDlg);
+        m_pLoginSheet->AddPage(m_pRegisterDlg);
+        m_pLoginSheet->Create(NULL, WS_OVERLAPPED | WS_SYSMENU);
     }
 
-    m_LoginSheet.ShowWindow(SW_SHOW);
+    m_pLoginDlg->GetDlgItem(IDOK)->EnableWindow();
+
+    m_pLoginSheet->ShowWindow(SW_SHOW);
+
 }
 
 bool CJLkitDoc::PerformLogonMission()
 {
-    ShowStatus(_T("正在连接服务器.."));
+    TRACE(_T("正在连接服务器.."));
 
     CString strSrvIp;
-    VERIFY(strSrvIp.LoadString(IDS_CONNECT_SERVER) == TRUE);
+    if(!strSrvIp.LoadString(IDS_CONNECT_SERVER)) return false;
 
     //设置回调
     m_socket.SetSink(this);
 
     if(!m_socket.ConnectSrv(strSrvIp, PORT_SRV))
     {
-        ShowMsg(_T("连接服务器失败"));
+        AfxMessageBox(_T("连接服务器失败"));
         ShowLogin();
         return false;
     }
@@ -235,13 +247,13 @@ bool CJLkitDoc::OnEventTCPSocketLink(CJLkitSocket* pSocket, INT nErrorCode)
 
     if(nErrorCode != 0)
     {
-        ShowMsg(_T("连接服务器失败"));
+        AfxMessageBox(_T("连接服务器失败"));
         m_socket.Close();
         ShowLogin();
     }
     else
     {
-        ShowStatus(_T("正在登陆.."));
+        TRACE(_T("正在登陆.."));
 
         //完成链接, 开始发送登陆数据
         BYTE cbBuffer[SOCKET_TCP_PACKET];
@@ -279,19 +291,25 @@ void CJLkitDoc::ProcessLogin(CJLkitSocket* pSocket, const Tcp_Head& stTcpHead, v
     switch(stTcpHead.wSubCmdID)
     {
 
+    //登录失败
     case fun_login_fail:
         {
-            PROCESS_DESCRIBE* pDes = (PROCESS_DESCRIBE*)pData;
+            //关闭连接
             m_socket.Close();
-            ShowLogin();
+
+
+            PROCESS_DESCRIBE* pDes = (PROCESS_DESCRIBE*)pData;
             AfxMessageBox(pDes->szDescribe);
+
+            //登录对话框
+            ShowLogin();
             break;
         }
 
+    //登录完成
     case fun_login_ok:
         {
-            
-            ShowStatus(NULL);
+            SafeDelete(m_pLoginSheet);
 
             //自动加载上次打开的文件
             if(CConfigMgr::GetInstance()->m_szFileName[0] != _T('\0'))
@@ -302,6 +320,7 @@ void CJLkitDoc::ProcessLogin(CJLkitSocket* pSocket, const Tcp_Head& stTcpHead, v
             //显示主窗口
             ((CMainFrame*)AfxGetMainWnd())->ActivateFrame();
 
+            //查询当前卡号
             PROCESS_DESCRIBE* pLoginSucess = (PROCESS_DESCRIBE*)pData;
             m_socket.Send(M_KEY, fun_querykey, NULL, 0);
 
@@ -309,11 +328,14 @@ void CJLkitDoc::ProcessLogin(CJLkitSocket* pSocket, const Tcp_Head& stTcpHead, v
         }
 
 
+    //注册
     case fun_regist_ok:
     case fun_regist_fail:
         {
             PROCESS_DESCRIBE* pDes = (PROCESS_DESCRIBE*)pData;
             AfxMessageBox(pDes->szDescribe);
+
+            //关闭套接字
             m_socket.Close();
             break;
         }
@@ -370,16 +392,20 @@ void CJLkitDoc::ProcessKey(CJLkitSocket* pSocket, const Tcp_Head& stTcpHead, voi
             {
                 CListCtrl& listctr = m_pKeyDlg->m_ListCtrl;
                 listctr.DeleteAllItems();
-
             }
+
             break;
         }
 
 
     default:
-        break;
+        {
+            _ASSERTE(FALSE);
+            break;
+        }
     }
 }
+
 
 void CJLkitDoc::ProcessHelp(CJLkitSocket* pSocket, const Tcp_Head& stTcpHead, void* pData, WORD wDataSize)
 {
@@ -429,40 +455,10 @@ void CJLkitDoc::OnLookkey()
 {
 
     if(m_pKeyDlg == NULL)
+    {
         m_pKeyDlg = new CDlgKey(AfxGetMainWnd());
+    }
 
     m_pKeyDlg->DoModal();
     SafeDelete(m_pKeyDlg);
-}
-
-void CJLkitDoc::ShowStatus(TCHAR szText[])
-{
-
-    if(m_pStatusBox == NULL)
-        m_pStatusBox = new CStatusBox;
-
-    if(m_pStatusBox->m_hWnd == NULL)
-        m_pStatusBox->Create(CStatusBox::IDD);
-
-    if(szText == NULL)
-    {
-        m_pStatusBox->ShowWindow(SW_HIDE);
-        return;
-    }
-
-    m_pStatusBox->SetMsg(szText);
-    m_pStatusBox->ShowWindow(SW_SHOW);
-    m_pStatusBox->SetForegroundWindow();
-}
-
-void CJLkitDoc::ShowMsg(TCHAR szText[])
-{
-    _ASSERTE(szText != NULL);
-
-    //隐藏状态提示
-    m_pStatusBox->ShowWindow(SW_HIDE);
-
-    CMsgBox dlg;
-    dlg.SetMsg(szText);
-    dlg.DoModal();
 }

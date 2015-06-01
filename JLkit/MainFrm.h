@@ -1,7 +1,6 @@
 #if !defined _MAINFRM_H_
 #define _MAINFRM_H_
 
-#include "MyStatusBar.h"
 
 
 class CMainFrame : public CFrameWnd
@@ -25,7 +24,7 @@ public:
     CComboBox m_cbScript;
 
 protected:  // control bar embedded members
-    CMyStatusBar m_wndStatusBar;
+    CStatusBar m_wndStatusBar;
     CToolBar m_wndToolBar;
     // Generated message map functions
 protected:

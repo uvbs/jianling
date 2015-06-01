@@ -12,6 +12,7 @@
 
 #define WIN32_LEAN_AND_MEAN     // Exclude rarely-used stuff from Windows headers
 
+#define _WIN32_WINNT 0x501
 
 //关闭无关警告
 #pragma warning(disable: 4786)

@@ -7,7 +7,7 @@
 #include "MainFrm.h"
 #include "JLkitSocket.h"
 #include "Keyviewdlg.h"
-
+#include "BindKeyDlg.h"
 
 #ifdef _DEBUG
     #define new DEBUG_NEW
@@ -90,7 +90,9 @@ void CDlgKey::OnBinkey()
 {
 
     if(m_pBindDlg == NULL)
+    {
         m_pBindDlg = new CDlgBindKey;
+    }
 
     m_pBindDlg->DoModal();
 }

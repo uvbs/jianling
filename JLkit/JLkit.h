@@ -10,7 +10,9 @@
 
 class CJLkitApp : public CWinApp
 {
-    DECLARE_MESSAGE_MAP()
+    DECLARE_MESSAGE_MAP();
+
+
 public:
     CJLkitApp();
     ~CJLkitApp();

@@ -173,22 +173,6 @@ BEGIN
     PUSHBUTTON      "取消",IDCANCEL,200,77,49,15
 END
 
-IDD_MSGBOX DIALOG DISCARDABLE  0, 0, 237, 69
-STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
-FONT 9, "宋体"
-BEGIN
-    CTEXT           "",IDC_TEXT,10,7,215,28,SS_CENTERIMAGE
-    DEFPUSHBUTTON   "OK",IDOK,95,49,50,14
-    RTEXT           "",IDC_LEFTTIMES,165,49,65,14,SS_NOTIFY | SS_CENTERIMAGE
-END
-
-IDD_STATUSBOX DIALOG DISCARDABLE  0, 0, 238, 51
-STYLE WS_POPUP | WS_VISIBLE | WS_BORDER
-FONT 8, "Tahoma"
-BEGIN
-    CTEXT           "",IDC_TEXT,5,7,225,35,SS_CENTERIMAGE
-END
-
 
 #ifndef _MAC
 /////////////////////////////////////////////////////////////////////////////
@@ -290,22 +274,6 @@ BEGIN
         TOPMARGIN, 7
         BOTTOMMARGIN, 118
     END
-
-    IDD_MSGBOX, DIALOG
-    BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 230
-        TOPMARGIN, 7
-        BOTTOMMARGIN, 62
-    END
-
-    IDD_STATUSBOX, DIALOG
-    BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 231
-        TOPMARGIN, 7
-        BOTTOMMARGIN, 44
-    END
 END
 #endif    // APSTUDIO_INVOKED
 
@@ -403,9 +371,9 @@ BEGIN
     IDS_RETRY_CONNECT       "连接服务器失败, 你要重试一次吗?"
     IDS_PASSWORDERROR       "密码错误, 重试一次?"
     IDS_NOTFIND_GAME        "没有找到游戏路径, 请在[设置]对话框中手动设定"
-    ID_INDICATOR_LOGINED    "已登录: 9999"
-    ID_INDICATOR_ALLNUMS    "帐号数: 9999"
-    ID_INDICATOR_VALIDKEY   "有效卡: 9999"
+    ID_INDICATOR_LOGINED    "已登录: 0000"
+    ID_INDICATOR_ALLNUMS    "帐号数: 0000"
+    ID_INDICATOR_VALIDKEY   "有效卡: 0000"
     IDS_CONNECT_SERVER      "liyhtning.xicp.net"
 END
 

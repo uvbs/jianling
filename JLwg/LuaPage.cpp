@@ -54,19 +54,9 @@ void CLuaPage::OnTestLua()
     GetDlgItem(IDC_EDIT1)->GetWindowText(strLua);
 
 
-    LPSTR pszLua;
-
-#ifdef _UNICODE
-    USES_CONVERSION;
-    pszLua = T2A((LPCTSTR)strLua);
-#else
-    pszLua = (LPCTSTR)strLua;
-#endif
-
-
-
-    int error = luaL_loadbuffer(pL, pszLua, strlen(pszLua), "line") ||
+    int error = luaL_loadbuffer(pL, (char *)strLua.GetBuffer(0), strLua.GetLength(), "line") ||
                 lua_pcall(pL, 0, 0, 0);
+    strLua.ReleaseBuffer();
     if(error)
     {
         MessageBoxA(NULL, lua_tostring(pL, -1), "脚本", MB_ICONINFORMATION);
@@ -98,3 +88,21 @@ BEGIN_MESSAGE_MAP(CDbgPage, CDialog)
 // NOTE: the ClassWizard will add message map macros here
 //}}AFX_MSG_MAP
 END_MESSAGE_MAP()
+
+
+BOOL CDbgPage::OnCmdMsg(UINT nID, int nCode, void* pExtra, AFX_CMDHANDLERINFO* pHandlerInfo)
+{
+	//拦截对回车和ESC
+	if(nID == IDOK || nID == IDCANCEL) return TRUE;
+
+	return CPropertyPage::OnCmdMsg(nID, nCode, pExtra, pHandlerInfo);
+}
+
+
+BOOL CLuaPage::OnCmdMsg(UINT nID, int nCode, void* pExtra, AFX_CMDHANDLERINFO* pHandlerInfo)
+{
+	//	
+	if(nID == IDOK || nID == IDCANCEL) return TRUE;
+
+	return CPropertyPage::OnCmdMsg(nID, nCode, pExtra, pHandlerInfo);
+}

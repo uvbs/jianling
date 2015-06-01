@@ -1,7 +1,6 @@
 #ifndef __MSJEXHND_H__
 #define __MSJEXHND_H__
 
-#include <dbghelp.h>
 
 
 class MSJExceptionHandler
@@ -28,7 +27,7 @@ private:
                                   DWORD& section, DWORD& offset);
     static void IntelStackWalk(PCONTEXT pContext);
     static int __cdecl _tprintf(const TCHAR* format, ...);
-    static void ShowFrame(STACKFRAME64 *pFrame);
+    static void ShowFrame(STACKFRAME64* pFrame);
 
     // Variables used by the class
     static TCHAR m_szLogFileName[MAX_PATH];

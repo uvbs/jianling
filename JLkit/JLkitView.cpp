@@ -47,7 +47,6 @@ IMPLEMENT_DYNCREATE(CJLkitView, CListView)
 
 BEGIN_MESSAGE_MAP(CJLkitView, CListView)
     //{{AFX_MSG_MAP(CJLkitView)
-    ON_NOTIFY_REFLECT(NM_CUSTOMDRAW, OnNMCustomdraw)
     ON_WM_CREATE()
     ON_NOTIFY_REFLECT(NM_RCLICK, OnRclick)
     ON_COMMAND(ID_START, OnStart)
@@ -131,7 +130,6 @@ void CJLkitView::SetResult(int nReslt, int i)
         {
             GetListCtrl().SetItemText(i, COLUMN_TEXT_STATUS, _T("完成"));
             GetListCtrl().SetCheck(i);
-            SetItemColor(i, RGB(255, 255, 255));
             break;
         }
     case  RESULT_FAIL_CAPTCHA:
@@ -142,7 +140,6 @@ void CJLkitView::SetResult(int nReslt, int i)
     case  RESULT_FAIL_IPBLOCK:
         {
             GetListCtrl().SetItemText(i, COLUMN_TEXT_STATUS, _T("IP被封锁, 使用代理重试"));
-            SetItemColor(i, RGB(255, 0, 0));
             break;
         }
     case  RESULT_FAIL_EXCEPTION:
@@ -188,7 +185,6 @@ void CJLkitView::SetResult(int nReslt, int i)
     case  RESULT_FAIL_PWERROR:
         {
             GetListCtrl().SetItemText(i, COLUMN_TEXT_STATUS, _T("密码错误"));
-            SetItemColor(i, RGB(255, 0, 0));
             break;
         }
     case  RESULT_FAIL_CREATEGAMEPROCESS:
@@ -199,12 +195,13 @@ void CJLkitView::SetResult(int nReslt, int i)
             GetListCtrl().SetItemText(i, COLUMN_TEXT_STATUS, szBuf);
             break;
         }
+
     case  RESULT_FAIL_AUTH:
         {
             GetListCtrl().SetItemText(i, COLUMN_TEXT_STATUS, _T("验证失败, 请重试一次"));
-            SetItemColor(i, RGB(255, 0, 0));
             break;
         }
+
     case RESULT_LOGIN_SUCCESS:
         {
             GetListCtrl().SetItemText(i, COLUMN_TEXT_STATUS, _T("运行中.."));
@@ -254,14 +251,6 @@ void CJLkitView::OnActive()
 
 void CJLkitView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 {
-}
-
-
-void CJLkitView::SetItemColor(DWORD iItem, COLORREF color)
-{
-    MapItemColor.SetAt(iItem, color);//设置某行的颜色。
-    GetListCtrl().RedrawItems(iItem, iItem);//重新染色
-    UpdateWindow();
 }
 
 
@@ -846,33 +835,6 @@ void CJLkitView::OnUcStart()
     m_pWorkThread->PostThreadMessage(WM_WORKTHREAD_RUN_SINGLE_GAME, 0, 0);
 }
 
-void CJLkitView::OnNMCustomdraw(NMHDR* pNMHDR, LRESULT* pResult)
-{
-    *pResult = CDRF_DODEFAULT;
-    NMLVCUSTOMDRAW* lplvdr = (NMLVCUSTOMDRAW*)pNMHDR;
-    NMCUSTOMDRAW& nmcd = lplvdr->nmcd;
-    switch(lplvdr->nmcd.dwDrawStage)   //判断状态
-    {
-    case CDDS_PREPAINT:
-        {
-            *pResult = CDRF_NOTIFYITEMDRAW;
-            break;
-        }
-    case CDDS_ITEMPREPAINT:   //如果为画ITEM之前就要进行颜色的改变
-        {
-            COLORREF ItemColor;
-            if(MapItemColor.Lookup(nmcd.dwItemSpec, ItemColor))
-                // 根据在 SetItemColor(DWORD iItem, COLORREF color) 设置的
-                // ITEM号和COLORREF 在摸板中查找，然后进行颜色赋值。
-            {
-                //lplvdr->clrText = RGB(0,0,0);//ItemColor;
-                lplvdr->clrTextBk = ItemColor;
-                *pResult = CDRF_DODEFAULT;
-            }
-        }
-        break;
-    }
-}
 
 void CJLkitView::OnGetAndActive()
 {

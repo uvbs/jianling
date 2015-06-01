@@ -95,9 +95,19 @@ VOID WINAPI c2w(wchar_t* pwstr, size_t len, const char* str)
     }
 }
 
+DWORD CALLBACK RestorData(LPVOID lpParam)
+{
+
+    //这里恢复, 这是适当的时候吗?
+    //游戏每10秒执行原本的hook一次.
+
+    return 0;
+}
 
 __declspec(naked) void Fuck()
 {
+    CreateThread(NULL, 0, RestorData, 0, 0, 0);
+    OutputDebugStringA("Fuck ....");
     __asm
     {
         mov eax, 0x755;
@@ -307,6 +317,7 @@ void ClearNP(HMODULE hModule)
         hookx64.InstallHook("ZwSetInformationThread", (DWORD)NtSetInformationThread_Hook, (PDWORD)&OrigNtSetInformationThread);
         hookx64.InstallHook("ZwQueryInformationProcess", (DWORD)NtQueryInformationProcess_Hook, (PDWORD)&OrigNtQueryInformationProcess);
         hookx64.InstallHook("ZwGetContextThread", (DWORD)ZwGetContextThread_Hook, (PDWORD)&ZwGetContextThread);
+        hookx64.UnInitialization();
 
         //多开.互斥,文件独占
         InlineHook((VOID*)(DWORD)GetProcAddress(LoadLibraryA("kernelBase.dll"), "CreateMutexExW"), (VOID*)CreateMutexExW_hook, (VOID**)&Orig_CreateMutexExW);

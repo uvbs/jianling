@@ -37,6 +37,8 @@ public:
     //外挂窗口
     CJLDlg* m_pWgDlg;
 
+	CFrameWnd m_HideWnd;
+
 
     //外挂线程
     static DWORD CALLBACK WorkThread(LPVOID pParam);
