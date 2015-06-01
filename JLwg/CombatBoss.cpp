@@ -10,6 +10,8 @@
 #include <iostream>
 #include <fstream>
 #include <direct.h>
+#include <algorithm>
+#include <map>
 
 using namespace std;
 
@@ -39,7 +41,10 @@ CombatBoss::~CombatBoss()
 //其实目前耗时的操作, 比如走路的问题, 在于如果不是同步调用, 需要一种方式获得
 //到达目的地的通知, 目前采用: 一直阻塞, 到达才返回. 因此到达的结果就是函数返回
 //需要一种异步调用, 在执行完获得通知
-void CombatBoss::run()
+//1 杀怪完
+//2 没找到怪
+//3 死亡
+int CombatBoss::run()
 {
 
     DWORD MaxHealth = 0;//GetPlayerMaxHealth();
@@ -55,17 +60,21 @@ void CombatBoss::run()
     GamecallEx* pCall = GamecallEx::GetInstance();
 
 
+    DWORD Cs_86 = 0;
+    BOOL Xiezi_flag = FALSE;
+    //ObjectNode* pNode;
     fPosition mypos;
     fPosition tarpos;
     My_id = pCall->GetPlayerID();
+    TRACE("要打的BOSS名:%s", m_name.c_str());
     ObjectNode* pBossNode = pCall->GetObjectByName(m_name.c_str(), 0);
     if(pBossNode == NULL)
     {
         TRACE(_T("没找到boss"));
-        return;
+        return 2;
     }
 
-    pCall->NewSpend(4);
+    pCall->NewSpend(3);
     pCall->Stepto(pBossNode);
     pCall->NewSpend(1);
 
@@ -76,21 +85,27 @@ void CombatBoss::run()
         if(pCall->GetPlayerHealth() <= 0)
         {
             TRACE(_T("%s: 人物死亡了"), FUNCNAME);
-            break;
+            return 3;
         }
 
 
         if(pCall->GetObjectHP(pBossNode->ObjAddress) == -1 || pCall->GetObjectHP(pBossNode->ObjAddress) == 0)
         {
             TRACE(_T("%s: 血量判断怪死了"), FUNCNAME);
-            break;
+            return 1;
         }
 
         if(pCall->GetObjectPos(pBossNode, &tarpos) == FALSE)
         {
             TRACE(_T("%s: 坐标判断怪死了"), FUNCNAME);
-            break;
+            return 1;
         }
+
+		if(pCall->GetObjectPos(pBossNode, &tarpos) == 1000)
+		{
+			TRACE(_T("%s: 坐标判断怪死了"), FUNCNAME);
+			return 1;
+		}
 
 
         //这个距离判断不太通用, 假设怪物第血量会快速逃脱
@@ -129,7 +144,7 @@ void CombatBoss::run()
                     pCall->TurnTo(pBossNode);
                     TRACE(_T("5190087"));
                     pCall->Kill_Tab(0x5dc1);
-                    pCall->Kill_Tab(0x5dca);
+                    pCall->Kill_Tab(0x5dca, 15);
                     pCall->Kill_Tab(0x5dc1);
                     pCall->Attack(0x5dca);
                     break;
@@ -152,7 +167,7 @@ void CombatBoss::run()
                     }
                     else
                     {
-                        pCall->Kill_Tab(0x5dca);
+                        pCall->Kill_Tab(0x5dca, 15);
                         pCall->TurnTo(pBossNode);
                         pCall->Attack(0x5dc1);
                     }
@@ -192,7 +207,7 @@ void CombatBoss::run()
             case 5511314:
                 {
                     pCall->sendcall(id_msg_attack, (LPVOID)0x5dc1);
-                    pCall->Attack(0x5E1B);
+                    pCall->Kill_Tab(0x5E1B, 25);
                     break;
                 }
 
@@ -211,7 +226,7 @@ void CombatBoss::run()
                 {
                     TRACE(_T("5100614"));
                     pCall->Kill_Tab(0x5dc1);
-                    pCall->Kill_Tab(0x5dca);
+                    pCall->Kill_Tab(0x5dca, 15);
                     pCall->Kill_Tab(0x5dc1);
                     pCall->Attack(0x5dca);
                     break;
@@ -255,112 +270,51 @@ void CombatBoss::run()
             //鬼门关万魂
             case 5902311:
                 {
-                    if(percent < 70)
+                    if(pCall->GetObjectTargetId(pBossNode->ObjAddress) == My_id)
                     {
-                        if(pCall->isStrikeCd(0x5DFC))
-                        {
-                            pCall->Attack(0x5DFC);
-                            pCall->TurnTo(pBossNode);
-                            Sleep(800);
-                            while(pCall->isStrikeCd(0x1F5))
-                            {
-                                pCall->sendcall(id_msg_attack, (LPVOID)0x5ECE);
-                            }
-                        }
+                        TRACE(_T("2311-0x5dc1"));
+                        pCall->sendcall(id_msg_attack, (LPVOID)0x5dc1);
+                        TRACE(_T("2311-0x5dca"));
+                        pCall->Kill_Tab(0x5dca, 11);
+                        //}
                     }
                     else
                     {
-                        if(pCall->GetObjectTargetId(pBossNode->ObjAddress) == My_id)
-                        {
-                            if(pCall->GetPlayerMana() > 60)
-                            {
-                                pCall->Kill_Tab(0x5dca);
-                            }
-                            else
-                            {
-                                pCall->Kill_Tab(0x5dca);
-                                pCall->sendcall(id_msg_attack, (LPVOID)0x5dc1);
-                            }
-                        }
-                        else
-                        {
-                            pCall->SteptoBack(pBossNode);
-                            pCall->TurnTo(pBossNode);
-                        }
+                        pCall->SteptoBack(pBossNode);
+                        pCall->TurnTo(pBossNode);
                     }
+                    //}
                     break;
                 }
             case 5902312:
                 {
-                    if(percent < 70)
+                    if(pCall->GetObjectTargetId(pBossNode->ObjAddress) == My_id)
                     {
-                        if(pCall->isStrikeCd(0x5DFC))
-                        {
-                            pCall->Attack(0x5DFC);
-                            pCall->TurnTo(pBossNode);
-                            Sleep(800);
-                            while(pCall->isStrikeCd(0x1F5))
-                            {
-                                pCall->sendcall(id_msg_attack, (LPVOID)0x5ECE);
-                            }
-                        }
+                        pCall->sendcall(id_msg_attack, (LPVOID)0x5dc1);
+                        pCall->Kill_Tab(0x5dca, 11);
                     }
                     else
                     {
-                        if(pCall->GetObjectTargetId(pBossNode->ObjAddress) == My_id)
-                        {
-                            if(pCall->GetPlayerMana() > 60)
-                            {
-                                pCall->Kill_Tab(0x5dca);
-                            }
-                            else
-                            {
-                                pCall->Kill_Tab(0x5dca);
-                                pCall->sendcall(id_msg_attack, (LPVOID)0x5dc1);
-                            }
-                        }
-                        else
-                        {
-                            pCall->SteptoBack(pBossNode);
-                        }
+                        pCall->SteptoBack(pBossNode);
+                        pCall->TurnTo(pBossNode);
                     }
+
                     break;
                 }
             case 5902313:
                 {
-                    if(percent < 70)
+
+                    if(pCall->GetObjectTargetId(pBossNode->ObjAddress) == My_id)
                     {
-                        if(pCall->isStrikeCd(0x5DFC))
-                        {
-                            pCall->Attack(0x5DFC);
-                            pCall->TurnTo(pBossNode);
-                            Sleep(800);
-                            while(pCall->isStrikeCd(0x1F5))
-                            {
-                                pCall->sendcall(id_msg_attack, (LPVOID)0x5ECE);
-                            }
-                        }
+                        pCall->sendcall(id_msg_attack, (LPVOID)0x5dc1);
+                        pCall->Kill_Tab(0x5dca, 11);
                     }
                     else
                     {
-                        if(pCall->GetObjectTargetId(pBossNode->ObjAddress) == My_id)
-                        {
-                            if(pCall->GetPlayerMana() > 60)
-                            {
-                                pCall->Kill_Tab(0x5dca);
-                            }
-                            else
-                            {
-                                pCall->Kill_Tab(0x5dca);
-                                pCall->sendcall(id_msg_attack, (LPVOID)0x5dc1);
-                            }
-
-                        }
-                        else
-                        {
-                            pCall->SteptoBack(pBossNode);
-                        }
+                        pCall->SteptoBack(pBossNode);
+                        pCall->TurnTo(pBossNode);
                     }
+
                     break;
                 }
             case 5902314:
@@ -382,34 +336,22 @@ void CombatBoss::run()
                     {
                         if(pCall->GetObjectTargetId(pBossNode->ObjAddress) == My_id)
                         {
-                            if(pCall->GetPlayerMana() > 60)
-                            {
-                                pCall->Kill_Tab(0x5dca);
-                            }
-                            else
-                            {
-                                pCall->Kill_Tab(0x5dca);
-                                pCall->sendcall(id_msg_attack, (LPVOID)0x5dc1);
-                            }
+                            pCall->sendcall(id_msg_attack, (LPVOID)0x5dc1);
+                            pCall->Kill_Tab(0x5dca, 11);
                         }
                         else
                         {
                             pCall->SteptoBack(pBossNode);
+                            pCall->TurnTo(pBossNode);
                         }
                     }
                     break;
                 }
             case 5902315:
                 {
-                    pCall->Kill_Tab(0x5e60);
-                    if(pCall->GetPlayerMana() > 60)
+                    if(pCall->isStrikeCd(0x5e60))
                     {
-                        pCall->Kill_Tab(0x5dca);
-                    }
-                    else
-                    {
-                        pCall->Kill_Tab(0x5dca);
-                        pCall->sendcall(id_msg_attack, (LPVOID)0x5dc1);
+                        pCall->Kill_Tab(0x5e60);
                     }
                     break;
                 }
@@ -420,6 +362,8 @@ void CombatBoss::run()
                 }
             case 5902319:
                 {
+                    pCall->TurnTo(pBossNode);
+                    pCall->sendcall(id_msg_attack, (LPVOID)0x5dc1);
                     if(percent < 70)
                     {
                         if(pCall->isStrikeCd(0x5DFC))
@@ -439,12 +383,12 @@ void CombatBoss::run()
                         {
                             if(pCall->GetPlayerMana() > 60)
                             {
-                                pCall->Kill_Tab(0x5dca);
+                                pCall->Kill_Tab(0x5dca, 11);
                             }
                             else
                             {
-                                pCall->Kill_Tab(0x5dca);
                                 pCall->sendcall(id_msg_attack, (LPVOID)0x5dc1);
+                                pCall->Kill_Tab(0x5dca, 11);
                             }
                         }
                         else
@@ -473,71 +417,87 @@ void CombatBoss::run()
                     {
                         TRACE(_T("万魂范围攻击"));
                         pCall->TurnTo(pBossNode);
-                        pCall->sendcall(id_msg_attack, (LPVOID)0x5DC1);
-                        if(pCall->isStrikeCd(0x5E1B))
+						Sleep(300);
+                        //pCall->sendcall(id_msg_attack, (LPVOID)0x5DC1);
+                        if(pCall->isStrikeCd(0x5DF2))
                         {
-                            pCall->Kill_Tab(0x5E1B);
+                            pCall->Kill_Tab(0x5DF2, 5);
+                            pCall->sendcall(id_msg_attack, (LPVOID)0x5E1A);
                         }
-                        else if(pCall->isStrikeCd(0x5DF2))
+                        else if(pCall->isStrikeCd(0x5e74))
                         {
-                            Sleep(800);
-                            pCall->Kill_Tab(0x5DF2);
+                            pCall->Kill_Tab(0x5e74, 5);
                         }
+                        else if(pCall->isStrikeCd(0x5E1B))
+                        {
+                            pCall->Kill_Tab(0x5E1B, 20);
+                        }
+
                         else
                         {
-                            pCall->Kill_Tab(0x5dca);
-                            pCall->sendcall(id_msg_attack, (LPVOID)0x5E1A);
+                            pCall->Kill_Tab(0x5dca, 11);
+                            pCall->sendcall(id_msg_attack, (LPVOID)0x5dc1);
                         }
                     }
                     break;
                 }
             case 5902316:
                 {
-                    if(percent < 70)
+                    //if(percent < 70)
+                    //{
+                    //    if(pCall->isStrikeCd(0x5DFC))
+                    //    {
+                    //        pCall->Attack(0x5DFC);
+                    //        pCall->TurnTo(pBossNode);
+                    //        Sleep(800);
+                    //        while(pCall->isStrikeCd(0x1F5))
+                    //        {
+                    //            pCall->sendcall(id_msg_attack, (LPVOID)0x5ECE);
+                    //        }
+                    //    }
+                    //}
+                    //else
+                    //{
+                    if(pCall->GetObjectTargetId(pBossNode->ObjAddress) == My_id)
                     {
-                        if(pCall->isStrikeCd(0x5DFC))
+                        if(pCall->GetPlayerMana() > 60)
                         {
-                            pCall->Attack(0x5DFC);
-                            pCall->TurnTo(pBossNode);
-                            Sleep(800);
-                            while(pCall->isStrikeCd(0x1F5))
-                            {
-                                pCall->sendcall(id_msg_attack, (LPVOID)0x5ECE);
-                            }
+                            pCall->Kill_Tab(0x5dca, 11);
+                        }
+                        else
+                        {
+                            pCall->Kill_Tab(0x5dca, 11);
+                            pCall->sendcall(id_msg_attack, (LPVOID)0x5dc1);
                         }
                     }
                     else
                     {
-                        if(pCall->GetObjectTargetId(pBossNode->ObjAddress) == My_id)
-                        {
-                            if(pCall->GetPlayerMana() > 60)
-                            {
-                                pCall->Kill_Tab(0x5dca);
-                            }
-                            else
-                            {
-                                pCall->Kill_Tab(0x5dca);
-                                pCall->Kill_Tab(0x5dc1);
-
-                            }
-                        }
-                        else
-                        {
-                            pCall->SteptoBack(pBossNode);
-                        }
+                        pCall->SteptoBack(pBossNode);
                     }
+                    //}
                     break;
                 }
             case 5902392:
                 {
                     //这不是万魂的ID了退
-                    return;
+                    return 1;
                 }
             case 5902398:
                 {
                     //这不是万魂的ID了退
-                    return;
+                    return 1;
                 }
+            case 5100600:
+                {
+                    //这不是万魂的ID了退
+                    return 1;
+                }
+            case 5100601:
+                {
+                    //这不是万魂的ID了退
+                    return 1;
+                }
+
             //鬼门关万魂
 
             //鬼门关鬼神泣
@@ -547,12 +507,12 @@ void CombatBoss::run()
                     {
                         if(pCall->GetPlayerMana() > 60)
                         {
-                            pCall->Kill_Tab(0x5dca);
+                            pCall->Kill_Tab(0x5dca, 11);
                         }
                         else
                         {
-                            pCall->Kill_Tab(0x5dc1);
-                            pCall->Kill_Tab(0x5dca);
+                            pCall->sendcall(id_msg_attack, (LPVOID)0x5dc1);
+                            pCall->Kill_Tab(0x5dca, 11);
                         }
                     }
                     else
@@ -563,58 +523,14 @@ void CombatBoss::run()
                 }
             case 5902377:
                 {
-                    if(percent < 70)
-                    {
-                        if(pCall->isStrikeCd(0x5DFC))
-                        {
-                            pCall->Attack(0x5DFC);
-                            pCall->TurnTo(pBossNode);
-                            Sleep(800);
-                            while(pCall->isStrikeCd(0x1F5))
-                            {
-                                pCall->sendcall(id_msg_attack, (LPVOID)0x5ECE);
-                            }
-                        }
-                    }
-                    else
-                    {
-                        if(pCall->GetObjectTargetId(pBossNode->ObjAddress) == My_id)
-                        {
-                            if(pCall->GetPlayerMana() > 60)
-                            {
-                                pCall->Kill_Tab(0x5dca);
-                            }
-                            else
-                            {
-                                pCall->Kill_Tab(0x5dc1);
-                                pCall->Kill_Tab(0x5dca);
-                            }
-                        }
-                        else
-                        {
-                            pCall->SteptoBack(pBossNode);
-                        }
-                    }
+                    pCall->SteptoBack(pBossNode);
                     break;
                 }
             case 5902379:
                 {
-                    if(pCall->GetObjectTargetId(pBossNode->ObjAddress) == My_id)
-                    {
-                        if(pCall->GetPlayerMana() > 60)
-                        {
-                            pCall->Kill_Tab(0x5dca);
-                        }
-                        else
-                        {
-                            pCall->Kill_Tab(0x5dc1);
-                            pCall->Kill_Tab(0x5dca);
-                        }
-                    }
-                    else
-                    {
-                        pCall->SteptoBack(pBossNode);
-                    }
+                    pCall->Attack(0x5dc1);
+                    pCall->Kill_Tab(0x5dca, 11);
+                    pCall->Kill_Tab(0x5dca, 11);
                     break;
                 }
             case 5902380:
@@ -623,12 +539,12 @@ void CombatBoss::run()
                     {
                         if(pCall->GetPlayerMana() > 60)
                         {
-                            pCall->Kill_Tab(0x5dca);
+                            pCall->Kill_Tab(0x5dca, 11);
                         }
                         else
                         {
-                            pCall->Kill_Tab(0x5dc1);
-                            pCall->Kill_Tab(0x5dca);
+                            pCall->Kill_Tab(0x5dca, 11);
+                            pCall->sendcall(id_msg_attack, (LPVOID)0x5dc1);
                         }
                     }
                     else
@@ -639,49 +555,31 @@ void CombatBoss::run()
                 }
             case 5902381:
                 {
-                    if(pCall->GetObjectTargetId(pBossNode->ObjAddress) == My_id)
-                    {
-                        if(pCall->GetPlayerMana() > 60)
-                        {
-                            pCall->Kill_Tab(0x5dca);
-                        }
-                        else
-                        {
-                            pCall->Kill_Tab(0x5dc1);
-                            pCall->Kill_Tab(0x5dca);
-                        }
-                    }
-                    else
-                    {
-                        pCall->SteptoBack(pBossNode);
-                    }
+                    TRACE(_T("进81，退"));
                     break;
                 }
             case 5902382:
                 {
                     pCall->TurnTo(pBossNode);
-                    //pCall->Kill_Tab(0x5dc1);
+                    pCall->Attack(0x5dc1);
+                    pCall->Attack(0x5dc1);
+                    pCall->Attack(0x5dc1);
                     if(pCall->isStrikeCd(0x5E1B))
                     {
-                        Sleep(2000);
-                        pCall->Kill_Tab(0x5E1B);
+                        pCall->TurnTo(pBossNode);
+                        pCall->Kill_Tab(0x5E1B, 25);
                     }
                     else if(pCall->isStrikeCd(0x5DF2))
                     {
-                        Sleep(2200);
-                        pCall->Kill_Tab(0x5DF2);
+                        pCall->TurnTo(pBossNode);
+                        pCall->Attack(0x5e6a);
+                        pCall->Kill_Tab(0x5DF2, 10);
+                        pCall->Kill_Tab(0x5E1A, 5);
                     }
                     else
                     {
-                        if(pCall->GetPlayerMana() > 60)
-                        {
-                            pCall->Kill_Tab(0x5dca);
-                        }
-                        else
-                        {
-                            pCall->Kill_Tab(0x5dc1);
-                            pCall->Kill_Tab(0x5dca);
-                        }
+                        pCall->Kill_Tab(0x5dca, 11);
+                        pCall->Kill_Tab(0x5dca, 11);
                     }
                     break;
                 }
@@ -690,9 +588,18 @@ void CombatBoss::run()
             //爆魔人
             case 5902300:
                 {
-                    if(pCall->isStrikeCd(0x5DFC))
+                    //pCall->TurnTo(pBossNode);
+                    //pCall->Attack(0x5dc1);
+                    //if(pCall->GetRangeMonsterCount() > 1)
+                    //{
+                    //    pCall->Kill_Tab(0x5dca, 15);
+                    //    pCall->Kill_Tab(0x5dca, 15);
+                    //}
+                    //else
+                    //{
+                    if(percent < 70)
                     {
-                        if(percent < 70)
+                        if(pCall->isStrikeCd(0x5DFC))
                         {
                             pCall->Attack(0x5DFC);
                             pCall->TurnTo(pBossNode);
@@ -705,41 +612,35 @@ void CombatBoss::run()
                     }
                     else
                     {
-                        if(pCall->GetPlayerMana() < 40)
-                        {
-                            pCall->sendcall(id_msg_attack, (LPVOID)0x5dc1);
-                        }
-                        else
-                        {
-                            pCall->Kill_Tab(0x5dca);
-                        }
+                        pCall->TurnTo(pBossNode);
+                        pCall->Attack(0x5dc1);
+                        pCall->Attack(0x5dc1);
+                        pCall->Attack(0x5dc1);
                         pCall->TurnTo(pBossNode);
                         if(pCall->isStrikeCd(0x5E1B))
                         {
-                            pCall->Kill_Tab(0x5E1B);
-                            Sleep(1000);
-                        }
-                        else if(pCall->isStrikeCd(0x5e74))
-                        {
-                            Sleep(1000);
-                            pCall->Kill_Tab(0x5e74);
+                            pCall->Kill_Tab(0x5E1B, 20);
                         }
                         else if(pCall->isStrikeCd(0x5DF2))
                         {
-                            pCall->Kill_Tab(0x5DF2);
+                            pCall->Kill_Tab(0x5DF2, 5);
+                            pCall->Attack(0x5E1A);
+                        }
+                        else
+                        {
+                            pCall->Kill_Tab(0x5dca, 11);
+                            pCall->Kill_Tab(0x5dca, 11);
                         }
                     }
+                    //}
                     break;
                 }
-            //爆魔人
-
-
-            //鬼门关最终BOSS
-            case 5902383:
+            case 5902301:
                 {
                     if(pCall->GetObjectTargetId(pBossNode->ObjAddress) == My_id)
                     {
-                        pCall->Kill_Tab(0x5dca);
+                        pCall->Kill_Tab(0x5dca, 11);
+                        pCall->sendcall(id_msg_attack, (LPVOID)0x5dc1);
                     }
                     else
                     {
@@ -747,8 +648,46 @@ void CombatBoss::run()
                     }
                     break;
                 }
+            case 5902303:
+                {
+                    if(pCall->GetRangeMonsterCount() > 1)
+                    {
+                        pCall->Kill_Tab(0x5dca, 11);
+                        pCall->sendcall(id_msg_attack, (LPVOID)0x5dc1);
+                    }
+                    break;
+                }
+            case 5902397:
+                {
+                    if(pCall->GetObjectTargetId(pBossNode->ObjAddress) == My_id)
+                    {
+                        pCall->Kill_Tab(0x5dca, 11);
+                        pCall->sendcall(id_msg_attack, (LPVOID)0x5dc1);
+                    }
+                    else
+                    {
+                        pCall->SteptoBack(pBossNode);
+                    }
+                    break;
+                }
+            case 5902304:
+                {
+                    if(pCall->isStrikeCd(0x5e60))
+                    {
+                        pCall->Kill_Tab(0x5e60);
+                    }
+                    else
+                    {
+                        pCall->Attack(0x5e6a);
+                    }
+                    pCall->Kill_Tab(0x5dca, 11);
+                    break;
+                }
+            //爆魔人
 
-            case 5902384:
+
+            //鬼门关最终BOSS
+            case 5902383:
                 {
                     if(percent < 70)
                     {
@@ -766,103 +705,122 @@ void CombatBoss::run()
                     }
                     else
                     {
-                        if(pCall->GetObjectTargetId(pBossNode->ObjAddress) == My_id)
-                        {
-                            pCall->Kill_Tab(0x5dca);
-                        }
-                        else
-                        {
-                            pCall->SteptoBack(pBossNode);
-                        }
+                        pCall->Kill_Tab(0x5dca, 1);
+                        //pCall->sendcall(id_msg_attack, (LPVOID)0x5dca);
                     }
+                    break;
+                }
+
+            case 5902384:
+                {
+                    pCall->SteptoBack(pBossNode);
                     break;
                 }
             case 5902385:
                 {
-                    if(pCall->GetObjectTargetId(pBossNode->ObjAddress) == My_id)
-                    {
-                        pCall->Kill_Tab(0x5dca);
-                    }
-                    else
-                    {
-                        pCall->SteptoBack(pBossNode);
-                    }
+                    pCall->SteptoBack(pBossNode);
                     break;
                 }
             case 5902386:
                 {
+                    pCall->SteptoBack(pBossNode);
+                    break;
+                }
+            case 5902388:
+                {
                     if(pCall->GetObjectTargetId(pBossNode->ObjAddress) == My_id)
                     {
-                        pCall->Kill_Tab(0x5dca);
+                        pCall->Kill_Tab(0x5dca, 11);
                     }
                     else
                     {
                         pCall->SteptoBack(pBossNode);
                     }
-                    break;
-                }
-            case 5902388:
-                {
-                    pCall->Kill_Tab(0x5dca);
-                    if(pCall->GetPlayerMana() < 20)
-                    {
-                        pCall->sendcall(id_msg_attack, (LPVOID)0x5dc1);//r
-                    }
-                    pCall->Kill_Tab(0x5dca);
                     break;
                 }
             case 5902389:
                 {
                     pCall->Kill_Tab(0x5dca);
-                    if(pCall->GetPlayerMana() < 20)
-                    {
-                        pCall->sendcall(id_msg_attack, (LPVOID)0x5dc1);//r
-                    }
-                    pCall->Kill_Tab(0x5dca);
                     break;
                 }
             case 5902391:
                 {
-                    pCall->TurnTo(pBossNode);
-                    if(pCall->GetPlayerMana() > 60)
-                    {
-                        if(pCall->isStrikeCd(0x5E1B))
-                        {
-                            pCall->Kill_Tab(0x5E1B);
-                        }
-                        else
-                        {
-                            pCall->Kill_Tab(0x5dca);
-                        }
-                    }
-                    else
-                    {
-                        if(pCall->isStrikeCd(0x5e74))
-                        {
-                            pCall->Kill_Tab(0x5e74);
-                        }
-                        else if(pCall->isStrikeCd(0x5DF2))
-                        {
-                            pCall->Kill_Tab(0x5DF2);
-                        }
-                        else
-                        {
-                            pCall->Kill_Tab(0x5dca);
-                        }
-                    }
-                    if(pCall->GetPlayerMana() < 20)
-                    {
-                        pCall->sendcall(id_msg_attack, (LPVOID)0x5dc1);//r
-                    }
+                    //pCall->Attack(0x5dc1);
+                    pCall->Stepto(pBossNode);
+                    //pCall->Attack(0x5dc1);
+                    pCall->ChangeZ_Status(TRUE);
+                    pCall->ChangeHeight(0);
+                    Sleep(6400);
+                    pCall->ChangeZ_Status(FALSE);
+                    pCall->ChangeHeight(-1071);
+                    pCall->Kill_Tab(0x5dca, 10);
+
+                    //              pCall->Stepto(pBossNode);
+                    //              if(Xiezi_flag == FALSE)
+                    //              {
+                    //TRACE(_T("沒打小蠍子,準備飛天"));
+                    //                  pCall->ChangeZ_Status(TRUE);
+                    //                  pCall->ChangeHeight(-500);
+                    //                  //MessageBox(L"摇奖完", L"装八卦", MB_OK);
+                    //Sleep(9500);
+                    //                  pCall->ChangeZ_Status(FALSE);
+                    //              }
+                    //              else
+                    //              {
+                    //pCall->Attack(0x5dc1);
+                    //pCall->Attack(0x5dc1);
+                    //pCall->Attack(0x5dc1);
+                    //                  Xiezi_flag = FALSE;
+                    //                  if(pCall->isStrikeCd(0x5E1B))
+                    //                  {
+                    //                      TRACE("准备使用C");
+                    //                      pCall->Kill_Tab(0x5E1B);
+                    //                  }
+                    //                  if(pCall->isStrikeCd(0x5DF2))
+                    //                  {
+                    //                      TRACE("准备使用2");
+                    //                      Sleep(500);
+                    //                      pCall->Kill_Tab(0x5DF2, 10);
+                    //                      Sleep(500);
+                    //                      TRACE("准备使用SS");
+                    //                      pCall->Kill_Tab(0x5e6a, 10);
+                    //                      /*Sleep(1000);
+                    //                      TRACE("准备使用e");
+                    //                      pCall->Kill_Tab(0x5E1A, 8);*/
+                    //                  }
+                    //                  else
+                    //                  {
+                    //                      TRACE("没其他技能可用，准备使用tab");
+                    //                      if(pCall->isStrikeCd(0x5e60))
+                    //                      {
+                    //                          pCall->Kill_Tab(0x5e60);
+                    //                      }
+                    //                      TRACE("tab1");
+                    //                      pCall->Kill_Tab(0x5dca, 15);
+                    //                      if(pCall->isStrikeCd(0x5e60))
+                    //                      {
+                    //                          pCall->Kill_Tab(0x5e60);
+                    //                      }
+                    //                      TRACE("tab2");
+                    //                      pCall->Kill_Tab(0x5dca, 15);
+                    //                      if(pCall->isStrikeCd(0x5e60))
+                    //                      {
+                    //                          pCall->Kill_Tab(0x5e60);
+                    //                      }
+                    //                      TRACE("tab3");
+                    //                      pCall->Kill_Tab(0x5dca, 15);
+                    //                  }
+                    //              }
                     break;
                 }
             //鬼门关最终BOSS
 
             //雪人洞雪人
 
-
-
             //雪人洞雪人
+
+
+
             default:
                 {
                     //杀怪
@@ -886,13 +844,10 @@ void CombatBoss::run()
                         }
                     }
 
-                    if(pCall->GetRangeMonsterCount() > 1)
-                    {
-                        pCall->Kill_Tab(0x5dca);
-                    }
                     if(pCall->GetObjectTargetId(pBossNode->ObjAddress) == My_id)
                     {
-                        pCall->Kill_Tab(0x5dca);
+                        pCall->sendcall(id_msg_attack, (LPVOID)0x5dc1);
+                        pCall->Kill_Tab(0x5dca, 15);
                     }
                     else
                     {
@@ -902,17 +857,21 @@ void CombatBoss::run()
                     break;
                 }
             }
-
+            TRACE("处理完毕");
+            m_event.dwStrikeId = 0;
         }
         else
         {
             //空闲时动作, 一般的释放技能
 
-
             //5E60->5EA6->5EB0->5E9C
             if(pCall->isStrikeCd(0x5e60))
             {
                 pCall->sendcall(id_msg_attack, (LPVOID)0x5e60);
+            }
+            if(pCall->isStrikeCd(0x5ea6))
+            {
+                pCall->sendcall(id_msg_attack, (LPVOID)0x5ea6);
             }
 
             pCall->TurnTo(pBossNode);
@@ -925,6 +884,7 @@ void CombatBoss::run()
                 }
             }
 
+            pCall->GetHealth(60);
 
             if(pCall->GetRangeMonsterCount() > 1)
             {
@@ -932,31 +892,22 @@ void CombatBoss::run()
                 {
                     pCall->sendcall(id_msg_attack, (LPVOID)0x5DE8);
                 }
+                else if(pCall->isStrikeCd(0x5E06))
+                {
+                    pCall->sendcall(id_msg_attack, (LPVOID)0x5E06);
+                }
             }
-            if(pCall->isStrikeCd(0x5E06))
-            {
-                pCall->sendcall(id_msg_attack, (LPVOID)0x5E06);
-            }
-
             //事件发送过快导致执行对应动作时为时已晚怎么办, 这个暂时不考虑
             //计算机没来得及处理人更不可能了
             //Sleep(10);
             if(pCall->GetPlayerMana() > 70)
             {
-                if(pCall->GetObjectTargetId(pBossNode->ObjAddress) == My_id)
-                {
-                    pCall->Kill_Tab(0x5dca);
-                }
-                else
-                {
-                    pCall->sendcall(id_msg_attack, (LPVOID)0x5dde);
-                }
+                pCall->sendcall(id_msg_attack, (LPVOID)0x5dde);
             }
-            //pCall->Attack(0x5dc1);
             pCall->sendcall(id_msg_attack, (LPVOID)0x5dc1);
         }
 
-        m_event.dwStrikeId = 0;
+
     }
 
 //取消回调
@@ -973,41 +924,61 @@ void CombatBoss::NotifyMonsterAttack(MONSTERATAACK* pAttack)
     static MONSTERATAACK old1;
     static DWORD dwEnd = GetTickCount();
     DWORD dwStart = GetTickCount();
-
+	static MONSTERATAACK attackid;
+	attackid = *pAttack;
     static int notProcess = 0; //不处理次数
-
-    //先按时间过滤
-    if(pAttack->dwStrikeId <= 0xffff) return;
-
-
-    if(pAttack->dwStrikeId != old1.dwStrikeId)
+    try
     {
-        m_event.dwObj = pAttack->dwObj;
-        m_event.dwStrikeId = pAttack->dwStrikeId;
+        //先按时间过滤
+        if(pAttack->dwStrikeId <= 65535)return;
+        if(pAttack->dwStrikeId >= 268435456) return;
 
-        old1 = *pAttack;
-        notProcess = 0;
-    }
-    else
-    {
-        //上个id
-        notProcess++;
-
-
-        //没找到
-        if(m_JnCounts.find(pAttack->dwStrikeId) == m_JnCounts.end())
-        {
-            //这是没有记录的id
-        }
-        else if(m_JnCounts[pAttack->dwStrikeId] == notProcess)
+        if(pAttack->dwStrikeId != old1.dwStrikeId)
         {
             m_event.dwObj = pAttack->dwObj;
             m_event.dwStrikeId = pAttack->dwStrikeId;
+
+            old1 = *pAttack;
+            notProcess = 0;
         }
         else
         {
+            //上个id
+            notProcess++;
 
+
+			TRACE(_T("pAttack->dwStrikeId:%d"),attackid.dwStrikeId);
+            //没找到
+			if (m_JnCounts.find(attackid.dwStrikeId) == m_JnCounts.end())
+			{
+				//TRACE("没有记录的技能ID,%d",pAttack->dwStrikeId);
+			}else
+			{
+				    m_event.dwObj = attackid.dwObj;
+				    m_event.dwStrikeId = attackid.dwStrikeId;
+			}
+            //if(m_JnCounts.find(pAttack->dwStrikeId) == m_JnCounts.end())
+            //{
+            //    //这是没有记录的id
+            //    //TRACE("没有记录的技能ID,%d",pAttack->dwStrikeId);
+            //}
+            //else if(m_JnCounts[pAttack->dwStrikeId] == notProcess)
+            //{
+            //    //TRACE("ID已勾:%d",pAttack->dwStrikeId);
+            //    m_event.dwObj = pAttack->dwObj;
+            //    m_event.dwStrikeId = pAttack->dwStrikeId;
+            //}
+            //else
+            //{	
+            //    //TRACE("notProcess,%d",notProcess);
+            //}
         }
+
+    }
+	catch(exception ex)
+    {
+        TRACE(_T("m_JnCounts.find-error"));
+		return;
     }
 }
 
@@ -1047,16 +1018,16 @@ void CombatBoss::LoadCountsData()
         {
             file1 >> i;
             file1 >> i1;
-
-            m_JnCounts[i] = i1;
-
+			TRACE(_T("技能i: %d"), i);
+			TRACE(_T("技能i1: %d"), i1);
+            //m_JnCounts[i] = i1;
+			m_JnCounts.insert(pair<int,int>(i,i1));
         }
-
         TRACE(_T("技能数量: %d"), m_JnCounts.size());
     }
     catch(...)
     {
-
+		TRACE(_T("读文件报错"));
     }
 
 }
@@ -1064,5 +1035,6 @@ void CombatBoss::LoadCountsData()
 
 void CombatBoss::SetName(const wchar_t* name)
 {
+    TRACE(_T("SetName: %s"), name);
     m_name = name;
 }

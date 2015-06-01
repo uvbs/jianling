@@ -95,19 +95,9 @@ VOID WINAPI c2w(wchar_t* pwstr, size_t len, const char* str)
     }
 }
 
-DWORD CALLBACK RestorData(LPVOID lpParam)
-{
-
-    //这里恢复, 这是适当的时候吗?
-    //游戏每10秒执行原本的hook一次.
-
-    return 0;
-}
 
 __declspec(naked) void Fuck()
 {
-    CreateThread(NULL, 0, RestorData, 0, 0, 0);
-    OutputDebugStringA("Fuck ....");
     __asm
     {
         mov eax, 0x755;
@@ -314,6 +304,10 @@ void ClearNP(HMODULE hModule)
 
         //处理调试器  多开不需要这些玩意
         hookx64.Initialization();
+		/*
+		處理調試器？
+		可能會引起崩潰問題。
+		*/
         hookx64.InstallHook("ZwSetInformationThread", (DWORD)NtSetInformationThread_Hook, (PDWORD)&OrigNtSetInformationThread);
         hookx64.InstallHook("ZwQueryInformationProcess", (DWORD)NtQueryInformationProcess_Hook, (PDWORD)&OrigNtQueryInformationProcess);
         hookx64.InstallHook("ZwGetContextThread", (DWORD)ZwGetContextThread_Hook, (PDWORD)&ZwGetContextThread);
@@ -323,11 +317,10 @@ void ClearNP(HMODULE hModule)
         InlineHook((VOID*)(DWORD)GetProcAddress(LoadLibraryA("kernelBase.dll"), "CreateMutexExW"), (VOID*)CreateMutexExW_hook, (VOID**)&Orig_CreateMutexExW);
         InlineHook((VOID*)(DWORD)GetProcAddress(LoadLibraryA("kernelBase.dll"), "CreateFileW"), (VOID*)CreateFileW_Hook, (VOID**)&Orig_CreateFileW);
         InlineHook((VOID*)(DWORD)GetProcAddress(LoadLibraryA("kernel32.dll"), "CreateProcessInternalW"), (VOID*)MyCreateProcessInternalW, (VOID**)&Orig_CreateProcessInternalW);
+		//hookx64.UnInitialization();
     }
     else
     {
-
-
         HMODULE hKer32 = GetModuleHandle(_T("kernel32.dll"));
         if(hKer32 == NULL) return;
 

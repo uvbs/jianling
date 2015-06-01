@@ -291,21 +291,18 @@ void GamecallEx::FuHuo()
         return;
     }
 
-    DWORD uiAddr = 0;
-    GetUIAddrByName(L"SkillBarPanel", &uiAddr);
-    if(uiAddr == 0)
-    {
-        OutputDebugString(_T("复活时没有遍历到UI"));
-        return;
-    }
-
-    TRACE(_T("uiAddr:%d"), uiAddr);
-    uiAddr = ReadDWORD(uiAddr + fuhuo_offset1);
-    TRACE(_T("uiAddr2:%d"), uiAddr);
+   Sleep(5000);
     __try
     {
-
-        sendcall(id_msg_Fuhuo, &uiAddr);
+		BOOL flag = isStrikeCan(L"復活");
+		if (!flag)
+		{
+			return;
+		}else
+		{
+			KeyPress(52);
+		}
+        //sendcall(id_msg_Fuhuo, &uiAddr);
         //复活后等待10秒 等待进入读图阶段 宁可复活后多等 时间少容易报错
         Sleep(10000);
 
@@ -586,7 +583,7 @@ int GamecallEx::ClearCustom()
 //参数2: 以参数1计算的范围
 //参数3: 模式
 //这个函数完全阻塞, 直到完成
-int GamecallEx::FindThenKill(int pos, DWORD range, DWORD mode, DWORD MyQuestStep, DWORD MyQuestID, DWORD canKillRange)
+int GamecallEx::FindThenKill(int pos, DWORD range, DWORD mode, DWORD MyQuestStep, DWORD MyQuestID, DWORD canKillRange, BOOL Rush)
 {
 
 
@@ -621,7 +618,7 @@ startKiLL:
             sendcall(id_msg_PickdownBody, 0);
             continue;
         }
-        int killresult = KillObject(range, RangeObject[i], mode, canKillRange);
+        int killresult = KillObject(range, RangeObject[i], mode, canKillRange, Rush);
         if(killresult == RESULT_KILL_PLAYDEAD)
         {
             return RESULT_KILL_PLAYDEAD;
@@ -668,7 +665,6 @@ startKiLL:
 
     }//for
     //打完所有怪小等片刻再遍历。
-    Sleep(500);
 
     //如果有一次超时, 那可能是一个隐藏的但是存在的怪物
     //没办法杀的, 就不继续找剩余怪, 避免死循环
@@ -702,12 +698,95 @@ exitfun:
     return RESULT_KILL_OK;
 }
 
-void GamecallEx::KillBoss(const wchar_t* name)
+int GamecallEx::FindThenKill_S(DWORD range, DWORD mode, DWORD canKillRange /*= CAN_OPERATOR*/, BOOL Rush /*= FALSE*/, BOOL One_Kill/*=FALSE*/)
+{
+
+    fPosition fmypos;
+    GetPlayerPos(&fmypos);
+
+    //TRACE(_T("遍历怪物"));
+    std::vector<ObjectNode*> RangeObject;
+    GetRangeMonsterToVector(GetObjectBinTreeBaseAddr(), range, RangeObject);
+
+
+    //排序
+    //TRACE(_T("怪物排序"));
+    std::sort(RangeObject.begin(), RangeObject.end(), UDgreater);
+
+    //TRACE(_T("根据配置配需"));
+    //应用杀怪配置, 包括自定义的
+    Kill_ApplyConfig(RangeObject);
+
+    DWORD count = RangeObject.size();
+    TRACE(_T("总共: %d 个目标怪物"), count);
+
+
+    //杀怪
+    BOOL bTimeOut = FALSE;
+    for(DWORD i = 0; i < count; i++)
+    {
+        if(isPickupDeadBody())
+        {
+            sendcall(id_msg_PickdownBody, 0);
+            continue;
+        }
+        int killresult = KillObject(range, RangeObject[i], mode, canKillRange, Rush);
+        if(One_Kill)
+        {
+            TRACE(_T("只打一只就退"));
+            return RESULT_KILL_OK;
+        }
+        if(killresult == RESULT_KILL_PLAYDEAD)
+        {
+            return RESULT_KILL_PLAYDEAD;
+        }
+
+        if(killresult == RESULT_KILL_TIMEOUT)
+        {
+            bTimeOut = TRUE;
+        }
+        if(mode & modePickupBody)
+        {
+
+            if(kill_PickupBody())
+            {
+                break;
+            }
+        }
+        if(mode & modePickupOnce)
+        {
+            TRACE(_T("执行modePickupOnce"));
+            Pickup(170);
+        }
+
+
+    }//for
+    //打完所有怪小等片刻再遍历。
+
+    if(mode & modePickup)
+    {
+        Sleep(500);
+        TRACE(_T("执行modePickup"));
+        //杀完捡起掉落, 此时的范围为了更可靠写改成x2
+        Pickup(range);
+    }
+
+    if(mode & modeGoback)
+    {
+        TRACE(_T("执行modeGoback"));
+        Gamecall::Stepto(fmypos, 10, CAN_OPERATOR, range * 2);
+    }
+
+    TRACE(_T("%s done!"), FUNCNAME);
+    return RESULT_KILL_OK;
+}
+
+int GamecallEx::KillBoss(const wchar_t* name)
 {
     CombatBoss Combat;
+    Combat.LoadCountsData();
     Combat.SetName(name);
-    Combat.run();
-
+    return Combat.run();
 }
 
 //交任务, 最后参数默认0
@@ -886,8 +965,15 @@ BOOL GamecallEx::PickupSpecTypeTask(DWORD range, DWORD type, wchar_t* name, BOOL
             if(flag)
             {
                 fPosition fpos;
-                GetObjectPos(RangeObject[i], &fpos);
-                Stepto(fpos.y, fpos.x, fpos.z, 20, 10, range + 100);
+
+                if(GetObjectPos(RangeObject[i], &fpos))
+                {
+                    Stepto(fpos.y, fpos.x, fpos.z, 20, 10, range + 100);
+                }
+                else
+                {
+                    TRACE(_T("PickupSpecTypeTask-error"));
+                }
             }
 
             if(GetObjectType(RangeObject[i]->ObjAddress) == type)
@@ -1112,7 +1198,9 @@ BOOL Gamecall::Stepto(fPosition& tarpos, double timeOut, DWORD okRange, DWORD to
     DWORD dis = (DWORD)CalcC(fmypos, tarpos);
     if(dis >= tooLong)
     {
-        TRACE(_T("%s: 目的距离太远"), FUNCNAME);
+        TRACE(_T("%s: 目的距离太远:%d"), FUNCNAME, dis);
+        TRACE(_T("目标坐标:%d,%d,%d"), (int)tarpos.y, (int)tarpos.x, (int)tarpos.z);
+        TRACE(_T("我的坐标:%d,%d,%d"), (int)fmypos.y, (int)fmypos.x, (int)fmypos.z);
         return FALSE;
     }
 
@@ -1217,14 +1305,16 @@ void GamecallEx::Stepto(ObjectNode* pNode, int timeout, int OkRange, int maxlong
     if(GetObjectPos(pNode, &fpos))
     {
         Stepto3x();
-        if(Gamecall::Stepto(fpos, timeout, OkRange, maxlong) == FALSE)
-        {
-            _ASSERTE(FALSE);
-        }
+        Gamecall::Stepto(fpos, timeout, OkRange, maxlong);
+        /* if(Gamecall::Stepto(fpos, timeout, OkRange, maxlong) == FALSE)
+         {
+             _ASSERTE(FALSE);
+         }*/
     }
     else
     {
-        _ASSERTE(FALSE);
+        TRACE(_T("GetObjectPos返回NULL,Stepto执行未成功"));
+        //_ASSERTE(FALSE);
     }
 }
 
@@ -1541,6 +1631,10 @@ void GamecallEx::FollowNpc(wchar_t* name, DWORD range)
     if(GetObjectPos(pNode, &ftargetpos_old) == FALSE)
     {
         return;
+    }
+    else
+    {
+        TRACE(_T("FollowNpc-error"));
     }
 
 
@@ -1975,6 +2069,10 @@ void GamecallEx::TurnTo(ObjectNode* pNode)
     {
         Gamecall::TurnTo(fpos);
     }
+    else
+    {
+        TRACE(_T("TurnTo转向目标时错误"));
+    }
 
 }
 //添加一个天赋技能
@@ -2061,33 +2159,31 @@ void GamecallEx::TurnToNear(DWORD range)
     }
 }
 
-void GamecallEx::Kill_Tab(int id)
+void GamecallEx::Kill_Tab(int id, int WaitCount)
 {
     int cs;
     cs = 0;
-    //sendcall(id_msg_attack, (LPVOID)0x5dca);
     Attack(id);
-    //TRACE(_T("执行一次"));
+    Sleep(500);
     while(true)
     {
         if(isPlayerDaodi())
         {
-            //TRACE(_T("TAB释放时倒地跳出"));
             break;
         }
-        if(cs > 20)
+        if(cs >= WaitCount)
         {
-            //TRACE(_T("cs退出"));
+            //TRACE("时间到退");
             return;
         }
-        if(GetPlayerSkillStatus() == FALSE)
-        {
-            if(GetPlayerBusy() == FALSE)
-            {
-                //TRACE(_T("没在忙碌,%d"), GetPlayerBusy());
-                break;
-            }
-        }
+        //    if(GetPlayerSkillStatus() == FALSE)
+        //    {
+        //        if(GetPlayerBusy() == FALSE)
+        //        {
+        //TRACE("不忙退");
+        //            break;
+        //        }
+        //    }
         cs++;
         Sleep(100);
     }
@@ -2114,6 +2210,7 @@ int GamecallEx::KillObject(DWORD range, ObjectNode* pNode, DWORD mode, DWORD can
     DWORD MaxHealth = 0;
     DWORD Health = 0;
     DWORD percent = 0;
+    BOOL Step_Flag = FALSE;
 
     if(Rush)
     {
@@ -2127,6 +2224,7 @@ int GamecallEx::KillObject(DWORD range, ObjectNode* pNode, DWORD mode, DWORD can
 
     for(;;)
     {
+		GetHealth(60);
         begitime = GetTickCount();
 
         int tick_begin = GetTickCount();
@@ -2146,14 +2244,14 @@ int GamecallEx::KillObject(DWORD range, ObjectNode* pNode, DWORD mode, DWORD can
 
         if(percent < 70)
         {
-            if(isStrikeCd(0x5dca))
+            if(isStrikeCd(0x5DFC))
             {
-                Attack(0x5dca);
+                Attack(0x5DFC);
                 TurnTo(pNode);
-                Sleep(500);
-                while(isStrikeCd(0x5dc1))
+                Sleep(800);
+                while(isStrikeCd(0x1F5))
                 {
-                    Attack(0x5ECE);
+                    sendcall(id_msg_attack, (LPVOID)0x5ECE);
                 }
             }
         }
@@ -2193,12 +2291,22 @@ int GamecallEx::KillObject(DWORD range, ObjectNode* pNode, DWORD mode, DWORD can
         {
             targetpos.x = targetpos.x - 50;
             targetpos.y = targetpos.y - 50;
-            Gamecall::Stepto(targetpos, 10, CAN_OPERATOR, range);
+            NewSpend(2.5);
+            Step_Flag = Gamecall::Stepto(targetpos, 5, CAN_OPERATOR, range);
+            NewSpend(1);
+            if(Step_Flag == FALSE)
+            {
+                TRACE(_T("需要走的坐标太远"));
+                TRACE(_T("需要走,%d,%d,%d"), (int)targetpos.y, (int)targetpos.x, (int)targetpos.z);
+                return RESULT_KILL_StepTimeOut;
+            }
+
         }
         else if(dis <= canKillRange)
         {
             //杀怪时才需要转向
             Gamecall::TurnTo(targetpos);
+			
             if(mode & modeOnlyAoe)
             {
                 //TRACE(_T("执行AEO"));
@@ -2209,51 +2317,65 @@ int GamecallEx::KillObject(DWORD range, ObjectNode* pNode, DWORD mode, DWORD can
                 }
                 else
                 {
-                    //sendcall(id_msg_attack, (LPVOID)0x5dc1);
-                    Attack(0x5dc1);
+                    sendcall(id_msg_attack, (LPVOID)0x5dc1);
+                    //Attack(0x5dc1);
                 }
             }
             else
             {
                 DWORD MonsterCount = 0;
                 int mana = GetPlayerMana();
-                MonsterCount = GetRangeMonsterCount();
+                MonsterCount = GetRangeMonsterCount(400);
+				if(isStrikeCd(0x5E24))
+				{
+					Attack(0x5E24);
+				}
+				//TRACE(_T("当前范围怪:%d"),MonsterCount);
                 if(mode & modeAoe)
                 {
-
+					//TRACE(_T("进入aoe:%d"),MonsterCount);
                     if(MonsterCount > 3)
                     {
-                        if(mana >= 60)
+                        if(mana >= 30)
                         {
-                            if(isStrikeCd(0x5E06))
+                            if(isStrikeCd(0x5DE8))
                             {
-                                Kill_Tab(0x5DE8);
-                                Kill_Tab(0x5E06);
-                                Kill_Tab(0x5dca);
-                                Kill_Tab(0x5e74);
-                            }
+								//TRACE(_T("执行0x5DE8"));
+                                Attack(0x5DE8);
+                                if(isStrikeCd(0x5E06))
+                                {
+                                    Attack(0x5E06);
+                                }
+							}else if(isStrikeCd(0x5e74))
+							{
+								Gamecall::TurnTo(targetpos);
+								Attack(0x5e74);
+							}else if (isStrikeCd(0x5E10))
+							{
+								Gamecall::TurnTo(targetpos);
+								Attack(0x5E10);
+							}
                             else
                             {
-                                Kill_Tab(0x5dca);
+                                Kill_Tab(0x5dca, 13);
                             }
                         }
                         else
                         {
+							//TRACE(_T("进入aoe:%d,没蓝执行5dc1"),MonsterCount);
                             sendcall(id_msg_attack, (LPVOID)0x5dc1);
                         }
                     }
                     else if(MonsterCount > 1)
                     {
-                        //TRACE(_T("执行AEO"));
-
                         if(mana >= 60)
                         {
-                            Kill_Tab(0x5dca);
+							TRACE(_T("进入MonsterCount>1"));
+                            Kill_Tab(0x5dca, 13);
                         }
                         else
                         {
-                            //sendcall(id_msg_attack, (LPVOID)0x5dc1);
-                            Attack(0x5dc1);
+                            sendcall(id_msg_attack, (LPVOID)0x5dc1);
                         }
                     }
                     else
@@ -2261,10 +2383,8 @@ int GamecallEx::KillObject(DWORD range, ObjectNode* pNode, DWORD mode, DWORD can
                         if(mana >= 60)
                         {
                             sendcall(id_msg_attack, (LPVOID)0x5dde);
-                            //Attack(0x5dde);
                         }
                         sendcall(id_msg_attack, (LPVOID)0x5dc1);
-                        //Attack(0x5dc1);
                     }
                 }
                 else
@@ -2277,10 +2397,7 @@ int GamecallEx::KillObject(DWORD range, ObjectNode* pNode, DWORD mode, DWORD can
                 }
             }
 
-            if(isStrikeCd(0x5E24))
-            {
-                Attack(0x5E24);
-            }
+            
             //5秒没能打掉血就退
             DWORD curTime = GetTickCount();
             if((curTime - oriTime) >= 6000)
@@ -2290,7 +2407,6 @@ int GamecallEx::KillObject(DWORD range, ObjectNode* pNode, DWORD mode, DWORD can
                 {
                     oriTime = GetTickCount();
                     tarHealth = GetObjectHP(pNode->ObjAddress);
-
                 }
                 else
                 {
@@ -2302,8 +2418,6 @@ int GamecallEx::KillObject(DWORD range, ObjectNode* pNode, DWORD mode, DWORD can
 
             Sleep(50);
         }//for
-
-
     }
 }
 
@@ -2656,7 +2770,6 @@ BOOL GamecallEx::isCustomKill_HaveName(wchar_t* name)
     //从自定义的列表中匹配
     for(int i = 0; i < CustomName.size(); i++)
     {
-
         //根据名字来匹配, 匹配到一个
         if(wcscmp(CustomName[i].name, name) == 0)
         {
@@ -2674,16 +2787,16 @@ DWORD GamecallEx::GetRangeMonsterCount(DWORD range)
     std::vector<ObjectNode*> RangeObject;
     GetRangeMonsterToVector(GetObjectBinTreeBaseAddr(), range, RangeObject);
     Kill_ApplyConfig(RangeObject);
-//	if (RangeObject.size() > 0)
-//	{
-//		int size = RangeObject.size() ;
-//			for (int i = 0;i < size; i++)
-//			{
+//  if (RangeObject.size() > 0)
+//  {
+//      int size = RangeObject.size() ;
+//          for (int i = 0;i < size; i++)
+//          {
 //TRACE("怪物地址:%x",RangeObject[0]->ObjAddress);
-//			}
-//			
-//	}
-	
+//          }
+//
+//  }
+
     return RangeObject.size();
 }
 
@@ -2705,30 +2818,27 @@ UINT GamecallEx::KeepAliveThread(LPVOID pParam)
 
         if(pCall->isLoadingMap() == 3)
         {
-
-            //if(pCall->GetPlayerHealth() > 0)
             if(pCall->GetPlayerDeadStatus() == 0)
             {
                 rs = pCall->GetHealth(60);
-                if(rs == 4)
+                if(rs == 3)
                 {
-                    Sleep(1000);
+                    Sleep(60000);
                 }
                 else
                 {
-                    Sleep(10000);
+                    Sleep(1000);
                 }
             }
             else
             {
-                Sleep(15000);
+                Sleep(20000);
             }
         }
         else
         {
-            Sleep(5000);
+            Sleep(10000);
         }
-
         //pCall->CloseXiaoDongHua();
     }
 
@@ -2834,8 +2944,8 @@ BOOL GamecallEx::Init()
 
 
     //创建辅助线程
-    m_hTHelper = (HANDLE)_beginthreadex(0, 0, KeepAliveThread, this, 0, 0);
-    SetThreadPriority(m_hTHelper, THREAD_PRIORITY_BELOW_NORMAL);
+    //m_hTHelper = (HANDLE)_beginthreadex(0, 0, KeepAliveThread, this, 0, 0);
+    //SetThreadPriority(m_hTHelper, THREAD_PRIORITY_NORMAL);
 
 
 
@@ -2875,31 +2985,36 @@ void GamecallEx::SteptoBack(ObjectNode* pObj)
 {
     //
     fPosition rpos;
-    GetObjectPos(pObj, &rpos);
+    if(GetObjectPos(pObj, &rpos) == FALSE)
+    {
+        TRACE(_T("SteptoBack-error"));
+        return;
+    }
+
 
     //获取怪物面向
     DWORD objview = GetObjectView(pObj->ObjAddress);
     if(objview < 360 && objview > 270) //西北
     {
-        TRACE(_T("西北"));
+        //TRACE(_T("西北"));
         rpos.x -= CAN_OPERATOR / 2;
         rpos.y += CAN_OPERATOR / 2;
     }
     else if(objview < 270 && objview > 180) //西南
     {
-        TRACE(_T("西南"));
+        //TRACE(_T("西南"));
         rpos.y += CAN_OPERATOR / 2;
         rpos.x += CAN_OPERATOR / 2;
     }
     else if(objview > 90 && objview < 180)  //东南
     {
-        TRACE(_T("东南"));
+        //TRACE(_T("东南"));
         rpos.x += CAN_OPERATOR / 2;
         rpos.y -= CAN_OPERATOR / 2;
     }
     else if(objview > 0 && objview < 90) //东北
     {
-        TRACE(_T("东北"));
+        //TRACE(_T("东北"));
         rpos.y -= CAN_OPERATOR / 2;
         rpos.x -= CAN_OPERATOR / 2;
     }
@@ -2921,9 +3036,9 @@ void GamecallEx::SteptoBack(ObjectNode* pObj)
     }
 
 
-    NewSpend(2.5);
+    NewSpend(2);
     //sendcall(id_msg_step,(LPVOID)&rpos);
-    Stepto(rpos.y, rpos.x, rpos.z, 10, 20, 1000, FALSE);
+    Gamecall::Stepto(rpos, 10, 20, 1000, FALSE);
     NewSpend(1);
 }
 
@@ -2933,7 +3048,7 @@ wchar_t* GamecallEx::SteptoParty()
     BOOL flag = GetPartyInfo(team);
     if(flag)
     {
-        Stepto(team[0].Pos.y, team[0].Pos.x, team[0].Pos.z, 10, 15, 1000, TRUE);
+        Gamecall::Stepto(team[0].Pos, 10, 15, 3000, TRUE);
         return team[0].name;
     }
     else
@@ -2979,12 +3094,12 @@ void GamecallEx::Party_KillObject()
                     }
                     else
                     {
-                        TRACE(_T("获取目标ID%d"), GetObjectTargetId(Party_Node->ObjAddress));
+                        //TRACE(_T("获取目标ID%d"), GetObjectTargetId(Party_Node->ObjAddress));
                     }
                 }
                 else
                 {
-                    TRACE(_T("释放技能状态:%d"), IsPlayerSkillStatus(Party_Node->ObjAddress));
+                    //TRACE(_T("释放技能状态:%d"), IsPlayerSkillStatus(Party_Node->ObjAddress));
                 }
                 /*  }else
                 {
@@ -2993,7 +3108,7 @@ void GamecallEx::Party_KillObject()
             }
             else
             {
-                TRACE(_T("玩家的二叉错误"));
+                //TRACE(_T("玩家的二叉错误"));
             }
         }
         else
@@ -3004,3 +3119,4 @@ void GamecallEx::Party_KillObject()
         Sleep(500);
     }
 }
+

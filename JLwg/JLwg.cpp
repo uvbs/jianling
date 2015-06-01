@@ -4,6 +4,7 @@
 #include "GameConfig.h"
 #include "JLDlg.h"
 #include "GameSpend.h"
+#include "GameHook.h"
 
 
 
@@ -138,12 +139,12 @@ DWORD CALLBACK CJLwgApp::WorkThread(LPVOID pParam)
         }
 
 
-        if(!GameSpend::GetInstance()->Init())
-        {
-            LOGER(_T("初始化加速失败"));
-            ExitProcess(0);
-            return FALSE;
-        }
+        //if(!GameSpend::GetInstance()->Init())
+        //{
+        //    LOGER(_T("初始化加速失败"));
+        //    ExitProcess(0);
+        //    return FALSE;
+        //}
 
 
         if(!GameConfig::GetInstance()->LoadConfig())
@@ -180,9 +181,8 @@ DWORD CALLBACK CJLwgApp::WorkThread(LPVOID pParam)
         theApp.wpOrigGameProc = (WNDPROC)::SetWindowLong(theApp.m_hGameWnd, GWL_WNDPROC, (LONG)theApp.GameWndProc);
         ::SetWindowText(theApp.m_hGameWnd, theApp.m_stData.szAccount);
 
-        //生成一个隐藏
-        theApp.m_HideWnd.Create(NULL, _T("HideTaskBar")); //生成窗口,不带ws_visible
-
+        //static CFrameWnd a;   //生成一个框架窗口对象
+        //a.Create(NULL, _T("HideTaskBar")); //生成窗口,不带ws_visible
 
         //主对话框
         theApp.m_pWgDlg = new CJLDlg();
@@ -542,8 +542,23 @@ static int FindThenKill(lua_State* L)
 static int KillBoss(lua_State* L)
 {
     const char* pszText = lua_tostring(L, 1);
-    GamecallEx::GetInstance()->KillBoss((wchar_t*)pszText);
-    return 0;
+	GameHook::GetInstance()->m_ObjAddrVec.clear();
+	GameHook::GetInstance()->backupCombat = GameHook::GetInstance()->CombatHook.hook();
+	ObjectNode pNode =	GamecallEx::GetInstance()->GetObjectByName(pszText);
+	ObjectVector& HookVec = GameHook::GetInstance()->m_ObjAddrVec;
+	HookVec.push_back(pNode);
+	int flag = GamecallEx::GetInstance()->KillBoss((wchar_t*)pszText);
+	GameHook::GetInstance()->CombatHook.unhook();
+	//从钩子vec中删掉
+	for(std::vector<ObjectNode*>::iterator it = HookVec.begin(); it != HookVec.end(); it++)
+	{
+		if(*it == pNode)
+		{
+			HookVec.erase(it);
+			break;
+		}
+	}
+    return flag;
 }
 
 static int STATUS(lua_State* L)

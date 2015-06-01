@@ -31,7 +31,6 @@ public:
     DWORD GetRangeLootCount(DWORD range);
     DWORD GetRangeMonsterCount(DWORD range = CAN_OPERATOR); //取范围内怪物数量, 一般用来判断是否用aoe攻击
 
-
     //拾取, UI
     void Pickup(int range);        //捡起范围内掉落
 
@@ -59,11 +58,12 @@ public:
 
 
     //打怪
-    void KillBoss(const wchar_t* name);
-    int FindThenKill(int pos, DWORD range, DWORD mode, DWORD MyQuestStep = 0, DWORD MyQuestID = 0, DWORD canKillRange = CAN_OPERATOR);    //找到杀掉
+    int KillBoss(const wchar_t* name);
+    int FindThenKill(int pos, DWORD range, DWORD mode, DWORD MyQuestStep = 0, DWORD MyQuestID = 0, DWORD canKillRange = CAN_OPERATOR,BOOL Rush = FALSE);    //找到杀掉
+	int FindThenKill_S(DWORD range, DWORD mode, DWORD canKillRange = CAN_OPERATOR,BOOL Rush = FALSE,BOOL One_Kill = FALSE);    //找到杀掉
     BOOL kill_PickupBody();
     BOOL kill_Task(int MyQuestID, int MyQuestStep);
-    void Kill_Tab(int id);//tab释放等待
+    void Kill_Tab(int id,int WaitCount = 20);//tab释放等待
 
     //自定义杀怪过滤
     BOOL isCustomKill_DontKill(wchar_t* name);

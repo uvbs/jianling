@@ -34,6 +34,7 @@
 #define RESULT_KILL_TIMEOUT     2
 #define RESULT_KILL_FAIL        3
 #define RESULT_KILL_No          4
+#define RESULT_KILL_StepTimeOut          4
 
 //杀怪模式, 默认只Normal
 //可以应用多个杀怪模式, 比如 modeNormal | modeSpend | modeTask | modeAoe
