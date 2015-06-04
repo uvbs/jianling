@@ -223,6 +223,12 @@ void CJLkitView::SetResult(int nReslt, int i)
             GetListCtrl().SetItemText(i, COLUMN_TEXT_STATUS, _T("运行中.."));
             break;
         }
+
+	default:
+		{
+			_ASSERTE(FALSE);
+			break;
+		}
     }
 }
 
@@ -448,6 +454,8 @@ UINT AFX_CDECL CJLkitView::IPCThread(LPVOID lpParam)
     DWORD dwBytesRead;
     BOOL bRetCode;
     DWORD dwBytesWrited = 0;
+	PIPESTATUS status;
+
 
     TCHAR szPipi[MAX_PATH];
     wsprintf(szPipi, _T("\\\\.\\Pipe\\JLwg_%d"), stPipeData.dwPid);
@@ -475,23 +483,34 @@ UINT AFX_CDECL CJLkitView::IPCThread(LPVOID lpParam)
     }
 
 
-    PIPESTATUS status;
+    
     while(1)
     {
 
-        // Read client requests from the pipe.
-        bRetCode = ReadFile(hPipe, &status, sizeof(PIPESTATUS),  &dwBytesRead, NULL);
-        if(!bRetCode || (dwBytesRead == 0))
-        {
-            list.SetItemText(inItem, COLUMN_TEXT_STATUS, _T("进程退出了"));
+		// Read client requests from the pipe.
+		bRetCode = ReadFile(hPipe, &status, sizeof(PIPESTATUS),  &dwBytesRead, NULL);
+		if(!bRetCode || (dwBytesRead == 0))
+		{
+			list.SetItemText(inItem, COLUMN_TEXT_STATUS, _T("进程非正常关闭"));
 
-            DisconnectNamedPipe(hPipe);
-            break;
-        }
+			//非正常退出, 重新启动游戏
+			pView->CreateGameProcess(inItem);
+			break;
+		}
+
+		if(_tcscmp(status.szStatus, _T("exit")) == 0)
+		{
+			list.SetItemText(inItem, COLUMN_TEXT_STATUS, _T("进程正常关闭"));
+			break;
+		}
 
         //设置状态
         list.SetItemText(inItem, COLUMN_TEXT_STATUS, status.szStatus);
+
+
     }
+
+	DisconnectNamedPipe(hPipe);
 
 fun_exit:
     if(hPipe != INVALID_HANDLE_VALUE)
@@ -587,7 +606,7 @@ int CJLkitView::CreateGameProcess(int inItem, bool bInject)
         _tcscpy(_tcsrchr(szLibFile, TEXT('\\')) + 1, TEXT("JLwg_tw.dll"));
         CInject wgdll(szLibFile);
 #else
-        _tcscpy(_tcsrchr(szLibFile, TEXT('\\')) + 1, TEXT("JLwg.dll"));
+        _tcscpy(_tcsrchr(szLibFile, TEXT('\\')) + 1, TEXT("JLwg_hf.dll"));
         CInject wgdll(szLibFile);
 #endif
 

@@ -51,7 +51,7 @@
     <IgnoreImportLibrary>true</IgnoreImportLibrary>
     <OutDir>$(SolutionDir)bin\</OutDir>
     <TargetName>$(ProjectName)_tw</TargetName>
-    <RunCodeAnalysis>true</RunCodeAnalysis>
+    <RunCodeAnalysis>false</RunCodeAnalysis>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='JLHF|Win32'">
     <ClCompile>
@@ -112,7 +112,7 @@
       <PrecompiledHeaderFile>stdafx.h</PrecompiledHeaderFile>
       <ObjectFileName>.\JLTW\</ObjectFileName>
       <ProgramDataBaseFileName>.\JLTW\</ProgramDataBaseFileName>
-      <EnablePREfast>true</EnablePREfast>
+      <EnablePREfast>false</EnablePREfast>
     </ClCompile>
     <Midl>
       <SuppressStartupBanner>true</SuppressStartupBanner>

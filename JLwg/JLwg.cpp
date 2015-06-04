@@ -54,14 +54,11 @@ LRESULT CALLBACK CJLwgApp::GameWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPAR
     //调出外挂
     switch(uMsg)
     {
-
-    //因为程序保护的问题, 好像游戏进程退出时, 外挂模块并不会被通知到
-    case WM_CLOSE:
-        {
-            theApp.m_pWgDlg->OnUnloadwg();
-            break;
-        }
-
+	case WM_DESTROY:
+		{
+			theApp.m_pWgDlg->OnUnloadwg();
+			break;
+		}
 
     case WM_MOVE:
         {
@@ -194,6 +191,8 @@ DWORD CALLBACK CJLwgApp::WorkThread(LPVOID pParam)
         AfxMessageBox(_T("异常! 重新注入"));
     }
 
+	//通知控制台正常退出
+	SENDLOG(_T("exit"));
 
     GamecallEx::GetInstance()->UnLoad();
 
@@ -419,9 +418,9 @@ int utf8ToUnicode16(const   char* utf8, wchar_t* unicode16,  int  length)
 }
 
 
-static int AddToPary()
+static int AddToParty()
 {
-    GamecallEx::GetInstance()->AddToPary();
+    GamecallEx::GetInstance()->AddToParty();
     return 0;
 }
 
@@ -831,7 +830,7 @@ void CJLwgApp::RegGameLib(lua_State* L)
     REGLUAFUN(Sleep);
     REGLUAFUN(DeliverQuests);
     REGLUAFUN(w);
-    REGLUAFUN(AddToPary);
+    REGLUAFUN(AddToParty);
     REGLUAFUN(FuHuo);
     REGLUAFUN(FollowNpc);
     REGLUAFUN(Shunyi);
