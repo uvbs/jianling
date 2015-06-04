@@ -19,7 +19,7 @@ public:
 // Dialog Data
 	//{{AFX_DATA(CDlgAddKey)
 	enum { IDD = IDD_DLG_ADDKEY };
-	UINT	m_unCounts;
+	int	m_unCounts;
 	CString	m_strKeyOut;
 	UINT	m_unTime;
 	//}}AFX_DATA

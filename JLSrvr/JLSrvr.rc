@@ -1,4 +1,4 @@
-//Microsoft Developer Studio generated resource script.
+// Microsoft Visual C++ generated resource script.
 //
 #include "resource.h"
 
@@ -13,13 +13,11 @@
 #undef APSTUDIO_READONLY_SYMBOLS
 
 /////////////////////////////////////////////////////////////////////////////
-// Chinese (P.R.C.) resources
+// Chinese (Simplified, PRC) resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_CHS)
-#ifdef _WIN32
 LANGUAGE LANG_CHINESE, SUBLANG_CHINESE_SIMPLIFIED
 #pragma code_page(936)
-#endif //_WIN32
 
 #ifdef APSTUDIO_INVOKED
 /////////////////////////////////////////////////////////////////////////////
@@ -27,18 +25,18 @@ LANGUAGE LANG_CHINESE, SUBLANG_CHINESE_SIMPLIFIED
 // TEXTINCLUDE
 //
 
-1 TEXTINCLUDE DISCARDABLE 
+1 TEXTINCLUDE 
 BEGIN
     "resource.h\0"
 END
 
-2 TEXTINCLUDE DISCARDABLE 
+2 TEXTINCLUDE 
 BEGIN
     "#include ""afxres.h""\r\n"
     "\0"
 END
 
-3 TEXTINCLUDE DISCARDABLE 
+3 TEXTINCLUDE 
 BEGIN
     "#define _AFX_NO_SPLITTER_RESOURCES\r\n"
     "#define _AFX_NO_OLE_RESOURCES\r\n"
@@ -66,34 +64,33 @@ END
 
 // Icon with lowest ID value placed first to ensure application icon
 // remains consistent on all systems.
-IDR_MAINFRAME           ICON    DISCARDABLE     "res\\JLSrvr.ico"
-IDR_JLSRVRTYPE          ICON    DISCARDABLE     "res\\JLSrvrDoc.ico"
+IDR_MAINFRAME           ICON                    "res\\JLSrvr.ico"
+IDR_JLSRVRTYPE          ICON                    "res\\JLSrvrDoc.ico"
 
 /////////////////////////////////////////////////////////////////////////////
 //
 // Bitmap
 //
 
-IDR_MAINFRAME           BITMAP  MOVEABLE PURE   "res\\Toolbar.bmp"
+IDR_MAINFRAME           BITMAP                  "res\\Toolbar.bmp"
 
 /////////////////////////////////////////////////////////////////////////////
 //
 // Toolbar
 //
 
-IDR_MAINFRAME TOOLBAR DISCARDABLE  16, 15
+IDR_MAINFRAME TOOLBAR 16, 15
 BEGIN
     BUTTON      ID_FILE_NEW
     BUTTON      ID_FILE_OPEN
     BUTTON      ID_FILE_SAVE
     SEPARATOR
+    BUTTON      ID_EDIT_PASTE
+    BUTTON      ID_APP_ABOUT
     BUTTON      ID_EDIT_CUT
     BUTTON      ID_EDIT_COPY
-    BUTTON      ID_EDIT_PASTE
     SEPARATOR
     BUTTON      ID_FILE_PRINT
-    SEPARATOR
-    BUTTON      ID_APP_ABOUT
 END
 
 
@@ -102,48 +99,48 @@ END
 // Menu
 //
 
-IDR_MAINFRAME MENU PRELOAD DISCARDABLE 
+IDR_MAINFRAME MENU
 BEGIN
     POPUP "文件(&F)"
     BEGIN
-        MENUITEM "打开(&O)...\tCtrl+O",         ID_FILE_OPEN
-        MENUITEM "保存(&S)\tCtrl+S",            ID_FILE_SAVE
-        MENUITEM "另存为(&A)...",               ID_FILE_SAVE_AS
-        MENUITEM "重新启动",                    ID_FILE_RESTART
+        MENUITEM "打开(&O)...\tCtrl+O",           ID_FILE_OPEN
+        MENUITEM "保存(&S)\tCtrl+S",              ID_FILE_SAVE
+        MENUITEM "另存为(&A)...",                  ID_FILE_SAVE_AS
+        MENUITEM "重新启动",                        ID_FILE_RESTART
         MENUITEM SEPARATOR
-        MENUITEM "最近文件",                    ID_FILE_MRU_FILE1, GRAYED
+        MENUITEM "最近文件",                        ID_FILE_MRU_FILE1, GRAYED
         MENUITEM SEPARATOR
-        MENUITEM "退出(&X)",                    ID_APP_EXIT
+        MENUITEM "退出(&X)",                      ID_APP_EXIT
     END
     POPUP "查看(&V)"
     BEGIN
-        MENUITEM "工具栏(&T)",                  ID_VIEW_TOOLBAR
-        MENUITEM "状态栏(&S)",                  ID_VIEW_STATUS_BAR
+        MENUITEM "工具栏(&T)",                     ID_VIEW_TOOLBAR
+        MENUITEM "状态栏(&S)",                     ID_VIEW_STATUS_BAR
     END
     POPUP "充值卡管理"
     BEGIN
-        MENUITEM "所有卡号",                    ID_KA_ALL
-        MENUITEM "添加卡号",                    ID_KEY_ADD
+        MENUITEM "所有卡号",                        ID_KA_ALL
+        MENUITEM "添加卡号",                        ID_KEY_ADD
     END
     POPUP "帮助(&H)"
     BEGIN
-        MENUITEM "关于 JLSrvr(&A)...",          ID_APP_ABOUT
+        MENUITEM "关于 JLSrvr(&A)...",            ID_APP_ABOUT
     END
 END
 
-IDR_MENU1 MENU DISCARDABLE 
+IDR_MENU1 MENU
 BEGIN
     POPUP "帐号"
     BEGIN
-        MENUITEM "查看详细信息",                ID_MENUITEM32774
+        MENUITEM "查看详细信息",                      ID_MENUITEM32774
     END
     POPUP "客户视图"
     BEGIN
-        MENUITEM "刷新",                        ID_MENUITEM32775
+        MENUITEM "刷新",                          ID_MENUITEM32775
     END
     POPUP "请求视图"
     BEGIN
-        MENUITEM "清空记录",                    ID_MENUITEM32776
+        MENUITEM "清空记录",                        ID_MENUITEM32776
     END
 END
 
@@ -153,7 +150,7 @@ END
 // Accelerator
 //
 
-IDR_MAINFRAME ACCELERATORS PRELOAD MOVEABLE PURE 
+IDR_MAINFRAME ACCELERATORS
 BEGIN
     "N",            ID_FILE_NEW,            VIRTKEY, CONTROL
     "O",            ID_FILE_OPEN,           VIRTKEY, CONTROL
@@ -176,8 +173,8 @@ END
 // Dialog
 //
 
-IDD_ABOUTBOX DIALOG DISCARDABLE  0, 0, 227, 217
-STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+IDD_ABOUTBOX DIALOG 0, 0, 227, 217
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "关于 JLSrvr"
 FONT 9, "宋体"
 BEGIN
@@ -185,35 +182,32 @@ BEGIN
     LTEXT           "JLSrvr 1.0 版",IDC_STATIC,35,182,119,8,SS_NOPREFIX
     LTEXT           "版权所有 (C) 2014",IDC_STATIC,35,196,119,8
     DEFPUSHBUTTON   "确定",IDOK,170,196,50,14,WS_GROUP
-    EDITTEXT        IDC_STATIC_SOCKET,7,7,213,170,ES_MULTILINE | 
-                    ES_AUTOVSCROLL | ES_READONLY | WS_VSCROLL
+    EDITTEXT        IDC_STATIC_SOCKET,7,7,213,170,ES_MULTILINE | ES_AUTOVSCROLL | ES_READONLY | WS_VSCROLL
 END
 
-IDD_DLG_ADDKEY DIALOG DISCARDABLE  0, 0, 212, 91
-STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+IDD_DLG_ADDKEY DIALOG 0, 0, 212, 91
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "添加卡号"
 FONT 8, "Tahoma"
 BEGIN
     EDITTEXT        IDC_EDIT_COUNTS,30,7,45,14,ES_AUTOHSCROLL
     EDITTEXT        IDC_EDIT_TIME,105,7,45,14,ES_AUTOHSCROLL
-    EDITTEXT        IDC_EDIT_KEY,5,28,200,56,ES_CENTER | ES_MULTILINE | 
-                    ES_AUTOVSCROLL | ES_WANTRETURN | WS_VSCROLL
+    EDITTEXT        IDC_EDIT_KEY,5,28,200,56,ES_CENTER | ES_MULTILINE | ES_AUTOVSCROLL | ES_WANTRETURN | WS_VSCROLL
     DEFPUSHBUTTON   "生成",IDOK,160,7,45,14
     LTEXT           "时间",IDC_STATIC,85,12,17,8
     LTEXT           "数量",IDC_STATIC,5,12,17,8
 END
 
-IDD_DIALOG1key DIALOG DISCARDABLE  0, 0, 210, 196
-STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+IDD_DIALOG1key DIALOG 0, 0, 210, 196
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "拥有卡号"
 FONT 8, "Tahoma"
 BEGIN
-    CONTROL         "List1",IDC_LIST1,"SysListView32",LVS_REPORT | WS_BORDER | 
-                    WS_TABSTOP,7,7,196,182
+    CONTROL         "List1",IDC_LIST1,"SysListView32",LVS_REPORT | WS_BORDER | WS_TABSTOP,7,7,196,182
 END
 
-IDD_DIALOG2base DIALOG DISCARDABLE  0, 0, 210, 196
-STYLE WS_CHILD | WS_CAPTION
+IDD_DIALOG2base DIALOG 0, 0, 210, 196
+STYLE DS_SETFONT | WS_CHILD | WS_CAPTION
 CAPTION "基本信息"
 FONT 8, "Tahoma"
 BEGIN
@@ -234,23 +228,20 @@ BEGIN
     EDITTEXT        IDC_EDIT7mb,62,84,90,14,ES_AUTOHSCROLL | ES_READONLY
     EDITTEXT        IDC_EDIT8hid,62,99,90,14,ES_AUTOHSCROLL | ES_READONLY
     EDITTEXT        IDC_EDIT9mac,62,114,90,14,ES_AUTOHSCROLL | ES_READONLY
-    EDITTEXT        IDC_EDIT10cpuid,62,129,90,14,ES_AUTOHSCROLL | 
-                    ES_READONLY
+    EDITTEXT        IDC_EDIT10cpuid,62,129,90,14,ES_AUTOHSCROLL | ES_READONLY
     LTEXT           "主板id",IDC_STATIC,19,147,22,8
     EDITTEXT        IDC_EDIT10bios,62,144,90,14,ES_AUTOHSCROLL | ES_READONLY
 END
 
-IDD_DIALOG3log DIALOG DISCARDABLE  0, 0, 210, 196
-STYLE WS_CHILD | WS_CAPTION
+IDD_DIALOG3log DIALOG 0, 0, 210, 196
+STYLE DS_SETFONT | WS_CHILD | WS_CAPTION
 CAPTION "卡号记录"
 FONT 8, "Tahoma"
 BEGIN
-    CONTROL         "List2",IDC_LIST2,"SysListView32",LVS_REPORT | WS_BORDER | 
-                    WS_TABSTOP,7,7,196,182
+    CONTROL         "List2",IDC_LIST2,"SysListView32",LVS_REPORT | WS_BORDER | WS_TABSTOP,7,7,196,182
 END
 
 
-#ifndef _MAC
 /////////////////////////////////////////////////////////////////////////////
 //
 // Version
@@ -273,18 +264,13 @@ BEGIN
     BEGIN
         BLOCK "080404b0"
         BEGIN
-            VALUE "Comments", "\0"
-            VALUE "CompanyName", "\0"
-            VALUE "FileDescription", "JLSrvr Microsoft 基础类应用程序\0"
-            VALUE "FileVersion", "1, 0, 0, 1\0"
-            VALUE "InternalName", "JLSrvr\0"
-            VALUE "LegalCopyright", "版权所有 (C) 2014\0"
-            VALUE "LegalTrademarks", "\0"
-            VALUE "OriginalFilename", "JLSrvr.EXE\0"
-            VALUE "PrivateBuild", "\0"
-            VALUE "ProductName", "JLSrvr 应用程序\0"
-            VALUE "ProductVersion", "1, 0, 0, 1\0"
-            VALUE "SpecialBuild", "\0"
+            VALUE "FileDescription", "JLSrvr Microsoft 基础类应用程序"
+            VALUE "FileVersion", "1, 0, 0, 1"
+            VALUE "InternalName", "JLSrvr"
+            VALUE "LegalCopyright", "版权所有 (C) 2014"
+            VALUE "OriginalFilename", "JLSrvr.EXE"
+            VALUE "ProductName", "JLSrvr 应用程序"
+            VALUE "ProductVersion", "1, 0, 0, 1"
         END
     END
     BLOCK "VarFileInfo"
@@ -293,8 +279,6 @@ BEGIN
     END
 END
 
-#endif    // !_MAC
-
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -302,7 +286,7 @@ END
 //
 
 #ifdef APSTUDIO_INVOKED
-GUIDELINES DESIGNINFO DISCARDABLE 
+GUIDELINES DESIGNINFO
 BEGIN
     IDD_ABOUTBOX, DIALOG
     BEGIN
@@ -352,28 +336,28 @@ END
 
 /////////////////////////////////////////////////////////////////////////////
 //
-// 24
+// RT_MANIFEST
 //
 
-1                       24      DISCARDABLE     "res\\default1.bin"
+1                       RT_MANIFEST             "res\\default1.bin"
 
 /////////////////////////////////////////////////////////////////////////////
 //
 // String Table
 //
 
-STRINGTABLE PRELOAD DISCARDABLE 
+STRINGTABLE
 BEGIN
     IDR_MAINFRAME           "JLSrvr\nDefault\nJLSrvr\n\n\nJLSrvr.Document\nJLSrvr Document"
 END
 
-STRINGTABLE PRELOAD DISCARDABLE 
+STRINGTABLE
 BEGIN
     AFX_IDS_APP_TITLE       "JLSrvr"
     AFX_IDS_IDLEMESSAGE     "等待连接中.."
 END
 
-STRINGTABLE DISCARDABLE 
+STRINGTABLE
 BEGIN
     ID_INDICATOR_EXT        "扩展名"
     ID_INDICATOR_CAPS       "大写"
@@ -384,7 +368,7 @@ BEGIN
     ID_INDICATOR_UPTIME     "已运行时间: 00h 00m"
 END
 
-STRINGTABLE DISCARDABLE 
+STRINGTABLE
 BEGIN
     ID_FILE_NEW             "建立新文档\n新建"
     ID_FILE_OPEN            "打开一个现有文档\n打开"
@@ -393,13 +377,13 @@ BEGIN
     ID_FILE_SAVE_AS         "将活动文档以一个新文件名保存\n另存为"
 END
 
-STRINGTABLE DISCARDABLE 
+STRINGTABLE
 BEGIN
     ID_APP_ABOUT            "显示程序信息，版本号和版权\n关于"
     ID_APP_EXIT             "退出应用程序；提示保存文档\n退出"
 END
 
-STRINGTABLE DISCARDABLE 
+STRINGTABLE
 BEGIN
     ID_FILE_MRU_FILE1       "打开该文档"
     ID_FILE_MRU_FILE2       "打开该文档"
@@ -419,18 +403,18 @@ BEGIN
     ID_FILE_MRU_FILE16      "打开该文档"
 END
 
-STRINGTABLE DISCARDABLE 
+STRINGTABLE
 BEGIN
     ID_NEXT_PANE            "切换到下一个窗格\n下一窗格"
     ID_PREV_PANE            "切换回前一个窗格\n前一窗格"
 END
 
-STRINGTABLE DISCARDABLE 
+STRINGTABLE
 BEGIN
     ID_WINDOW_SPLIT         "将活动的窗口分隔成窗格\n分隔"
 END
 
-STRINGTABLE DISCARDABLE 
+STRINGTABLE
 BEGIN
     ID_EDIT_CLEAR           "删除被选对象\n删除"
     ID_EDIT_CLEAR_ALL       "全部删除\n全部删除"
@@ -445,13 +429,13 @@ BEGIN
     ID_EDIT_REDO            "重新执行先前已撤消的操作\n重新执行"
 END
 
-STRINGTABLE DISCARDABLE 
+STRINGTABLE
 BEGIN
     ID_VIEW_TOOLBAR         "显示或隐藏工具栏\n显隐工具栏"
     ID_VIEW_STATUS_BAR      "显示或隐藏状态栏\n显隐状态栏"
 END
 
-STRINGTABLE DISCARDABLE 
+STRINGTABLE
 BEGIN
     AFX_IDS_SCSIZE          "改变窗口大小"
     AFX_IDS_SCMOVE          "改变窗口位置"
@@ -462,7 +446,7 @@ BEGIN
     AFX_IDS_SCCLOSE         "关闭活动的窗口并提示保存所有文档"
 END
 
-STRINGTABLE DISCARDABLE 
+STRINGTABLE
 BEGIN
     AFX_IDS_SCRESTORE       "把窗口恢复到正常大小"
     AFX_IDS_SCTASKLIST      "激活任务表"
@@ -470,7 +454,7 @@ BEGIN
     IDS_CANT_LISTEN         "无法启动服务!"
 END
 
-STRINGTABLE DISCARDABLE 
+STRINGTABLE
 BEGIN
     IDS_UPTIME_DAY          "已运行时间: %Hh %Mm"
     IDS_UPTIME_DAYS         "已运行时间: %Dd %Hh %Mm"
@@ -482,7 +466,7 @@ BEGIN
     IDS_LISTEN_INUSE        "端口 %d 正在使用中"
 END
 
-#endif    // Chinese (P.R.C.) resources
+#endif    // Chinese (Simplified, PRC) resources
 /////////////////////////////////////////////////////////////////////////////
 
 

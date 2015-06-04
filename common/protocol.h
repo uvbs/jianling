@@ -92,6 +92,8 @@ enum CMD_SUB_LOGIN
     fun_login_fail,
     fun_login_ok,
 
+	fun_login_reply,  //"挑战"的应答
+
     fun_regist,   //注册
     fun_regist_fail,
     fun_regist_ok,
@@ -125,12 +127,21 @@ enum CMD_SUB_HELP
 };
 
 
+
+//挑战值
+typedef struct _TZ
+{
+	DWORD dwNvalue;  //挑战值
+}TZ, *PTZ;
+
+
 //登陆
 struct LOGIN_BUF
 {
     TCHAR name[MAXLEN];
     TCHAR pw[MAXLEN];
     TCHAR szMachineID[LEN_MACHINE_ID];
+	DWORD tz; //挑战值的应答
 };
 
 //注册
@@ -174,7 +185,9 @@ struct QUERYKEY_SUCCESS
     DWORD remaintime;  //剩余时间
 };
 
-
+//计算应答值
+//算法就是/2 + 110;
+DWORD calcNvalue(DWORD n);
 
 
 #endif

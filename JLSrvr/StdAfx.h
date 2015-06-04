@@ -9,7 +9,9 @@
 
 #define VC_EXTRALEAN		// Exclude rarely-used stuff from Windows headers
 #define _CRT_SECURE_NO_WARNINGS
-
+#define _CRT_NON_CONFORMING_SWPRINTFS
+#define _WIN32_WINNT 0x601
+#define WINVER	0x601
 
 
 //关闭调试长度警告

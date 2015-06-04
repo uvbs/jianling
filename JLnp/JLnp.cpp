@@ -311,7 +311,7 @@ void ClearNP(HMODULE hModule)
         hookx64.InstallHook("ZwSetInformationThread", (DWORD)NtSetInformationThread_Hook, (PDWORD)&OrigNtSetInformationThread);
         hookx64.InstallHook("ZwQueryInformationProcess", (DWORD)NtQueryInformationProcess_Hook, (PDWORD)&OrigNtQueryInformationProcess);
         hookx64.InstallHook("ZwGetContextThread", (DWORD)ZwGetContextThread_Hook, (PDWORD)&ZwGetContextThread);
-        hookx64.UnInitialization();
+        //hookx64.UnInitialization();
 
         //多开.互斥,文件独占
         InlineHook((VOID*)(DWORD)GetProcAddress(LoadLibraryA("kernelBase.dll"), "CreateMutexExW"), (VOID*)CreateMutexExW_hook, (VOID**)&Orig_CreateMutexExW);

@@ -14,6 +14,14 @@ class CDlgRegist;
 class CDlgKey;
 class CLoginSheet;
 
+enum LoginState
+{
+	nologin,
+	logining,
+	logined
+};
+
+
 class CJLkitDoc : public CDocument, public ITCPSocketSink
 {
 protected:
@@ -36,7 +44,8 @@ public:
     void ShowLogin();
     bool PerformLogonMission();
 
-
+	LoginState m_loginStatus;
+	
     //¶Ô»°¿ò
     CLoginSheet* m_pLoginSheet;
 

@@ -3,7 +3,7 @@
 
 //服务器端口
 #define     PORT_SRV    5569
-
+#define     NAME_SRV    _T("liyhtning.xicp.net")
 
 //共享内存名称
 #define SHAREOBJNAME _T("Bns_Mem_Share")

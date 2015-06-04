@@ -87,7 +87,22 @@ void CJLSrvrView::AutoColumnWidth()
 
 void CJLSrvrView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 {
+	//遍历所有用户
+	CJLSrvrDoc *pDoc = (CJLSrvrDoc *)GetDocument();
+	UserData &_userdata = pDoc->_userdata;
 
+	CListCtrl &list = GetListCtrl();
+
+	list.DeleteAllItems();
+	int i = 0;
+	for(UserData::iterator it = _userdata.begin(); it != _userdata.end(); it++)
+	{
+		list.InsertItem(i, (*it).second.name);
+		list.SetItemText(i, 1, _T(""));
+		list.SetItemText(i, 2, _T(""));
+		list.SetItemText(i++, 3, _T(""));
+
+	}
 }
 
 

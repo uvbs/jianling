@@ -228,16 +228,36 @@ bool CJLSrvrDoc::ProcessLogin(CJLkitSocket* pSocket, const Tcp_Head& stTcpHead, 
 {
     _ASSERTE(pSocket != NULL);
 
+
+	//挑战-应答 对应重放攻击
+	//如果他没办法建立连接, 那就没办法进行这种重放攻击了.
+	//如果他记录一次返回10个有效卡号的数据. 打算用这个数据来破解
+	
     switch(stTcpHead.wSubCmdID)
     {
-    case fun_login:
-        {
+
+	case fun_login_reply:
+		{
+
             PROCESS_DESCRIBE des;
             int inResult;
             int inDbRet;
 
 
             LOGIN_BUF* pLogin = (LOGIN_BUF*)pData;
+
+
+			//监测应答值
+			DWORD Nvalue = _userNvalue[pSocket];
+			DWORD rightN = calcNvalue(Nvalue);
+			if(rightN != pLogin->tz)
+			{
+				//这种情况直接关掉连接, 不给客户端任何提示
+				DeleteClient(pSocket);
+				break;
+			}
+
+
 
             try
             {
@@ -247,9 +267,8 @@ bool CJLSrvrDoc::ProcessLogin(CJLkitSocket* pSocket, const Tcp_Head& stTcpHead, 
             }
             catch(CDBException* pEx)
             {
-                inDbRet = 0;
-                TRACE(pEx->m_strError);
-                pEx->Delete();
+				pEx->Delete();
+                inDbRet = 0;  //远端错误
             }
 
 
@@ -264,6 +283,9 @@ bool CJLSrvrDoc::ProcessLogin(CJLkitSocket* pSocket, const Tcp_Head& stTcpHead, 
                 {
                     //保存用户登陆数据
                     _userdata[pSocket] = *pLogin;
+
+					UpdateAllViews(NULL);
+
                     _tcscpy(des.szDescribe, _T("登陆完成"));
                     break;
                 }
@@ -312,7 +334,24 @@ bool CJLSrvrDoc::ProcessLogin(CJLkitSocket* pSocket, const Tcp_Head& stTcpHead, 
             }
 
             pSocket->Send(M_LOGIN, inResult, &des, sizeof(PROCESS_DESCRIBE));
+            break;
 
+		}
+
+
+    case fun_login:
+        {
+
+			//这里发送挑战值
+			//数据设置为 GetTickCount + psocket 指针地址
+			//还得保留这个值啊, 给后面再对比用啊
+			DWORD dwNvalue = GetTickCount() + (DWORD)pSocket;
+			_userNvalue[pSocket] = dwNvalue;
+
+			//发送挑战值
+			TZ tz;
+			tz.dwNvalue = dwNvalue;
+			pSocket->Send(M_LOGIN, fun_login_reply, &tz, sizeof(TZ));
             break;
         }
 
@@ -458,6 +497,8 @@ bool CJLSrvrDoc::DeleteClient(CJLkitSocket* pSocket)
     pSocket->Close();
     SafeDelete(pSocket);
 
+	//更新视图
+	UpdateAllViews(NULL);
     return true;
 }
 

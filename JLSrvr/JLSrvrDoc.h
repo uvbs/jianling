@@ -9,6 +9,8 @@
 #include "ListenSocket.h"
 #include "../JLkit/JLkitSocket.h"
 
+typedef std::map<CJLkitSocket*, LOGIN_BUF> UserData;
+
 class CJLSrvrDoc : public CDocument, public ITCPSocketSink
 {
 protected:
@@ -42,6 +44,8 @@ public:
 public:
     std::list<CJLkitSocket*> _client;
     std::map<CJLkitSocket*, LOGIN_BUF> _userdata;
+	std::map<CJLkitSocket*, DWORD> _userNvalue; //用户的挑战值
+
     std::map<CJLkitSocket*, time_t> _heart;
 
 

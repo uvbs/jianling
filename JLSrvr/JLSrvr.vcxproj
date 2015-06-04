@@ -71,6 +71,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\common\protocol.cpp" />
     <ClCompile Include="DbMngr.cpp" />
     <ClCompile Include="DlgAddKey.cpp" />
     <ClCompile Include="..\JLkit\JLkitSocket.cpp" />

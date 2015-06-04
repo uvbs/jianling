@@ -30,10 +30,11 @@ CJLkitDoc::CJLkitDoc()
     m_pLoginSheet = NULL;
 
     m_bRegister = false;
-
 	
     //设置回调
     m_socket.SetSink(this);
+
+	m_loginStatus = nologin;
 }
 
 
@@ -221,28 +222,23 @@ bool CJLkitDoc::PerformLogonMission()
 {
     TRACE(_T("正在连接服务器.."));
 
-    CString strSrvIp;
-    if(!strSrvIp.LoadString(IDS_CONNECT_SERVER)) return false;
 
-
-    if(!m_socket.ConnectSrv(strSrvIp, PORT_SRV))
+    if(!m_socket.ConnectSrv(NAME_SRV, PORT_SRV))
     {
         AfxMessageBox(_T("连接服务器失败"));
         ShowLogin();
         return false;
     }
 
-
-    AfxGetMainWnd()->SetTimer(IDT_HEART, 15000, NULL);
-
     return true;
 }
+
 
 VOID CALLBACK TimeoutLogin(PTP_CALLBACK_INSTANCE pInstance, PVOID pvContext, PTP_CALLBACK_ENVIRON pcbe)
 {
 	CJLkitDoc *pDoc = (CJLkitDoc *)pvContext;
 
-	if(pDoc->m_pLoginSheet != NULL)
+	if(pDoc->m_loginStatus == logining)
 	{
 		AfxMessageBox(_T("登录失败"));
 		pDoc->m_socket.Close();
@@ -257,41 +253,29 @@ bool CJLkitDoc::OnEventTCPSocketLink(CJLkitSocket* pSocket, INT nErrorCode)
 
     if(nErrorCode != 0)
     {
+		m_loginStatus = nologin;
         AfxMessageBox(_T("连接服务器失败"));
         m_socket.Close();
         ShowLogin();
     }
     else
     {
-        TRACE(_T("正在登陆.."));
 
-        //完成链接, 开始发送登陆数据
-        BYTE cbBuffer[SOCKET_TCP_PACKET];
-        WORD wPacketSize;
-        int funid;
+		int funid;
 
-        if(m_bRegister)
-        {
-            wPacketSize = m_pRegisterDlg->ConstructRegisterPacket(cbBuffer, sizeof(cbBuffer));
-            funid = fun_regist;
-        }
-        else
-        {
-            wPacketSize = m_pLoginDlg->ConstructLoginPacket(cbBuffer, sizeof(cbBuffer));
-            funid = fun_login;
-        }
+		if(m_bRegister)
+		{
+			funid = fun_regist;
+		}
+		else
+		{
+			funid = fun_login;
+		}
 
-        m_socket.Send(M_LOGIN, funid, cbBuffer, wPacketSize);
+		m_socket.Send(M_LOGIN, funid, 0, 0);
 
-		PTP_TIMER hTimerOut = CreateThreadpoolTimer((PTP_TIMER_CALLBACK)TimeoutLogin, this, NULL);
-		ULARGE_INTEGER ulRelativeStartTime;
-		ulRelativeStartTime.QuadPart = -50000000;
-		FILETIME ftRelativeStartTime;
-		ftRelativeStartTime.dwHighDateTime = ulRelativeStartTime.HighPart;
-		ftRelativeStartTime.dwLowDateTime = ulRelativeStartTime.LowPart;
-
-		SetThreadpoolTimer(hTimerOut, &ftRelativeStartTime, 0, 0);
-    }
+		m_loginStatus = logining;
+	}
 
     return true;
 }
@@ -300,20 +284,66 @@ bool CJLkitDoc::OnEventTCPSocketLink(CJLkitSocket* pSocket, INT nErrorCode)
 //关闭事件
 bool CJLkitDoc::OnEventTCPSocketShut(CJLkitSocket* pSocket, INT nErrorCode)
 {
-
+	m_loginStatus = nologin;
     pSocket->Close();
     return true;
 }
 
 void CJLkitDoc::ProcessLogin(CJLkitSocket* pSocket, const Tcp_Head& stTcpHead, void* pData, WORD wDataSize)
 {
-    switch(stTcpHead.wSubCmdID)
-    {
+
+	switch(stTcpHead.wSubCmdID)
+	{
+		//服务器请求应答
+	case fun_login_reply:
+		{
+			TZ *pLoginBuf = (TZ*)pData;
+			DWORD dwnValue = pLoginBuf->dwNvalue;
+			DWORD repyN = calcNvalue(dwnValue);
+
+
+			TRACE(_T("正在登陆.."));
+
+			//完成链接, 开始发送登陆数据
+			BYTE cbBuffer[SOCKET_TCP_PACKET];
+			WORD wPacketSize;
+			int funid;
+
+			if(m_bRegister)
+			{
+				wPacketSize = m_pRegisterDlg->ConstructRegisterPacket(cbBuffer, sizeof(cbBuffer));
+				funid = fun_regist;
+			}
+			else
+			{
+				wPacketSize = m_pLoginDlg->ConstructLoginPacket(cbBuffer, sizeof(cbBuffer));
+
+				LOGIN_BUF *pLoginBuf = (LOGIN_BUF *)cbBuffer;
+				pLoginBuf->tz = repyN;
+
+				funid = fun_login_reply;
+			}
+
+			m_socket.Send(M_LOGIN, funid, cbBuffer, wPacketSize);
+
+			PTP_TIMER hTimerOut = CreateThreadpoolTimer((PTP_TIMER_CALLBACK)TimeoutLogin, this, NULL);
+			ULARGE_INTEGER ulRelativeStartTime;
+			ulRelativeStartTime.QuadPart = -50000000;
+			FILETIME ftRelativeStartTime;
+			ftRelativeStartTime.dwHighDateTime = ulRelativeStartTime.HighPart;
+			ftRelativeStartTime.dwLowDateTime = ulRelativeStartTime.LowPart;
+
+			SetThreadpoolTimer(hTimerOut, &ftRelativeStartTime, 0, 0);
+
+			m_loginStatus = logining;
+			break;
+		}
 
     //登录失败
     case fun_login_fail:
         {
             //关闭连接
+			m_loginStatus = nologin;
             m_socket.Close();
 
             PROCESS_DESCRIBE* pDes = (PROCESS_DESCRIBE*)pData;
@@ -327,6 +357,7 @@ void CJLkitDoc::ProcessLogin(CJLkitSocket* pSocket, const Tcp_Head& stTcpHead, v
     //登录完成
     case fun_login_ok:
         {
+			m_loginStatus = logined;
             SafeDelete(m_pLoginSheet);
 
             //自动加载上次打开的文件
@@ -337,6 +368,8 @@ void CJLkitDoc::ProcessLogin(CJLkitSocket* pSocket, const Tcp_Head& stTcpHead, v
 
             //显示主窗口
             ((CMainFrame*)AfxGetMainWnd())->ActivateFrame();
+			//发送心跳
+			AfxGetMainWnd()->SetTimer(IDT_HEART, 15000, NULL);
 
             //查询当前卡号
             PROCESS_DESCRIBE* pLoginSucess = (PROCESS_DESCRIBE*)pData;
@@ -366,6 +399,7 @@ void CJLkitDoc::ProcessLogin(CJLkitSocket* pSocket, const Tcp_Head& stTcpHead, v
 
 void CJLkitDoc::ProcessKey(CJLkitSocket* pSocket, const Tcp_Head& stTcpHead, void* pData, WORD wDataSize)
 {
+
     switch(stTcpHead.wSubCmdID)
     {
     case fun_bindkey_fail:
@@ -422,6 +456,7 @@ void CJLkitDoc::ProcessKey(CJLkitSocket* pSocket, const Tcp_Head& stTcpHead, voi
             break;
         }
     }
+
 }
 
 
@@ -442,10 +477,12 @@ void CJLkitDoc::ProcessHelp(CJLkitSocket* pSocket, const Tcp_Head& stTcpHead, vo
 }
 
 
+#pragma optimize("g", off)
 
 //处理网络消息
 bool CJLkitDoc::OnEventTCPSocketRead(CJLkitSocket* pSocket, const Tcp_Head& stTcpHead, VOID* pData, WORD wDataSize)
 {
+	VMProtectBegin("process key");
 
     switch(stTcpHead.wMainCmdID)
     {
@@ -464,9 +501,12 @@ bool CJLkitDoc::OnEventTCPSocketRead(CJLkitSocket* pSocket, const Tcp_Head& stTc
     default:
         break;
     }
-
+	
+    VMProtectEnd();
     return true;
 }
+
+#pragma optimize("g", on)
 
 
 void CJLkitDoc::OnLookkey()

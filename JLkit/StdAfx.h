@@ -52,6 +52,13 @@
 
 #include "..\第三方库\SimpleIni\SimpleIni.h"
 
+#include "..\第三方库\vmp\Include\C\VMProtectSDK.h"
+
+#ifdef _WIN64
+	#pragma comment(lib, "..\\第三方库\\vmp\\lib\\coff\\VMProtectSDK64.lib")
+#else
+	#pragma comment(lib, "..\\第三方库\\vmp\\lib\\coff\\VMProtectSDK32.lib")
+#endif
 
 
 #ifdef _UNICODE
