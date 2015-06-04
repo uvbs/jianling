@@ -5,10 +5,6 @@
 #if !defined(AFX_JLSRVRDOC_H__4ABA5256_27E0_427F_87E1_2E441B5CA64B__INCLUDED_)
 #define AFX_JLSRVRDOC_H__4ABA5256_27E0_427F_87E1_2E441B5CA64B__INCLUDED_
 
-#if _MSC_VER > 1000
-    #pragma once
-#endif // _MSC_VER > 1000
-
 #include "DbMngr.h"
 #include "ListenSocket.h"
 #include "../JLkit/JLkitSocket.h"

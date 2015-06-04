@@ -200,7 +200,7 @@ bool CPartySrvDlg::OnEventTCPSocketLink(CJLkitSocket* pSocket, INT nErrorCode)
     return true;
 }
 
-bool CPartySrvDlg::OnEventTCPSocketShut(CJLkitSocket* pSocket, BYTE cbShutReason)
+bool CPartySrvDlg::OnEventTCPSocketShut(CJLkitSocket* pSocket, INT nErrorCode)
 {
     TRACE(_T("处理消息"));
     DelRequest(pSocket);

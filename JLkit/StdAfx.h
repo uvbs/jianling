@@ -3,7 +3,9 @@
 
 #define VC_EXTRALEAN        // 从 Windows 标头中排除不常使用的资料
 
-#define _WIN32_WINNT 0x501
+
+#define WINVER 0x0601
+#define _WIN32_WINNT 0x0601
 
 #define _CRT_SECURE_NO_WARNINGS
 
@@ -49,4 +51,17 @@
 #include "..\common\WHService.h"
 
 #include "..\第三方库\SimpleIni\SimpleIni.h"
+
+
+
+#ifdef _UNICODE
+#if defined _M_IX86
+#pragma comment(linker,"/manifestdependency:\"type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='x86' publicKeyToken='6595b64144ccf1df' language='*'\"")
+#elif defined _M_X64
+#pragma comment(linker,"/manifestdependency:\"type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='amd64' publicKeyToken='6595b64144ccf1df' language='*'\"")
+#else
+#pragma comment(linker,"/manifestdependency:\"type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
+#endif
+#endif
+
 

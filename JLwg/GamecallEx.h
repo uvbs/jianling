@@ -153,8 +153,9 @@ public:
     int GetPresentTaskStep();    //获取当前任务步骤
     int GetPresentTaskID();     //当前任务ID;
     int GetTaskStepById(int id);
+
     //组队
-    void AddToPary();
+    void AddToParty();
 
 
     //自定义的要杀的怪物名称

@@ -11,7 +11,7 @@
 #include "CVpnFile.h"
 #include "ConfigMgr.h"
 
-
+#if _MSC_VER < 1200
 #include <boost/regex.hpp>
 
 #ifdef _UNICODE
@@ -21,6 +21,22 @@
     typedef boost::regex tregex;
     typedef boost::smatch tmatch;
 #endif
+
+#else
+#include <regex>
+
+#ifdef _UNICODE
+    typedef std::wregex tregex;
+    typedef std::wsmatch tmatch;
+#else
+    typedef std::regex tregex;
+    typedef std::smatch tmatch;
+#endif
+
+#endif
+
+
+
 
 #ifdef _DEBUG
     #define new DEBUG_NEW
@@ -396,7 +412,7 @@ void CJLkitView::SerializeText(CArchive& ar)
             tregex line(_T("([^,; ]+)[,; ]+([^,; ]+)"));
             tmatch matches;
 
-            if(boost::regex_search(strLine, matches, line))
+            if(regex_search(strLine, matches, line))
             {
                 strName = matches.str(1);
                 strPw = matches.str(2);

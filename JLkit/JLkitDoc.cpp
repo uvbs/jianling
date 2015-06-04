@@ -30,6 +30,10 @@ CJLkitDoc::CJLkitDoc()
     m_pLoginSheet = NULL;
 
     m_bRegister = false;
+
+	
+    //设置回调
+    m_socket.SetSink(this);
 }
 
 
@@ -202,16 +206,12 @@ void CJLkitDoc::ShowLogin()
 
     m_bRegister = false;
 
-
-
     if(m_pLoginSheet->m_hWnd == NULL)
     {
         m_pLoginSheet->AddPage(m_pLoginDlg);
         m_pLoginSheet->AddPage(m_pRegisterDlg);
         m_pLoginSheet->Create(NULL, WS_OVERLAPPED | WS_SYSMENU);
     }
-
-    m_pLoginDlg->GetDlgItem(IDOK)->EnableWindow();
 
     m_pLoginSheet->ShowWindow(SW_SHOW);
 
@@ -224,8 +224,6 @@ bool CJLkitDoc::PerformLogonMission()
     CString strSrvIp;
     if(!strSrvIp.LoadString(IDS_CONNECT_SERVER)) return false;
 
-    //设置回调
-    m_socket.SetSink(this);
 
     if(!m_socket.ConnectSrv(strSrvIp, PORT_SRV))
     {
@@ -240,6 +238,18 @@ bool CJLkitDoc::PerformLogonMission()
     return true;
 }
 
+VOID CALLBACK TimeoutLogin(PTP_CALLBACK_INSTANCE pInstance, PVOID pvContext, PTP_CALLBACK_ENVIRON pcbe)
+{
+	CJLkitDoc *pDoc = (CJLkitDoc *)pvContext;
+
+	if(pDoc->m_pLoginSheet != NULL)
+	{
+		AfxMessageBox(_T("登录失败"));
+		pDoc->m_socket.Close();
+		pDoc->ShowLogin();
+	}
+
+}
 
 //连接事件
 bool CJLkitDoc::OnEventTCPSocketLink(CJLkitSocket* pSocket, INT nErrorCode)
@@ -272,6 +282,15 @@ bool CJLkitDoc::OnEventTCPSocketLink(CJLkitSocket* pSocket, INT nErrorCode)
         }
 
         m_socket.Send(M_LOGIN, funid, cbBuffer, wPacketSize);
+
+		PTP_TIMER hTimerOut = CreateThreadpoolTimer((PTP_TIMER_CALLBACK)TimeoutLogin, this, NULL);
+		ULARGE_INTEGER ulRelativeStartTime;
+		ulRelativeStartTime.QuadPart = -50000000;
+		FILETIME ftRelativeStartTime;
+		ftRelativeStartTime.dwHighDateTime = ulRelativeStartTime.HighPart;
+		ftRelativeStartTime.dwLowDateTime = ulRelativeStartTime.LowPart;
+
+		SetThreadpoolTimer(hTimerOut, &ftRelativeStartTime, 0, 0);
     }
 
     return true;
@@ -296,7 +315,6 @@ void CJLkitDoc::ProcessLogin(CJLkitSocket* pSocket, const Tcp_Head& stTcpHead, v
         {
             //关闭连接
             m_socket.Close();
-
 
             PROCESS_DESCRIBE* pDes = (PROCESS_DESCRIBE*)pData;
             AfxMessageBox(pDes->szDescribe);

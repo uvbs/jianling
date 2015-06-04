@@ -40,6 +40,8 @@ protected:
 	afx_msg void OnCheck3();
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
+public:
+	virtual BOOL OnCmdMsg(UINT nID, int nCode, void* pExtra, AFX_CMDHANDLERINFO* pHandlerInfo);
 };
 
 //{{AFX_INSERT_LOCATION}}

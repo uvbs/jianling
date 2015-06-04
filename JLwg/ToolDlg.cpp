@@ -263,3 +263,12 @@ void CToolDlg::OnCheck3()
 
     }
 }
+
+
+BOOL CToolDlg::OnCmdMsg(UINT nID, int nCode, void* pExtra, AFX_CMDHANDLERINFO* pHandlerInfo)
+{
+	// TODO: Add your specialized code here and/or call the base class
+	if(nID == IDOK || nID == IDCANCEL) return TRUE;
+
+	return CDialog::OnCmdMsg(nID, nCode, pExtra, pHandlerInfo);
+}

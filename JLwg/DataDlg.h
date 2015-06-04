@@ -4,11 +4,12 @@
 
 #include "GameHook.h"
 
+class CLuaPage;
+class CDbgPage;
+
 
 /////////////////////////////////////////////////////////////////////////////
 // CDataDlg dialog
-class CLuaPage;
-class CDbgPage;
 class CDataDlg : public CDialog, public IHookRetSink
 {
 // Construction

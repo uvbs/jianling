@@ -48,7 +48,7 @@ public:
 private:
     ITCPSocketSink* m_Sink;
     
-
+	char m_cbBuffer[SOCKET_TCP_BUFFER];
     char m_cbRecvBuf[SOCKET_TCP_BUFFER];
     int m_nRecvWriterPointer;   //ª∫≥Â«¯–¥»Î÷∏’Î
 

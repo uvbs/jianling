@@ -196,9 +196,8 @@ int CJLkitSocket::Send(const void* lpBuf, int nBufLen, int nFlags /* = 0 */)
 
 int CJLkitSocket::Send(int cmd_main, int cmd_sub, void* pData, WORD wDataSize)
 {
-    char cbBuffer[SOCKET_TCP_BUFFER];
 
-    Tcp_Head* pTcpHead = (Tcp_Head*)cbBuffer;
+    Tcp_Head* pTcpHead = (Tcp_Head*)m_cbBuffer;
     pTcpHead->wVersion = 100;
     pTcpHead->wPacketSize = wDataSize;
     pTcpHead->wSubCmdID = cmd_sub;

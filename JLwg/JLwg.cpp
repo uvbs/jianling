@@ -541,24 +541,26 @@ static int FindThenKill(lua_State* L)
 
 static int KillBoss(lua_State* L)
 {
+	//获得参数
     const char* pszText = lua_tostring(L, 1);
+
+	//安装钩子
 	GameHook::GetInstance()->m_ObjAddrVec.clear();
 	GameHook::GetInstance()->backupCombat = GameHook::GetInstance()->CombatHook.hook();
-	ObjectNode pNode =	GamecallEx::GetInstance()->GetObjectByName(pszText);
-	ObjectVector& HookVec = GameHook::GetInstance()->m_ObjAddrVec;
-	HookVec.push_back(pNode);
+
+	
+	ObjectNode *pNode =	GamecallEx::GetInstance()->GetObjectByName((wchar_t *)pszText);
+	GameHook::GetInstance()->m_ObjAddrVec.push_back(pNode);
+
+	//杀怪
 	int flag = GamecallEx::GetInstance()->KillBoss((wchar_t*)pszText);
+
+
+	//卸载钩子
 	GameHook::GetInstance()->CombatHook.unhook();
-	//从钩子vec中删掉
-	for(std::vector<ObjectNode*>::iterator it = HookVec.begin(); it != HookVec.end(); it++)
-	{
-		if(*it == pNode)
-		{
-			HookVec.erase(it);
-			break;
-		}
-	}
-    return flag;
+
+    lua_pushinteger(L, flag);
+    return 1;
 }
 
 static int STATUS(lua_State* L)

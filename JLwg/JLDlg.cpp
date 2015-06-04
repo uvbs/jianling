@@ -186,7 +186,7 @@ UINT CJLDlg::WorkThread(LPVOID pParam)
                 {
                     int inItem  = pDlg->m_ListCtrl.GetNextSelectedItem(rpos);
                     TCHAR szName[MAX_PATH] = {0};
-                    pDlg->m_ListCtrl.GetItemText(inItem, 1, szName, sizeof(szName));
+                    pDlg->m_ListCtrl.GetItemText(inItem, 1, szName, MAX_PATH*sizeof(TCHAR));
                     GamecallEx::GetInstance()->KillBoss(szName);
                 }
                 break;

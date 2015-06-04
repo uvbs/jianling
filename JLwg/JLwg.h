@@ -9,7 +9,11 @@
 
 
 
+
 class CJLDlg;
+
+
+
 class CJLwgApp: public CWinApp
 {
 public:

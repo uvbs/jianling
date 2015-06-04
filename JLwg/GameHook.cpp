@@ -10,13 +10,16 @@
 
 
 
+DWORD* GameHook::backupSendStep = NULL;
+DWORD* GameHook::backupWearEquipment = NULL;
+DWORD* GameHook::backupYiciJianWu = NULL;
+DWORD* GameHook::backupDunDi = NULL;
+DWORD* GameHook::backupQuest = NULL;
+DWORD* GameHook::backupCombat = NULL;
+
 
 //单例
 IMPLEMENT_SINGLETON(GameHook)
-
-
-
-DWORD* jmpTo;
 
 
 //构造函数
@@ -107,12 +110,13 @@ void __stdcall GameHook::mySendStep(float x, float y, float z)
     __asm pushad;
     GameHook::GetInstance()->m_sink->ShowHook(_T("gcall.Stepto(%d,%d,%d);"), (int)y, (int)x, (int)z);
 
-    jmpTo = GameHook::GetInstance()->backupSendStep;
+    
+
     __asm
     {
         popad;
         leave;
-        jmp jmpTo;
+        jmp backupSendStep;
     }
 }
 
@@ -151,11 +155,10 @@ void __stdcall GameHook::myWearEquipment(DWORD argv1, DWORD value, DWORD argv3, 
         GameHook::GetInstance()->m_sink->ShowHook(_T("穿装备失败"));
     }
 
-    jmpTo = GameHook::GetInstance()->backupWearEquipment;
     __asm
     {
         leave;
-        jmp jmpTo;
+        jmp backupWearEquipment;
     }
 }
 
@@ -214,11 +217,11 @@ void __stdcall GameHook::myCombatFilter()
     {
         TRACE(_T("hook技能出错"));
     }
-	jmpTo = GameHook::GetInstance()->backupCombat;
+	
 	__asm
 	{
 		leave;
-		jmp jmpTo;
+		jmp backupCombat;
 	}
 }
 
@@ -239,11 +242,11 @@ void __stdcall GameHook::myYiCiJianWu(
         GameHook::GetInstance()->m_sink->ShowHook(_T("esp+%d %08x"), i, *(pEsp + i));
     }
 
-    jmpTo = GameHook::GetInstance()->backupYiciJianWu;
+
     __asm
     {
         leave;
-        jmp jmpTo;
+        jmp backupYiciJianWu;
     }
 }
 
@@ -260,11 +263,11 @@ void __stdcall GameHook::myDunDi()
 
     GameHook::GetInstance()->m_sink->ShowHook(_T("eax = %08x"), eax_value);
 
-    jmpTo = GameHook::GetInstance()->backupDunDi;
+
     __asm
     {
         leave;
-        jmp jmpTo;
+        jmp backupDunDi;
     }
 }
 
@@ -340,13 +343,13 @@ void __stdcall GameHook::myDeliveQuest(DWORD unknow, DWORD questID, UCHAR questS
                             NULL, MB_OKCANCEL);
 
 
-    jmpTo = GameHook::GetInstance()->backupQuest;
+ 
     if(result == IDOK)
     {
         __asm
         {
             leave;
-            jmp jmpTo;
+            jmp backupQuest;
         }
     }
     else

@@ -6,11 +6,11 @@
 #if !defined(AFX_STDAFX_H__C3EF42C6_EAB7_4057_ACC3_F632B199F2AF__INCLUDED_)
 #define AFX_STDAFX_H__C3EF42C6_EAB7_4057_ACC3_F632B199F2AF__INCLUDED_
 
-#if _MSC_VER > 1000
-#pragma once
-#endif // _MSC_VER > 1000
 
 #define VC_EXTRALEAN		// Exclude rarely-used stuff from Windows headers
+#define _CRT_SECURE_NO_WARNINGS
+
+
 
 //关闭调试长度警告
 #pragma warning(disable: 4786)

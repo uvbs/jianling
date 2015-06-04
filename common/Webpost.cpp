@@ -9,18 +9,28 @@
 #if _MSC_VER <= 1500
     #include <boost\regex.hpp>
     using namespace boost;
+
+	#ifdef _UNICODE
+    typedef boost::wregex tregex;
+    typedef boost::wsmatch tsmatch;
+	#else
+    typedef boost::regex tregex;
+    typedef boost::smatch tsmatch;
+	#endif
+
 #else
     #include <regex>
     using namespace std;
+
+	#ifdef _UNICODE
+    typedef wregex tregex;
+    typedef wsmatch tsmatch;
+	#else
+    typedef regex tregex;
+    typedef smatch tsmatch;
+	#endif
 #endif
 
-#ifdef _UNICODE
-    typedef boost::wregex tregex;
-    typedef boost::wsmatch tsmatch;
-#else
-    typedef boost::regex tregex;
-    typedef boost::smatch tsmatch;
-#endif
 
 #ifdef _DEBUG
     #define new DEBUG_NEW

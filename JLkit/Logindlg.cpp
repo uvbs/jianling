@@ -98,7 +98,6 @@ void CDlgLogin::OnOK()
     {
         pDoc->m_bRegister = false;
         pDoc->PerformLogonMission();
-        GetDlgItem(IDOK)->EnableWindow(FALSE);
     }
 }
 

@@ -58,12 +58,12 @@ public:
     }
 
 
-    DWORD* backupSendStep;
-    DWORD* backupWearEquipment;
-    DWORD* backupYiciJianWu;
-    DWORD* backupDunDi;
-    DWORD* backupQuest;
-    DWORD* backupCombat;
+    static DWORD* backupSendStep;
+    static DWORD* backupWearEquipment;
+    static DWORD* backupYiciJianWu;
+    static DWORD* backupDunDi;
+    static DWORD* backupQuest;
+    static DWORD* backupCombat;
 
 
     std::vector<ObjectNode*> m_ObjAddrVec;

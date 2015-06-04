@@ -365,7 +365,7 @@ bool CJLSrvrDoc::ProcessKey(CJLkitSocket* pSocket, const Tcp_Head& stTcpHead, vo
             {
                 for(std::vector<QUERYKEY_SUCCESS>::iterator it = KeyVec.begin(); it != KeyVec.end(); it++)
                 {
-                    pSocket->Send(M_KEY, fun_querykey_ok, it, sizeof(QUERYKEY_SUCCESS));
+                    pSocket->Send(M_KEY, fun_querykey_ok, &(*it), sizeof(QUERYKEY_SUCCESS));
                 }
             }
             else

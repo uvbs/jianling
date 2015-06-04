@@ -210,6 +210,9 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
     //ап╠М©Р
     InitComBox();
     CenterWindow();
+
+
+
     return 0;
 }
 

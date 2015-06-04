@@ -34,6 +34,8 @@ BOOL GameSpend::Init()
     if(m_hack == NULL) return FALSE;
 
     HMODULE hWinmm = GetModuleHandle(_T("Winmm"));
+	if(hWinmm == NULL) return FALSE;
+
     BYTE* pfntimeGetTime = (BYTE*)GetProcAddress(hWinmm, "timeGetTime");
 
 
@@ -46,6 +48,8 @@ BOOL GameSpend::Init()
 
 
     HMODULE hKernel = GetModuleHandle(_T("Kernel32"));
+	if(hKernel == NULL) return FALSE;
+
     DWORD GetTickCount_addr = (DWORD)GetProcAddress(hKernel, "GetTickCount");
     DWORD Query_addr = (DWORD)GetProcAddress(hKernel, "QueryPerformanceCounter");
 

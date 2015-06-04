@@ -47,6 +47,7 @@ CombatBoss::~CombatBoss()
 int CombatBoss::run()
 {
 
+	DWORD dwRet = 0;
     DWORD MaxHealth = 0;//GetPlayerMaxHealth();
     DWORD Health = 0;//GetPlayerHealth();
     DWORD percent = 0;//Health * 100 / MaxHealth;
@@ -85,26 +86,31 @@ int CombatBoss::run()
         if(pCall->GetPlayerHealth() <= 0)
         {
             TRACE(_T("%s: 人物死亡了"), FUNCNAME);
-            return 3;
+			dwRet = 3;
+			break;
         }
 
 
         if(pCall->GetObjectHP(pBossNode->ObjAddress) == -1 || pCall->GetObjectHP(pBossNode->ObjAddress) == 0)
         {
             TRACE(_T("%s: 血量判断怪死了"), FUNCNAME);
+			dwRet = 1;
+			break;
             return 1;
         }
 
         if(pCall->GetObjectPos(pBossNode, &tarpos) == FALSE)
         {
             TRACE(_T("%s: 坐标判断怪死了"), FUNCNAME);
-            return 1;
+			dwRet = 1;
+			break;
         }
 
 		if(pCall->GetObjectPos(pBossNode, &tarpos) == 1000)
 		{
 			TRACE(_T("%s: 坐标判断怪死了"), FUNCNAME);
-			return 1;
+			dwRet = 1;
+			break;
 		}
 
 
@@ -910,8 +916,10 @@ int CombatBoss::run()
 
     }
 
-//取消回调
+	//取消回调
     GameHook::GetInstance()->SetCombatSink(NULL);
+
+	return dwRet;
 }
 
 

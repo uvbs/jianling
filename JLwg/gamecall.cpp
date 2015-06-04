@@ -645,11 +645,11 @@ BOOL Gamecall::GetGoodsByName_Hezi(wchar_t* name, BagVector& GoodsVec)
     _ASSERTE(name != NULL);
 
 
-    int len = wcslen(name);
-    wchar_t* fixName = new wchar_t[len + 1];
+    int len = wcslen(name) + 1;
+    wchar_t* fixName = new wchar_t[len];
     wcscpy(fixName, name);
-    fixName[len] = L' ';
-    fixName[len + 1] = L'\0';
+    fixName[len-2] = L' ';
+    fixName[len-1] = L'\0';
 
 
     BagVector AllGoods;
@@ -4032,7 +4032,7 @@ bool Gamecall::WaitPlans(int inMaxTime)
             return true;
         }
 
-        Sleep(1000);
+        Sleep(3000);
     }
 
     return false;

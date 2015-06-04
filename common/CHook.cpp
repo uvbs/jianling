@@ -137,6 +137,9 @@ DWORD* CHook::hook()
         // 原始的字节 ( 不会更改), 恢复call时应该从此处拷贝原始数据
         m_nLen = 4 + dwPathSize + 5 + dwPathSize;
         BYTE* backup = (BYTE*)VirtualAlloc(NULL, m_nLen, MEM_COMMIT, PAGE_EXECUTE_READWRITE);
+		if(backup == NULL) return 0;
+
+
         memset(backup, 0x90, m_nLen);
         int nCall = (DWORD)m_NewCall - (DWORD)m_CallAddr - 5;
         memcpy((void*)(sub + 1), (void*)&nCall, 4);

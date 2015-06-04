@@ -1140,10 +1140,10 @@ void GamecallEx::WearEquipment(wchar_t* name, int pos, BOOL Blur)
     {
         if(Blur == TRUE)
         {
-            int len = wcslen(name);
+            int len = wcslen(name) + 1;
             wchar_t* fixName = new wchar_t[len];
             wcscpy(fixName, name);
-            fixName[len] = L'\0';
+            fixName[len-1] = L'\0';
             //MessageBox(NULL,fixName,NULL,NULL);
             if(wcsstr(RangeObject[i].name, fixName) != NULL)
             {
@@ -2637,7 +2637,7 @@ DWORD GamecallEx::HuoQuWuQiPo10CanShu(DWORD m_adressA)  //参数是主武器的首地址;
 }
 
 //进入组队
-void GamecallEx::AddToPary()
+void GamecallEx::AddToParty()
 {
 
     sock.SetSink(this);

@@ -48,7 +48,7 @@ BOOL CJLkitApp::InitInstance()
 #ifdef JLTW
     if(!LoadLibrary(_T("JLnp_tw.dll")))
 #else
-    if(!LoadLibrary(_T("JLnp.dll")))
+    if(!LoadLibrary(_T("JLnp_hf.dll")))
 #endif
     {
         AfxMessageBox(_T("º”‘ÿNP ß∞‹"));
