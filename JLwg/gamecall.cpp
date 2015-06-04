@@ -1711,6 +1711,37 @@ wchar_t* Gamecall::_GetObjectNameByIndex(int index)
     return name;
 }
 
+
+//获取对象的血量
+//参数1: 对象地址
+int Gamecall::GetObjectTid(DWORD pObjAddress)
+{
+    if(pObjAddress < 0x3000000)
+    {
+        return 0;
+    }
+
+
+    int tid;
+
+    __try
+    {
+        __asm
+        {
+            mov eax, pObjAddress;
+            mov eax, [eax + Offset_Object_UK];
+            mov tid, eax;
+        }
+    }
+    __except(1)
+    {
+		_ASSERTE(FALSE);
+        tid = 0;
+    }
+
+    return tid;
+}
+
 //获取对象的血量
 //参数1: 对象地址
 int Gamecall::GetObjectHP(DWORD pObjAddress)
@@ -7554,6 +7585,227 @@ BOOL Gamecall::isStrikeCan(wchar_t* Name)
 		}
 	}
 	return FALSE;
+}
+
+
+//邀请组队
+void Gamecall::Party_Invite(DWORD sn, DWORD id)
+{
+	BYTE* pBuf = (BYTE *)AllocGameMemory(0x30);
+	*(WORD*)pBuf = CONST_PARTYINVITE;
+	*(DWORD*)(pBuf + 0x4) = PHEAD_PARTYINVITE;
+	*(DWORD*)(pBuf + 0x10) = sn;
+	*(DWORD*)(pBuf + 0x14) = id;
+
+	*(pBuf + 0x25) = 4;
+	*(pBuf + 0x26) = 0x1c;
+	*(pBuf + 0x27) = 00;
+	*(pBuf + 0x28) = 5;
+
+	Packet_Send(pBuf);
+}
+
+//{明文发包}
+void Gamecall::Packet_Send(BYTE *PBuffer, DWORD PType)
+{
+
+	EnterCriticalSection(&F_SendPacket_CS);
+
+	if(PBuffer > 0)
+	{
+		__asm
+		{
+			push PType;
+			mov  esi,PBuffer;
+			mov eax, FUNC_SENDPACKET;
+			call eax;
+			add  esp,4;
+		}
+	}
+
+	 LeaveCriticalSection(&F_SendPacket_CS);
+}
+
+//{根据名字取控件Id}
+DWORD Gamecall::GetUIId(wchar_t *UIName)
+{
+
+	DWORD Result = 0;
+	if(UIName == NULL) return 0;
+	if(*UIName == L' ') return 0;
+
+	__asm
+	{
+
+		call dword ptr ds:[CONST_GETUIID];
+		mov  esi,eax;
+		test esi,esi;
+		Je   fun_exit;
+
+		mov  edx,dword ptr ds:[esi];
+		push UIName;
+		mov  eax,dword ptr ds:[edx+ OFFSET_GETUIID];
+		mov  ecx,esi;
+		call eax;
+		mov  Result,eax;
+fun_exit:
+	}
+
+	return Result;
+}
+
+//{取控件指针}
+bool Gamecall::GetUI(wchar_t *UIName, UI *ui, DWORD nType)
+{
+	bool bRet = false;
+
+
+	PVOID PTMP;
+	DWORD  UIId;
+	DWORD PInfo;
+	DWORD vCode;
+	DWORD pName;
+
+	ZeroMemory(ui,sizeof(UI));
+	if (UIName == NULL) return false;
+	if(*UIName == L' ') return false;
+
+	//{取控件Id}
+	UIId = GetUIId(UIName);
+	if (UIId == 0) return false;
+
+	PTMP = new char[0x10];
+	__asm
+	{
+		mov  eax,Offset_Game_Base;
+		mov  eax,dword ptr ds:[eax];
+		mov  eax,dword ptr ds:[eax+ Offset_UI_Offset0];
+		mov  ecx,dword ptr ds:[eax+ Offset_UI_Offset1+ Offset_UI_Offset2];
+		lea  edi,dword ptr ds:[ecx+ Offset_UI_Offset3];
+		lea  ecx,dword ptr ss:[UIId];
+		mov  eax,PTMP;
+
+		mov eax, FUNC_GETPUI;
+		call eax;
+	}
+
+	switch(nType)
+	{
+	case 1:
+		{
+			PInfo = *(DWORD *)(DWORD(*(DWORD *)(DWORD(PTMP)+ 4)) +  0x10);
+			break;
+		}
+	case 2:
+		{
+			PInfo=*(DWORD *)(DWORD(PTMP)+ 0x4);
+			break;
+		}	  
+
+	default:
+		{
+			PInfo = *(DWORD *)(DWORD(*(DWORD *)(DWORD(PTMP)+ 4)) +  0x10);
+			break;
+		}
+	}
+
+	if (PInfo>0)
+	{
+
+		vCode= ReadDWORD(PInfo+ Offset_UI_Code);
+
+		if (vCode<3)
+		{
+
+			//{信息指针}
+			ui->PInfo = PInfo;
+			
+			//{Id}
+			ui->Id=ReadDWORD(PInfo + 0x4);
+
+			//{控件名}
+			pName = ReadDWORD(PInfo + Offset_UI_PName);
+			ui->szName= (wchar_t *)ReadDWORD(pName);
+			
+			//{vCode}
+			ui->vCode=vCode;
+
+			//{是否可见}
+			ui->bVisable=vCode=1;
+		}
+
+
+		bRet = true;
+	}
+
+	delete PTMP;
+	return bRet;
+}
+
+
+
+void Gamecall::GetInvite(TInvite *pstInvite)
+{
+
+	ZeroMemory(pstInvite,sizeof(TInvite));
+
+	UI ui;
+	//'窗口_接受组队
+	if(!GetUI(L"InvitedPartyConfirmPanel", &ui)) return;
+
+
+	if (ui.PInfo>0)
+	{
+		pstInvite->PInfo = ui.PInfo;
+		pstInvite->PartySn = ReadDWORD(ui.PInfo+ Offset_UI_PartySn);
+		pstInvite->PartyTId = ReadDWORD(ui.PInfo+ Offset_UI_PartyTId);
+		pstInvite->CaptainSn = ReadDWORD(ui.PInfo+ Offset_UI_CaptainSn);
+		pstInvite->CaptainTId = ReadDWORD(ui.PInfo+ Offset_UI_CaptainTId);
+	}
+}
+
+void Gamecall::Party_Accept(DWORD PartySn, DWORD PartyTId, DWORD CaptainSn, DWORD CaptainTId)
+{
+	if(PartySn == 0 || PartyTId==0 || CaptainSn == 0 || CaptainTId ==0)
+	{
+		return;
+	}
+
+	BYTE *PBuffer = AllocGameMemory(0x28);
+
+	*(WORD*)(PBuffer+ 4) = PHEAD_PARTYACCEPT;
+	*(DWORD*)PBuffer = CONST_PARTYACCEPT;
+
+	*(DWORD*)(PBuffer+ 0x0) = PartySn;
+	*(DWORD*)(PBuffer+ 0x14) = PartyTId;
+
+	*(DWORD*)(PBuffer+ 0x18) = CaptainSn;
+	*(DWORD*)(PBuffer+ 0x1C) = CaptainTId;
+
+	*(DWORD*)(PBuffer+ 0x24) = 4;
+
+	Packet_Send(PBuffer);
+}
+
+
+//申请内存
+BYTE* Gamecall::AllocGameMemory(DWORD ALen)
+{
+	BYTE* Result;
+	__asm
+	{
+		mov  esi,ALen;
+		mov eax, FUNC_ALLOCGAMEMMORY;
+		call eax;
+		mov  Result,eax
+	}
+
+	if(Result > 0)
+	{
+		ZeroMemory(Result, ALen);
+	}
+
+	return Result;
 }
 
 

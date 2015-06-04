@@ -243,9 +243,7 @@ int _tmain(int argc, TCHAR* argv[], TCHAR* envp[])
     // 首先提示权限
     if(EnableDebugPriv())
     {
-
         EnumProcessForModule();
-
     }
 
 

@@ -147,7 +147,7 @@ public:
     wchar_t* GetObjectName(DWORD pObjAddress);
 
     int GetObjectHP(DWORD pObjAddress);            //获取类型为4的对象血量
-
+	int GetObjectTid(DWORD pObjAddress);
 
     int GetObjectLevel(DWORD pObjAddress);        //取对象等级
     int GetObjectSY12(DWORD pObjAddress);
@@ -460,8 +460,19 @@ public:
 
     int Operation();
     int _Operation(DWORD Param1, DWORD Param2);
+
+
+	//组队
+	DWORD GetUIId(wchar_t *UIName);
+	void Packet_Send(BYTE *PBuffer, DWORD PType = 0);
+	BYTE* AllocGameMemory(DWORD ALen);
+	void Party_Invite(DWORD sn, DWORD id);
+	void Party_Accept(DWORD PartySn, DWORD PartyTId, DWORD CaptainSn, DWORD CaptainTId);
+	void GetInvite(TInvite *pstInvite);
+	bool GetUI(wchar_t *UIName, UI *ui, DWORD nType = 1);
 private:
     HANDLE m_hModuleBsEngine;
+	CRITICAL_SECTION F_SendPacket_CS;
 };
 
 

@@ -51,6 +51,23 @@ typedef struct _PARAM_8
     DWORD   mianban;
 } PARAM_8, *PPARAM_8;
 
+typedef struct _TInvite
+{
+	DWORD PInfo;
+    DWORD PartySn;
+	DWORD PartyTId;
+	DWORD CaptainSn;
+	DWORD CaptainTId;
+} TInvite, *PTInvite;
+
+typedef struct _UI
+{
+    wchar_t* szName;
+	DWORD PInfo;
+    DWORD Id;
+	DWORD vCode;
+	DWORD bVisable;
+}UI, *PUI;
 
 typedef struct _YaoPingCD_JG
 {

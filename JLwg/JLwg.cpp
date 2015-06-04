@@ -783,6 +783,16 @@ static int HeChengWuQiByHun(lua_State* L)
     return 0;
 }
 
+static int Party_Invite(lua_State* L)
+{
+	int v1 = lua_tointeger(L, 1);
+	int v2 = lua_tointeger(L, 2);
+	GamecallEx::GetInstance()->Party_Invite(v1, v2);
+
+	return 0;
+}
+
+
 bool CJLwgApp::InitLua()
 {
     //创建一个lua状态
@@ -845,6 +855,7 @@ void CJLwgApp::RegGameLib(lua_State* L)
     REGLUAFUN(NewBag);
     REGLUAFUN(NPCJieRenWu);
     REGLUAFUN(HeChengWuQiByHun);
+	REGLUAFUN(Party_Invite);
 }
 
 

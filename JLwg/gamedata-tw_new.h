@@ -598,3 +598,68 @@
 #define Offset_Quest_StepTagCount3 0xE
 #define Offset_Quest_StepTagDone4 0xF
 #define Offset_Quest_StepTagCount4 0x10
+
+
+
+
+#define Offset_UI_Offset0 Offset_ShorCutPanel_Offset1
+#define  Offset_UI_Offset1 4
+#define  Offset_UI_Offset2 4
+#define  Offset_UI_Offset3 4
+#define  Offset_UI_PTR 10
+#define  Offset_UI_Code 38
+#define  Offset_UI_Id 0xC
+#define  Offset_UI_PName  0xC
+
+
+
+ // {邀请组队信息}
+#define    Offset_UI_PartySn  0xE0
+ #define   Offset_UI_PartyTId  (Offset_UI_PartySn+ 4)
+ #define   Offset_UI_CaptainSn  0x98
+ #define   Offset_UI_CaptainTId (Offset_UI_CaptainSn+ 4)
+
+  //{人物指针 006D61AC}
+   #define    Offset_Role_Offset    0x00000080    
+   #define    Offset_Role_Attr    0x14    
+   #define    Offset_Role_Name    0x8C    
+   #define    Offset_Role_Faction    0x28    
+   #define    Offset_Role_Level    0x9C    
+   #define    Offset_Role_Sn    0x8    
+  #define   Offset_Role_TId    0xC    
+   #define    Offset_Role_CurrLife    0xC0    
+
+  #define    Offset_Object_Name_Body2 0x104
+ #define     Offset_Object_Index 0x1FF //{变}
+  #define    Offset_Object_Level 0x9C
+ #define     Offset_Object_Sn 0x8
+ #define     Offset_Object_UK 0xC
+ #define     Offset_Object_CurrLife   Offset_Role_CurrLife
+  #define    Offset_Object_MaxLife1  Offset_Role_MaxLife1
+ #define     Offset_Object_MaxLife2  Offset_Role_MaxLife2
+  #define    Offset_Object_iType 0x16
+  #define    Offset_Object_Angle 0x9A
+  #define    Offset_Object_X 0x1A8
+  #define    Offset_Object_Y  Offset_Object_X+ $4
+ #define     Offset_Object_Z  Offset_Object_Y+ $4
+  #define    Offset_Object_X1 0x28
+   #define   Offset_Object_Y1 0x2C
+ #define     Offset_Object_Z1 0x30
+  #define    Offset_Object_X2 0x28
+  #define    Offset_Object_Y2 0x2A
+  #define    Offset_Object_Z2 0x2C
+  #define    Offset_Object_X3 0x158
+ #define     Offset_Object_Y3 0x15C
+   #define   Offset_Object_Z3 0x160
+   #define   Offset_Object_X_Body 0x2A   //{Word}
+   #define    Offset_Object_Y_Body 0x2C  //{Word}
+    #define   Offset_Object_Z_Body 0x2E   //{Word}
+   #define   Offset_Object_ByAttackSn 0x100   //{战利归属对象SN}
+  #define    Offset_Object_TSn 0x108
+  #define    Offset_Object_bDead 0x14
+   #define   Offset_Object_bOwn1 0x48
+ #define     Offset_Object_bOwn2 0x8
+  #define    Offset_Object_bBossGoods 0x34
+  #define    Offset_Object_bManipulate 0x1C
+ #define     Offset_Object_bExsit 0x10    //{Byte}
+  #define    Offset_Object_OwnerId 0x168

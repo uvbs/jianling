@@ -204,6 +204,7 @@ bool CPartySrvDlg::OnEventTCPSocketShut(CJLkitSocket* pSocket, INT nErrorCode)
 {
     TRACE(_T("处理消息"));
     DelRequest(pSocket);
+
     TRACE(_T("处理完成"));
     return true;
 }
@@ -288,6 +289,7 @@ BOOL CPartySrvDlg::MatchGroup(RequestMap::iterator& tarit, GroupVec& ItVec)
         }
         else if(tarit->second.flag == SAME_TASKID)
         {
+			//匹配任务id相同的
             if(it->second.taskid == tarit->second.taskid)
             {
                 ItVec.push_back(it->first);
@@ -315,8 +317,16 @@ void CPartySrvDlg::NotifyGroupComplete(GroupVec& VecIt)
     CJLkitSocket* pSocket = (CJLkitSocket*)VecIt[0];
     _ASSERTE(pSocket != NULL);
 
+	//通知队长
     pSocket->Send(M_ADDPARTY, fun_group_caption, &req, sizeof(PartyRequest));
 
+	//通知成员
+	int i = 0;
+	for(i = 1; i < 5; i++)
+	{
+		pSocket = (CJLkitSocket*)VecIt[0];
+		pSocket->Send(M_ADDPARTY, fun_group_member, &req, sizeof(PartyRequest));
+	}
 
     //控件
     for(int i = 0; i < VecIt.size(); i++)
@@ -348,6 +358,7 @@ void CPartySrvDlg::OnTimer(UINT nIDEvent)
 {
     if(nIDEvent == IDT_PIPEI)
     {
+		//这里不驱动匹配, 而是当一个组队请求时去匹配一次
         //SearchGroup();
     }
 
