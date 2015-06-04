@@ -13,4 +13,5 @@ bin/
 *.aps
 *.orig
 *.vcproj.*.user
+*.vcproj.*.filters
 *.suo
