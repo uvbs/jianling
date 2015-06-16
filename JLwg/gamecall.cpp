@@ -3817,6 +3817,7 @@ void Gamecall::ChiYao(const wchar_t* name)
         TRACE(_T("%s: 没有在背包中找到这个物品: %s"), FUNCNAME, name);
     }
 
+	
 }
 
 void Gamecall::TurnTo(float x, float y, float z)
@@ -6921,12 +6922,15 @@ DWORD Gamecall::GetBiJiaoShu3(DWORD m_adress)  //获取比较数值3 这里用到的2个地址
     __try
     {
         if(m_adress != 0)
+		{
             Adress = ReadDWORD(ReadDWORD(m_adress + obj_type4_id2_offset) + obj_type4_view_offset1);
+		}
     }
     __except(1)
     {
         TRACE(_T("获取比较数值3错误"));
-    }
+	}
+
     return Adress;
 }
 
@@ -6937,7 +6941,9 @@ DWORD Gamecall::GetBiJiaoShu4(int i, DWORD m_adress) //获取比较数值4
     __try
     {
         if(m_adress != 0)
+		{
             Adress = ReadDWORD(ReadDWORD(m_adress + i * 4) + Wuqi_po10_cmp4_offset);
+		}
     }
     __except(1)
     {
@@ -7048,9 +7054,9 @@ void Gamecall::YaoQingZuDui(DWORD ID, DWORD Info) //邀请组队 参数1是对象ID  参数
             push eax;
             mov eax, obj_enum_base;
             mov eax, [eax];
-            mov eax, [eax+invite_party_call_offset1];   // 邀请组队一级偏移
-            mov eax, [eax+invite_party_call_offset2];   // 邀请组队二级偏移
-            mov eax, [eax+invite_party_call_offset3];  // 邀请组队三级偏移
+            mov eax, [eax + invite_party_call_offset1];   // 邀请组队一级偏移
+            mov eax, [eax + invite_party_call_offset2];   // 邀请组队二级偏移
+            mov eax, [eax + invite_party_call_offset3];  // 邀请组队三级偏移
             push eax;
             mov eax, invite_party_call;
             call eax;
@@ -7118,6 +7124,8 @@ BOOL Gamecall::GetPlayerBusy()
     {
         value_1 = ReadDWORD(ReadDWORD(pAddr + 0x14) + 0x28);
         value_2 = ReadDWORD(pAddr + 0xF8);
+
+
         if(value_1 > 0 || value_2 == 5)
         {
             return TRUE;
@@ -7136,7 +7144,7 @@ DWORD Gamecall::DuiWu_StartAdress()
     DWORD Adress;
     __try
     {
-        _asm
+        __asm
         {
             mov eax, obj_enum_base;
             mov eax, [eax+0];
@@ -7660,7 +7668,7 @@ bool Gamecall::GetUI(wchar_t *UIName, UI *ui, DWORD nType)
 	bool bRet = false;
 
 
-	PVOID PTMP;
+	BYTE *PTMP;
 	DWORD  UIId;
 	DWORD PInfo;
 	DWORD vCode;
@@ -7674,7 +7682,7 @@ bool Gamecall::GetUI(wchar_t *UIName, UI *ui, DWORD nType)
 	UIId = GetUIId(UIName);
 	if (UIId == 0) return false;
 
-	PTMP = new char[0x10];
+	PTMP = new BYTE[0x10];
 	__asm
 	{
 		mov  eax,Offset_Game_Base;
@@ -7684,21 +7692,19 @@ bool Gamecall::GetUI(wchar_t *UIName, UI *ui, DWORD nType)
 		lea  edi,dword ptr ds:[ecx+ Offset_UI_Offset3];
 		lea  ecx,dword ptr ss:[UIId];
 		mov  eax,PTMP;
-
-		mov eax, FUNC_GETPUI;
-		call eax;
+		call dword ptr ds:[FUNC_GETPUI];
 	}
 
 	switch(nType)
 	{
 	case 1:
 		{
-			PInfo = *(DWORD *)(DWORD(*(DWORD *)(DWORD(PTMP)+ 4)) +  0x10);
+			PInfo = *(DWORD *) (   (*(DWORD *)(DWORD(PTMP)+ 4)  +  0x10   ));
 			break;
 		}
 	case 2:
 		{
-			PInfo=*(DWORD *)(DWORD(PTMP)+ 0x4);
+			PInfo = *(DWORD *)(DWORD(PTMP)+ 0x4);
 			break;
 		}	  
 
@@ -7738,7 +7744,7 @@ bool Gamecall::GetUI(wchar_t *UIName, UI *ui, DWORD nType)
 		bRet = true;
 	}
 
-	delete PTMP;
+	delete []PTMP;
 	return bRet;
 }
 

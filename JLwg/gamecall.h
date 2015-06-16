@@ -18,7 +18,7 @@
 
 
 typedef std::vector <CUSTOMKILL> CustKillVector;
-typedef std::vector<ObjectNode*> ObjectVector;
+typedef std::vector <ObjectNode*> ObjectVector;
 typedef std::vector <BAGSTU> BagVector;
 typedef std::vector <Team> TeamVector;
 typedef std::vector <STRIKEINFO> StrikeVector;

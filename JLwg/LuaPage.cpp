@@ -51,20 +51,22 @@ void CLuaPage::OnTestLua()
 
 
     CString strLua;
-	GetDlgItem(IDC_EDIT1)->GetWindowText(strLua);
+    GetDlgItem(IDC_EDIT1)->GetWindowText(strLua);
+
+
+    LPSTR pszLua;
+
+#ifdef _UNICODE
+    USES_CONVERSION;
+    pszLua = T2A((LPCTSTR)strLua);
+#else
+    pszLua = (LPCTSTR)strLua;
+#endif
 
 
 
-	int utf8_size = WideCharToMultiByte(CP_UTF8, 0, strLua.GetBuffer(0), -1, NULL, 0, NULL, NULL) + 1;
-	strLua.ReleaseBuffer();
-
-	char* utf8_str = new char[utf8_size];
-	WideCharToMultiByte(CP_UTF8, 0, strLua.GetBuffer(0), -1, utf8_str, utf8_size, NULL, NULL);
-	strLua.ReleaseBuffer();
-
-
-    int error = luaL_loadbuffer(pL, utf8_str, utf8_size-1, "line") || lua_pcall(pL, 0, 0, 0);
-
+    int error = luaL_loadbuffer(pL, pszLua, strlen(pszLua), "line") ||
+                lua_pcall(pL, 0, 0, 0);
     if(error)
     {
         MessageBoxA(NULL, lua_tostring(pL, -1), "½Å±¾", MB_ICONINFORMATION);

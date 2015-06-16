@@ -3042,6 +3042,7 @@ void GamecallEx::SteptoBack(ObjectNode* pObj)
     NewSpend(1);
 }
 
+//走到队长
 wchar_t* GamecallEx::SteptoParty()
 {
     TeamVector team;
